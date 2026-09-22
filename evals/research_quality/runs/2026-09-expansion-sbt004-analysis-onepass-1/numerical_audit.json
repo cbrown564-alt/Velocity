@@ -1,0 +1,631 @@
+{
+  "status": "PASS",
+  "scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+  "output_sha256": "e43bf9fac43ef45d9213bc23752c4839dafc5538c1c56616a8872dc95fffc6cd",
+  "checks": [
+    {
+      "id": "att_plan_ahead_5.n_unweighted",
+      "reported": 2617,
+      "reference": 2617,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.n_weighted",
+      "reported": 2623.52,
+      "reference": 2623.5181818181845,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.n_eff",
+      "reported": 2065.38,
+      "reference": 2065.3834599970533,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.1",
+      "reported": 15.6,
+      "reference": 15.603382457745258,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.2",
+      "reported": 20.87,
+      "reference": 20.874698675500515,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.3",
+      "reported": 26.27,
+      "reference": 26.26544739252519,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.4",
+      "reported": 22.24,
+      "reference": 22.237545927802252,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.5",
+      "reported": 15.02,
+      "reference": 15.018925546426791,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_unweighted",
+      "reported": 2632,
+      "reference": 2632,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_weighted",
+      "reported": 2628.96,
+      "reference": 2628.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_eff",
+      "reported": 2076.13,
+      "reference": 2076.1333562002583,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.1",
+      "reported": 14.85,
+      "reference": 14.854026714125663,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.2",
+      "reported": 20.33,
+      "reference": 20.329062331422985,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.3",
+      "reported": 28.46,
+      "reference": 28.463292283149446,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.4",
+      "reported": 22.33,
+      "reference": 22.32939429846603,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.5",
+      "reported": 14.02,
+      "reference": 14.024224372835869,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_unweighted",
+      "reported": 2628,
+      "reference": 2628,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_weighted",
+      "reported": 2632.09,
+      "reference": 2632.087878787882,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_eff",
+      "reported": 2075.23,
+      "reference": 2075.2341662967556,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.1",
+      "reported": 12.62,
+      "reference": 12.620583498064104,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.2",
+      "reported": 18.52,
+      "reference": 18.515546478253807,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.3",
+      "reported": 27.25,
+      "reference": 27.246948787055782,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.4",
+      "reported": 21.54,
+      "reference": 21.54079777662393,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.5",
+      "reported": 20.08,
+      "reference": 20.076123460002368,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_unweighted",
+      "reported": 2627,
+      "reference": 2627,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_weighted",
+      "reported": 2630.51,
+      "reference": 2630.512121212124,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_eff",
+      "reported": 2074.76,
+      "reference": 2074.7628351722606,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.1",
+      "reported": 16.48,
+      "reference": 16.482445519883793,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.2",
+      "reported": 21.05,
+      "reference": 21.052128344636202,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.3",
+      "reported": 25.67,
+      "reference": 25.666277680691284,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.4",
+      "reported": 20.33,
+      "reference": 20.333406676197402,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.5",
+      "reported": 16.47,
+      "reference": 16.46574177859133,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_unweighted",
+      "reported": 2612,
+      "reference": 2612,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_weighted",
+      "reported": 2608.35,
+      "reference": 2608.354545454548,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_eff",
+      "reported": 2060.53,
+      "reference": 2060.5329637708605,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.1",
+      "reported": 13.86,
+      "reference": 13.864191635966957,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.2",
+      "reported": 15.74,
+      "reference": 15.739169126710564,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.3",
+      "reported": 23.2,
+      "reference": 23.203528986694277,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.4",
+      "reported": 22.3,
+      "reference": 22.2950263547087,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.5",
+      "reported": 24.9,
+      "reference": 24.89808389591951,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_unweighted",
+      "reported": 2632,
+      "reference": 2632,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_weighted",
+      "reported": 2628.66,
+      "reference": 2628.660606060609,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_eff",
+      "reported": 2075.49,
+      "reference": 2075.4939027841356,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.1",
+      "reported": 14.05,
+      "reference": 14.05324522916384,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.2",
+      "reported": 19.04,
+      "reference": 19.044380246651713,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.3",
+      "reported": 24.85,
+      "reference": 24.846505536867493,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.4",
+      "reported": 21.07,
+      "reference": 21.06684127646525,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.5",
+      "reported": 20.99,
+      "reference": 20.98902771085169,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_unweighted",
+      "reported": 2625,
+      "reference": 2625,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_weighted",
+      "reported": 2629.14,
+      "reference": 2629.1393939393965,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_eff",
+      "reported": 2071.96,
+      "reference": 2071.956753290228,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.1",
+      "reported": 1.8,
+      "reference": 1.7992983070851611,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.2",
+      "reported": 10.61,
+      "reference": 10.609186552576253,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.3",
+      "reported": 23.92,
+      "reference": 23.922334304577134,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.4",
+      "reported": 33.46,
+      "reference": 33.461116438608784,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.5",
+      "reported": 30.21,
+      "reference": 30.208064397152665,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_unweighted",
+      "reported": 2623,
+      "reference": 2623,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_weighted",
+      "reported": 2631.77,
+      "reference": 2631.7696969697,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_eff",
+      "reported": 2071.23,
+      "reference": 2071.2275365736496,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.1",
+      "reported": 11.33,
+      "reference": 11.32571239078671,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.2",
+      "reported": 15.8,
+      "reference": 15.797412502705868,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.3",
+      "reported": 24.27,
+      "reference": 24.272295171816634,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.4",
+      "reported": 23.16,
+      "reference": 23.159321300104548,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.5",
+      "reported": 25.45,
+      "reference": 25.445258634586235,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_unweighted",
+      "reported": 2610,
+      "reference": 2610,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_weighted",
+      "reported": 2609.19,
+      "reference": 2609.193939393942,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_eff",
+      "reported": 2057.46,
+      "reference": 2057.4603562770435,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.1",
+      "reported": 34.49,
+      "reference": 34.49352754943476,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.2",
+      "reported": 12.89,
+      "reference": 12.890199457861131,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.3",
+      "reported": 5.8,
+      "reference": 5.797564323824611,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.4",
+      "reported": 12.18,
+      "reference": 12.184768545725255,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.5",
+      "reported": 34.63,
+      "reference": 34.63394012315425,
+      "pass": true
+    },
+    {
+      "id": "budget.n_unweighted",
+      "reported": 2557,
+      "reference": 2557,
+      "pass": true
+    },
+    {
+      "id": "budget.n_weighted",
+      "reported": 2564.25,
+      "reference": 2564.245454545457,
+      "pass": true
+    },
+    {
+      "id": "budget.n_eff",
+      "reported": 2020.88,
+      "reference": 2020.8761888159931,
+      "pass": true
+    },
+    {
+      "id": "budget.pct",
+      "reported": 26.02,
+      "reference": 26.023013444796213,
+      "pass": true
+    },
+    {
+      "id": "effort.n_unweighted",
+      "reported": 2546,
+      "reference": 2546,
+      "pass": true
+    },
+    {
+      "id": "effort.n_weighted",
+      "reported": 2539.02,
+      "reference": 2539.0151515151542,
+      "pass": true
+    },
+    {
+      "id": "effort.n_eff",
+      "reported": 2006.68,
+      "reference": 2006.6769826277973,
+      "pass": true
+    },
+    {
+      "id": "effort.pct",
+      "reported": 31.89,
+      "reference": 31.891511263613292,
+      "pass": true
+    },
+    {
+      "id": "waste.n_unweighted",
+      "reported": 2549,
+      "reference": 2549,
+      "pass": true
+    },
+    {
+      "id": "waste.n_weighted",
+      "reported": 2561.31,
+      "reference": 2561.3090909090934,
+      "pass": true
+    },
+    {
+      "id": "waste.n_eff",
+      "reported": 2012.92,
+      "reference": 2012.917043851338,
+      "pass": true
+    },
+    {
+      "id": "waste.pct",
+      "reported": 30.28,
+      "reference": 30.277840876824346,
+      "pass": true
+    },
+    {
+      "id": "joint.000",
+      "reported": 41.11,
+      "reference": 41.10508027829457,
+      "pass": true
+    },
+    {
+      "id": "joint.001",
+      "reported": 10.78,
+      "reference": 10.77795979072334,
+      "pass": true
+    },
+    {
+      "id": "joint.010",
+      "reported": 12.22,
+      "reference": 12.2235512989814,
+      "pass": true
+    },
+    {
+      "id": "joint.011",
+      "reported": 9.17,
+      "reference": 9.17477565213709,
+      "pass": true
+    },
+    {
+      "id": "joint.100",
+      "reported": 11.45,
+      "reference": 11.451995776358727,
+      "pass": true
+    },
+    {
+      "id": "joint.101",
+      "reported": 4.45,
+      "reference": 4.454009680501121,
+      "pass": true
+    },
+    {
+      "id": "joint.110",
+      "reported": 4.88,
+      "reference": 4.880872674152425,
+      "pass": true
+    },
+    {
+      "id": "joint.111",
+      "reported": 5.93,
+      "reference": 5.93175484885133,
+      "pass": true
+    },
+    {
+      "id": "current_use",
+      "reported": 38.9,
+      "reference": 38.903046123465636,
+      "pass": true
+    },
+    {
+      "id": "satisfaction.n_unweighted",
+      "reported": 999,
+      "reference": 999,
+      "pass": true
+    },
+    {
+      "id": "satisfaction.n_weighted",
+      "reported": 981.28,
+      "reference": 981.2818181818191,
+      "pass": true
+    },
+    {
+      "id": "satisfaction.n_eff",
+      "reported": 780.9,
+      "reference": 780.9029708168897,
+      "pass": true
+    },
+    {
+      "id": "sharing.n_unweighted",
+      "reported": 996,
+      "reference": 996,
+      "pass": true
+    },
+    {
+      "id": "sharing.n_weighted",
+      "reported": 980.23,
+      "reference": 980.2272727272737,
+      "pass": true
+    },
+    {
+      "id": "sharing.n_eff",
+      "reported": 779.91,
+      "reference": 779.9066656190005,
+      "pass": true
+    },
+    {
+      "id": "sat.1",
+      "reported": 0.7,
+      "reference": 0.7043971552360392,
+      "pass": true
+    },
+    {
+      "id": "sat.2",
+      "reported": 4.85,
+      "reference": 4.849871689163521,
+      "pass": true
+    },
+    {
+      "id": "sat.3",
+      "reported": 11.29,
+      "reference": 11.292588852552162,
+      "pass": true
+    },
+    {
+      "id": "sat.4",
+      "reported": 21.57,
+      "reference": 21.568881765655927,
+      "pass": true
+    },
+    {
+      "id": "sat.5",
+      "reported": 61.58,
+      "reference": 61.58426053739236,
+      "pass": true
+    }
+  ]
+}

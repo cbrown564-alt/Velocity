@@ -1,0 +1,3900 @@
+{
+  "study_id": "SBT-005",
+  "evidence": [
+    {
+      "evidence_id": "E-age_band",
+      "analysis_id": "tables.age_band.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 2.272857753299176,
+        "distribution_pct": {
+          "1": 25.516465237855368,
+          "2": 36.724227499665155,
+          "3": 22.716373957185965,
+          "4": 15.042933305293513
+        }
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "age_band"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "011439a733ef107a5a88def8879a1f84688a564b753920a3d98696f3135e3a92"
+    },
+    {
+      "evidence_id": "E-children_under18",
+      "analysis_id": "tables.children_under18.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.349824591608638,
+        "distribution_pct": {
+          "0": 65.0175408391362,
+          "1": 34.982459160863804
+        },
+        "pct": 34.982459160863804
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "children_under18"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "dbc231b0309518a2dfea7d4902dd4297e81fd9e5384d90ed8209054f7cd7185d"
+    },
+    {
+      "evidence_id": "E-work_pattern",
+      "analysis_id": "tables.work_pattern.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 1.7317733713384988,
+        "distribution_pct": {
+          "1": 53.63456592410733,
+          "2": 19.55353101793548,
+          "3": 26.8119030579572
+        }
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "work_pattern"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "813691c75d66aaeeaae674b4cb40a8ff6d42abf3a305dc41f2b5b593a465d193"
+    },
+    {
+      "evidence_id": "E-online_grocery_pre",
+      "analysis_id": "tables.online_grocery_pre.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.44673357056191665,
+        "distribution_pct": {
+          "0": 55.326642943808324,
+          "1": 44.67335705619166
+        },
+        "pct": 44.67335705619166
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "online_grocery_pre"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "c35e8342258b7fc9df9bb2edced7165e1060dd8c3c7547908a08e705f801f8fe"
+    },
+    {
+      "evidence_id": "E-digital_confidence_pre",
+      "analysis_id": "tables.digital_confidence_pre.values",
+      "values": {
+        "n_unweighted": 2712,
+        "n_weighted": 2715.0152983821,
+        "n_eff": 2352.7046540940937,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 46,
+          "98": 20,
+          "99": 22,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 3.1936946373720545,
+        "distribution_pct": {
+          "1": 12.198122101011858,
+          "2": 19.63804094973696,
+          "3": 24.36476506078612,
+          "4": 24.194394887964023,
+          "5": 19.604677000501034
+        },
+        "top2_pct": 43.79907188846506
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "digital_confidence_pre"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "367480bbb567f11e496b3f2ac21a3077f6f97ea54f429c91691601db29587527"
+    },
+    {
+      "evidence_id": "E-budget_pressure_pre",
+      "analysis_id": "tables.budget_pressure_pre.values",
+      "values": {
+        "n_unweighted": 2728,
+        "n_weighted": 2729.41819041,
+        "n_eff": 2368.845155541229,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 46,
+          "98": 13,
+          "99": 13,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 3.0714546335618884,
+        "distribution_pct": {
+          "1": 13.362868764841501,
+          "2": 19.11840129325197,
+          "3": 29.839870580281303,
+          "4": 22.368116544126597,
+          "5": 15.310742817498621
+        },
+        "top2_pct": 37.678859361625214
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "budget_pressure_pre"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "ccc2daffc3b8e7e5f50bcc19a46cbe9703ae980a861ce5fd69346fb6cc38da4c"
+    },
+    {
+      "evidence_id": "E-mealplan_days_pre",
+      "analysis_id": "tables.mealplan_days_pre.values",
+      "values": {
+        "n_unweighted": 2698,
+        "n_weighted": 2698.2513253939,
+        "n_eff": 2341.827753338725,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 70,
+          "98": 11,
+          "99": 21,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 3.0047552835539615,
+        "distribution_pct": {
+          "0": 4.538170828116766,
+          "1": 13.63223561608749,
+          "2": 21.23270244736985,
+          "3": 23.594425348941932,
+          "4": 18.899933601883916,
+          "5": 11.74976185385613,
+          "6": 5.223324005280543,
+          "7": 1.1294462984633615
+        }
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "mealplan_days_pre"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "a6bb41920ae9b0f50e243943e87ef06d50e4b75b6505125275ff69913e9f7cf8"
+    },
+    {
+      "evidence_id": "E-assignment",
+      "analysis_id": "tables.assignment.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.5046223162681748,
+        "distribution_pct": {
+          "0": 49.53776837318251,
+          "1": 50.46223162681748
+        },
+        "pct": 50.46223162681748
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "3bb6df16a14f93b1213c292bde3e500ebfe6f3f6ba1239d57a20690a56ae63e9"
+    },
+    {
+      "evidence_id": "E-followup_status",
+      "analysis_id": "tables.followup_status.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.7416137529416382,
+        "distribution_pct": {
+          "0": 25.838624705836168,
+          "1": 74.16137529416382
+        },
+        "pct": 74.16137529416382
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "followup_status"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "1765cf1a6aa3a43b745ba8e8406642a7e2e5edb0b2bff6b0a569d36643fa37c0"
+    },
+    {
+      "evidence_id": "E-followup_attempts",
+      "analysis_id": "tables.followup_attempts.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 2.4689986789794283,
+        "distribution_pct": {
+          "1": 31.21802328148772,
+          "2": 23.123625461710212,
+          "3": 13.198811334173591,
+          "4": 32.459539922628466
+        }
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "followup_attempts"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "b76fd5d8a5b992de7dfd5e5efe2c1b3c0e73e9413c5a8d12ce91c5861b1e222e"
+    },
+    {
+      "evidence_id": "E-receipt_log",
+      "analysis_id": "tables.receipt_log.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.4756232484340454,
+        "distribution_pct": {
+          "0": 52.43767515659547,
+          "1": 47.56232484340454
+        },
+        "pct": 47.56232484340454
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "receipt_log"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "8da31bcb20f939b0f8b576f95c410221bb65b8f54f7fdf1aecdaa7d6251e9fe5"
+    },
+    {
+      "evidence_id": "E-receipt_count",
+      "analysis_id": "tables.receipt_count.values",
+      "values": {
+        "n_unweighted": 2800,
+        "n_weighted": 2799.9999999806,
+        "n_eff": 2430.844489687424,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 0,
+          "98": 0,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 1.0205080811921066,
+        "distribution_pct": {
+          "0": 52.43767515659547,
+          "1": 12.448889962389822,
+          "2": 19.39206012453436,
+          "3": 12.067701118169326,
+          "4": 3.653673638311029
+        }
+      },
+      "universe": "All 2,800 enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "receipt_count"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "c8794848960cf32968c5c828135bdbc73807e663afce3aaf055157e3394730c6"
+    },
+    {
+      "evidence_id": "E-recall_post",
+      "analysis_id": "tables.recall_post.values",
+      "values": {
+        "n_unweighted": 1987,
+        "n_weighted": 1966.1754398411,
+        "n_eff": 1723.68992434996,
+        "eligible_n": 2089,
+        "eligible_weighted_n": 2076.5185082221997,
+        "eligible_n_eff": 1808.8503416140459,
+        "structural_excluded_n": 711,
+        "missing_counts": {
+          "97": 81,
+          "98": 8,
+          "99": 13,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.40720660695802663,
+        "distribution_pct": {
+          "0": 59.27933930419733,
+          "1": 40.720660695802664
+        },
+        "pct": 40.720660695802664
+      },
+      "universe": "followup_status == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "recall_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "00a62079190ebf1f86a6708a4e4fe271f89d8fa228a217d2a7c8b5e6642ab263"
+    },
+    {
+      "evidence_id": "E-awareness_pre",
+      "analysis_id": "tables.awareness_pre.values",
+      "values": {
+        "n_unweighted": 2727,
+        "n_weighted": 2723.9148182542003,
+        "n_eff": 2367.3361365794876,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 41,
+          "98": 11,
+          "99": 21,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.30443247348820474,
+        "distribution_pct": {
+          "0": 69.55675265117952,
+          "1": 30.443247348820474
+        },
+        "pct": 30.443247348820474
+      },
+      "universe": "All enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "awareness_pre"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "fd09036587b22a392ba75a069bcb9b55f1901c6126a97a5119d218d57e882a43"
+    },
+    {
+      "evidence_id": "E-awareness_post",
+      "analysis_id": "tables.awareness_post.values",
+      "values": {
+        "n_unweighted": 2028,
+        "n_weighted": 2019.1622533729997,
+        "n_eff": 1755.9917957357468,
+        "eligible_n": 2089,
+        "eligible_weighted_n": 2076.5185082221997,
+        "eligible_n_eff": 1808.8503416140459,
+        "structural_excluded_n": 711,
+        "missing_counts": {
+          "97": 32,
+          "98": 17,
+          "99": 12,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.5204668863486653,
+        "distribution_pct": {
+          "0": 47.95331136513348,
+          "1": 52.046688634866534
+        },
+        "pct": 52.046688634866534
+      },
+      "universe": "followup_status == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "awareness_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "962563926bbfcd1baee94f444d5e13c49700220fb7935e424b10adbc54ca92f9"
+    },
+    {
+      "evidence_id": "E-consideration_pre",
+      "analysis_id": "tables.consideration_pre.values",
+      "values": {
+        "n_unweighted": 2719,
+        "n_weighted": 2722.5205407549997,
+        "n_eff": 2361.4842578651487,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 45,
+          "98": 16,
+          "99": 20,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 2.7153762484785484,
+        "distribution_pct": {
+          "1": 22.367119799335956,
+          "2": 23.126346176620437,
+          "3": 26.479115237734174,
+          "4": 16.6566269494717,
+          "5": 11.370791836837732
+        },
+        "top2_pct": 28.027418786309433
+      },
+      "universe": "All enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "consideration_pre"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "57d4b5e50b133c261b05dcee51bc44288c8be34497273df83c5e39604093ea94"
+    },
+    {
+      "evidence_id": "E-consideration_post",
+      "analysis_id": "tables.consideration_post.values",
+      "values": {
+        "n_unweighted": 2040,
+        "n_weighted": 2030.5609843911998,
+        "n_eff": 1767.171656058895,
+        "eligible_n": 2089,
+        "eligible_weighted_n": 2076.5185082221997,
+        "eligible_n_eff": 1808.8503416140459,
+        "structural_excluded_n": 711,
+        "missing_counts": {
+          "97": 33,
+          "98": 9,
+          "99": 7,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 3.004747436785057,
+        "distribution_pct": {
+          "1": 18.27087807768714,
+          "2": 19.683911970333444,
+          "3": 23.45566542996482,
+          "4": 20.478677239815784,
+          "5": 18.110867282198814
+        },
+        "top2_pct": 38.5895445220146
+      },
+      "universe": "followup_status == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "consideration_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "542a1b7196314b19c42c17593f60bf7d495333cf0909a10c52a378f641ced082"
+    },
+    {
+      "evidence_id": "E-usage_pre",
+      "analysis_id": "tables.usage_pre.values",
+      "values": {
+        "n_unweighted": 2720,
+        "n_weighted": 2722.733818757,
+        "n_eff": 2362.779961459307,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 56,
+          "98": 11,
+          "99": 13,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.05312950909018348,
+        "distribution_pct": {
+          "0": 94.68704909098165,
+          "1": 5.312950909018347
+        },
+        "pct": 5.312950909018347
+      },
+      "universe": "All enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "usage_pre"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "3a0913b054924931bee659031fdddd41373500f3617fbfc08aa7265120e0feb1"
+    },
+    {
+      "evidence_id": "E-usage_post",
+      "analysis_id": "tables.usage_post.values",
+      "values": {
+        "n_unweighted": 2038,
+        "n_weighted": 2026.1600364173,
+        "n_eff": 1763.763275479383,
+        "eligible_n": 2089,
+        "eligible_weighted_n": 2076.5185082221997,
+        "eligible_n_eff": 1808.8503416140459,
+        "structural_excluded_n": 711,
+        "missing_counts": {
+          "97": 29,
+          "98": 15,
+          "99": 7,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.08800118698569431,
+        "distribution_pct": {
+          "0": 91.19988130143058,
+          "1": 8.80011869856943
+        },
+        "pct": 8.80011869856943
+      },
+      "universe": "followup_status == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "usage_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "7e35400acbec43189b461533961baf7704a3ee38cc636c04f925cede935ab734"
+    },
+    {
+      "evidence_id": "E-meal_stress_pre",
+      "analysis_id": "tables.meal_stress_pre.values",
+      "values": {
+        "n_unweighted": 2746,
+        "n_weighted": 2742.0498065556003,
+        "n_eff": 2383.6947616932416,
+        "eligible_n": 2800,
+        "eligible_weighted_n": 2799.9999999806,
+        "eligible_n_eff": 2430.844489687424,
+        "structural_excluded_n": 0,
+        "missing_counts": {
+          "97": 33,
+          "98": 10,
+          "99": 11,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 3.2112523760550644,
+        "distribution_pct": {
+          "1": 11.648816357903137,
+          "2": 18.221545897772106,
+          "3": 26.661709338443263,
+          "4": 24.291440592678157,
+          "5": 19.176487813203323
+        },
+        "top2_pct": 43.46792840588148
+      },
+      "universe": "All enrolled respondents",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "meal_stress_pre"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "4d24b5054de3d5c79596638420398abfca79c513b21aec44ca379b0fe40e69ac"
+    },
+    {
+      "evidence_id": "E-meal_stress_post",
+      "analysis_id": "tables.meal_stress_post.values",
+      "values": {
+        "n_unweighted": 2039,
+        "n_weighted": 2028.7151114115995,
+        "n_eff": 1764.8500250296456,
+        "eligible_n": 2089,
+        "eligible_weighted_n": 2076.5185082221997,
+        "eligible_n_eff": 1808.8503416140459,
+        "structural_excluded_n": 711,
+        "missing_counts": {
+          "97": 24,
+          "98": 11,
+          "99": 15,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 3.082043312532724,
+        "distribution_pct": {
+          "1": 13.332807746706937,
+          "2": 21.07746446873315,
+          "3": 26.535400373772855,
+          "4": 22.16124360615483,
+          "5": 16.893083804632244
+        },
+        "top2_pct": 39.054327410787074
+      },
+      "universe": "followup_status == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "meal_stress_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "7d33ba7c566528fcb55b678db6cc8958d77a284dc74b6932e8e3ab0f578cbeea"
+    },
+    {
+      "evidence_id": "E-campaign_clear_post",
+      "analysis_id": "tables.campaign_clear_post.values",
+      "values": {
+        "n_unweighted": 862,
+        "n_weighted": 773.016286868,
+        "n_eff": 755.9593265422434,
+        "eligible_n": 891,
+        "eligible_weighted_n": 800.6396295418999,
+        "eligible_n_eff": 781.7615016099128,
+        "structural_excluded_n": 1909,
+        "missing_counts": {
+          "97": 22,
+          "98": 3,
+          "99": 4,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 4.180344885183907,
+        "distribution_pct": {
+          "1": 0.4721668709838271,
+          "2": 3.623831043844935,
+          "3": 19.16505945106922,
+          "4": 30.875231964000694,
+          "5": 45.863710670101334
+        },
+        "top2_pct": 76.73894263410203
+      },
+      "universe": "followup_status == 1 AND recall_post == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "campaign_clear_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "5f81093666ebd847b16f50dad3f8ff136ce4f3a0ce35ad71711874c95b2e567c"
+    },
+    {
+      "evidence_id": "E-campaign_relevant_post",
+      "analysis_id": "tables.campaign_relevant_post.values",
+      "values": {
+        "n_unweighted": 854,
+        "n_weighted": 770.2788567284999,
+        "n_eff": 747.6551709389787,
+        "eligible_n": 891,
+        "eligible_weighted_n": 800.6396295418999,
+        "eligible_n_eff": 781.7615016099128,
+        "structural_excluded_n": 1909,
+        "missing_counts": {
+          "97": 25,
+          "98": 6,
+          "99": 6,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 4.013123423881883,
+        "distribution_pct": {
+          "1": 2.0590955505209263,
+          "2": 8.580316520864283,
+          "3": 18.84464438306181,
+          "4": 27.021037081011574,
+          "5": 43.49490646454141
+        },
+        "top2_pct": 70.51594354555299
+      },
+      "universe": "followup_status == 1 AND recall_post == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "campaign_relevant_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "d57f29b823804df67b43ec4801e4ed9663241419178805b3d318a21f923386ea"
+    },
+    {
+      "evidence_id": "E-campaign_trust_post",
+      "analysis_id": "tables.campaign_trust_post.values",
+      "values": {
+        "n_unweighted": 852,
+        "n_weighted": 765.1650969023,
+        "n_eff": 749.2563841833784,
+        "eligible_n": 891,
+        "eligible_weighted_n": 800.6396295418999,
+        "eligible_n_eff": 781.7615016099128,
+        "structural_excluded_n": 1909,
+        "missing_counts": {
+          "97": 33,
+          "98": 3,
+          "99": 3,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 4.130170488815197,
+        "distribution_pct": {
+          "1": 1.3924146744190018,
+          "2": 6.7329148448701455,
+          "3": 15.973492954371663,
+          "4": 29.26756197745052,
+          "5": 46.63361554888867
+        },
+        "top2_pct": 75.90117752633918
+      },
+      "universe": "followup_status == 1 AND recall_post == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "campaign_trust_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "f246a217a48e55bdf3f203b50a038a10fda33df622347624f1872b18ca023a0d"
+    },
+    {
+      "evidence_id": "E-campaign_channel_post",
+      "analysis_id": "tables.campaign_channel_post.values",
+      "values": {
+        "n_unweighted": 850,
+        "n_weighted": 760.2542533811999,
+        "n_eff": 747.1971903822238,
+        "eligible_n": 891,
+        "eligible_weighted_n": 800.6396295418999,
+        "eligible_n_eff": 781.7615016099128,
+        "structural_excluded_n": 1909,
+        "missing_counts": {
+          "97": 27,
+          "98": 9,
+          "99": 5,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 1.8270357510534494,
+        "distribution_pct": {
+          "1": 48.02377725818962,
+          "2": 27.535083654459513,
+          "3": 18.154925811167207,
+          "4": 6.286213276183666
+        }
+      },
+      "universe": "followup_status == 1 AND recall_post == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "campaign_channel_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "2f7f6a0f61ba364de1973298cdf0ccecbf50bc423e569158ff283af7e3ea1d24"
+    },
+    {
+      "evidence_id": "E-info_search_post",
+      "analysis_id": "tables.info_search_post.values",
+      "values": {
+        "n_unweighted": 2023,
+        "n_weighted": 2013.1085770982,
+        "n_eff": 1752.2748442722832,
+        "eligible_n": 2089,
+        "eligible_weighted_n": 2076.5185082221997,
+        "eligible_n_eff": 1808.8503416140459,
+        "structural_excluded_n": 711,
+        "missing_counts": {
+          "97": 31,
+          "98": 15,
+          "99": 20,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 0.2502582683082099,
+        "distribution_pct": {
+          "0": 74.97417316917901,
+          "1": 25.02582683082099
+        },
+        "pct": 25.02582683082099
+      },
+      "universe": "followup_status == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "info_search_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "0952254433c9ed9b8b3ffb977bad86c139eefaa203da947c140434ac372b874d"
+    },
+    {
+      "evidence_id": "E-usage_days_post",
+      "analysis_id": "tables.usage_days_post.values",
+      "values": {
+        "n_unweighted": 201,
+        "n_weighted": 172.6902641498,
+        "n_eff": 178.04419187085324,
+        "eligible_n": 208,
+        "eligible_weighted_n": 178.30448822769998,
+        "eligible_n_eff": 184.55369171501675,
+        "structural_excluded_n": 2592,
+        "missing_counts": {
+          "97": 4,
+          "98": 3,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 3.485358343975277,
+        "distribution_pct": {
+          "0": 2.894663171378205,
+          "1": 7.686139000219587,
+          "2": 16.183264139927118,
+          "3": 21.459434401613844,
+          "4": 25.14718543155943,
+          "5": 17.753301051242563,
+          "6": 7.382472698253016,
+          "7": 1.493540105806241
+        }
+      },
+      "universe": "followup_status == 1 AND usage_post == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "usage_days_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "a42d54f7952a2d1fceced63c9153d36324f4a39158275c3e65e04b3ee68a8af5"
+    },
+    {
+      "evidence_id": "E-satisfaction_post",
+      "analysis_id": "tables.satisfaction_post.values",
+      "values": {
+        "n_unweighted": 202,
+        "n_weighted": 172.1414971388,
+        "n_eff": 180.0382146216757,
+        "eligible_n": 208,
+        "eligible_weighted_n": 178.30448822769998,
+        "eligible_n_eff": 184.55369171501675,
+        "structural_excluded_n": 2592,
+        "missing_counts": {
+          "97": 5,
+          "98": 1,
+          "99": 0,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 4.479803323697152,
+        "distribution_pct": {
+          "1": 0.0,
+          "2": 2.311603805787453,
+          "3": 9.94629576219762,
+          "4": 25.192264688527217,
+          "5": 62.54983574348771
+        },
+        "top2_pct": 87.74210043201492
+      },
+      "universe": "followup_status == 1 AND usage_post == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "satisfaction_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "fb160dbe493fb59394c18d2e4f7ba8dedf6d85be557bcc4579fe45e1adf9dcea"
+    },
+    {
+      "evidence_id": "E-planning_confidence_post",
+      "analysis_id": "tables.planning_confidence_post.values",
+      "values": {
+        "n_unweighted": 2033,
+        "n_weighted": 2020.4935102513,
+        "n_eff": 1759.5470042149798,
+        "eligible_n": 2089,
+        "eligible_weighted_n": 2076.5185082221997,
+        "eligible_n_eff": 1808.8503416140459,
+        "structural_excluded_n": 711,
+        "missing_counts": {
+          "97": 34,
+          "98": 12,
+          "99": 10,
+          "unexpected_blank": 0
+        },
+        "status": "reportable",
+        "mean": 3.3902193594772485,
+        "distribution_pct": {
+          "1": 4.441296839658693,
+          "2": 16.715835074109844,
+          "3": 31.72974140275081,
+          "4": 29.6058886658092,
+          "5": 17.507238017671447
+        },
+        "top2_pct": 47.113126683480644
+      },
+      "universe": "followup_status == 1",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "planning_confidence_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "a99af9d33b720dea6c5857f8849e3b6deedf2fc199c288d5bd2dde24bb516323"
+    },
+    {
+      "evidence_id": "E-ITT_awareness",
+      "analysis_id": "tables.ITT_awareness.values",
+      "values": {
+        "arms": {
+          "0": {
+            "n_unweighted": 1016,
+            "n_weighted": 999.792714557,
+            "n_eff": 876.6181457370669,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "returned_n": 1070,
+            "pair_n": 1016,
+            "excluded_pair_n": 384,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 17,
+              "98": 5,
+              "99": 11,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 15,
+              "98": 8,
+              "99": 6,
+              "structural_blank": 330
+            },
+            "pre_distribution_pct": {
+              "0": 68.63139161956558,
+              "1": 31.36860838043443
+            },
+            "post_distribution_pct": {
+              "0": 54.29713369107078,
+              "1": 45.70286630892922
+            },
+            "pre_pct": 31.36860838043443,
+            "post_pct": 45.70286630892922,
+            "change_pp": 14.334257928494786,
+            "variance_change": 0.0001577176748665947
+          },
+          "1": {
+            "n_unweighted": 960,
+            "n_weighted": 965.2055471422999,
+            "n_eff": 834.4067153467572,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "returned_n": 1019,
+            "pair_n": 960,
+            "excluded_pair_n": 440,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 24,
+              "98": 6,
+              "99": 10,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 17,
+              "98": 9,
+              "99": 6,
+              "structural_blank": 381
+            },
+            "pre_distribution_pct": {
+              "0": 69.16618879194823,
+              "1": 30.833811208051777
+            },
+            "post_distribution_pct": {
+              "0": 41.23995706678378,
+              "1": 58.76004293321622
+            },
+            "pre_pct": 30.83381120805178,
+            "post_pct": 58.76004293321622,
+            "change_pp": 27.926231725164445,
+            "variance_change": 0.00027382027780075867
+          }
+        },
+        "status": "reportable",
+        "estimate_pp": 13.59197379666966,
+        "se_pp": 2.0773491585849344,
+        "ci95_pp": [
+          9.520444262528603,
+          17.663503330810716
+        ],
+        "p_raw": 6.032047417436093e-11,
+        "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation",
+        "p_holm": 1.8096142252308278e-10,
+        "family": "PRIMARY_ASSIGNMENT",
+        "family_size": 3
+      },
+      "universe": "Endpoint-specific valid pairs; assigned grouping retained; observed pairs only",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "awareness_pre",
+        "awareness_post",
+        "assignment",
+        "followup_status"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "42b29b2ceabda6fb1cbf49888b12e4bd4c02d06d825b614c4fe57db1f48ac753"
+    },
+    {
+      "evidence_id": "E-ITT_consideration",
+      "analysis_id": "tables.ITT_consideration.values",
+      "values": {
+        "arms": {
+          "0": {
+            "n_unweighted": 1015,
+            "n_weighted": 1000.1708218222,
+            "n_eff": 877.6155602347469,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "returned_n": 1070,
+            "pair_n": 1015,
+            "excluded_pair_n": 385,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 26,
+              "98": 9,
+              "99": 11,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 16,
+              "98": 3,
+              "99": 3,
+              "structural_blank": 330
+            },
+            "pre_distribution_pct": {
+              "1": 19.38795288514943,
+              "2": 21.573651448238103,
+              "3": 27.543678940593274,
+              "4": 17.983119204818593,
+              "5": 13.511597521200594
+            },
+            "post_distribution_pct": {
+              "1": 18.212017711348608,
+              "2": 18.7758725056052,
+              "3": 23.152946998814365,
+              "4": 20.893679273384056,
+              "5": 18.96548351084777
+            },
+            "pre_pct": 31.49471672601919,
+            "post_pct": 39.859162784231835,
+            "change_pp": 8.364446058212643,
+            "variance_change": 0.00015285654078612334
+          },
+          "1": {
+            "n_unweighted": 966,
+            "n_weighted": 973.6126249385,
+            "n_eff": 839.3247929578924,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "returned_n": 1019,
+            "pair_n": 966,
+            "excluded_pair_n": 434,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 19,
+              "98": 7,
+              "99": 9,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 17,
+              "98": 6,
+              "99": 4,
+              "structural_blank": 381
+            },
+            "pre_distribution_pct": {
+              "1": 22.28063882439924,
+              "2": 22.631493005189654,
+              "3": 26.407815053275506,
+              "4": 17.163217217541256,
+              "5": 11.516835899594344
+            },
+            "post_distribution_pct": {
+              "1": 18.1586559879467,
+              "2": 20.786678284649792,
+              "3": 24.018479871948184,
+              "4": 19.92894471742869,
+              "5": 17.10724113802663
+            },
+            "pre_pct": 28.6800531171356,
+            "post_pct": 37.03618585545532,
+            "change_pp": 8.356132738319722,
+            "variance_change": 0.000153405213765594
+          }
+        },
+        "status": "reportable",
+        "estimate_pp": -0.00831331989292039,
+        "se_pp": 1.7500335841112231,
+        "ci95_pp": [
+          -3.4383161164864653,
+          3.4216894767006245
+        ],
+        "p_raw": 0.9962097615126849,
+        "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation",
+        "p_holm": 0.9962097615126849,
+        "family": "PRIMARY_ASSIGNMENT",
+        "family_size": 3
+      },
+      "universe": "Endpoint-specific valid pairs; assigned grouping retained; observed pairs only",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "consideration_pre",
+        "consideration_post",
+        "assignment",
+        "followup_status"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "7cb30dafe8159cbd2517685c4adc59577c9262c6590cb5bff16c0a2022cd3867"
+    },
+    {
+      "evidence_id": "E-ITT_usage",
+      "analysis_id": "tables.ITT_usage.values",
+      "values": {
+        "arms": {
+          "0": {
+            "n_unweighted": 1007,
+            "n_weighted": 993.8101093811999,
+            "n_eff": 868.8313921823847,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "returned_n": 1070,
+            "pair_n": 1007,
+            "excluded_pair_n": 393,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 31,
+              "98": 7,
+              "99": 5,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 15,
+              "98": 8,
+              "99": 4,
+              "structural_blank": 330
+            },
+            "pre_distribution_pct": {
+              "0": 94.4930904811205,
+              "1": 5.506909518879493
+            },
+            "post_distribution_pct": {
+              "0": 90.90299316151128,
+              "1": 9.09700683848872
+            },
+            "pre_pct": 5.5069095188794925,
+            "post_pct": 9.09700683848872,
+            "change_pp": 3.5900973196092285,
+            "variance_change": 3.9026581919763585e-05
+          },
+          "1": {
+            "n_unweighted": 969,
+            "n_weighted": 973.3022379396,
+            "n_eff": 842.041140310847,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "returned_n": 1019,
+            "pair_n": 969,
+            "excluded_pair_n": 431,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 25,
+              "98": 4,
+              "99": 8,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 14,
+              "98": 7,
+              "99": 3,
+              "structural_blank": 381
+            },
+            "pre_distribution_pct": {
+              "0": 93.81149865590488,
+              "1": 6.188501344095116
+            },
+            "post_distribution_pct": {
+              "0": 91.20051870766223,
+              "1": 8.799481292337774
+            },
+            "pre_pct": 6.188501344095118,
+            "post_pct": 8.799481292337775,
+            "change_pp": 2.6109799482426577,
+            "variance_change": 3.783184316117702e-05
+          }
+        },
+        "status": "reportable",
+        "estimate_pp": -0.9791173713665708,
+        "se_pp": 0.8766893696226765,
+        "ci95_pp": [
+          -2.69739696145614,
+          0.7391622187229985
+        ],
+        "p_raw": 0.2640648812076475,
+        "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation",
+        "p_holm": 0.528129762415295,
+        "family": "PRIMARY_ASSIGNMENT",
+        "family_size": 3
+      },
+      "universe": "Endpoint-specific valid pairs; assigned grouping retained; observed pairs only",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "usage_pre",
+        "usage_post",
+        "assignment",
+        "followup_status"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "5ee7c2c14d1ad9fc6cba370d78524bfcb3b29b825ed88be87575fb0627146372"
+    },
+    {
+      "evidence_id": "E-HET_awareness",
+      "analysis_id": "tables.HET_awareness.values",
+      "values": {
+        "groups": {
+          "0": {
+            "arms": {
+              "0": {
+                "n_unweighted": 666,
+                "n_weighted": 692.7804265389,
+                "n_eff": 568.9455653074521,
+                "eligible_n": 874,
+                "eligible_weighted_n": 922.522697878,
+                "eligible_n_eff": 748.5739252513517,
+                "returned_n": 699,
+                "pair_n": 666,
+                "excluded_pair_n": 208,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 11,
+                  "98": 2,
+                  "99": 8,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 10,
+                  "98": 5,
+                  "99": 2,
+                  "structural_blank": 175
+                },
+                "pre_distribution_pct": {
+                  "0": 67.72921769047026,
+                  "1": 32.270782309529736
+                },
+                "post_distribution_pct": {
+                  "0": 54.34093282035898,
+                  "1": 45.65906717964103
+                },
+                "pre_pct": 32.270782309529736,
+                "post_pct": 45.65906717964103,
+                "change_pp": 13.388284870111288,
+                "variance_change": 0.00023933554125228323
+              },
+              "1": {
+                "n_unweighted": 591,
+                "n_weighted": 630.999039816,
+                "n_eff": 510.0523295318443,
+                "eligible_n": 836,
+                "eligible_weighted_n": 897.9684456052,
+                "eligible_n_eff": 723.1861793319956,
+                "returned_n": 631,
+                "pair_n": 591,
+                "excluded_pair_n": 245,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 16,
+                  "98": 6,
+                  "99": 9,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 11,
+                  "98": 6,
+                  "99": 3,
+                  "structural_blank": 205
+                },
+                "pre_distribution_pct": {
+                  "0": 73.16189046343365,
+                  "1": 26.83810953656634
+                },
+                "post_distribution_pct": {
+                  "0": 44.54541607140378,
+                  "1": 55.454583928596215
+                },
+                "pre_pct": 26.83810953656635,
+                "post_pct": 55.454583928596215,
+                "change_pp": 28.61647439202987,
+                "variance_change": 0.00044607799575541586
+              }
+            },
+            "status": "reportable",
+            "estimate_pp": 15.22818952191858,
+            "se_pp": 2.6180403683054605,
+            "ci95_pp": [
+              10.0969246899679,
+              20.35945435386926
+            ],
+            "p_raw": 6.004346554082561e-09,
+            "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation"
+          },
+          "1": {
+            "arms": {
+              "0": {
+                "n_unweighted": 350,
+                "n_weighted": 307.0122880181,
+                "n_eff": 317.67668906877134,
+                "eligible_n": 526,
+                "eligible_weighted_n": 464.53481656149995,
+                "eligible_n_eff": 477.07134297794,
+                "returned_n": 371,
+                "pair_n": 350,
+                "excluded_pair_n": 176,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 6,
+                  "98": 3,
+                  "99": 3,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 5,
+                  "98": 3,
+                  "99": 4,
+                  "structural_blank": 155
+                },
+                "pre_distribution_pct": {
+                  "0": 70.66716824416136,
+                  "1": 29.33283175583863
+                },
+                "post_distribution_pct": {
+                  "0": 54.19829992885825,
+                  "1": 45.801700071141745
+                },
+                "pre_pct": 29.33283175583863,
+                "post_pct": 45.801700071141745,
+                "change_pp": 16.468868315303112,
+                "variance_change": 0.0004517023129893159
+              },
+              "1": {
+                "n_unweighted": 369,
+                "n_weighted": 334.20650732629997,
+                "n_eff": 332.53877774744524,
+                "eligible_n": 564,
+                "eligible_weighted_n": 514.9740399359,
+                "eligible_n_eff": 509.0142739924418,
+                "returned_n": 388,
+                "pair_n": 369,
+                "excluded_pair_n": 195,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 8,
+                  "98": 0,
+                  "99": 1,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 6,
+                  "98": 3,
+                  "99": 3,
+                  "structural_blank": 176
+                },
+                "pre_distribution_pct": {
+                  "0": 61.622098946812876,
+                  "1": 38.37790105318712
+                },
+                "post_distribution_pct": {
+                  "0": 34.99908080511969,
+                  "1": 65.0009191948803
+                },
+                "pre_pct": 38.37790105318712,
+                "post_pct": 65.00091919488031,
+                "change_pp": 26.623018141693183,
+                "variance_change": 0.0006949887131165604
+              }
+            },
+            "status": "reportable",
+            "estimate_pp": 10.154149826390071,
+            "se_pp": 3.386282661128389,
+            "ci95_pp": [
+              3.5171577691059763,
+              16.791141883674165
+            ],
+            "p_raw": 0.0027121192548619256,
+            "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation"
+          }
+        },
+        "estimate_pp": -5.0740396955285085,
+        "se_pp": 4.280309057899412,
+        "ci95_pp": [
+          -13.463291291711926,
+          3.3152119006549086
+        ],
+        "p_raw": 0.23584443596088397,
+        "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation",
+        "p_holm": 0.47168887192176795,
+        "family": "SECONDARY_CHILDREN_HETEROGENEITY",
+        "family_size": 3
+      },
+      "universe": "Endpoint-specific pairs; four disjoint assignment \u00d7 children cells",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "awareness_pre",
+        "awareness_post",
+        "children_under18",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "ced95a7a108a33f55d75bd6c901802071bc944b7f2ae065f78b8cb2c07d161d3"
+    },
+    {
+      "evidence_id": "E-HET_consideration",
+      "analysis_id": "tables.HET_consideration.values",
+      "values": {
+        "groups": {
+          "0": {
+            "arms": {
+              "0": {
+                "n_unweighted": 663,
+                "n_weighted": 690.8556256511,
+                "n_eff": 567.8472271965826,
+                "eligible_n": 874,
+                "eligible_weighted_n": 922.522697878,
+                "eligible_n_eff": 748.5739252513517,
+                "returned_n": 699,
+                "pair_n": 663,
+                "excluded_pair_n": 211,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 20,
+                  "98": 5,
+                  "99": 3,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 9,
+                  "98": 3,
+                  "99": 2,
+                  "structural_blank": 175
+                },
+                "pre_distribution_pct": {
+                  "1": 20.227154348927968,
+                  "2": 21.198085589269,
+                  "3": 27.122701550270236,
+                  "4": 17.870503576929714,
+                  "5": 13.581554934603082
+                },
+                "post_distribution_pct": {
+                  "1": 19.428908680811332,
+                  "2": 17.397845765534967,
+                  "3": 21.965213234108717,
+                  "4": 21.655161123817038,
+                  "5": 19.55287119572794
+                },
+                "pre_pct": 31.452058511532805,
+                "post_pct": 41.208032319544984,
+                "change_pp": 9.755973808012183,
+                "variance_change": 0.00022761419210888406
+              },
+              "1": {
+                "n_unweighted": 598,
+                "n_weighted": 641.2937411533001,
+                "n_eff": 516.1747454512258,
+                "eligible_n": 836,
+                "eligible_weighted_n": 897.9684456052,
+                "eligible_n_eff": 723.1861793319956,
+                "returned_n": 631,
+                "pair_n": 598,
+                "excluded_pair_n": 238,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 15,
+                  "98": 4,
+                  "99": 4,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 11,
+                  "98": 2,
+                  "99": 2,
+                  "structural_blank": 205
+                },
+                "pre_distribution_pct": {
+                  "1": 25.126717449887092,
+                  "2": 23.4794728964158,
+                  "3": 25.53478530593598,
+                  "4": 15.668292012346413,
+                  "5": 10.190732335414701
+                },
+                "post_distribution_pct": {
+                  "1": 19.820908996664375,
+                  "2": 22.07992409485429,
+                  "3": 23.80478331645018,
+                  "4": 19.73686426254133,
+                  "5": 14.55751932948981
+                },
+                "pre_pct": 25.85902434776111,
+                "post_pct": 34.29438359203114,
+                "change_pp": 8.435359244270026,
+                "variance_change": 0.00023701296693192002
+              }
+            },
+            "status": "reportable",
+            "estimate_pp": -1.320614563742156,
+            "se_pp": 2.155521187649994,
+            "ci95_pp": [
+              -5.545358459449147,
+              2.9041293319648354
+            ],
+            "p_raw": 0.5400972021482657,
+            "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation"
+          },
+          "1": {
+            "arms": {
+              "0": {
+                "n_unweighted": 352,
+                "n_weighted": 309.31519617109996,
+                "n_eff": 319.6334728349744,
+                "eligible_n": 526,
+                "eligible_weighted_n": 464.53481656149995,
+                "eligible_n_eff": 477.07134297794,
+                "returned_n": 371,
+                "pair_n": 352,
+                "excluded_pair_n": 174,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 6,
+                  "98": 4,
+                  "99": 8,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 7,
+                  "98": 0,
+                  "99": 1,
+                  "structural_blank": 155
+                },
+                "pre_distribution_pct": {
+                  "1": 17.513596049524267,
+                  "2": 22.412477958164153,
+                  "3": 28.483932125618544,
+                  "4": 18.23464625886034,
+                  "5": 13.355347607832693
+                },
+                "post_distribution_pct": {
+                  "1": 15.494091199932383,
+                  "2": 21.853695831002216,
+                  "3": 25.805750880679774,
+                  "4": 19.1929092280875,
+                  "5": 17.653552860298134
+                },
+                "pre_pct": 31.589993866693035,
+                "post_pct": 36.846462088385636,
+                "change_pp": 5.256468221692601,
+                "variance_change": 0.00045568812120014415
+              },
+              "1": {
+                "n_unweighted": 368,
+                "n_weighted": 332.31888378519994,
+                "n_eff": 331.9933923800815,
+                "eligible_n": 564,
+                "eligible_weighted_n": 514.9740399359,
+                "eligible_n_eff": 509.0142739924418,
+                "returned_n": 388,
+                "pair_n": 368,
+                "excluded_pair_n": 196,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 4,
+                  "98": 3,
+                  "99": 5,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 6,
+                  "98": 4,
+                  "99": 2,
+                  "structural_blank": 176
+                },
+                "pre_distribution_pct": {
+                  "1": 16.78840681950578,
+                  "2": 20.995100301070302,
+                  "3": 28.09254782088845,
+                  "4": 20.04805531841616,
+                  "5": 14.075889740119315
+                },
+                "post_distribution_pct": {
+                  "1": 14.950916365804408,
+                  "2": 18.291031830827027,
+                  "3": 24.430861684218186,
+                  "4": 20.29961277009572,
+                  "5": 22.02757734905466
+                },
+                "pre_pct": 34.12394505853548,
+                "post_pct": 42.32719011915038,
+                "change_pp": 8.203245060614904,
+                "variance_change": 0.00043521114640563785
+              }
+            },
+            "status": "reportable",
+            "estimate_pp": 2.946776838922303,
+            "se_pp": 2.984793573441524,
+            "ci95_pp": [
+              -2.9033110663096924,
+              8.796864744154298
+            ],
+            "p_raw": 0.32351362879109274,
+            "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation"
+          }
+        },
+        "estimate_pp": 4.267391402664459,
+        "se_pp": 3.681747447403999,
+        "ci95_pp": [
+          -2.9487009944196556,
+          11.483483799748573
+        ],
+        "p_raw": 0.24642893854544323,
+        "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation",
+        "p_holm": 0.47168887192176795,
+        "family": "SECONDARY_CHILDREN_HETEROGENEITY",
+        "family_size": 3
+      },
+      "universe": "Endpoint-specific pairs; four disjoint assignment \u00d7 children cells",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "consideration_pre",
+        "consideration_post",
+        "children_under18",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "371f56b9e2894136d892a4ac6fb3ad3de2e1957d5d90a75acc37c438566077d0"
+    },
+    {
+      "evidence_id": "E-HET_usage",
+      "analysis_id": "tables.HET_usage.values",
+      "values": {
+        "groups": {
+          "0": {
+            "arms": {
+              "0": {
+                "n_unweighted": 662,
+                "n_weighted": 693.4281311717,
+                "n_eff": 566.033636297269,
+                "eligible_n": 874,
+                "eligible_weighted_n": 922.522697878,
+                "eligible_n_eff": 748.5739252513517,
+                "returned_n": 699,
+                "pair_n": 662,
+                "excluded_pair_n": 212,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 19,
+                  "98": 5,
+                  "99": 4,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 8,
+                  "98": 5,
+                  "99": 1,
+                  "structural_blank": 175
+                },
+                "pre_distribution_pct": {
+                  "0": 94.54235369177297,
+                  "1": 5.457646308227035
+                },
+                "post_distribution_pct": {
+                  "0": 90.64090862038731,
+                  "1": 9.359091379612696
+                },
+                "pre_pct": 5.457646308227035,
+                "post_pct": 9.359091379612696,
+                "change_pp": 3.9014450713856625,
+                "variance_change": 6.033256366930301e-05
+              },
+              "1": {
+                "n_unweighted": 600,
+                "n_weighted": 642.1548474964001,
+                "n_eff": 518.4507068695431,
+                "eligible_n": 836,
+                "eligible_weighted_n": 897.9684456052,
+                "eligible_n_eff": 723.1861793319956,
+                "returned_n": 631,
+                "pair_n": 600,
+                "excluded_pair_n": 236,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 12,
+                  "98": 3,
+                  "99": 7,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 8,
+                  "98": 3,
+                  "99": 3,
+                  "structural_blank": 205
+                },
+                "pre_distribution_pct": {
+                  "0": 93.24910565034034,
+                  "1": 6.7508943496596485
+                },
+                "post_distribution_pct": {
+                  "0": 91.24242904364039,
+                  "1": 8.757570956359597
+                },
+                "pre_pct": 6.750894349659648,
+                "post_pct": 8.757570956359597,
+                "change_pp": 2.00667660669995,
+                "variance_change": 4.347788708084009e-05
+              }
+            },
+            "status": "reportable",
+            "estimate_pp": -1.8947684646857126,
+            "se_pp": 1.0188741372227637,
+            "ci95_pp": [
+              -3.89172507842165,
+              0.102188149050225
+            ],
+            "p_raw": 0.06293239597588662,
+            "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation"
+          },
+          "1": {
+            "arms": {
+              "0": {
+                "n_unweighted": 345,
+                "n_weighted": 300.3819782095,
+                "n_eff": 314.0903198670086,
+                "eligible_n": 526,
+                "eligible_weighted_n": 464.53481656149995,
+                "eligible_n_eff": 477.07134297794,
+                "returned_n": 371,
+                "pair_n": 345,
+                "excluded_pair_n": 181,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 12,
+                  "98": 2,
+                  "99": 1,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 7,
+                  "98": 3,
+                  "99": 3,
+                  "structural_blank": 155
+                },
+                "pre_distribution_pct": {
+                  "0": 94.37936696048229,
+                  "1": 5.620633039517693
+                },
+                "post_distribution_pct": {
+                  "0": 91.50801212651004,
+                  "1": 8.491987873489961
+                },
+                "pre_pct": 5.620633039517695,
+                "post_pct": 8.491987873489961,
+                "change_pp": 2.871354833972267,
+                "variance_change": 0.00010619103777258821
+              },
+              "1": {
+                "n_unweighted": 369,
+                "n_weighted": 331.1473904432,
+                "n_eff": 332.6519155308816,
+                "eligible_n": 564,
+                "eligible_weighted_n": 514.9740399359,
+                "eligible_n_eff": 509.0142739924418,
+                "returned_n": 388,
+                "pair_n": 369,
+                "excluded_pair_n": 195,
+                "status": "reportable",
+                "pre_missing_counts": {
+                  "97": 13,
+                  "98": 1,
+                  "99": 1,
+                  "structural_blank": 0
+                },
+                "post_missing_counts": {
+                  "97": 6,
+                  "98": 4,
+                  "99": 0,
+                  "structural_blank": 176
+                },
+                "pre_distribution_pct": {
+                  "0": 94.9020806902008,
+                  "1": 5.097919309799186
+                },
+                "post_distribution_pct": {
+                  "0": 91.11924696527413,
+                  "1": 8.880753034725867
+                },
+                "pre_pct": 5.097919309799186,
+                "post_pct": 8.880753034725867,
+                "change_pp": 3.7828337249266797,
+                "variance_change": 0.00016248887867884918
+              }
+            },
+            "status": "reportable",
+            "estimate_pp": 0.9114788909544127,
+            "se_pp": 1.6391458643190893,
+            "ci95_pp": [
+              -2.3011879685187804,
+              4.124145750427606
+            ],
+            "p_raw": 0.5781633987160403,
+            "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation"
+          }
+        },
+        "estimate_pp": 2.8062473556401253,
+        "se_pp": 1.930000951299197,
+        "ci95_pp": [
+          -0.9764849990343434,
+          6.588979710314594
+        ],
+        "p_raw": 0.14594257526645016,
+        "interval_scope": "Pointwise, not simultaneous; fixed-weight normal approximation",
+        "p_holm": 0.4378277257993505,
+        "family": "SECONDARY_CHILDREN_HETEROGENEITY",
+        "family_size": 3
+      },
+      "universe": "Endpoint-specific pairs; four disjoint assignment \u00d7 children cells",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "usage_pre",
+        "usage_post",
+        "children_under18",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "7f9a7015a31712639d1c3fb6cb850b505f3e473d48cecda351ed009f6140726c"
+    },
+    {
+      "evidence_id": "E-OBS_receipt_log",
+      "analysis_id": "tables.OBS_receipt_log.values",
+      "values": {
+        "groups": {
+          "0": {
+            "n_unweighted": 944,
+            "n_weighted": 1003.7461261092999,
+            "n_eff": 820.4335758660733,
+            "eligible_n": 944,
+            "eligible_weighted_n": 1003.7461261092999,
+            "eligible_n_eff": 820.4335758660733,
+            "returned_n": 944,
+            "pair_n": 944,
+            "excluded_pair_n": 0,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "pre_distribution_pct": {
+              "1": 27.63602317106167,
+              "2": 25.3339817298194,
+              "3": 26.3348883748435,
+              "4": 13.63779270578165,
+              "5": 7.0573140184937895
+            },
+            "post_distribution_pct": {
+              "1": 25.840422993419004,
+              "2": 22.52731299727852,
+              "3": 22.561732678233028,
+              "4": 17.19009145449108,
+              "5": 11.880439876578382
+            },
+            "pre_pct": 20.69510672427544,
+            "post_pct": 29.07053133106946,
+            "change_pp": 8.375424606794017,
+            "variance_change": 0.00014089621955481424
+          },
+          "1": {
+            "n_unweighted": 1037,
+            "n_weighted": 970.0373206513999,
+            "n_eff": 903.7302548991861,
+            "eligible_n": 1037,
+            "eligible_weighted_n": 970.0373206513999,
+            "eligible_n_eff": 903.7302548991861,
+            "returned_n": 1037,
+            "pair_n": 1037,
+            "excluded_pair_n": 0,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "pre_distribution_pct": {
+              "1": 13.756609708314052,
+              "2": 18.744390140896748,
+              "3": 27.654424604144,
+              "4": 21.65652190613959,
+              "5": 18.188053640505608
+            },
+            "post_distribution_pct": {
+              "1": 10.264966877587142,
+              "2": 16.91228650784625,
+              "3": 24.633429023569718,
+              "4": 23.757676486049267,
+              "5": 24.431641104947623
+            },
+            "pre_pct": 39.8445755466452,
+            "post_pct": 48.18931759099689,
+            "change_pp": 8.34474204435169,
+            "variance_change": 0.00016618515664950195
+          }
+        },
+        "pre_gap_pp": 19.149468822369762,
+        "post_gap_pp": 19.118786259927433,
+        "eligible_pair_n": 1981,
+        "valid_group_pair_n": 1981,
+        "excluded_group_n": 0,
+        "claim_limit": "Observational grouping on the same consideration pairs. Not a random-assignment effect."
+      },
+      "universe": "Valid consideration pairs; additionally valid recall for recall grouping",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "receipt_log",
+        "consideration_pre",
+        "consideration_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "0d067a95ee01537cb6d5f7f9bbf423ac18b6e81ac1276de14b4ee30bd77862fb"
+    },
+    {
+      "evidence_id": "E-OBS_recall_post",
+      "analysis_id": "tables.OBS_recall_post.values",
+      "values": {
+        "groups": {
+          "0": {
+            "n_unweighted": 1040,
+            "n_weighted": 1107.1277489968002,
+            "n_eff": 906.034875457685,
+            "eligible_n": 1040,
+            "eligible_weighted_n": 1107.1277489968002,
+            "eligible_n_eff": 906.034875457685,
+            "returned_n": 1040,
+            "pair_n": 1040,
+            "excluded_pair_n": 0,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "pre_distribution_pct": {
+              "1": 29.986005982310488,
+              "2": 27.135584479896206,
+              "3": 25.66810775605637,
+              "4": 11.840166517105235,
+              "5": 5.370135264631673
+            },
+            "post_distribution_pct": {
+              "1": 26.13242608274975,
+              "2": 25.028955684562188,
+              "3": 25.575414861651925,
+              "4": 14.211554394022757,
+              "5": 9.051648977013368
+            },
+            "pre_pct": 17.210301781736906,
+            "post_pct": 23.263203371036127,
+            "change_pp": 6.0529015892992195,
+            "variance_change": 0.00010817420258311798
+          },
+          "1": {
+            "n_unweighted": 844,
+            "n_weighted": 760.646854569,
+            "n_eff": 741.868862757701,
+            "eligible_n": 844,
+            "eligible_weighted_n": 760.646854569,
+            "eligible_n_eff": 741.868862757701,
+            "returned_n": 844,
+            "pair_n": 844,
+            "excluded_pair_n": 0,
+            "status": "reportable",
+            "pre_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "pre_distribution_pct": {
+              "1": 7.427926757340549,
+              "2": 14.780584500688473,
+              "3": 28.23395207553817,
+              "4": 25.982637251867047,
+              "5": 23.574899414565753
+            },
+            "post_distribution_pct": {
+              "1": 6.557559445291217,
+              "2": 12.100545116452674,
+              "3": 20.841196129184752,
+              "4": 28.643965820282723,
+              "5": 31.856733488788635
+            },
+            "pre_pct": 49.55753666643281,
+            "post_pct": 60.50069930907135,
+            "change_pp": 10.943162642638551,
+            "variance_change": 0.00023716638869664318
+          }
+        },
+        "pre_gap_pp": 32.34723488469591,
+        "post_gap_pp": 37.237495938035224,
+        "eligible_pair_n": 1981,
+        "valid_group_pair_n": 1884,
+        "excluded_group_n": 97,
+        "claim_limit": "Observational grouping on the same consideration pairs. Not a random-assignment effect."
+      },
+      "universe": "Valid consideration pairs; additionally valid recall for recall grouping",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "recall_post",
+        "consideration_pre",
+        "consideration_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "0b7b8aa2615c9ef066f2de9140c7da129e668f90e6ab68aa754b905e7ab627d7"
+    },
+    {
+      "evidence_id": "E-followup_status_by_assignment",
+      "analysis_id": "tables.followup_status_by_assignment.values",
+      "values": {
+        "0": {
+          "n_unweighted": 1400,
+          "n_weighted": 1387.0575144395,
+          "n_eff": 1210.6116200875301,
+          "eligible_n": 1400,
+          "eligible_weighted_n": 1387.0575144395,
+          "eligible_n_eff": 1210.6116200875301,
+          "structural_excluded_n": 0,
+          "missing_counts": {
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 0.759794206107138,
+          "distribution_pct": {
+            "0": 24.0205793892862,
+            "1": 75.9794206107138
+          },
+          "pct": 75.9794206107138
+        },
+        "1": {
+          "n_unweighted": 1400,
+          "n_weighted": 1412.9424855410998,
+          "n_eff": 1220.3001032310437,
+          "eligible_n": 1400,
+          "eligible_weighted_n": 1412.9424855410998,
+          "eligible_n_eff": 1220.3001032310437,
+          "structural_excluded_n": 0,
+          "missing_counts": {
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 0.7237663639380694,
+          "distribution_pct": {
+            "0": 27.623363606193074,
+            "1": 72.37663639380693
+          },
+          "pct": 72.37663639380693
+        }
+      },
+      "universe": "All enrolled within assignment; recall additionally requires returned survey with valid recall",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "followup_status",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "0834e17f3384d8f91aeb393ffca5fa29a35a75d77b5e90c49de59b004135f36f"
+    },
+    {
+      "evidence_id": "E-receipt_log_by_assignment",
+      "analysis_id": "tables.receipt_log_by_assignment.values",
+      "values": {
+        "0": {
+          "n_unweighted": 1400,
+          "n_weighted": 1387.0575144395,
+          "n_eff": 1210.6116200875301,
+          "eligible_n": 1400,
+          "eligible_weighted_n": 1387.0575144395,
+          "eligible_n_eff": 1210.6116200875301,
+          "structural_excluded_n": 0,
+          "missing_counts": {
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 0.24544742105043374,
+          "distribution_pct": {
+            "0": 75.45525789495663,
+            "1": 24.544742105043373
+          },
+          "pct": 24.544742105043373
+        },
+        "1": {
+          "n_unweighted": 1400,
+          "n_weighted": 1412.9424855410998,
+          "n_eff": 1220.3001032310437,
+          "eligible_n": 1400,
+          "eligible_weighted_n": 1412.9424855410998,
+          "eligible_n_eff": 1220.3001032310437,
+          "structural_excluded_n": 0,
+          "missing_counts": {
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 0.7015822766902461,
+          "distribution_pct": {
+            "0": 29.841772330975402,
+            "1": 70.15822766902461
+          },
+          "pct": 70.15822766902461
+        }
+      },
+      "universe": "All enrolled within assignment; recall additionally requires returned survey with valid recall",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "receipt_log",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "46fedac96caa515fb345762749a61d674335d4c48984215e1e4b43ffa4dcbac0"
+    },
+    {
+      "evidence_id": "E-recall_post_by_assignment",
+      "analysis_id": "tables.recall_post_by_assignment.values",
+      "values": {
+        "0": {
+          "n_unweighted": 1014,
+          "n_weighted": 991.7474239753,
+          "n_eff": 878.1379292614228,
+          "eligible_n": 1070,
+          "eligible_weighted_n": 1053.8782630085,
+          "eligible_n_eff": 923.6573212077367,
+          "structural_excluded_n": 330,
+          "missing_counts": {
+            "97": 43,
+            "98": 4,
+            "99": 9,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 0.3297006988503593,
+          "distribution_pct": {
+            "0": 67.02993011496407,
+            "1": 32.97006988503593
+          },
+          "pct": 32.97006988503593
+        },
+        "1": {
+          "n_unweighted": 973,
+          "n_weighted": 974.4280158658,
+          "n_eff": 845.7242276861664,
+          "eligible_n": 1019,
+          "eligible_weighted_n": 1022.6402452136999,
+          "eligible_n_eff": 885.2621805817785,
+          "structural_excluded_n": 381,
+          "missing_counts": {
+            "97": 38,
+            "98": 4,
+            "99": 4,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 0.4860900990755517,
+          "distribution_pct": {
+            "0": 51.39099009244483,
+            "1": 48.60900990755517
+          },
+          "pct": 48.60900990755517
+        }
+      },
+      "universe": "All enrolled within assignment; recall additionally requires returned survey with valid recall",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "recall_post",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "fc9528e71371a4774976e72edbbfab339fe867ae50a95260c409540886918112"
+    },
+    {
+      "evidence_id": "E-log_recall_concordance",
+      "analysis_id": "tables.log_recall_concordance.values",
+      "values": {
+        "recall_by_receipt": {
+          "0": {
+            "n_unweighted": 939,
+            "n_weighted": 985.1517221882,
+            "n_eff": 816.5370566200193,
+            "eligible_n": 939,
+            "eligible_weighted_n": 985.1517221882,
+            "eligible_n_eff": 816.5370566200193,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.1572901958805062,
+            "distribution_pct": {
+              "0": 84.27098041194938,
+              "1": 15.729019588050619
+            },
+            "pct": 15.729019588050619
+          },
+          "1": {
+            "n_unweighted": 1048,
+            "n_weighted": 981.0237176528999,
+            "n_eff": 912.9372000002899,
+            "eligible_n": 1048,
+            "eligible_weighted_n": 981.0237176528999,
+            "eligible_n_eff": 912.9372000002899,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.6581746297955993,
+            "distribution_pct": {
+              "0": 34.18253702044007,
+              "1": 65.81746297955992
+            },
+            "pct": 65.81746297955992
+          }
+        },
+        "receipt_among_recallers": {
+          "n_unweighted": 891,
+          "n_weighted": 800.6396295418999,
+          "n_eff": 781.7615016099128,
+          "eligible_n": 891,
+          "eligible_weighted_n": 800.6396295418999,
+          "eligible_n_eff": 781.7615016099128,
+          "structural_excluded_n": 0,
+          "missing_counts": {
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 0.8064613570981243,
+          "distribution_pct": {
+            "0": 19.353864290187587,
+            "1": 80.6461357098124
+          },
+          "pct": 80.6461357098124
+        }
+      },
+      "universe": "Returned households with valid recall; separate conditional bases",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "receipt_log",
+        "recall_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "4b846d1f0f4ff015ab000fbf573502313602ab5858116f0462b053d65ffcbf26"
+    },
+    {
+      "evidence_id": "E-profile_followup_status_baseline",
+      "analysis_id": "tables.profile_followup_status_baseline.values",
+      "values": {
+        "awareness_pre": {
+          "0": {
+            "n_unweighted": 692,
+            "n_weighted": 703.2635371577001,
+            "n_eff": 605.4152559739317,
+            "eligible_n": 711,
+            "eligible_weighted_n": 723.4814917583999,
+            "eligible_n_eff": 622.0730663957901,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 9,
+              "98": 3,
+              "99": 7,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.2781080356881098,
+            "distribution_pct": {
+              "0": 72.189196431189,
+              "1": 27.810803568810982
+            },
+            "pct": 27.810803568810982
+          },
+          "1": {
+            "n_unweighted": 2035,
+            "n_weighted": 2020.6512810964998,
+            "n_eff": 1761.9956819338065,
+            "eligible_n": 2089,
+            "eligible_weighted_n": 2076.5185082221997,
+            "eligible_n_eff": 1808.8503416140459,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 32,
+              "98": 8,
+              "99": 14,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.3135943795598634,
+            "distribution_pct": {
+              "0": 68.64056204401366,
+              "1": 31.359437955986348
+            },
+            "pct": 31.359437955986348
+          }
+        },
+        "consideration_pre": {
+          "0": {
+            "n_unweighted": 691,
+            "n_weighted": 704.1399587939,
+            "n_eff": 604.7496518262419,
+            "eligible_n": 711,
+            "eligible_weighted_n": 723.4814917583999,
+            "eligible_n_eff": 622.0730663957901,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 9,
+              "98": 3,
+              "99": 8,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.493921352363696,
+            "distribution_pct": {
+              "1": 27.43004525589398,
+              "2": 25.63875899183865,
+              "3": 24.940890912924765,
+              "4": 14.08962493868903,
+              "5": 7.9006799006535715
+            },
+            "top2_pct": 21.9903048393426
+          },
+          "1": {
+            "n_unweighted": 2028,
+            "n_weighted": 2018.3805819610998,
+            "n_eff": 1756.8155467516012,
+            "eligible_n": 2089,
+            "eligible_weighted_n": 2076.5185082221997,
+            "eligible_n_eff": 1808.8503416140459,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 36,
+              "98": 13,
+              "99": 12,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.7926338493585123,
+            "distribution_pct": {
+              "1": 20.60084828730352,
+              "2": 22.249856246033545,
+              "3": 27.0157460507569,
+              "4": 17.552161075320328,
+              "5": 12.58138834058572
+            },
+            "top2_pct": 30.133549415906046
+          }
+        },
+        "usage_pre": {
+          "0": {
+            "n_unweighted": 694,
+            "n_weighted": 706.4287528870999,
+            "n_eff": 607.9273726948281,
+            "eligible_n": 711,
+            "eligible_weighted_n": 723.4814917583999,
+            "eligible_n_eff": 622.0730663957901,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 11,
+              "98": 4,
+              "99": 2,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.03925272980633,
+            "distribution_pct": {
+              "0": 96.074727019367,
+              "1": 3.9252729806330002
+            },
+            "pct": 3.9252729806330002
+          },
+          "1": {
+            "n_unweighted": 2026,
+            "n_weighted": 2016.3050658698999,
+            "n_eff": 1754.9107457704927,
+            "eligible_n": 2089,
+            "eligible_weighted_n": 2076.5185082221997,
+            "eligible_n_eff": 1808.8503416140459,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 45,
+              "98": 7,
+              "99": 11,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.05799135070806031,
+            "distribution_pct": {
+              "0": 94.20086492919397,
+              "1": 5.79913507080603
+            },
+            "pct": 5.79913507080603
+          }
+        },
+        "children_under18": {
+          "0": {
+            "n_unweighted": 711,
+            "n_weighted": 723.4814917583999,
+            "n_eff": 622.0730663957901,
+            "eligible_n": 711,
+            "eligible_weighted_n": 723.4814917583999,
+            "eligible_n_eff": 622.0730663957901,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.42308654107701454,
+            "distribution_pct": {
+              "0": 57.691345892298564,
+              "1": 42.30865410770145
+            },
+            "pct": 42.30865410770145
+          },
+          "1": {
+            "n_unweighted": 2089,
+            "n_weighted": 2076.5185082221997,
+            "n_eff": 1808.8503416140459,
+            "eligible_n": 2089,
+            "eligible_weighted_n": 2076.5185082221997,
+            "eligible_n_eff": 1808.8503416140459,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.32429933658170934,
+            "distribution_pct": {
+              "0": 67.57006634182909,
+              "1": 32.429933658170924
+            },
+            "pct": 32.429933658170924
+          }
+        },
+        "digital_confidence_pre": {
+          "0": {
+            "n_unweighted": 694,
+            "n_weighted": 706.3279880051,
+            "n_eff": 606.7870985429994,
+            "eligible_n": 711,
+            "eligible_weighted_n": 723.4814917583999,
+            "eligible_n_eff": 622.0730663957901,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 5,
+              "98": 7,
+              "99": 5,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.9627371986271767,
+            "distribution_pct": {
+              "1": 16.25955439528339,
+              "2": 22.535438178198127,
+              "3": 24.642758134715624,
+              "4": 21.79623175212312,
+              "5": 14.766017539679726
+            },
+            "top2_pct": 36.56224929180284
+          },
+          "1": {
+            "n_unweighted": 2018,
+            "n_weighted": 2008.687310377,
+            "n_eff": 1745.9799297853563,
+            "eligible_n": 2089,
+            "eligible_weighted_n": 2076.5185082221997,
+            "eligible_n_eff": 1808.8503416140459,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 41,
+              "98": 13,
+              "99": 17,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 3.274907727224682,
+            "distribution_pct": {
+              "1": 10.76997383422496,
+              "2": 18.619210022564715,
+              "3": 24.267012519823876,
+              "4": 25.037676833290096,
+              "5": 21.30612679009636
+            },
+            "top2_pct": 46.34380362338646
+          }
+        },
+        "budget_pressure_pre": {
+          "0": {
+            "n_unweighted": 692,
+            "n_weighted": 703.0564486443,
+            "n_eff": 605.9801314363735,
+            "eligible_n": 711,
+            "eligible_weighted_n": 723.4814917583999,
+            "eligible_n_eff": 622.0730663957901,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 12,
+              "98": 2,
+              "99": 5,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 3.481489901669284,
+            "distribution_pct": {
+              "1": 6.380393251722389,
+              "2": 12.760751199608153,
+              "3": 31.66331190538961,
+              "4": 24.720559416578375,
+              "5": 24.474984226701476
+            },
+            "top2_pct": 49.19554364327985
+          },
+          "1": {
+            "n_unweighted": 2036,
+            "n_weighted": 2026.3617417657,
+            "n_eff": 1762.9042947510152,
+            "eligible_n": 2089,
+            "eligible_weighted_n": 2076.5185082221997,
+            "eligible_n_eff": 1808.8503416140459,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 34,
+              "98": 11,
+              "99": 8,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.929190824749893,
+            "distribution_pct": {
+              "1": 15.78547393736204,
+              "2": 21.324220128276714,
+              "3": 29.207218395866878,
+              "4": 21.55192459899868,
+              "5": 12.131162939495692
+            },
+            "top2_pct": 33.68308753849438
+          }
+        }
+      },
+      "universe": "Valid baseline responses in stated groups; returned subset only where named",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "awareness_pre",
+        "consideration_pre",
+        "usage_pre",
+        "children_under18",
+        "digital_confidence_pre",
+        "budget_pressure_pre",
+        "followup_status"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "f8ccd95f03300a0e4ede1308dd4c8199fb6a5ccb499f1205e04e709bf414bb7d"
+    },
+    {
+      "evidence_id": "E-profile_assignment_baseline",
+      "analysis_id": "tables.profile_assignment_baseline.values",
+      "values": {
+        "awareness_pre": {
+          "0": {
+            "n_unweighted": 1367,
+            "n_weighted": 1352.9092143142998,
+            "n_eff": 1181.4700032789094,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 17,
+              "98": 5,
+              "99": 11,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.30724912129198617,
+            "distribution_pct": {
+              "0": 69.27508787080139,
+              "1": 30.724912129198618
+            },
+            "pct": 30.724912129198618
+          },
+          "1": {
+            "n_unweighted": 1360,
+            "n_weighted": 1371.0056039398999,
+            "n_eff": 1185.919859039717,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 24,
+              "98": 6,
+              "99": 10,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.3016530036185974,
+            "distribution_pct": {
+              "0": 69.83469963814026,
+              "1": 30.16530036185975
+            },
+            "pct": 30.16530036185975
+          }
+        },
+        "consideration_pre": {
+          "0": {
+            "n_unweighted": 1354,
+            "n_weighted": 1343.1846829354,
+            "n_eff": 1171.6063489939095,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 26,
+              "98": 9,
+              "99": 11,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.780328396376978,
+            "distribution_pct": {
+              "1": 21.008070601023316,
+              "2": 21.89268938273343,
+              "3": 27.307303129069442,
+              "4": 17.64220355186978,
+              "5": 12.149733335304024
+            },
+            "top2_pct": 29.791936887173804
+          },
+          "1": {
+            "n_unweighted": 1365,
+            "n_weighted": 1379.3358578195998,
+            "n_eff": 1189.9496369817132,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 19,
+              "98": 7,
+              "99": 9,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.6521264390239927,
+            "distribution_pct": {
+              "1": 23.690549518197024,
+              "2": 24.327669915254763,
+              "3": 25.67263341974348,
+              "4": 15.696881439561416,
+              "5": 10.61226570724333
+            },
+            "top2_pct": 26.309147146804747
+          }
+        },
+        "usage_pre": {
+          "0": {
+            "n_unweighted": 1357,
+            "n_weighted": 1344.3431897451,
+            "n_eff": 1174.5031440227046,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 31,
+              "98": 7,
+              "99": 5,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.0491293767864611,
+            "distribution_pct": {
+              "0": 95.0870623213539,
+              "1": 4.91293767864611
+            },
+            "pct": 4.91293767864611
+          },
+          "1": {
+            "n_unweighted": 1363,
+            "n_weighted": 1378.3906290118998,
+            "n_eff": 1188.380735215719,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 25,
+              "98": 4,
+              "99": 8,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.05703083467046796,
+            "distribution_pct": {
+              "0": 94.29691653295322,
+              "1": 5.703083467046796
+            },
+            "pct": 5.703083467046796
+          }
+        },
+        "children_under18": {
+          "0": {
+            "n_unweighted": 1400,
+            "n_weighted": 1387.0575144395,
+            "n_eff": 1210.6116200875301,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.334906672380644,
+            "distribution_pct": {
+              "0": 66.5093327619356,
+              "1": 33.4906672380644
+            },
+            "pct": 33.4906672380644
+          },
+          "1": {
+            "n_unweighted": 1400,
+            "n_weighted": 1412.9424855410998,
+            "n_eff": 1220.3001032310437,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.3644692159841777,
+            "distribution_pct": {
+              "0": 63.55307840158224,
+              "1": 36.44692159841777
+            },
+            "pct": 36.44692159841777
+          }
+        },
+        "digital_confidence_pre": {
+          "0": {
+            "n_unweighted": 1356,
+            "n_weighted": 1344.964061392,
+            "n_eff": 1172.0111628319626,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 25,
+              "98": 11,
+              "99": 8,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 3.220989960408817,
+            "distribution_pct": {
+              "1": 10.741982530720684,
+              "2": 19.85299315090593,
+              "3": 25.278677991545795,
+              "4": 24.81673840042618,
+              "5": 19.30960792640141
+            },
+            "top2_pct": 44.12634632682759
+          },
+          "1": {
+            "n_unweighted": 1356,
+            "n_weighted": 1370.0512369900998,
+            "n_eff": 1180.765165769867,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 21,
+              "98": 9,
+              "99": 14,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 3.166899122330454,
+            "distribution_pct": {
+              "1": 13.627598121715293,
+              "2": 19.427024764587202,
+              "3": 23.467586901366616,
+              "4": 23.583447183598636,
+              "5": 19.894343028732262
+            },
+            "top2_pct": 43.4777902123309
+          }
+        },
+        "budget_pressure_pre": {
+          "0": {
+            "n_unweighted": 1356,
+            "n_weighted": 1345.6010874661,
+            "n_eff": 1172.5910028092103,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1387.0575144395,
+            "eligible_n_eff": 1210.6116200875301,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 27,
+              "98": 10,
+              "99": 7,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 3.018866324684982,
+            "distribution_pct": {
+              "1": 13.758599678611228,
+              "2": 20.109913443029768,
+              "3": 30.444284267525955,
+              "4": 21.860659952915707,
+              "5": 13.826542657917345
+            },
+            "top2_pct": 35.687202610833054
+          },
+          "1": {
+            "n_unweighted": 1372,
+            "n_weighted": 1383.8171029439,
+            "n_eff": 1196.2919897078275,
+            "eligible_n": 1400,
+            "eligible_weighted_n": 1412.9424855410998,
+            "eligible_n_eff": 1220.3001032310437,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 19,
+              "98": 3,
+              "99": 6,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 3.1225906438498305,
+            "distribution_pct": {
+              "1": 12.978066505366836,
+              "2": 18.154271117278174,
+              "3": 29.25214860957752,
+              "4": 22.861559022560034,
+              "5": 16.753954745217435
+            },
+            "top2_pct": 39.61551376777747
+          }
+        }
+      },
+      "universe": "Valid baseline responses in stated groups; returned subset only where named",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "awareness_pre",
+        "consideration_pre",
+        "usage_pre",
+        "children_under18",
+        "digital_confidence_pre",
+        "budget_pressure_pre",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "abe74916e0d03c47604bee114c9e14a5cb0b23b5052072ef2f76166fb3b126ce"
+    },
+    {
+      "evidence_id": "E-profile_assignment_returners",
+      "analysis_id": "tables.profile_assignment_returners.values",
+      "values": {
+        "awareness_pre": {
+          "0": {
+            "n_unweighted": 1045,
+            "n_weighted": 1027.4026510684998,
+            "n_eff": 901.9799735948253,
+            "eligible_n": 1070,
+            "eligible_weighted_n": 1053.8782630085,
+            "eligible_n_eff": 923.6573212077367,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 14,
+              "98": 4,
+              "99": 7,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.3145881346725771,
+            "distribution_pct": {
+              "0": 68.5411865327423,
+              "1": 31.458813467257713
+            },
+            "pct": 31.458813467257713
+          },
+          "1": {
+            "n_unweighted": 990,
+            "n_weighted": 993.248630028,
+            "n_eff": 860.0988086056233,
+            "eligible_n": 1019,
+            "eligible_weighted_n": 1022.6402452136999,
+            "eligible_n_eff": 885.2621805817785,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 18,
+              "98": 4,
+              "99": 7,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.312566453010107,
+            "distribution_pct": {
+              "0": 68.7433546989893,
+              "1": 31.2566453010107
+            },
+            "pct": 31.2566453010107
+          }
+        },
+        "consideration_pre": {
+          "0": {
+            "n_unweighted": 1036,
+            "n_weighted": 1021.580677058,
+            "n_eff": 894.9001745465539,
+            "eligible_n": 1070,
+            "eligible_weighted_n": 1053.8782630085,
+            "eligible_n_eff": 923.6573212077367,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 21,
+              "98": 8,
+              "99": 5,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.850912190094652,
+            "distribution_pct": {
+              "1": 19.100934640928163,
+              "2": 21.830012607035492,
+              "3": 27.59177015761005,
+              "4": 17.831464290495553,
+              "5": 13.645818303930724
+            },
+            "top2_pct": 31.477282594426278
+          },
+          "1": {
+            "n_unweighted": 992,
+            "n_weighted": 996.7999049031,
+            "n_eff": 861.9886063861285,
+            "eligible_n": 1019,
+            "eligible_weighted_n": 1022.6402452136999,
+            "eligible_n_eff": 885.2621805817785,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 15,
+              "98": 5,
+              "99": 7,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.7329066899815952,
+            "distribution_pct": {
+              "1": 22.138050278250354,
+              "2": 22.68013733542411,
+              "3": 26.425401795920735,
+              "4": 17.26591429072524,
+              "5": 11.490496299679553
+            },
+            "top2_pct": 28.756410590404794
+          }
+        },
+        "usage_pre": {
+          "0": {
+            "n_unweighted": 1034,
+            "n_weighted": 1019.1725484231001,
+            "n_eff": 892.9199387135134,
+            "eligible_n": 1070,
+            "eligible_weighted_n": 1053.8782630085,
+            "eligible_n_eff": 923.6573212077367,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 27,
+              "98": 5,
+              "99": 4,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.05498548407000032,
+            "distribution_pct": {
+              "0": 94.50145159299996,
+              "1": 5.498548407000032
+            },
+            "pct": 5.498548407000032
+          },
+          "1": {
+            "n_unweighted": 992,
+            "n_weighted": 997.1325174468,
+            "n_eff": 862.06840115868,
+            "eligible_n": 1019,
+            "eligible_weighted_n": 1022.6402452136999,
+            "eligible_n_eff": 885.2621805817785,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 18,
+              "98": 2,
+              "99": 7,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.06106365725521391,
+            "distribution_pct": {
+              "0": 93.89363427447861,
+              "1": 6.106365725521391
+            },
+            "pct": 6.106365725521391
+          }
+        },
+        "children_under18": {
+          "0": {
+            "n_unweighted": 1070,
+            "n_weighted": 1053.8782630085,
+            "n_eff": 923.6573212077367,
+            "eligible_n": 1070,
+            "eligible_weighted_n": 1053.8782630085,
+            "eligible_n_eff": 923.6573212077367,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.3076488584568946,
+            "distribution_pct": {
+              "0": 69.23511415431052,
+              "1": 30.76488584568946
+            },
+            "pct": 30.76488584568946
+          },
+          "1": {
+            "n_unweighted": 1019,
+            "n_weighted": 1022.6402452136999,
+            "n_eff": 885.2621805817785,
+            "eligible_n": 1019,
+            "eligible_weighted_n": 1022.6402452136999,
+            "eligible_n_eff": 885.2621805817785,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 0.3414584275196703,
+            "distribution_pct": {
+              "0": 65.85415724803299,
+              "1": 34.145842751967024
+            },
+            "pct": 34.145842751967024
+          }
+        },
+        "digital_confidence_pre": {
+          "0": {
+            "n_unweighted": 1036,
+            "n_weighted": 1021.8397069093999,
+            "n_eff": 893.7339103695277,
+            "eligible_n": 1070,
+            "eligible_weighted_n": 1053.8782630085,
+            "eligible_n_eff": 923.6573212077367,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 22,
+              "98": 5,
+              "99": 7,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 3.301407954047736,
+            "distribution_pct": {
+              "1": 9.96148997610103,
+              "2": 18.78727086421797,
+              "3": 24.196180542260116,
+              "4": 25.259071013648203,
+              "5": 21.79598760377269
+            },
+            "top2_pct": 47.0550586174209
+          },
+          "1": {
+            "n_unweighted": 982,
+            "n_weighted": 986.8476034675999,
+            "n_eff": 852.3153762357396,
+            "eligible_n": 1019,
+            "eligible_weighted_n": 1022.6402452136999,
+            "eligible_n_eff": 885.2621805817785,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 19,
+              "98": 8,
+              "99": 10,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 3.247467842976343,
+            "distribution_pct": {
+              "1": 11.607125290765396,
+              "2": 18.44519000105939,
+              "3": 24.3403560907453,
+              "4": 24.808432354635386,
+              "5": 20.79889626279453
+            },
+            "top2_pct": 45.607328617429914
+          }
+        },
+        "budget_pressure_pre": {
+          "0": {
+            "n_unweighted": 1034,
+            "n_weighted": 1019.1234063393,
+            "n_eff": 892.7500113523456,
+            "eligible_n": 1070,
+            "eligible_weighted_n": 1053.8782630085,
+            "eligible_n_eff": 923.6573212077367,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 23,
+              "98": 8,
+              "99": 5,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.8937493818914906,
+            "distribution_pct": {
+              "1": 16.28171182293071,
+              "2": 21.828831118734485,
+              "3": 29.79032927677861,
+              "4": 20.431062609367387,
+              "5": 11.668065172188799
+            },
+            "top2_pct": 32.099127781556184
+          },
+          "1": {
+            "n_unweighted": 1002,
+            "n_weighted": 1007.2383354263998,
+            "n_eff": 870.2383220578157,
+            "eligible_n": 1019,
+            "eligible_weighted_n": 1022.6402452136999,
+            "eligible_n_eff": 885.2621805817785,
+            "structural_excluded_n": 0,
+            "missing_counts": {
+              "97": 11,
+              "98": 3,
+              "99": 3,
+              "unexpected_blank": 0
+            },
+            "status": "reportable",
+            "mean": 2.9650504646196802,
+            "distribution_pct": {
+              "1": 15.28338061296403,
+              "2": 20.813654899190333,
+              "3": 28.617227004229957,
+              "4": 22.68601238014505,
+              "5": 12.59972510347065
+            },
+            "top2_pct": 35.285737483615705
+          }
+        }
+      },
+      "universe": "Valid baseline responses in stated groups; returned subset only where named",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "awareness_pre",
+        "consideration_pre",
+        "usage_pre",
+        "children_under18",
+        "digital_confidence_pre",
+        "budget_pressure_pre",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "e7bbbdbf1defd83d43267239a2821496b361e8034f7898a26312c4914823afe0"
+    },
+    {
+      "evidence_id": "E-children_stress",
+      "analysis_id": "tables.children_stress.values",
+      "values": {
+        "0": {
+          "n_unweighted": 1686,
+          "n_weighted": 1791.6666996731,
+          "n_eff": 1451.1215600674082,
+          "eligible_n": 1710,
+          "eligible_weighted_n": 1820.4911434832002,
+          "eligible_n_eff": 1471.7392670152533,
+          "structural_excluded_n": 0,
+          "missing_counts": {
+            "97": 17,
+            "98": 4,
+            "99": 3,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 2.990612618475094,
+          "distribution_pct": {
+            "1": 14.396132763513489,
+            "2": 21.50920330996349,
+            "3": 27.530568311003233,
+            "4": 23.76546054653967,
+            "5": 12.798635068980117
+          },
+          "top2_pct": 36.56409561551979
+        },
+        "1": {
+          "n_unweighted": 1060,
+          "n_weighted": 950.3831068824999,
+          "n_eff": 958.6897026757993,
+          "eligible_n": 1090,
+          "eligible_weighted_n": 979.5088564974,
+          "eligible_n_eff": 985.7256090113249,
+          "structural_excluded_n": 0,
+          "missing_counts": {
+            "97": 16,
+            "98": 6,
+            "99": 8,
+            "unexpected_blank": 0
+          },
+          "status": "reportable",
+          "mean": 3.627203484000055,
+          "distribution_pct": {
+            "1": 6.469562558302264,
+            "2": 12.023638693088404,
+            "3": 25.023732319939363,
+            "4": 25.283020647641578,
+            "5": 31.20004578102839
+          },
+          "top2_pct": 56.48306642866997
+        }
+      },
+      "universe": "All enrolled; valid baseline stress",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "meal_stress_pre",
+        "children_under18"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "29cd7b929d4790c433e45a79fe1c5c343a0b7ec872b23a538de5d5289186636e"
+    },
+    {
+      "evidence_id": "E-message_correlations",
+      "analysis_id": "tables.message_correlations.values",
+      "values": {
+        "campaign_clear_post__campaign_relevant_post": {
+          "n_unweighted": 828,
+          "n_weighted": 745.1816559409999,
+          "n_eff": 724.5924397389064,
+          "correlation": 0.5062137491238491
+        },
+        "campaign_clear_post__campaign_trust_post": {
+          "n_unweighted": 823,
+          "n_weighted": 737.5417542283999,
+          "n_eff": 723.4614713638522,
+          "correlation": 0.5042906547878322
+        },
+        "campaign_relevant_post__campaign_trust_post": {
+          "n_unweighted": 816,
+          "n_weighted": 735.4845184042,
+          "n_eff": 716.0109147704904,
+          "correlation": 0.543552302259875
+        }
+      },
+      "universe": "Returned recorded recallers; pairwise valid 1\u20135; descriptive correlations",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "campaign_clear_post",
+        "campaign_relevant_post",
+        "campaign_trust_post"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "f6c1c8a55b074b6fea711d5a446b9d5e3cc0b053e5fef67b9f7fee392ebd62b6"
+    },
+    {
+      "evidence_id": "E-older_digital_online",
+      "analysis_id": "tables.older_digital_online.values",
+      "values": {
+        "arms": {
+          "0": {
+            "n_unweighted": 22,
+            "n_weighted": 23.044983403200007,
+            "n_eff": 22.00000000000002,
+            "eligible_n": 26,
+            "eligible_weighted_n": 27.234980385600004,
+            "eligible_n_eff": 26.000000000000004,
+            "returned_n": 22,
+            "pair_n": 22,
+            "excluded_pair_n": 4,
+            "status": "suppressed",
+            "pre_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 4
+            }
+          },
+          "1": {
+            "n_unweighted": 21,
+            "n_weighted": 21.997484157600006,
+            "n_eff": 21.000000000000014,
+            "eligible_n": 28,
+            "eligible_weighted_n": 29.329978876800006,
+            "eligible_n_eff": 28.000000000000014,
+            "returned_n": 21,
+            "pair_n": 21,
+            "excluded_pair_n": 7,
+            "status": "suppressed",
+            "pre_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 0
+            },
+            "post_missing_counts": {
+              "97": 0,
+              "98": 0,
+              "99": 0,
+              "structural_blank": 7
+            }
+          }
+        },
+        "status": "suppressed"
+      },
+      "universe": "Age 65+, baseline online grocery, valid digital confidence 4/5; endpoint pairs by assignment",
+      "weighting": "weight_base; fixed baseline profile weights, not attrition correction",
+      "source_variables": [
+        "age_band",
+        "online_grocery_pre",
+        "digital_confidence_pre",
+        "awareness_pre",
+        "awareness_post",
+        "assignment"
+      ],
+      "interpretation": {
+        "permitted": "Declared observed-pair assignment contrast or labelled descriptive comparison with stated uncertainty and bases.",
+        "unsupported_extensions": [
+          "Full-cohort population effect despite attrition",
+          "Recall or receipt as random treatment",
+          "Actual sales or ROI",
+          "Suppressed subgroup effect/targeting"
+        ]
+      },
+      "fingerprint": "3180149d1b80125b16368eee70c794367a5fc71f3e9a21abd77903d4790a2440"
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "project_id": "SBT-006",
+  "version": "1.0.0",
+  "findings": [
+    {
+      "finding_id": "M1",
+      "proposition": "Cheaper assigned prices increase stated subscription interest, with a much lower full-intent profile at the high end; this is not revealed demand.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-intent_by_price",
+        "E-P1_VALID_INTENT",
+        "E-P2_ALL_ASSIGNED_INTENT"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "M1",
+      "qualification": "Do not rename reported likelihood a purchase probability, demand curve or actual price elasticity."
+    },
+    {
+      "finding_id": "M2",
+      "proposition": "The cheapest price is not the strongest price-times-interest candidate. Gross and assumed-cost contribution proxies favour different closely competing mid-price candidates in the intended first-candidate design.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-gross_proxy",
+        "E-contribution_cost_2_0",
+        "E-P3_GROSS_PROXY",
+        "E-P4_CONTRIBUTION_SCENARIOS"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "M2",
+      "qualification": "Retain any failure to realise the anticipated different point leaders; do not manufacture or silently rewrite it. These indices do not measure revenue or profit."
+    },
+    {
+      "finding_id": "M3",
+      "proposition": "Close mid-price proxy leads are uncertain and sensitive to the predeclared variable-cost scenarios, so recommend further behavioural validation rather than a certain optimal price.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-P3_GROSS_PROXY",
+        "E-P4_CONTRIBUTION_SCENARIOS",
+        "E-contribution_cost_0_5",
+        "E-contribution_cost_2_0",
+        "E-contribution_cost_3_0"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "M3",
+      "qualification": "Not equivalence from a wide CI, no data-chosen cost scenario, no universally optimal point leader."
+    },
+    {
+      "finding_id": "M4",
+      "proposition": "Price-related incomplete observation makes valid-case interest conditional; show conservative all-assigned sensitivity, missing-data ranges and fixed-weight denominators before generalising.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-intent_by_price",
+        "E-assignment_balance",
+        "E-postprice_responded"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "M4",
+      "qualification": "q_0 is a lower coding sensitivity for recorded positive intent, not observed rejection or a bound on sales. Baseline weights do not fix missingness."
+    },
+    {
+      "finding_id": "S1",
+      "proposition": "The prespecified time-pressed-family audience has higher stated interest at the same mid-price assignments, without establishing that children/time pressure causes that interest.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-audience_intent"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "S1",
+      "qualification": "Do not turn an observational audience contrast into attribute causality or a proven subgroup price optimum."
+    },
+    {
+      "finding_id": "S2",
+      "proposition": "Value, affordability and intent show correlated diagnostic patterns; these support interpretation but not independently identified causal mechanisms.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-diagnostic_correlations",
+        "E-value_5",
+        "E-affordability_5"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "S2",
+      "qualification": "Price randomisation does not randomise perceived value, trust or affordability separately."
+    },
+    {
+      "finding_id": "S3",
+      "proposition": "Hypothetical use and certainty are selectively routed follow-ups, not independent evidence of actual uptake or all-household usage.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-certainty_5",
+        "E-anticipated_use_days_7"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "S3",
+      "qualification": "Never generalise P10's frequency to all assigned households or treat hypothetical days as measured behaviour."
+    },
+    {
+      "finding_id": "R1",
+      "proposition": "An apparent largest proxy point estimate is not a certain economically optimal price.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-P3_GROSS_PROXY",
+        "E-P4_CONTRIBUTION_SCENARIOS"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "R1",
+      "qualification": "Preserve candidate uncertainty and all fixed cost scenarios."
+    },
+    {
+      "finding_id": "R2",
+      "proposition": "Older comfortable households already paying for planning can look unusually interested but their price-specific cells are too small for rates or targeting claims.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-premium_niche"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "R2",
+      "qualification": "Suppress each n<40 component rate/proxy/contrast. Do not rescue it with a pooled n across unlike prices."
+    },
+    {
+      "finding_id": "R3",
+      "proposition": "Stated intent and assumed-cost arithmetic establish neither actual demand nor sales, elasticity, uptake, profit, ROI or an effect on all UK households.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-intent_by_price",
+        "E-gross_proxy",
+        "E-contribution_cost_2_0"
+      ],
+      "claim_strength": "stated_intent_and_scenario_proxy_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "R3",
+      "qualification": "Label the estimands and scenario assumptions; preserve randomisation and missingness limits."
+    }
+  ]
+}

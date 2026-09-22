@@ -1,0 +1,99 @@
+{
+  "run_id": "2026-09-expansion-sbt006-raw-onepass-1",
+  "study_id": "SBT-006",
+  "study_version": "1.0.0",
+  "arm": "E4_RAW_DATA",
+  "input_surface": "raw",
+  "workflow": "one_pass",
+  "model": {
+    "provider": "codex_chatgpt",
+    "model_id": "gpt-6-astra"
+  },
+  "replicate": 1,
+  "input_artifacts": [
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-006/model_inputs/study_materials.json",
+      "sha256": "f4d45a27930eaa364431763d2bb8c55572665f6bfe0a2d71c309e8fd1dd0367f",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-006/model_inputs/questionnaire.md",
+      "sha256": "10cee6c4d18ae436535aa93f8c84f50d9b636b699bc879165b3c1e2fa553a78d",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-006/model_inputs/codebook.json",
+      "sha256": "64ddaeb0d942d0cea2426210904fc8beedfe4105ead9b92c3da8fdf6c2ed2176",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-006/model_inputs/respondents.csv",
+      "sha256": "591dbccf2eff795fcb65c11c130f8dc13ba510e2a4856e9310a8d22b9469ca9e",
+      "exposure_class": "raw_data"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt006-raw-onepass-1/01-researcher/events.jsonl",
+      "sha256": "d75aa9419063552aae1e3e96700e332fbc9d56bc06f420f1a8eed1dc07c93390",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt006-raw-onepass-1/01-researcher/output.json",
+      "sha256": "c947d41693e4525287f8a3c436c530ff1c0951efda4d6fbc9423463ebae1f7ac",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt006-raw-onepass-1/01-researcher/prompt.txt",
+      "sha256": "9695138a344dcc9881d9b2e8d68ad9aebdda5173a441ade5c393daa7e4ad8d1f",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt006-raw-onepass-1/01-researcher/response.txt",
+      "sha256": "b65081cedfd7005ddf4825cab57ccf27fc08761477f7f1edfec5888969a52cbf",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt006-raw-onepass-1/01-researcher/stderr.txt",
+      "sha256": "d8ac2a2ce1a6d0613a627b5cbc7796d5f7a3d95f2674701ad7b10ceae6ef3379",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt006-raw-onepass-1/output.json",
+      "sha256": "c947d41693e4525287f8a3c436c530ff1c0951efda4d6fbc9423463ebae1f7ac",
+      "artifact_type": "json"
+    }
+  ],
+  "stage_runs": [
+    {
+      "stage": "researcher",
+      "elapsed_seconds": 340.3362681249855,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 138258,
+          "cached_input_tokens": 80000,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 10618,
+          "reasoning_output_tokens": 61
+        }
+      ],
+      "prompt_sha256": "9695138a344dcc9881d9b2e8d68ad9aebdda5173a441ade5c393daa7e4ad8d1f"
+    }
+  ],
+  "status": "complete",
+  "created_at": "2026-09-22T06:00:45.265514+00:00",
+  "freeze_sha256": "e449d0767eea18d40f97c47f3cccfab0233bf18a72c680b4e84b0dff28ff40ef",
+  "started_at": "2026-09-22T06:00:45.367658+00:00",
+  "runner_sha256": "0dd829c87d986d4b299a53c880dec91c062df3fde5425cf006305389fac755e7",
+  "cli_version": "codex-cli 0.154.0-alpha.6.2",
+  "reasoning_effort": "low",
+  "timeout_per_stage_seconds": 360,
+  "cost": {
+    "billing": "existing ChatGPT Codex access",
+    "incremental_usd": null,
+    "reason": "CLI reports token usage, not monetary cost"
+  },
+  "exposure_audit": "PASS; recorded-action review in exposure_audit.json",
+  "completed_at": "2026-09-22T06:06:25.778622+00:00"
+}

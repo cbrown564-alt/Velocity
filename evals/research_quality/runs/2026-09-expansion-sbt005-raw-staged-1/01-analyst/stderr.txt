@@ -1,0 +1,5 @@
+2026-09-22T05:53:42.109034Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-22T05:53:42.151946Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-22T05:53:42.157046Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-22T05:53:49.128140Z  WARN codex_sandboxing::violation: recorded sandbox violation: resource=filesystem backend=seatbelt reason=operation_not_permitted path=unknown
+2026-09-22T05:59:35.278180Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at AbsolutePathBuf("/Users/cobro/.codex/shell_snapshots/01a0c7ad-5aad-71d3-95a1-25729c63cb7a.1790056422062732000.sh"): Os { code: 2, kind: NotFound, message: "No such file or directory" }

@@ -1,0 +1,931 @@
+{
+  "study_id": "SBT-005",
+  "version": "0.1.0-first-candidate",
+  "row_unit": "One enrolled adult with primary/shared grocery-planning responsibility; one respondent per household",
+  "format": "UTF-8 CSV; integer codes except respondent_id and weight_base; empty field is structural blank",
+  "global_missing_policy": {
+    "validity": "Use the variable's explicit valid_values, not a numeric range inferred from the observed values.",
+    "numeric_missing_codes": {
+      "97": "Don't know / cannot remember",
+      "98": "Prefer not to answer",
+      "99": "Item not answered"
+    },
+    "structural_blank": "No returned follow-up or route not established; never a No/zero response.",
+    "no_imputation": "Neither numeric missing codes nor structural blanks enter valid-case outcome denominators. No last-observation-carried-forward or nonresponder-as-zero shortcut.",
+    "routing_unknown": "Recall or usage coded 97/98/99 cannot establish a Yes route; the follow-up item is structurally blank, not refused."
+  },
+  "variables": [
+    {
+      "name": "respondent_id",
+      "question_id": "ID",
+      "label": "Synthetic household/respondent ID",
+      "storage": "string",
+      "format": "SBT005_ followed by four digits",
+      "missing_values": [],
+      "missing_codes": {},
+      "structural_blank_allowed": false,
+      "route": "All enrolled respondents",
+      "wave": "administrative"
+    },
+    {
+      "name": "age_band",
+      "question_id": "P1",
+      "label": "Age",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "value_labels": {
+        "1": "18-34",
+        "2": "35-54",
+        "3": "55-64",
+        "4": "65+"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "children_under18",
+      "question_id": "P2",
+      "label": "Any child aged under 18 in household",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "work_pattern",
+      "question_id": "P3",
+      "label": "Main work pattern",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        1,
+        2,
+        3
+      ],
+      "value_labels": {
+        "1": "Regular fixed hours",
+        "2": "Irregular or shift hours",
+        "3": "Not in paid work / retired"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "online_grocery_pre",
+      "question_id": "P4",
+      "label": "Ordered groceries online in previous four weeks",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "digital_confidence_pre",
+      "question_id": "P5",
+      "label": "Confidence using apps for household tasks",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Not at all confident",
+        "2": "Slightly confident",
+        "3": "Moderately confident",
+        "4": "Very confident",
+        "5": "Extremely confident"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "budget_pressure_pre",
+      "question_id": "P6",
+      "label": "Grocery-budget pressure in previous four weeks",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "None",
+        "2": "Slight",
+        "3": "Moderate",
+        "4": "High",
+        "5": "Very high"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "mealplan_days_pre",
+      "question_id": "P7",
+      "label": "Days in last seven days with evening meal planned by previous evening",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "value_labels": {
+        "0": "0",
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "assignment",
+      "question_id": "R1",
+      "label": "Randomised campaign-encouragement assignment",
+      "storage": "integer_numeric_code",
+      "wave": "randomisation",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "Usual communications / control",
+        "1": "Campaign invitation sequence"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": "Assigned after baseline. Keep assignment unchanged when receipt or recall differs. Exact 1:1 complete randomisation."
+    },
+    {
+      "name": "weight_base",
+      "question_id": "W1",
+      "label": "Positive baseline profile-transport weight",
+      "storage": "positive_float",
+      "valid_range": {
+        "exclusive_minimum": 0
+      },
+      "missing_values": [],
+      "missing_codes": {},
+      "structural_blank_allowed": false,
+      "wave": "baseline",
+      "route": "All enrolled respondents",
+      "notes": "Based ONLY on age x baseline online-grocery sampling cell. Normalised once to baseline mean one; not an attrition or receipt-propensity weight. Sum is a weighted N, not a known population size."
+    },
+    {
+      "name": "followup_status",
+      "question_id": "F1",
+      "label": "Follow-up questionnaire returned",
+      "storage": "integer_numeric_code",
+      "wave": "administrative",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No follow-up questionnaire",
+        "1": "Returned; item-level missingness may remain"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "followup_attempts",
+      "question_id": "F2",
+      "label": "Survey invitation/contact attempts",
+      "storage": "integer_numeric_code",
+      "wave": "administrative",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "value_labels": {
+        "1": "One",
+        "2": "Two",
+        "3": "Three",
+        "4": "Four"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": "Nonreturners exhausted four attempts. Do not condition the main analysis on this post-assignment variable."
+    },
+    {
+      "name": "receipt_log",
+      "question_id": "L1",
+      "label": "Any qualifying logged campaign receipt during days 1-14",
+      "storage": "integer_numeric_code",
+      "wave": "campaign_log",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": "A rendered creative/opened campaign message, NOT random assignment, proven attention, recall, or purchase. Available even for survey nonreturners. Control respondents can encounter organic placements."
+    },
+    {
+      "name": "receipt_count",
+      "question_id": "L2",
+      "label": "Number of qualifying logged campaign receipts",
+      "storage": "integer_numeric_code",
+      "wave": "campaign_log",
+      "route": "All 2,800 enrolled respondents",
+      "valid_values": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "value_labels": {
+        "0": "0",
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+      },
+      "missing_codes": {},
+      "missing_values": [],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": "0 iff receipt_log=0; 1-4 iff receipt_log=1. Administrative exposure measure, not a causal dose."
+    },
+    {
+      "name": "recall_post",
+      "question_id": "Q8",
+      "label": "Self-reported recall of BasketBridge campaign in previous six weeks",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "Asked after outcomes. Can disagree with logs. A valid No is 0; 97/98/99 are not No."
+    },
+    {
+      "name": "awareness_pre",
+      "question_id": "Q1_pre",
+      "label": "Prompted awareness before today's interview",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All enrolled respondents",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "awareness_post",
+      "question_id": "Q1_post",
+      "label": "Prompted awareness before today's interview",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": ""
+    },
+    {
+      "name": "consideration_pre",
+      "question_id": "Q2_pre",
+      "label": "Likelihood to consider BasketBridge for next grocery-planning occasion",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All enrolled respondents",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Definitely would not",
+        "2": "Probably would not",
+        "3": "Might or might not",
+        "4": "Probably would",
+        "5": "Definitely would"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": "Unconditional after the same neutral description at each wave; do not restrict to aware respondents. Top-two-box = valid codes 4 or 5."
+    },
+    {
+      "name": "consideration_post",
+      "question_id": "Q2_post",
+      "label": "Likelihood to consider BasketBridge for next grocery-planning occasion",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Definitely would not",
+        "2": "Probably would not",
+        "3": "Might or might not",
+        "4": "Probably would",
+        "5": "Definitely would"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "Unconditional after the same neutral description at each wave; do not restrict to aware respondents. Top-two-box = valid codes 4 or 5."
+    },
+    {
+      "name": "usage_pre",
+      "question_id": "Q3_pre",
+      "label": "Self-reported BasketBridge use in previous four weeks",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All enrolled respondents",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": "A self-reported service-use measure, NOT administrative active-user, grocery-transaction, sales or revenue data."
+    },
+    {
+      "name": "usage_post",
+      "question_id": "Q3_post",
+      "label": "Self-reported BasketBridge use in previous four weeks",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "A self-reported service-use measure, NOT administrative active-user, grocery-transaction, sales or revenue data."
+    },
+    {
+      "name": "meal_stress_pre",
+      "question_id": "Q4_pre",
+      "label": "Stress deciding what household will eat in previous seven days",
+      "storage": "integer_numeric_code",
+      "wave": "baseline",
+      "route": "All enrolled respondents",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Not at all stressful",
+        "2": "Slightly stressful",
+        "3": "Moderately stressful",
+        "4": "Very stressful",
+        "5": "Extremely stressful"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": false,
+      "structural_blank_definition": "Not allowed",
+      "notes": ""
+    },
+    {
+      "name": "meal_stress_post",
+      "question_id": "Q4_post",
+      "label": "Stress deciding what household will eat in previous seven days",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Not at all stressful",
+        "2": "Slightly stressful",
+        "3": "Moderately stressful",
+        "4": "Very stressful",
+        "5": "Extremely stressful"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": ""
+    },
+    {
+      "name": "campaign_clear_post",
+      "question_id": "Q9",
+      "label": "The campaign message was clear",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1 AND recall_post == 1",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Strongly disagree",
+        "2": "Somewhat disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Somewhat agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "Asked only of recorded recall=Yes. Shared respondent impressions; report distributions and weighted descriptive associations, not causal drivers."
+    },
+    {
+      "name": "campaign_relevant_post",
+      "question_id": "Q10",
+      "label": "The campaign message felt relevant to my household",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1 AND recall_post == 1",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Strongly disagree",
+        "2": "Somewhat disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Somewhat agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "Asked only of recorded recall=Yes. Shared respondent impressions; report distributions and weighted descriptive associations, not causal drivers."
+    },
+    {
+      "name": "campaign_trust_post",
+      "question_id": "Q11",
+      "label": "The campaign message was believable",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1 AND recall_post == 1",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Strongly disagree",
+        "2": "Somewhat disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Somewhat agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "Asked only of recorded recall=Yes. Shared respondent impressions; report distributions and weighted descriptive associations, not causal drivers."
+    },
+    {
+      "name": "campaign_channel_post",
+      "question_id": "Q12",
+      "label": "Main recalled campaign channel",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1 AND recall_post == 1",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "value_labels": {
+        "1": "Email",
+        "2": "Social / online feed",
+        "3": "Grocery or planning app placement",
+        "4": "Other"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "Self-reported main channel, not verified channel attribution. Single response."
+    },
+    {
+      "name": "info_search_post",
+      "question_id": "Q5",
+      "label": "Searched for more information about BasketBridge during previous four weeks",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1",
+      "valid_values": [
+        0,
+        1
+      ],
+      "value_labels": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": ""
+    },
+    {
+      "name": "usage_days_post",
+      "question_id": "Q6",
+      "label": "Days used BasketBridge in previous seven days",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1 AND usage_post == 1",
+      "valid_values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "value_labels": {
+        "0": "0",
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "Zero is valid: a four-week user need not have used it during the last week. Do not convert structural blanks or 97/98/99 to zero."
+    },
+    {
+      "name": "satisfaction_post",
+      "question_id": "Q7",
+      "label": "Overall satisfaction with BasketBridge",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1 AND usage_post == 1",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Very dissatisfied",
+        "2": "Somewhat dissatisfied",
+        "3": "Neither satisfied nor dissatisfied",
+        "4": "Somewhat satisfied",
+        "5": "Very satisfied"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": "Selected self-reported current users only; not all assigned respondents."
+    },
+    {
+      "name": "planning_confidence_post",
+      "question_id": "Q13",
+      "label": "Confidence managing next week's grocery/meal plan",
+      "storage": "integer_numeric_code",
+      "wave": "followup",
+      "route": "followup_status == 1",
+      "valid_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "value_labels": {
+        "1": "Not at all confident",
+        "2": "Slightly confident",
+        "3": "Moderately confident",
+        "4": "Very confident",
+        "5": "Extremely confident"
+      },
+      "missing_codes": {
+        "97": "Don't know / cannot remember",
+        "98": "Prefer not to answer",
+        "99": "Item not answered"
+      },
+      "missing_values": [
+        97,
+        98,
+        99
+      ],
+      "structural_blank_allowed": true,
+      "structural_blank_definition": "No follow-up questionnaire, or route is not established by a valid recorded routing answer; not a measured zero.",
+      "notes": ""
+    }
+  ],
+  "derived_definitions": {
+    "consideration_top2": "1 for valid 4,5; 0 for valid 1,2,3; undefined for 97,98,99 or blank.",
+    "paired_change": "For each endpoint separately: post valid outcome minus pre valid outcome, on that endpoint's observed pair set only.",
+    "priority_households": "children_under18 == 1, measured before randomisation; overlapping ordinary profile, not a latent segment.",
+    "older_digital_online": "age_band == 4 AND online_grocery_pre == 1 AND digital_confidence_pre in {4,5}. Exclude invalid digital-confidence answers from either subgroup or its complement when comparing this rule."
+  }
+}

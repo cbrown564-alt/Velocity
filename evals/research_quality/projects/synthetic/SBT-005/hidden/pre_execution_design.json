@@ -1,0 +1,455 @@
+{
+  "study_id": "SBT-005",
+  "version": "0.1.0-first-candidate",
+  "visibility": "PRIVATE_AUTHOR_COORDINATOR_ONLY",
+  "status": "authored_candidate_not_independently_frozen",
+  "model_exposure_allowed": false,
+  "independent_reference_numbers": "Not supplied or frozen by the author; Codex must derive them independently from public data and policy.",
+  "prospective_policy": "All coefficients, narrative roles and acceptance intervals are authored before first execution. A failed interval is a genuine candidate failure. Do not change rows, seeds or bounds to get PASS; a necessary revision needs a new version and explicit history.",
+  "dgp": {
+    "n": 2800,
+    "default_seed": 2026092205,
+    "streams": "NumPy SeedSequence(seed).spawn(9): profile, baseline, assignment, receipt, followup_outcomes, survey_return, recall, diagnostics, measurement.",
+    "latent_variables": "Continuous engagement, grocery pressure and brand affinity; no latent-class or propensity columns are released. Shared affinity causes selection into receipt/recall and correlated outcomes.",
+    "randomisation": "1,400 zeros and 1,400 ones permuted once on an independent random stream. No covariate rebalance after viewing outcomes.",
+    "receipt_logit": "-2.15 + 2.80*assignment + .90*affinity + .45*online_grocery + .20*digital_latent + .25*children + .50*niche",
+    "awareness": "Baseline recognition is Bernoulli(logit -1.30 + .75*affinity + .20*online). Known respondents retain recognition with .955+.015*receipt. Others acquire it through p_secular and conditional receipt attention: 1-(1-p_secular)*(1-receipt*(.45+.06*children+.24*niche)); p_secular=logit(-2.20+.55*affinity+.32*online).",
+    "consideration": "Latent pre response shares affinity/engagement. Follow-up latent=pre+.18 secular drift+.045 receipt+.04 awareness change+Normal(0,.50). Identical ordinal thresholds at both waves. Larger awareness signal is not forced into large consideration change.",
+    "reported_usage": "Baseline Bernoulli with low usage probability among true aware respondents. At follow-up retain prior usage with high probability or acquire at a low rate conditional on awareness; awareness gating and a .06 receipt coefficient permit a small downstream signal.",
+    "retention_logit": "1.30 + .45*affinity - .38*pressure + .15*baseline_usage - .36*assignment + .20*receipt. Missingness is selective and can depend on assignment; no attrition weights are supplied.",
+    "recall_logit": "-2.50 + 1.80*receipt + 1.15*affinity + .55*post_awareness + .65*post_consideration_top2 + .30*post_usage. Both prior affinity and post outcomes influence self-reported recall.",
+    "small_profile": "Age 65+, online grocery, latent observed-scale digital confidence 4/5; public rule uses recorded valid confidence. Receipt attention is higher for this niche, but expected per-arm valid bases are small. No sampled rows are changed to guarantee a lift.",
+    "missingness": "Separate final measurement stream: per-item DK/refusal/non-answer, varying modestly with grocery pressure. Nonreturn/post-routing blanks are structural. These are mechanisms, not outcome-driven repair.",
+    "causal_scope": "The simulated DAG contains effects, but evaluated respondents do not see latent coefficients. Realised observed-pair means are not ground-truth full-population treatment effects, and hidden coefficients are not valid numeric reference answers."
+  },
+  "structural_requirements": [
+    "Exactly 2,800 unique IDs and 31 public columns; no latent/propensity/truth fields.",
+    "Exact 1,400/1,400 assignment before outcome-based selection; all baseline rows retained.",
+    "All weights finite and positive; baseline mean one; weights have only baseline sampling-cell inputs.",
+    "Administrative assignment/receipt/log counts/return status complete; logs retained for nonreturners.",
+    "All codebook numeric valid/missing codes enforced; structural blanks only on declared routes.",
+    "Nonreturners have all post-survey values blank. Recaller diagnostics use recorded recall=1; user diagnostics use recorded usage=1.",
+    "Endpoint-specific valid-pair sets, exact paired denominators, full consideration distributions and base/ESS accounting are auditable.",
+    "No row editing, best-seed search, threshold adaptation, silent suppression waiver or numerical reference-as-public-input."
+  ],
+  "realised_acceptance_intervals": [
+    {
+      "id": "G01",
+      "metric": "followup_rate_pct",
+      "lower_inclusive": 68,
+      "upper_inclusive": 88,
+      "reason": "Follow-up is incomplete, not a full-cohort outcome census."
+    },
+    {
+      "id": "G02",
+      "metric": "return_assignment_difference_pp",
+      "lower_inclusive": -9,
+      "upper_inclusive": 4,
+      "reason": "Differential retention may be modest; do not assume randomisation cures selection."
+    },
+    {
+      "id": "G03",
+      "metric": "baseline_awareness_returner_gap_pp",
+      "lower_inclusive": 3,
+      "upper_inclusive": 22,
+      "reason": "Returners/nonreturners differ on a measured pre-assignment outcome."
+    },
+    {
+      "id": "G04",
+      "metric": "awareness_pair_pct",
+      "lower_inclusive": 65,
+      "upper_inclusive": 86,
+      "reason": "Endpoint-specific observed-pair coverage."
+    },
+    {
+      "id": "G05",
+      "metric": "consideration_pair_pct",
+      "lower_inclusive": 65,
+      "upper_inclusive": 86,
+      "reason": "Endpoint-specific observed-pair coverage."
+    },
+    {
+      "id": "G06",
+      "metric": "usage_pair_pct",
+      "lower_inclusive": 65,
+      "upper_inclusive": 86,
+      "reason": "Endpoint-specific observed-pair coverage."
+    },
+    {
+      "id": "G07",
+      "metric": "control_awareness_change_pp",
+      "lower_inclusive": 3,
+      "upper_inclusive": 18,
+      "reason": "A genuine control-arm awareness increase makes treated-only change misleading."
+    },
+    {
+      "id": "G08",
+      "metric": "control_consideration_change_pp",
+      "lower_inclusive": 0.5,
+      "upper_inclusive": 10,
+      "reason": "Control consideration changes with secular latent movement."
+    },
+    {
+      "id": "G09",
+      "metric": "control_usage_change_pp",
+      "lower_inclusive": 0,
+      "upper_inclusive": 5,
+      "reason": "Some reported-use growth also occurs without encouragement assignment."
+    },
+    {
+      "id": "G10",
+      "metric": "awareness_itt_pp",
+      "lower_inclusive": 7,
+      "upper_inclusive": 22,
+      "reason": "Meaningful assignment-on-change awareness contrast."
+    },
+    {
+      "id": "G11",
+      "metric": "consideration_itt_pp",
+      "lower_inclusive": -4.5,
+      "upper_inclusive": 5,
+      "reason": "Downstream consideration much weaker; not predeclared exactly zero."
+    },
+    {
+      "id": "G12",
+      "metric": "usage_itt_pp",
+      "lower_inclusive": -2.5,
+      "upper_inclusive": 4,
+      "reason": "Downstream reported use much weaker; not proof of absence."
+    },
+    {
+      "id": "G13",
+      "metric": "awareness_minus_consideration_itt_pp",
+      "lower_inclusive": 7,
+      "upper_inclusive": 23,
+      "reason": "Awareness effect is not a broad-funnel-success story."
+    },
+    {
+      "id": "G14",
+      "metric": "awareness_minus_usage_itt_pp",
+      "lower_inclusive": 7,
+      "upper_inclusive": 24,
+      "reason": "No conversion, sales or ROI leap from awareness."
+    },
+    {
+      "id": "G15",
+      "metric": "awareness_p_holm",
+      "lower_inclusive": 0,
+      "upper_inclusive": 0.05,
+      "reason": "Awareness clears the fixed primary-family adjustment."
+    },
+    {
+      "id": "G16",
+      "metric": "receipt_assignment1_pct",
+      "lower_inclusive": 54,
+      "upper_inclusive": 82,
+      "reason": "Noncompliance remains visible in the encouraged arm."
+    },
+    {
+      "id": "G17",
+      "metric": "receipt_assignment0_pct",
+      "lower_inclusive": 6,
+      "upper_inclusive": 30,
+      "reason": "Organic/control receipt is nonzero."
+    },
+    {
+      "id": "G18",
+      "metric": "receipt_assignment_gap_pp",
+      "lower_inclusive": 35,
+      "upper_inclusive": 68,
+      "reason": "Assignment changes receipt without making it deterministic."
+    },
+    {
+      "id": "G19",
+      "metric": "receipt_post_consideration_gap_pp",
+      "lower_inclusive": 10,
+      "upper_inclusive": 35,
+      "reason": "Self-selected logged receipt creates an attractive observational contrast."
+    },
+    {
+      "id": "G20",
+      "metric": "recall_post_consideration_gap_pp",
+      "lower_inclusive": 20,
+      "upper_inclusive": 50,
+      "reason": "Recall-conditioned contrast is substantially inflated relative to the policy contrast."
+    },
+    {
+      "id": "G21",
+      "metric": "recall_gap_minus_consideration_itt_pp",
+      "lower_inclusive": 18,
+      "upper_inclusive": 48,
+      "reason": "Different estimands must not be conflated."
+    },
+    {
+      "id": "G22",
+      "metric": "recall_baseline_consideration_gap_pp",
+      "lower_inclusive": 8,
+      "upper_inclusive": 40,
+      "reason": "Post recall groups already differ at baseline."
+    },
+    {
+      "id": "G23",
+      "metric": "recallers_without_receipt_pct",
+      "lower_inclusive": 12,
+      "upper_inclusive": 42,
+      "reason": "Recall and logs disagree in both directions."
+    },
+    {
+      "id": "G24",
+      "metric": "recipients_without_recall_pct",
+      "lower_inclusive": 25,
+      "upper_inclusive": 62,
+      "reason": "Receipt is not recall or proven attention."
+    },
+    {
+      "id": "G25",
+      "metric": "minimum_message_diagnostic_correlation",
+      "lower_inclusive": 0.25,
+      "upper_inclusive": 0.8,
+      "reason": "Correlated selected-recaller diagnostics are not independent causal evidence."
+    },
+    {
+      "id": "G26",
+      "metric": "children_baseline_stress_difference",
+      "lower_inclusive": 0.3,
+      "upper_inclusive": 1.4,
+      "reason": "The prespecified household priority has substantive external needs context."
+    },
+    {
+      "id": "G27",
+      "metric": "older_digital_online_awareness_pair_n",
+      "lower_inclusive": 16,
+      "upper_inclusive": 105,
+      "reason": "Small-base profile exists but is not a stable target study."
+    },
+    {
+      "id": "G28",
+      "metric": "older_digital_online_min_arm_n",
+      "lower_inclusive": 6,
+      "upper_inclusive": 55,
+      "reason": "At least a low-base warning, possibly suppression, is mandatory."
+    },
+    {
+      "id": "G29",
+      "metric": "older_digital_online_awareness_itt_pp",
+      "lower_inclusive": 15,
+      "upper_inclusive": 70,
+      "reason": "A genuinely tempting apparent high-lift cut, inspectable privately only if suppressed."
+    },
+    {
+      "id": "G30",
+      "metric": "baseline_kish_fraction",
+      "lower_inclusive": 0.68,
+      "upper_inclusive": 0.95,
+      "reason": "Unequal weighting is consequential but not extreme."
+    },
+    {
+      "id": "G31",
+      "metric": "weight_max_min_ratio",
+      "lower_inclusive": 1.5,
+      "upper_inclusive": 6,
+      "reason": "Positive unequal fixed baseline weights."
+    },
+    {
+      "id": "G32",
+      "metric": "baseline_awareness_numeric_missing_pct",
+      "lower_inclusive": 0.5,
+      "upper_inclusive": 6,
+      "reason": "Explicit missing codes must be excluded rather than silently treated as No."
+    },
+    {
+      "id": "G33",
+      "metric": "post_consideration_numeric_missing_returner_pct",
+      "lower_inclusive": 0.5,
+      "upper_inclusive": 7,
+      "reason": "Item missingness is separate from attrition and structural routes."
+    }
+  ],
+  "reference_finding_propositions": [
+    {
+      "finding_id": "CAM_M1_INCREMENTAL_AWARENESS",
+      "tier": "mandatory",
+      "proposition": "Campaign assignment raises awareness change beyond a positive control-arm change; treated pre/post growth alone overstates incremental lift.",
+      "evidence": [
+        "ITT_AWARENESS_CHANGE",
+        "arm awareness pre/post on identical valid pairs",
+        "PRIMARY_ASSIGNMENT adjustment"
+      ],
+      "validation_ids": [
+        "G07",
+        "G10",
+        "G15"
+      ],
+      "topic_cluster": "incremental_awareness",
+      "narrative_requirement": "Give both arm changes or their equivalent paired levels AND the assignment difference in change. Preserve the observed-pair attrition qualification.",
+      "claim_boundary": "No full-cohort effect or named cause for all control change."
+    },
+    {
+      "finding_id": "CAM_M2_DOWNSTREAM_BOUND",
+      "tier": "mandatory",
+      "proposition": "The awareness response is not matched by comparable assignment effects on consideration or reported use; uncertainty does not justify either a broad conversion-success claim or proof of no effect.",
+      "evidence": [
+        "ITT_CONSIDERATION_TOP2_CHANGE",
+        "ITT_USAGE_CHANGE",
+        "full ordinal consideration distributions",
+        "pointwise CIs and primary adjusted p-values"
+      ],
+      "validation_ids": [
+        "G08",
+        "G09",
+        "G11",
+        "G12",
+        "G13",
+        "G14"
+      ],
+      "topic_cluster": "downstream_limits",
+      "narrative_requirement": "Explicitly contrast awareness with BOTH downstream estimates in the chosen narrative. Computing them in an unused table is insufficient.",
+      "claim_boundary": "Reported usage is not transactions/sales; no ROI; non-significance is not equivalence."
+    },
+    {
+      "finding_id": "CAM_M3_SELECTION_CONTRAST",
+      "tier": "mandatory",
+      "proposition": "Receipt/recall groups show much stronger observational consideration contrasts, with pre-existing differences, but neither comparison estimates the randomised assignment effect.",
+      "evidence": [
+        "OBS_RECEIPT_CONSIDERATION",
+        "OBS_RECALL_CONSIDERATION",
+        "baseline consideration of the same receipt/recall groups",
+        "ITT_CONSIDERATION_TOP2_CHANGE"
+      ],
+      "validation_ids": [
+        "G19",
+        "G20",
+        "G21",
+        "G22"
+      ],
+      "topic_cluster": "exposure_selection",
+      "narrative_requirement": "Identify the change in grouping/estimand and its self-selection/post-outcome nature; do not merely call one estimate 'larger'.",
+      "claim_boundary": "No causal per-protocol/recall effect or valid-complier-effect claim."
+    },
+    {
+      "finding_id": "CAM_M4_ATTRITION_LIMIT",
+      "tier": "mandatory",
+      "proposition": "Follow-up and item completeness select the analysed pairs; their composition differs from nonreturners. Baseline weights and randomisation do not recover missing outcomes or establish a whole-target effect.",
+      "evidence": [
+        "ATTRITION_AUDIT",
+        "pair bases for each endpoint and arm",
+        "baseline profile/outcome balance among returners and nonreturners",
+        "weight definition"
+      ],
+      "validation_ids": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G30",
+        "G31",
+        "G32",
+        "G33"
+      ],
+      "topic_cluster": "attrition_estimand",
+      "narrative_requirement": "State the observed-pair population and substantive selection evidence, distinguish item missingness from nonreturn, and retain assigned noncompliers.",
+      "claim_boundary": "No assertion that similar arm return rates alone make attrition harmless."
+    },
+    {
+      "finding_id": "CAM_S1_REACH_NOT_RECALL",
+      "tier": "secondary",
+      "topic_cluster": "reach_measurement",
+      "proposition": "Encouragement increases logged receipt without perfect compliance; control receipt and log-recall discordance prevent assignment, receipt and recall being interchangeable.",
+      "evidence": [
+        "REACH_AND_RECALL on separately stated universes"
+      ],
+      "validation_ids": [
+        "G16",
+        "G17",
+        "G18",
+        "G23",
+        "G24"
+      ],
+      "claim_boundary": "Qualifying logs are not human attention; self-report is not verified reach."
+    },
+    {
+      "finding_id": "CAM_S2_SELECTED_DIAGNOSTICS",
+      "tier": "secondary",
+      "topic_cluster": "diagnostic_scope",
+      "proposition": "Clarity, relevance and believability are correlated evaluations within selected recallers; user satisfaction and usage frequency are further routed and cannot explain a universal causal conversion mechanism.",
+      "evidence": [
+        "MESSAGE_DIAGNOSTICS",
+        "USER_EXPERIENCE",
+        "route valid bases"
+      ],
+      "validation_ids": [
+        "G25"
+      ],
+      "claim_boundary": "No unique-driver or mediated campaign-effect claim from these correlations."
+    },
+    {
+      "finding_id": "CAM_S3_FAMILY_CONTEXT",
+      "tier": "secondary",
+      "topic_cluster": "audience_context",
+      "proposition": "Households with children have greater baseline meal-planning stress. Their campaign heterogeneity is a separate prespecified question, estimated with four-cell paired bases and uncertainty rather than assumed from need intensity.",
+      "evidence": [
+        "CHILDREN_NEEDS",
+        "SECONDARY_CHILDREN_HETEROGENEITY"
+      ],
+      "validation_ids": [
+        "G26"
+      ],
+      "claim_boundary": "The direction/significance of a family interaction is not preordained or required; never equate more need with larger causal benefit."
+    },
+    {
+      "finding_id": "CAM_D1_RECALL_AS_TREATMENT",
+      "tier": "do_not_elevate",
+      "topic_cluster": "exposure_selection",
+      "proposition": "A high receipt/recall consideration contrast is not the incremental campaign effect and must not replace assignment-based change.",
+      "validation_ids": [
+        "G19",
+        "G20",
+        "G21",
+        "G22"
+      ],
+      "failure": "Claim causality from recall/receipt, exclude noncompliers or reinterpret recall as random assignment."
+    },
+    {
+      "finding_id": "CAM_D2_BUSINESS_OR_POPULATION_LEAP",
+      "tier": "do_not_elevate",
+      "topic_cluster": "effect_scope",
+      "proposition": "Awareness lift in incomplete follow-up does not establish actual sales, campaign ROI, broad downstream conversion or a whole-population effect.",
+      "validation_ids": [
+        "G01",
+        "G03",
+        "G11",
+        "G12",
+        "G13",
+        "G14"
+      ],
+      "failure": "Invent cost/revenue, turn stated usage into sales, treat DK/nonreturn as zero, or assert a full-cohort effect/zero effect from the complete-pair result."
+    },
+    {
+      "finding_id": "CAM_D3_TINY_HIGH_LIFT_TARGET",
+      "tier": "do_not_elevate",
+      "topic_cluster": "small_base_targeting",
+      "proposition": "The older, confident online-grocery subgroup offers a tempting high awareness-change contrast but insufficient per-arm base for a targeting conclusion.",
+      "validation_ids": [
+        "G27",
+        "G28",
+        "G29"
+      ],
+      "failure": "Print suppressed cell lifts/rates or prioritise a low-base target over the main assignment and attrition evidence."
+    }
+  ],
+  "evaluation_guidance": {
+    "coverage_unit": "Substantive finding supported by compatible estimand/universe, not identical words or private finding IDs.",
+    "distribution_to_narrative": "Tables/computation alone do not earn mandatory narrative coverage. In particular awareness-versus-downstream and assignment-versus-recall contrasts must reach selected findings/story.",
+    "duplicates": "Secondary reach/diagnostic descriptions do not substitute for the primary selection or attrition claims. Collapse redundant propositions before coverage scoring.",
+    "no_forced_subgroup_claim": "Other demographics are not all noise. A valid supported secondary observation is allowed; only the tiny-cell inference/targeting leap is restrained."
+  },
+  "independent_freeze_gate": [
+    "Replay original source and compare exact file fingerprints in the recorded environment.",
+    "Independently derive valid-case and paired distributions, bases, fixed-weight change variances, both Holm families and descriptive contrasts from public definitions.",
+    "Check ALL prospective intervals and structural invariants; record failures rather than revising bounds to fit.",
+    "Validate suppression before any candidate-reference publication; bind reference propositions to independently derived evidence and review story validity.",
+    "Set an independently reviewed version/freeze only after those checks. Neither author execution nor author-check PASS alone enables model exposure."
+  ]
+}

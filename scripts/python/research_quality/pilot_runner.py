@@ -59,7 +59,17 @@ def check_output(result, study):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("study", choices=["SBT-002", "SBT-003", "FSA-CIT-2025-03"])
+    ap.add_argument(
+        "study",
+        choices=[
+            "SBT-002",
+            "SBT-003",
+            "SBT-004",
+            "SBT-005",
+            "SBT-006",
+            "FSA-CIT-2025-03",
+        ],
+    )
     ap.add_argument("--surface", choices=["analysis", "raw"], default="analysis")
     ap.add_argument("--workflow", choices=["one_pass", "staged"], default="one_pass")
     ap.add_argument("--replicate", type=int, default=1)

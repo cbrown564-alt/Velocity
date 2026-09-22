@@ -1,0 +1,1598 @@
+{
+  "study_id": "SBT-006",
+  "analysis_claims": [
+    {
+      "analysis_id": "assignment_audit",
+      "values": {
+        "price_order_gbp": [
+          4,
+          7,
+          10,
+          13
+        ],
+        "base_tuple": [
+          "unweighted_n",
+          "sum_weights",
+          "kish_ess"
+        ],
+        "assigned_bases": [
+          [
+            750,
+            747.5628,
+            698.169
+          ],
+          [
+            750,
+            755.5206,
+            699.0882
+          ],
+          [
+            750,
+            748.4243,
+            698.4524
+          ],
+          [
+            750,
+            748.4923,
+            698.3256
+          ]
+        ],
+        "module_entered_bases": [
+          [
+            733,
+            733.2568,
+            682.4546
+          ],
+          [
+            720,
+            725.911,
+            671.4508
+          ],
+          [
+            709,
+            711.9224,
+            660.5735
+          ],
+          [
+            719,
+            718.6787,
+            669.5019
+          ]
+        ],
+        "intent_valid_bases": [
+          [
+            704,
+            705.8463,
+            655.4088
+          ],
+          [
+            682,
+            687.5954,
+            635.8685
+          ],
+          [
+            655,
+            655.968,
+            610.9377
+          ],
+          [
+            633,
+            632.7519,
+            590.0649
+          ]
+        ],
+        "weighted_baseline_distributions": {
+          "notation": "Each row follows price_order_gbp; columns follow the listed code order. Shares use all assigned households, retaining nonvalid baseline codes separately.",
+          "age_band": {
+            "codes": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "shares": [
+              [
+                0.3071,
+                0.40151,
+                0.173627,
+                0.117763
+              ],
+              [
+                0.278688,
+                0.418287,
+                0.170268,
+                0.132757
+              ],
+              [
+                0.311169,
+                0.377359,
+                0.177729,
+                0.133743
+              ],
+              [
+                0.307082,
+                0.418217,
+                0.155086,
+                0.119616
+              ]
+            ]
+          },
+          "household_children": {
+            "codes": [
+              0,
+              1
+            ],
+            "shares": [
+              [
+                0.592485,
+                0.407515
+              ],
+              [
+                0.614302,
+                0.385698
+              ],
+              [
+                0.6008,
+                0.3992
+              ],
+              [
+                0.610075,
+                0.389925
+              ]
+            ]
+          },
+          "budget_band": {
+            "codes": [
+              1,
+              2,
+              3
+            ],
+            "shares": [
+              [
+                0.343372,
+                0.483486,
+                0.173142
+              ],
+              [
+                0.334294,
+                0.481185,
+                0.184522
+              ],
+              [
+                0.339766,
+                0.48496,
+                0.175275
+              ],
+              [
+                0.34967,
+                0.450748,
+                0.199582
+              ]
+            ]
+          },
+          "meal_planning_role": {
+            "codes": [
+              1,
+              2
+            ],
+            "shares": [
+              [
+                0.641313,
+                0.358687
+              ],
+              [
+                0.608,
+                0.392
+              ],
+              [
+                0.653782,
+                0.346218
+              ],
+              [
+                0.640516,
+                0.359484
+              ]
+            ]
+          },
+          "weekday_time_pressure_5": {
+            "codes": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              97,
+              98
+            ],
+            "shares": [
+              [
+                0.066327,
+                0.139538,
+                0.1813,
+                0.219058,
+                0.357687,
+                0.026992,
+                0.009098
+              ],
+              [
+                0.079102,
+                0.130326,
+                0.182301,
+                0.230795,
+                0.355029,
+                0.016115,
+                0.006332
+              ],
+              [
+                0.059586,
+                0.139075,
+                0.179122,
+                0.213747,
+                0.386962,
+                0.013238,
+                0.00827
+              ],
+              [
+                0.05952,
+                0.149936,
+                0.188587,
+                0.221966,
+                0.360241,
+                0.012449,
+                0.0073
+              ]
+            ]
+          },
+          "current_planning_method": {
+            "codes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "shares": [
+              [
+                0.346465,
+                0.302763,
+                0.169047,
+                0.099839,
+                0.081885
+              ],
+              [
+                0.341826,
+                0.271066,
+                0.184402,
+                0.109981,
+                0.092726
+              ],
+              [
+                0.357669,
+                0.251613,
+                0.181273,
+                0.103238,
+                0.106207
+              ],
+              [
+                0.316714,
+                0.261949,
+                0.203005,
+                0.127643,
+                0.090689
+              ]
+            ]
+          },
+          "digital_confidence_5": {
+            "codes": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              97,
+              98
+            ],
+            "shares": [
+              [
+                0.032299,
+                0.104085,
+                0.252752,
+                0.339156,
+                0.259667,
+                0.010372,
+                0.001668
+              ],
+              [
+                0.03406,
+                0.120004,
+                0.221102,
+                0.347677,
+                0.257232,
+                0.013234,
+                0.006692
+              ],
+              [
+                0.040078,
+                0.127776,
+                0.246463,
+                0.298416,
+                0.269486,
+                0.012147,
+                0.005634
+              ],
+              [
+                0.024353,
+                0.107984,
+                0.227722,
+                0.349852,
+                0.261889,
+                0.021809,
+                0.006391
+              ]
+            ]
+          },
+          "plan_ahead_days_7": {
+            "codes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              97,
+              98
+            ],
+            "shares": [
+              [
+                0.010857,
+                0.060019,
+                0.188093,
+                0.234222,
+                0.245898,
+                0.151639,
+                0.068571,
+                0.020714,
+                0.015831,
+                0.004155
+              ],
+              [
+                0.006932,
+                0.07226,
+                0.191063,
+                0.264254,
+                0.238057,
+                0.14458,
+                0.043302,
+                0.009963,
+                0.024547,
+                0.005041
+              ],
+              [
+                0.012057,
+                0.077792,
+                0.193905,
+                0.232892,
+                0.227712,
+                0.149102,
+                0.069522,
+                0.010178,
+                0.025749,
+                0.001091
+              ],
+              [
+                0.009693,
+                0.056037,
+                0.157176,
+                0.273248,
+                0.262162,
+                0.153814,
+                0.063246,
+                0.006028,
+                0.01569,
+                0.002908
+              ]
+            ]
+          },
+          "subscription_spend_band": {
+            "codes": [
+              0,
+              1,
+              2,
+              3,
+              97,
+              98
+            ],
+            "shares": [
+              [
+                0.116641,
+                0.339823,
+                0.342553,
+                0.177933,
+                0.007461,
+                0.015589
+              ],
+              [
+                0.153643,
+                0.312508,
+                0.325441,
+                0.170928,
+                0.015214,
+                0.022266
+              ],
+              [
+                0.126503,
+                0.346703,
+                0.306837,
+                0.172488,
+                0.032504,
+                0.014965
+              ],
+              [
+                0.129066,
+                0.336009,
+                0.340492,
+                0.16281,
+                0.013146,
+                0.018477
+              ]
+            ]
+          },
+          "household_size_band": {
+            "codes": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "shares": [
+              [
+                0.253541,
+                0.338944,
+                0.145604,
+                0.261911
+              ],
+              [
+                0.25087,
+                0.363432,
+                0.1414,
+                0.244298
+              ],
+              [
+                0.249583,
+                0.351216,
+                0.136015,
+                0.263185
+              ],
+              [
+                0.276216,
+                0.333858,
+                0.126795,
+                0.263131
+              ]
+            ]
+          },
+          "time_pressed_family": {
+            "codes": [
+              0,
+              1,
+              97
+            ],
+            "shares": [
+              [
+                0.674734,
+                0.315197,
+                0.010069
+              ],
+              [
+                0.688483,
+                0.304255,
+                0.007262
+              ],
+              [
+                0.682348,
+                0.309139,
+                0.008512
+              ],
+              [
+                0.692252,
+                0.302659,
+                0.005089
+              ]
+            ]
+          },
+          "design_stratum": {
+            "codes": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "shares": [
+              [
+                0.15722,
+                0.193249,
+                0.057047,
+                0.186152,
+                0.290237,
+                0.116095
+              ],
+              [
+                0.140199,
+                0.189053,
+                0.056446,
+                0.194094,
+                0.292132,
+                0.128076
+              ],
+              [
+                0.163824,
+                0.173397,
+                0.061979,
+                0.175941,
+                0.311563,
+                0.113296
+              ],
+              [
+                0.165748,
+                0.159205,
+                0.064972,
+                0.183922,
+                0.291543,
+                0.13461
+              ]
+            ]
+          }
+        },
+        "quality_checks": {
+          "unique_respondents": 3000,
+          "total_weight": 3000,
+          "all_weights_positive": true,
+          "nonblank_postprice_items_among_module_exits": 0,
+          "blank_intent_among_module_entrants": 0,
+          "price_code_mismatches": 0,
+          "baseline_audience_derivation_mismatches": 0
+        }
+      },
+      "universe": "All 3,000 assigned synthetic households, analysed by assigned price before conditioning on response. Baseline profiles are assignment-composition audits.",
+      "weighting": "Stored fixed wt_design; no arm or response recalibration. Base tuples report literal N, weight sum and Kish ESS."
+    },
+    {
+      "analysis_id": "intent_and_missingness",
+      "values": {
+        "price_order_gbp": [
+          4,
+          7,
+          10,
+          13
+        ],
+        "bases_ref": "analysis_claims/assignment_audit/values",
+        "interval_tuple": [
+          "estimate",
+          "pointwise_95_lower",
+          "pointwise_95_upper"
+        ],
+        "intent_category_order": [
+          "definitely_not",
+          "probably_not",
+          "might_or_might_not",
+          "probably",
+          "definitely"
+        ],
+        "valid_distribution_shares": [
+          [
+            0.109819,
+            0.104391,
+            0.117432,
+            0.239553,
+            0.428805
+          ],
+          [
+            0.18966,
+            0.17103,
+            0.120351,
+            0.268762,
+            0.250198
+          ],
+          [
+            0.334359,
+            0.19476,
+            0.134587,
+            0.172467,
+            0.163827
+          ],
+          [
+            0.558064,
+            0.182235,
+            0.061521,
+            0.127342,
+            0.070837
+          ]
+        ],
+        "valid_bottom_two_shares": [
+          0.21421,
+          0.36069,
+          0.529119,
+          0.740299
+        ],
+        "q_valid": [
+          [
+            0.668358,
+            0.631672,
+            0.705045
+          ],
+          [
+            0.518959,
+            0.480027,
+            0.557892
+          ],
+          [
+            0.336294,
+            0.29942,
+            0.373168
+          ],
+          [
+            0.19818,
+            0.167348,
+            0.229011
+          ]
+        ],
+        "q_all_assigned": [
+          [
+            0.631062,
+            0.594887,
+            0.667237
+          ],
+          [
+            0.472302,
+            0.435357,
+            0.509247
+          ],
+          [
+            0.29475,
+            0.261554,
+            0.327946
+          ],
+          [
+            0.167535,
+            0.141055,
+            0.194015
+          ]
+        ],
+        "missing_category_order": [
+          "97_DK",
+          "98_refusal",
+          "99_skipped",
+          "structural_blank_module_exit"
+        ],
+        "missing_counts": [
+          [
+            19,
+            7,
+            3,
+            17
+          ],
+          [
+            25,
+            9,
+            4,
+            30
+          ],
+          [
+            45,
+            4,
+            5,
+            41
+          ],
+          [
+            67,
+            8,
+            11,
+            31
+          ]
+        ],
+        "missing_weighted_all_assigned_shares": [
+          [
+            0.023686,
+            0.00834,
+            0.00464,
+            0.019137
+          ],
+          [
+            0.033849,
+            0.011403,
+            0.005462,
+            0.039191
+          ],
+          [
+            0.061979,
+            0.006059,
+            0.006725,
+            0.048772
+          ],
+          [
+            0.089507,
+            0.010632,
+            0.01466,
+            0.039832
+          ]
+        ],
+        "logical_completion_bounds": [
+          [
+            0.631062,
+            0.686865
+          ],
+          [
+            0.472302,
+            0.562207
+          ],
+          [
+            0.29475,
+            0.418285
+          ],
+          [
+            0.167535,
+            0.322166
+          ]
+        ],
+        "contrast_pair_order": [
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            7,
+            10
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            10,
+            13
+          ]
+        ],
+        "P1_valid_contrasts": {
+          "estimate_ci": [
+            [
+              0.149399,
+              0.095905,
+              0.202893
+            ],
+            [
+              0.332064,
+              0.280049,
+              0.384079
+            ],
+            [
+              0.470179,
+              0.422257,
+              0.5181
+            ],
+            [
+              0.182665,
+              0.129042,
+              0.236288
+            ],
+            [
+              0.32078,
+              0.271118,
+              0.370442
+            ],
+            [
+              0.138114,
+              0.090049,
+              0.18618
+            ]
+          ],
+          "holm_p": [
+            4.40518e-08,
+            2.55654e-35,
+            1.24516e-81,
+            7.33895e-11,
+            4.93065e-36,
+            3.56445e-08
+          ]
+        },
+        "P2_all_assigned_contrasts": {
+          "estimate_ci": [
+            [
+              0.15876,
+              0.107053,
+              0.210466
+            ],
+            [
+              0.336312,
+              0.287214,
+              0.385409
+            ],
+            [
+              0.463527,
+              0.418696,
+              0.508357
+            ],
+            [
+              0.177552,
+              0.127884,
+              0.22722
+            ],
+            [
+              0.304767,
+              0.259313,
+              0.350222
+            ],
+            [
+              0.127215,
+              0.084752,
+              0.169679
+            ]
+          ],
+          "holm_p": [
+            3.53416e-09,
+            2.14497e-40,
+            1.57005e-90,
+            7.33304e-12,
+            7.62961e-39,
+            4.31038e-09
+          ]
+        }
+      },
+      "universe": "Five-category distributions and q_valid use intent-valid assigned households; eligible bases are module entrants. Missingness, q_all_assigned and completion bounds use all 750 assigned households per price. Bases are in assignment_audit.",
+      "weighting": "Fixed wt_design. Positive intent is codes 4/5 only. All absent or nonvalid intent scores zero solely for q_all_assigned; original categories remain unchanged."
+    },
+    {
+      "analysis_id": "financial_proxies",
+      "values": {
+        "price_order_gbp": [
+          4,
+          7,
+          10,
+          13
+        ],
+        "bases_ref": "analysis_claims/assignment_audit/values",
+        "units": "GBP per hypothetical household-month on the stated denominator",
+        "interval_tuple": [
+          "estimate",
+          "pointwise_95_lower",
+          "pointwise_95_upper"
+        ],
+        "gross_valid": [
+          [
+            2.673433,
+            2.526687,
+            2.82018
+          ],
+          [
+            3.632716,
+            3.360188,
+            3.905243
+          ],
+          [
+            3.362942,
+            2.994202,
+            3.731682
+          ],
+          [
+            2.576337,
+            2.175529,
+            2.977145
+          ]
+        ],
+        "gross_all_assigned": [
+          [
+            2.524247,
+            2.379548,
+            2.668946
+          ],
+          [
+            3.306116,
+            3.047501,
+            3.56473
+          ],
+          [
+            2.947502,
+            2.615543,
+            3.279461
+          ],
+          [
+            2.177955,
+            1.833719,
+            2.52219
+          ]
+        ],
+        "contribution_valid_by_assumed_cost": {
+          "0.5": [
+            [
+              2.339254,
+              2.210851,
+              2.467657
+            ],
+            [
+              3.373236,
+              3.120175,
+              3.626297
+            ],
+            [
+              3.194795,
+              2.844492,
+              3.545098
+            ],
+            [
+              2.477247,
+              2.091855,
+              2.86264
+            ]
+          ],
+          "2": [
+            [
+              1.336717,
+              1.263344,
+              1.41009
+            ],
+            [
+              2.594797,
+              2.400134,
+              2.789459
+            ],
+            [
+              2.690354,
+              2.395361,
+              2.985346
+            ],
+            [
+              2.179978,
+              1.840833,
+              2.519123
+            ]
+          ],
+          "3": [
+            [
+              0.668358,
+              0.631672,
+              0.705045
+            ],
+            [
+              2.075838,
+              1.920107,
+              2.231568
+            ],
+            [
+              2.354059,
+              2.095941,
+              2.612178
+            ],
+            [
+              1.981798,
+              1.673484,
+              2.290112
+            ]
+          ]
+        },
+        "contribution_all_assigned_by_assumed_cost": {
+          "0.5": [
+            [
+              2.208716,
+              2.082104,
+              2.335328
+            ],
+            [
+              3.069965,
+              2.829822,
+              3.310107
+            ],
+            [
+              2.800127,
+              2.484766,
+              3.115488
+            ],
+            [
+              2.094187,
+              1.763192,
+              2.425183
+            ]
+          ],
+          "2": [
+            [
+              1.262124,
+              1.189774,
+              1.334473
+            ],
+            [
+              2.361511,
+              2.176786,
+              2.546236
+            ],
+            [
+              2.358002,
+              2.092435,
+              2.623569
+            ],
+            [
+              1.842885,
+              1.551609,
+              2.134161
+            ]
+          ],
+          "3": [
+            [
+              0.631062,
+              0.594887,
+              0.667237
+            ],
+            [
+              1.889209,
+              1.741429,
+              2.036989
+            ],
+            [
+              2.063252,
+              1.83088,
+              2.295623
+            ],
+            [
+              1.67535,
+              1.410553,
+              1.940146
+            ]
+          ]
+        },
+        "contrast_pair_order": [
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            7,
+            10
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            10,
+            13
+          ]
+        ],
+        "P3_gross_valid": {
+          "estimate_ci": [
+            [
+              -0.959282,
+              -1.268807,
+              -0.649757
+            ],
+            [
+              -0.689509,
+              -1.086376,
+              -0.292641
+            ],
+            [
+              0.097096,
+              -0.329731,
+              0.523923
+            ],
+            [
+              0.269774,
+              -0.188746,
+              0.728294
+            ],
+            [
+              1.056378,
+              0.571695,
+              1.541062
+            ],
+            [
+              0.786605,
+              0.24198,
+              1.33123
+            ]
+          ],
+          "holm_p": [
+            7.47011e-09,
+            0.002645,
+            0.655699,
+            0.49769,
+            9.6958e-05,
+            0.01393
+          ]
+        },
+        "P4_contribution_valid_joint_18_test_family": {
+          "0.5": {
+            "estimate_ci": [
+              [
+                -1.033982,
+                -1.317755,
+                -0.750208
+              ],
+              [
+                -0.855541,
+                -1.228635,
+                -0.482446
+              ],
+              [
+                -0.137993,
+                -0.544213,
+                0.268226
+              ],
+              [
+                0.178441,
+                -0.253708,
+                0.61059
+              ],
+              [
+                0.895988,
+                0.434938,
+                1.357039
+              ],
+              [
+                0.717547,
+                0.196741,
+                1.238354
+              ]
+            ],
+            "holm_p": [
+              1.20015e-11,
+              7.6751e-05,
+              1,
+              1,
+              0.001396,
+              0.062337
+            ]
+          },
+          "2": {
+            "estimate_ci": [
+              [
+                -1.25808,
+                -1.466112,
+                -1.050049
+              ],
+              [
+                -1.353637,
+                -1.657617,
+                -1.049657
+              ],
+              [
+                -0.843261,
+                -1.190253,
+                -0.49627
+              ],
+              [
+                -0.095557,
+                -0.448988,
+                0.257875
+              ],
+              [
+                0.414819,
+                0.023778,
+                0.80586
+              ],
+              [
+                0.510376,
+                0.060887,
+                0.959864
+              ]
+            ],
+            "holm_p": [
+              3.32307e-31,
+              3.89508e-17,
+              2.2875e-05,
+              1,
+              0.263228,
+              0.208403
+            ]
+          },
+          "3": {
+            "estimate_ci": [
+              [
+                -1.407479,
+                -1.567472,
+                -1.247486
+              ],
+              [
+                -1.685701,
+                -1.946413,
+                -1.424989
+              ],
+              [
+                -1.31344,
+                -1.623928,
+                -1.002951
+              ],
+              [
+                -0.278222,
+                -0.57968,
+                0.023236
+              ],
+              [
+                0.09404,
+                -0.251372,
+                0.439451
+              ],
+              [
+                0.372261,
+                -0.029836,
+                0.774359
+              ]
+            ],
+            "holm_p": [
+              2.31077e-65,
+              1.42534e-35,
+              1.57085e-15,
+              0.417575,
+              1,
+              0.417575
+            ]
+          }
+        }
+      },
+      "universe": "Valid financial proxies use the same intent-valid rows as q_valid; all-assigned sensitivities use all assigned rows. Eligible and valid bases are inherited from assignment_audit and intent_and_missingness.",
+      "weighting": "Fixed wt_design. Gross=p*q; contribution=(p-c)*q. Cost c is assumed GBP per proxy-positive subscriber-month. Variance scales by the squared coefficient; scenarios share the same q."
+    },
+    {
+      "analysis_id": "baseline_audience",
+      "values": {
+        "base_tuple": [
+          "unweighted_n",
+          "sum_weights",
+          "kish_ess"
+        ],
+        "interval_tuple": [
+          "estimate",
+          "pointwise_95_lower",
+          "pointwise_95_upper"
+        ],
+        "7": {
+          "group_1": {
+            "eligible": [
+              299,
+              229.8711,
+              298.0667
+            ],
+            "valid": [
+              267,
+              205.2947,
+              266.167
+            ],
+            "q_valid": [
+              0.627388,
+              0.569255,
+              0.685522
+            ]
+          },
+          "group_0": {
+            "eligible": [
+              444,
+              520.1629,
+              426.1475
+            ],
+            "valid": [
+              409,
+              477.5396,
+              392.2312
+            ],
+            "q_valid": [
+              0.470968,
+              0.421583,
+              0.520353
+            ]
+          },
+          "unknown_group": {
+            "eligible": [
+              7,
+              5.4866,
+              6.9835
+            ],
+            "valid": [
+              6,
+              4.7611,
+              5.9902
+            ],
+            "rate_status": "suppressed; n<40 and ESS<40"
+          },
+          "group_1_minus_0": [
+            0.15642,
+            0.080142,
+            0.232698
+          ],
+          "P5_holm_p": 5.8393e-05
+        },
+        "10": {
+          "group_1": {
+            "eligible": [
+              302,
+              231.3674,
+              301.0642
+            ],
+            "valid": [
+              257,
+              197.2915,
+              256.2096
+            ],
+            "q_valid": [
+              0.462308,
+              0.40111,
+              0.523505
+            ]
+          },
+          "group_0": {
+            "eligible": [
+              440,
+              510.6861,
+              421.2687
+            ],
+            "valid": [
+              390,
+              452.3057,
+              373.7913
+            ],
+            "q_valid": [
+              0.282607,
+              0.23739,
+              0.327823
+            ]
+          },
+          "unknown_group": {
+            "eligible": [
+              8,
+              6.3708,
+              7.9847
+            ],
+            "valid": [
+              8,
+              6.3708,
+              7.9847
+            ],
+            "rate_status": "suppressed; n<40 and ESS<40"
+          },
+          "group_1_minus_0": [
+            0.179701,
+            0.103611,
+            0.255791
+          ],
+          "P5_holm_p": 7.3542e-06
+        }
+      },
+      "universe": "Assigned households at GBP7 or GBP10 within each baseline time_pressed_family group; valid estimates additionally require intent 1\u20135. Unknown group status is excluded from comparisons.",
+      "weighting": "Unchanged wt_design within each cell. P5 Holm adjustment covers both prespecified audience contrasts."
+    },
+    {
+      "analysis_id": "premium_niche_suppression",
+      "values": {
+        "price_order_gbp": [
+          4,
+          7,
+          10,
+          13
+        ],
+        "base_tuple": [
+          "unweighted_n",
+          "sum_weights",
+          "kish_ess"
+        ],
+        "eligible_bases": [
+          [
+            22,
+            20.9489,
+            21.7778
+          ],
+          [
+            17,
+            16.2105,
+            16.8327
+          ],
+          [
+            20,
+            18.2056,
+            19.6642
+          ],
+          [
+            19,
+            18.2056,
+            18.8304
+          ]
+        ],
+        "valid_bases": [
+          [
+            20,
+            18.9538,
+            19.7808
+          ],
+          [
+            15,
+            14.4647,
+            14.885
+          ],
+          [
+            20,
+            18.2056,
+            19.6642
+          ],
+          [
+            16,
+            15.2129,
+            15.834
+          ]
+        ],
+        "status": "All price-specific rates, proxies and comparisons suppressed: every valid cell n<40; every valid ESS<40 also triggers a precision warning."
+      },
+      "universe": "Exploratory niche: age_band 3/4, budget_band 3 and current_planning_method 4, by assigned price; valid bases additionally require intent 1\u20135.",
+      "weighting": "Stored wt_design; no pooling to rescue price-specific evidence."
+    }
+  ],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Prioritise GBP7 and GBP10 for a future paid-behaviour test. GBP7 leads the valid-case gross price-times-intent index, GBP3.633 versus GBP3.363, but the difference is uncertain: GBP0.270, pointwise 95% CI \u22120.189 to 0.728; P3 Holm p=0.498. Both exceed GBP4 and GBP13 on this index after adjustment.",
+      "evidence_refs": [
+        "analysis_claims/financial_proxies/values/gross_valid",
+        "analysis_claims/financial_proxies/values/P3_gross_valid",
+        "analysis_claims/assignment_audit/values/intent_valid_bases"
+      ],
+      "importance": "primary",
+      "claim_strength": "Decision recommendation supported by adjusted proxy contrasts; no demonstrated superiority between the two recommended prices.",
+      "qualification": "Valid intent bases are 704, 682, 655 and 633 at GBP4/7/10/13. The index mechanically treats positive intent as a subscriber-month; it is neither revenue nor a forecast. Nonsignificance does not establish equivalence.",
+      "topic_cluster": "price_priority"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "The choice between GBP7 and GBP10 depends on assumed cost. Their valid contribution proxies are respectively GBP3.373/3.195 at cost GBP0.50, GBP2.595/2.690 at the GBP2 base case, and GBP2.076/2.354 at cost GBP3. None of these mid-price contrasts survives the joint 18-test adjustment: Holm p=1, 1 and 0.418. At base cost, all-assigned scoring changes the tiny point lead to GBP7: GBP2.362 versus GBP2.358.",
+      "evidence_refs": [
+        "analysis_claims/financial_proxies/values/contribution_valid_by_assumed_cost",
+        "analysis_claims/financial_proxies/values/contribution_all_assigned_by_assumed_cost",
+        "analysis_claims/financial_proxies/values/P4_contribution_valid_joint_18_test_family"
+      ],
+      "importance": "primary",
+      "claim_strength": "Prespecified scenario sensitivity; no statistically established mid-price winner.",
+      "qualification": "For GBP7 minus GBP10, pointwise 95% CIs are \u22120.254 to 0.611, \u22120.449 to 0.258 and \u22120.580 to 0.023 across the three costs. Costs are hypothetical per proxy-positive subscriber-month; contribution is not profit.",
+      "topic_cluster": "cost_sensitivity"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Lower prices receive substantially stronger stated interest. Positive intent falls from 66.8% at GBP4 to 51.9%, 33.6% and 19.8% at GBP7/10/13; every pairwise valid-case contrast survives P1 Holm adjustment. GBP7 exceeds GBP10 by 18.3 percentage points, pointwise 95% CI 12.9\u201323.6, adjusted p=7.34e\u221211. Across the endpoints, 'definitely would' falls from 42.9% to 7.1%, while 'definitely would not' rises from 11.0% to 55.8%.",
+      "evidence_refs": [
+        "analysis_claims/intent_and_missingness/values/valid_distribution_shares",
+        "analysis_claims/intent_and_missingness/values/q_valid",
+        "analysis_claims/intent_and_missingness/values/P1_valid_contrasts",
+        "analysis_claims/assignment_audit/values/intent_valid_bases"
+      ],
+      "importance": "primary",
+      "claim_strength": "Adjusted evidence of differences in stated intent among valid respondents.",
+      "qualification": "Full five-category distributions are retained in the analysis. Conditioning on post-randomisation response limits full-sample causal interpretation; stated intent is not paid uptake.",
+      "topic_cluster": "interest_tradeoff"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Missing intent increases the uncertainty of higher-price readings. Weighted missing shares are 5.6%, 9.0%, 12.4% and 15.5%; DK alone rises from 2.4% to 9.0%. All-assigned recorded-positive yields remain ordered at 63.1%, 47.2%, 29.5% and 16.8%, with every P2 contrast surviving Holm adjustment. Completion ranges separate GBP7 from GBP10, 47.2\u201356.2% versus 29.5\u201341.8%, but GBP10 and GBP13 ranges overlap.",
+      "evidence_refs": [
+        "analysis_claims/intent_and_missingness/values/missing_counts",
+        "analysis_claims/intent_and_missingness/values/missing_weighted_all_assigned_shares",
+        "analysis_claims/intent_and_missingness/values/q_all_assigned",
+        "analysis_claims/intent_and_missingness/values/logical_completion_bounds",
+        "analysis_claims/intent_and_missingness/values/P2_all_assigned_contrasts"
+      ],
+      "importance": "primary",
+      "claim_strength": "Observed missingness and prespecified conservative sensitivity; logical bounds without sampling uncertainty.",
+      "qualification": "Each all-assigned base is 750. Module exits are 17/30/41/31, distinct from DK, refusal and skipped items. Zero scoring measures recorded-positive yield, not recovered preferences. Completion bounds are neither confidence intervals nor actual-demand bounds.",
+      "topic_cluster": "response_uncertainty"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "GBP4 offers the strongest interest benchmark but lower financial proxies than both mid-prices under every declared cost. GBP13 is a lower-priority candidate: its gross proxy is below both mid-prices after P3 adjustment. However, its base-cost contribution deficits are not established after the joint adjustment: GBP7 minus GBP13 is GBP0.415, Holm p=0.263; GBP10 minus GBP13 is GBP0.510, p=0.208.",
+      "evidence_refs": [
+        "analysis_claims/intent_and_missingness/values/q_valid",
+        "analysis_claims/financial_proxies/values/P3_gross_valid",
+        "analysis_claims/financial_proxies/values/P4_contribution_valid_joint_18_test_family"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Adjusted evidence against GBP4 on contribution proxies; qualified prioritisation against GBP13.",
+      "qualification": "Neither endpoint is proven commercially inferior. GBP4 could serve as an interest benchmark if the behavioural test can support another arm; no actual market optimum is identified.",
+      "topic_cluster": "alternative_prices"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Include time-pressed families as a prespecified audience in behavioural testing. At GBP7, positive intent is 62.7% versus 47.1% among other known-status households: +15.6 points, CI 8.0\u201323.3, P5 Holm p=0.0000584. At GBP10 it is 46.2% versus 28.3%: +18.0 points, CI 10.4\u201325.6, p=0.00000735.",
+      "evidence_refs": [
+        "analysis_claims/baseline_audience/values/7",
+        "analysis_claims/baseline_audience/values/10"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Adjusted observational audience association at each assigned price.",
+      "qualification": "Family/other valid n are 267/409 at GBP7 and 257/390 at GBP10; corresponding ESS are 266.2/392.2 and 256.2/373.8. Unknown status is excluded. This does not establish an effect of household attributes or a distinct optimal audience price.",
+      "topic_cluster": "audience"
+    },
+    {
+      "model_finding_id": "F7",
+      "proposition": "Equal assignment counts do not imply identical composition. Each price has 750 households, but weight sums range from 747.6 to 755.5 and assigned ESS from 698.2 to 699.1. Weighted children-in-household shares range from 38.6% to 40.8%; comfortable-budget shares from 17.3% to 20.0%.",
+      "evidence_refs": [
+        "analysis_claims/assignment_audit/values/assigned_bases",
+        "analysis_claims/assignment_audit/values/weighted_baseline_distributions"
+      ],
+      "importance": "context",
+      "claim_strength": "Descriptive pre-response assignment audit.",
+      "qualification": "These are realised differences under random assignment, not evidence that randomisation failed. Fixed weights target a specified synthetic frame and do not correct outcome nonresponse or establish UK representativeness.",
+      "topic_cluster": "design"
+    },
+    {
+      "model_finding_id": "F8",
+      "proposition": "The exploratory older, comfortable-budget, existing-paid-planner niche cannot support a premium-price recommendation: valid price-specific n are only 20, 15, 20 and 16.",
+      "evidence_refs": [
+        "analysis_claims/premium_niche_suppression/values"
+      ],
+      "importance": "context",
+      "claim_strength": "Mandatory small-cell suppression.",
+      "qualification": "All price-specific rates, proxies and comparisons are suppressed; ESS is also below 40 throughout. Pooling prices would not identify the niche's best price.",
+      "topic_cluster": "small_cells"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": [
+          "F1",
+          "F2"
+        ],
+        "headline_intent": "Advance GBP7 and GBP10 together; resolve the cost-sensitive choice with paid behaviour.",
+        "analytical_relationship": "Recommendation followed by the scenario and inferential limits preventing a single-price winner."
+      },
+      {
+        "order": 2,
+        "finding_refs": [
+          "F3",
+          "F5"
+        ],
+        "headline_intent": "Explain the trade-off between stronger interest at lower prices and financial proxies favouring the middle.",
+        "analytical_relationship": "Full-distribution evidence explains why the highest-intent price need not lead the proxy; endpoint comparisons establish priorities."
+      },
+      {
+        "order": 3,
+        "finding_refs": [
+          "F4",
+          "F7"
+        ],
+        "headline_intent": "Show how response uncertainty and realised assignment composition constrain interpretation.",
+        "analytical_relationship": "Sensitivity analysis qualifies valid-case comparisons; the baseline audit distinguishes fixed design weights from response correction."
+      },
+      {
+        "order": 4,
+        "finding_refs": [
+          "F6",
+          "F8"
+        ],
+        "headline_intent": "Test the prespecified family audience while withholding unsupported niche pricing claims.",
+        "analytical_relationship": "Audience evidence informs future sampling, with small-cell suppression defining the limit of segmentation."
+      }
+    ]
+  },
+  "method_notes": [
+    "Only supplied study information and respondents.csv were used; no browsing, connectors, file discovery or delegation. Analysis references are exact logical paths within this JSON, keyed by stable analysis_id.",
+    "All households and responses are synthetic. The target is the specified hypothetical frame, not all UK households or current customers. Sampling target shares are scenario assumptions.",
+    "Base tuples give unweighted N, sum of fixed wt_design and Kish ESS=(sum w)^2/sum(w^2). Module-entered bases are eligible for P01; intent-valid bases exclude codes 97/98/99. All-assigned sensitivity has all assigned rows as its scoring denominator. Subgroup eligible bases retain all assigned members before requiring valid intent.",
+    "Weighted category distributions retain all five valid intent categories. DK, refusal, skipped items and structural module exits remain separate. Baseline audit distributions retain coded nonresponse as explicit categories. Zero is never treated as missing where valid.",
+    "Inference follows the declared independent-row ratio variance: n/(n\u22121) times sum[w^2(y\u2212mean)^2]/(sum w)^2. Disjoint-cell variances add; proxy variances multiply by squared fixed coefficients. All intervals are unadjusted pointwise normal 95% intervals, not simultaneous intervals.",
+    "All tests are two-sided at alpha 0.05. Holm adjustment uses all six members of each P1/P2/P3 family, all 18 contribution contrasts jointly in P4, and both audience contrasts in P5. Financial all-assigned sensitivities have pointwise intervals only, with no additional confirmatory tests. Contrasts follow cheaper price minus dearer price.",
+    "Small-base rules apply to valid component denominators, not category numerators: suppress n<40, warn at n=40\u201374, and additionally warn for ESS<40. Main price and reported audience comparison cells clear these thresholds; niche and unknown-audience outcome rates are suppressed.",
+    "Financial proxies assume one subscriber-month per positive stated response without conversion calibration. Cost scenarios exclude fixed costs, acquisition, taxes, refunds, payment failures, retention and churn. No actual purchases, revenue, usage or profits were observed. The recommendation is for future behavioural testing, not a validated market optimum.",
+    "Values were calculated before rounding; displayed shares can sum slightly above or below one. No interpolation, demand elasticity, ROI calculation, diagnostic significance scan or routed hypothetical-use evidence was used."
+  ]
+}

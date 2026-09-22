@@ -1,0 +1,232 @@
+[
+  {
+    "table": "intent_by_price",
+    "recipe": {
+      "kind": "intent"
+    }
+  },
+  {
+    "table": "gross_proxy",
+    "recipe": {
+      "kind": "proxy",
+      "cost": 0
+    }
+  },
+  {
+    "table": "contribution_cost_0_5",
+    "recipe": {
+      "kind": "proxy",
+      "cost": 0.5
+    }
+  },
+  {
+    "table": "contribution_cost_2_0",
+    "recipe": {
+      "kind": "proxy",
+      "cost": 2.0
+    }
+  },
+  {
+    "table": "contribution_cost_3_0",
+    "recipe": {
+      "kind": "proxy",
+      "cost": 3.0
+    }
+  },
+  {
+    "table": "P1_VALID_INTENT",
+    "recipe": {
+      "kind": "family",
+      "name": "P1_VALID_INTENT"
+    }
+  },
+  {
+    "table": "P2_ALL_ASSIGNED_INTENT",
+    "recipe": {
+      "kind": "family",
+      "name": "P2_ALL_ASSIGNED_INTENT"
+    }
+  },
+  {
+    "table": "P3_GROSS_PROXY",
+    "recipe": {
+      "kind": "family",
+      "name": "P3_GROSS_PROXY"
+    }
+  },
+  {
+    "table": "P4_CONTRIBUTION_SCENARIOS",
+    "recipe": {
+      "kind": "family",
+      "name": "P4_CONTRIBUTION_SCENARIOS"
+    }
+  },
+  {
+    "table": "audience_intent",
+    "recipe": {
+      "kind": "audience"
+    }
+  },
+  {
+    "table": "assignment_balance",
+    "recipe": {
+      "kind": "balance",
+      "variables": [
+        "age_band",
+        "household_children",
+        "budget_band",
+        "current_planning_method",
+        "weekday_time_pressure_5",
+        "digital_confidence_5",
+        "subscription_spend_band"
+      ]
+    }
+  },
+  {
+    "table": "weekday_time_pressure_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "weekday_time_pressure_5"
+    }
+  },
+  {
+    "table": "digital_confidence_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "digital_confidence_5"
+    }
+  },
+  {
+    "table": "postprice_responded",
+    "recipe": {
+      "kind": "describe",
+      "variable": "postprice_responded"
+    }
+  },
+  {
+    "table": "intent_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "intent_5"
+    }
+  },
+  {
+    "table": "value_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "value_5"
+    }
+  },
+  {
+    "table": "fit_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "fit_5"
+    }
+  },
+  {
+    "table": "affordability_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "affordability_5"
+    }
+  },
+  {
+    "table": "ease_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "ease_5"
+    }
+  },
+  {
+    "table": "trust_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "trust_5"
+    }
+  },
+  {
+    "table": "differentiation_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "differentiation_5"
+    }
+  },
+  {
+    "table": "certainty_5",
+    "recipe": {
+      "kind": "describe",
+      "variable": "certainty_5"
+    }
+  },
+  {
+    "table": "primary_use_goal",
+    "recipe": {
+      "kind": "describe",
+      "variable": "primary_use_goal"
+    }
+  },
+  {
+    "table": "anticipated_use_days_7",
+    "recipe": {
+      "kind": "describe",
+      "variable": "anticipated_use_days_7"
+    }
+  },
+  {
+    "table": "reason_not_commit",
+    "recipe": {
+      "kind": "describe",
+      "variable": "reason_not_commit"
+    }
+  },
+  {
+    "table": "time_pressed_family",
+    "recipe": {
+      "kind": "describe",
+      "variable": "time_pressed_family"
+    }
+  },
+  {
+    "table": "diagnostic_correlations",
+    "recipe": {
+      "kind": "correlations",
+      "pairs": [
+        [
+          "intent_5",
+          "value_5"
+        ],
+        [
+          "intent_5",
+          "fit_5"
+        ],
+        [
+          "intent_5",
+          "affordability_5"
+        ],
+        [
+          "intent_5",
+          "ease_5"
+        ],
+        [
+          "intent_5",
+          "trust_5"
+        ],
+        [
+          "intent_5",
+          "differentiation_5"
+        ],
+        [
+          "value_5",
+          "affordability_5"
+        ]
+      ]
+    }
+  },
+  {
+    "table": "premium_niche",
+    "recipe": {
+      "kind": "tiny"
+    }
+  }
+]

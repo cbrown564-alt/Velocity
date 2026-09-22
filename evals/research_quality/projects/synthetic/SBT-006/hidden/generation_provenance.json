@@ -1,0 +1,23 @@
+{
+  "model": "GPT-6 Pro",
+  "visible_selector": "ChatGPT 6 Pro",
+  "conversation_url": "https://chatgpt.com/c/6aab9fc9-bfcc-83eb-aefb-e10db36b8499",
+  "source_file": "hidden/gpt6_pro_source/generate_sbt006.py",
+  "source_sha256": "709a3b1a881c6d0ca455a19b5099c074ab8c90c687fe6025af4ddfe93c3bf42f",
+  "captured_at_utc": "2026-09-22T05:53:10.202729+00:00",
+  "capture_method": "Standalone generated attachment opened in ChatGPT source preview; select all and copy using browser UI; exact 51725-character clipboard result saved from this task tool transcript. No source edits.",
+  "local_execution": {
+    "seed": 2026092206,
+    "python": "3.14.4",
+    "numpy": "2.4.0",
+    "pandas": "2.3.3",
+    "receipt": {
+      "respondents.csv": "591dbccf2eff795fcb65c11c130f8dc13ba510e2a4856e9310a8d22b9469ca9e",
+      "codebook.json": "64ddaeb0d942d0cea2426210904fc8beedfe4105ead9b92c3da8fdf6c2ed2176",
+      "questionnaire.md": "10cee6c4d18ae436535aa93f8c84f50d9b636b699bc879165b3c1e2fa553a78d",
+      "study_materials.json": "f4d45a27930eaa364431763d2bb8c55572665f6bfe0a2d71c309e8fd1dd0367f",
+      "hidden_design.json": "f2b3d5496b0c11afd81bf211d03066017b52c1a7bcee8be87ec4ad0d0df2b32f"
+    }
+  },
+  "authorship_limits": "Pro reports original source and design locked before its first draw; local design snapshot saved before the first local draw. Author checks are not independent reference evidence. No data, seed or threshold tuning."
+}

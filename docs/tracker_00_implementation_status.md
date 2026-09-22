@@ -48,6 +48,8 @@ graph TD
   SB5 --> SCI26
 
   RQ1["RQ-1 Frozen studies and capped pilot"] --> RQ2["RQ-2 Independent researcher review"]
+  RQ1 --> RQ4["RQ-4 GPT-6 Pro authored SBT-004 to SBT-006 loops"]
+  RQ4 --> RQ2
   RQ2 --> RQ3["RQ-3 Product promotion decision"]
 
   MARKET["External Market Assessment"] --> P0["PILOT-0 Thesis + Success Criteria"]
@@ -373,8 +375,9 @@ This bounded experiment is authorised separately from product expansion. It does
 
 | ID | Outcome | Depends on | Status | Evidence / remaining work |
 |---|---|---|---|---|
-| RQ-1 | Corrected SBT-001; frozen SBT-002/003; ten Codex outputs and explicit scores | SBT-001 corrections (PR 76) | In review | PR 75; `evals/research_quality/runs/2026-09-pilot-comparison/readout.md`; realised-data checks and per-run exposure/numeric audits. No human validation claim. |
-| RQ-2 | Independent findings, preferences and correction burden | RQ-1 | In progress | Blinded pack prepared at `evals/research_quality/review/2026-09-pilot/reviewer_pack.zip`. User's reviewers own assessments; none received. |
+| RQ-1 | Corrected SBT-001; frozen SBT-002/003; ten Codex outputs and explicit scores | SBT-001 corrections (PR 76) | Done | PR 75 merged as `82a43e0`; `evals/research_quality/runs/2026-09-pilot-comparison/readout.md`; realised-data checks and per-run exposure/numeric audits. No human validation claim. |
+| RQ-4 | GPT-6 Pro authored SBT-004/005/006 generation-to-review loops | RQ-1 | Done (verified prototype) | Three frozen studies; twelve scored outputs plus one retained timeout; separate blinded pack and three native-deck examples. `evals/research_quality/runs/2026-09-expansion-comparison/readout.md`. Human validation remains RQ-2. |
+| RQ-2 | Independent findings, preferences and correction burden | RQ-1 | In progress | Separate blinded packs prepared under `evals/research_quality/review/2026-09-pilot/` and `2026-09-expansion/`; share only each `reviewer_pack.zip`. User's reviewers own assessments; none received. |
 | RQ-3 | Decide whether to promote approved-evidence workflow | RQ-2 | Frozen | Offline review/export prototype implemented; durable product integration awaits reviewer evidence, a new study version with aligned methods, and product-specific checks. Fine-tuning deferred. |
 
 ## 5. Completed Work Reference

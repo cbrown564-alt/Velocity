@@ -1,0 +1,187 @@
+{
+  "run_id": "2026-09-expansion-sbt004-raw-staged-1",
+  "study_id": "SBT-004",
+  "status": "provisional_agent_adjudication",
+  "scorer_version": "selection-1.1",
+  "scorer_sha256": "c1f68ac6c2baaf31ef7272cc49d5d63cb773317094c00ccfd5e165e9fb75aa40",
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "universe_weight_routing": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "inference_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_completeness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    }
+  },
+  "selection_metrics": {
+    "mandatory_recall": 0.75,
+    "selected_precision": 1.0,
+    "unsupported_rate": 0.0,
+    "do_not_elevate_rate": 0.0,
+    "redundancy_adjusted_coverage": 0.7142857142857143
+  },
+  "finding_matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1"
+      ],
+      "rationale": "Supported MR task shortlist with appropriate restraint."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "M2",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F2",
+        "F5"
+      ],
+      "rationale": "Effort/external-behaviour contrasts and distinct children context jointly selected, with appropriate bases and inferential qualifications."
+    },
+    {
+      "model_finding_id": "F3",
+      "reference_finding_id": "M3",
+      "match_state": "partial",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F3"
+      ],
+      "rationale": "Overspending contrast correct; budget-state request for budget support remains omitted. Bundled waste outcome cannot separately earn full S1; within-state use-up comparison also absent."
+    },
+    {
+      "model_finding_id": "F4",
+      "reference_finding_id": "M1",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F4",
+        "F1"
+      ],
+      "rationale": "Selected overlap and nonexclusive flags meet the declared narrative requirement; task bundles remain multiple-response."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "M2",
+      "match_state": "partial",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F5"
+      ],
+      "rationale": "Complementary children-context finding; joint full M2 credit on F2 only."
+    },
+    {
+      "model_finding_id": "F6",
+      "reference_finding_id": "M4",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F6"
+      ],
+      "rationale": "Both opposing digital-attitude poles selected."
+    },
+    {
+      "model_finding_id": "F7",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F7"
+      ],
+      "rationale": "Correct barrier incidence. Privacy is shorthand for the questionnaire information-sharing concern, not a measured privacy mechanism."
+    },
+    {
+      "model_finding_id": "F8",
+      "reference_finding_id": "S3",
+      "match_state": "full",
+      "model_importance": "context",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F8"
+      ],
+      "rationale": "Current-use type prevalence and separately routed satisfaction/sharing retain correct bases and limits."
+    },
+    {
+      "model_finding_id": "F9",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F9"
+      ],
+      "rationale": "Bounded future research proposal does not assert measured savings, uptake or ROI."
+    }
+  ],
+  "hard_failures": [],
+  "provenance_coverage": 1.0,
+  "unresolved_references": [],
+  "missed_mandatory_findings": [
+    "M3"
+  ],
+  "correction_burden": {
+    "human_active_minutes": null,
+    "human_corrections": null,
+    "proposed_agent_corrections": [
+      "Add the budget-state versus other-households support_budget contrast to complete M3.",
+      "Consider the within-waste-state use-up support difference (S1) and correctly reverse-keyed planning association (S2); independent reviewers should assess their narrative value."
+    ]
+  },
+  "costs": {
+    "elapsed_seconds": 1045.008609626093,
+    "input_tokens": 294499,
+    "cached_input_tokens": 184704,
+    "output_tokens": 33353,
+    "incremental_usd": null,
+    "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+  },
+  "notes": [
+    "Primary Codex adjudication, not independent researcher validation. Original outputs and frozen reference tiers unchanged.",
+    "Joint selected findings may recover a reference proposition; supporting finding IDs are explicit and reference-cluster coverage is deduplicated.",
+    "Raw and analysis one-pass outputs both retained polarisation. This is a different study with an explicit full-distribution instruction; it does not establish improvement over SBT-002 or reliability.",
+    "The analysis package exposes valid-U1 current-use bases but lacks the U1 DK/refusal split and complete eligible metadata in some prefiltered summaries. The analysis one-pass model identified this limitation rather than inventing it. Freeze v1.0.0 is preserved; correct this in a future study version, and avoid attributing this information difference to workflow quality.",
+    "Scorer/reviewer now resolve exact analysis_results.json#/ JSON pointers and local #/ fragments. This transport-notation extension preserves output bytes and does not change semantic scoring.",
+    "Do-not-elevate traps score inappropriate promotion, not an accurate warning that the prohibited inference is unsupported.",
+    "Staged output inspected independently of its earlier drafts. No additional mandatory proposition was recovered; S2 remains absent from the selected narrative. Null scale scores are intentional pending researcher calibration."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "model": "GPT-6 Pro",
+  "conversation_url": "https://chatgpt.com/c/6aab9fc9-bfcc-83eb-aefb-e10db36b8499",
+  "observed_model_selector": "6 Pro",
+  "response_heading": "SBT-004 is ready for Codex\u2019s independent validation",
+  "source_retrieval": "Complete attachment editor selected and copied through the Browser UI; exact 50,140-character tool result saved without edits. ZIP download unavailable locally.",
+  "source_file": "hidden/gpt6_pro_source/generate_sbt004.py",
+  "source_sha256": "06ecf38fd2478bf8d88651394afe361448c67001d24371fabc6cb82e3de5c290",
+  "local_execution_utc": "2026-09-22T05:05:14.264299+00:00",
+  "seed": 2026092204,
+  "local_execution_receipt": {
+    "design_before_execution_sha256": "de655588a03993c8349218f914825ca2c75a938c2105266643a109a90cbe10ea",
+    "generator_source_sha256": "06ecf38fd2478bf8d88651394afe361448c67001d24371fabc6cb82e3de5c290",
+    "respondents_sha256": "6394f992f4eeddf376413b0ca394466f4a2ca9151304a015930adf658b3aa20a",
+    "public_file_sha256": {
+      "respondents.csv": "6394f992f4eeddf376413b0ca394466f4a2ca9151304a015930adf658b3aa20a",
+      "codebook.json": "c1e0edc250b036ddfb20c530872afcce104f8bcbbf5370a74e1ca0366cd04a52",
+      "questionnaire.md": "06dfa43d9e907728a7b307acd600973ff0131280a3df86b9b6e08474e11adc7a",
+      "study_materials.json": "3887fa6ab6f4535dca6d4d84de979779bf7f0295fdbc6b59eb4a850f59b60af4"
+    },
+    "runtime": {
+      "python": "3.14.4",
+      "numpy": "2.4.0",
+      "pandas": "2.3.3"
+    },
+    "execution": "Generated only; no hidden acceptance checks or reference freeze performed by this generator."
+  },
+  "author_claims": "Author reported first candidate passed 27 effect/trap checks and 24 structural checks. These claims are not local independent verification.",
+  "local_modifications": [],
+  "human_review": "pending"
+}

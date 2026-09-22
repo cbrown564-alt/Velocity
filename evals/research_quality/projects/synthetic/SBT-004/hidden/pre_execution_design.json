@@ -1,0 +1,459 @@
+{
+  "study_id": "SBT-004",
+  "version": "0.1.0-author-candidate",
+  "private": true,
+  "stage": "Authored candidate; author execution does not substitute for Codex independent freeze validation",
+  "model_exposure_allowed": false,
+  "human_review": "pending",
+  "seed": 2026092204,
+  "n": 2700,
+  "default_seed": 2026092204,
+  "dgp": {
+    "profiles": "Fixed disproportionate age x child quotas, shuffled, then independent within-stratum households.",
+    "private_latents": {
+      "budget": "0.75*z0 + 0.66*z1 + 0.20*children - 0.10*older",
+      "time": "0.35*z0 + 0.90*z2 + 0.55*children + 0.30*fulltime - 0.35*older",
+      "planning": "0.85*z3 - 0.25*time + 0.20*older + 0.10*children",
+      "waste_care": "0.80*z4 + 0.20*budget + 0.15*older",
+      "waste_difficulty": "0.60*time - 0.35*planning + 0.75*z5",
+      "digital_fit": "Bernoulli(logistic(0.25*time - 0.30*older - 0.20*budget)); a private taste mode, not a public segment"
+    },
+    "attitude_model": "Correlated latent response + item-specific Normal error; cutpoints [-1.05,-0.35,0.35,1.05]. A2 has a negative planning loading. A9 has two preference modes (+/-1.4).",
+    "external_behaviours": "Binomial counts of days, n=7, and a Bernoulli spending outcome; depend on private traits, never on the observed derived need-state flags.",
+    "selection": "Existing tool use is a softmax choice influenced by fit, planning, budget and age; satisfaction is conditional on recorded current use.",
+    "multiple_response": "Four support and four barrier Bernoulli choices with shared latent covariates; none is all zeros. No exactly-one constraint.",
+    "response_process": "DK/refusal injected by a separately seeded, pre-specified observation mechanism. Structural blanks occur only for unasked tool follow-ups. This is measurement generation, not an outcome correction.",
+    "not_present": [
+      "outcome-based row editing",
+      "search over seeds",
+      "redraw until PASS",
+      "latent scores or classes in respondents.csv",
+      "forced narrative labels",
+      "real respondents"
+    ]
+  },
+  "prospective_validation": {
+    "specified_before_first_execution": true,
+    "intervals_inclusive": true,
+    "default_n": 2700,
+    "policy": "Run once at the specified seed. Missing metric, invalid denominator or failed interval is FAIL/not established, never an automatic pass. Record every failure. Do not silently tune, change seed, weaken thresholds, or invent a reference finding. Any substantive DGP/design revision is a new pre-exposure candidate version with its prior failures retained.",
+    "checks": [
+      {
+        "id": "D01",
+        "metric": "budget_need_pct",
+        "lower": 20,
+        "upper": 55,
+        "rationale": "Budget need is neither universal nor negligible",
+        "finding": "M1"
+      },
+      {
+        "id": "D02",
+        "metric": "effort_need_pct",
+        "lower": 20,
+        "upper": 60,
+        "rationale": "Effort need is substantial",
+        "finding": "M1"
+      },
+      {
+        "id": "D03",
+        "metric": "budget_effort_joint_pct",
+        "lower": 10,
+        "upper": 35,
+        "rationale": "Material measured overlap on joint valid base",
+        "finding": "M1"
+      },
+      {
+        "id": "D04",
+        "metric": "overlap_fraction_of_smaller_state",
+        "lower": 0.28,
+        "upper": 0.8,
+        "rationale": "Neither exclusive nor almost identical flags",
+        "finding": "M1"
+      },
+      {
+        "id": "D05",
+        "metric": "needs_respondent_percent_sum",
+        "lower": 155,
+        "upper": 300,
+        "rationale": "Multiple task selections; respondent percentages legitimately exceed 100",
+        "finding": "M1"
+      },
+      {
+        "id": "D06",
+        "metric": "effort_topup_difference_days",
+        "lower": 0.5,
+        "upper": 2.5,
+        "rationale": "External behaviour difference, not a defining-item contrast",
+        "finding": "M2"
+      },
+      {
+        "id": "D07",
+        "metric": "effort_planning_difference_days",
+        "lower": -2.8,
+        "upper": -0.5,
+        "rationale": "Incomplete planning associated with effort need",
+        "finding": "M2"
+      },
+      {
+        "id": "D08",
+        "metric": "children_topup_difference_days",
+        "lower": 0.25,
+        "upper": 1.6,
+        "rationale": "Prespecified household context is relevant",
+        "finding": "M2"
+      },
+      {
+        "id": "D09",
+        "metric": "children_planning_difference_days",
+        "lower": -1.7,
+        "upper": -0.1,
+        "rationale": "Prespecified context, not a universal parent persona",
+        "finding": "M2"
+      },
+      {
+        "id": "D10",
+        "metric": "budget_overspend_difference_pp",
+        "lower": 15,
+        "upper": 55,
+        "rationale": "External reported outcome linked to budget need",
+        "finding": "M3"
+      },
+      {
+        "id": "D11",
+        "metric": "budget_support_difference_pp",
+        "lower": 15,
+        "upper": 55,
+        "rationale": "Support preference is not a defining attitude item",
+        "finding": "M3"
+      },
+      {
+        "id": "D12",
+        "metric": "digital_agree_pct",
+        "lower": 30,
+        "upper": 65,
+        "rationale": "Substantial favourable pole",
+        "finding": "M4"
+      },
+      {
+        "id": "D13",
+        "metric": "digital_disagree_pct",
+        "lower": 25,
+        "upper": 60,
+        "rationale": "Substantial unfavourable pole",
+        "finding": "M4"
+      },
+      {
+        "id": "D14",
+        "metric": "digital_neutral_pct",
+        "lower": 0,
+        "upper": 25,
+        "rationale": "Midpoint alone is not the population pattern",
+        "finding": "M4"
+      },
+      {
+        "id": "D15",
+        "metric": "digital_mean",
+        "lower": 2.5,
+        "upper": 3.6,
+        "rationale": "An ordinary-looking mean can conceal opposing poles",
+        "finding": "M4"
+      },
+      {
+        "id": "D16",
+        "metric": "waste_need_pct",
+        "lower": 15,
+        "upper": 50,
+        "rationale": "Waste need remains another overlapping task",
+        "finding": "S1"
+      },
+      {
+        "id": "D17",
+        "metric": "waste_days_difference",
+        "lower": 0.4,
+        "upper": 2.8,
+        "rationale": "External discard-day difference",
+        "finding": "S1"
+      },
+      {
+        "id": "D18",
+        "metric": "waste_useup_support_difference_pp",
+        "lower": 10,
+        "upper": 45,
+        "rationale": "Support preference corroborates a distinct task",
+        "finding": "S1"
+      },
+      {
+        "id": "D19",
+        "metric": "planning_index_behaviour_weighted_r",
+        "lower": 0.35,
+        "upper": 0.85,
+        "rationale": "Reverse-keyed index relates to external planning behaviour",
+        "finding": "S2"
+      },
+      {
+        "id": "D20",
+        "metric": "current_tool_user_pct",
+        "lower": 20,
+        "upper": 55,
+        "rationale": "Existing users are a selected minority",
+        "finding": "S3"
+      },
+      {
+        "id": "D21",
+        "metric": "tool_satisfaction_top2_pct",
+        "lower": 55,
+        "upper": 90,
+        "rationale": "Good satisfaction within current users is not all-household demand",
+        "finding": "S3"
+      },
+      {
+        "id": "D22",
+        "metric": "older_paid_user_valid_sat_n",
+        "lower": 5,
+        "upper": 39,
+        "rationale": "Seductive older/paid tool cell is intentionally below suppression threshold",
+        "finding": "R3"
+      },
+      {
+        "id": "D23",
+        "metric": "older_paid_user_top2_private_pct",
+        "lower": 55,
+        "upper": 100,
+        "rationale": "Private-only trap diagnostic; NEVER a publishable subgroup rate",
+        "finding": "R3"
+      },
+      {
+        "id": "D24",
+        "metric": "barriers_respondent_percent_sum",
+        "lower": 135,
+        "upper": 295,
+        "rationale": "Multiple barriers can co-exist",
+        "finding": "C2"
+      },
+      {
+        "id": "D25",
+        "metric": "needs_none_valid_n",
+        "lower": 10,
+        "upper": 500,
+        "rationale": "None rows must survive the MR denominator",
+        "finding": "C2"
+      },
+      {
+        "id": "D26",
+        "metric": "unknown_need_state_any_n",
+        "lower": 40,
+        "upper": 500,
+        "rationale": "Nonresponse is not absence of need",
+        "finding": "C1"
+      },
+      {
+        "id": "D27",
+        "metric": "full_sample_kish_ess_fraction",
+        "lower": 0.72,
+        "upper": 0.95,
+        "rationale": "Unequal positive weighting has a visible design effect",
+        "finding": "C2"
+      }
+    ],
+    "structural_requirements": [
+      "Exactly n unique eligible records and 34 public columns",
+      "positive finite weights and declared stratum targets",
+      "all categorical codes documented",
+      "routing and nonresponse semantics correct",
+      "observed need flags exactly match public deterministic definitions",
+      "private scores/mode absent from CSV",
+      "public materials omit proposed truths/reference tiers/acceptance intervals"
+    ],
+    "inference_readiness": "Independent reviewer checks the six public estimands, family membership and linearisation. Acceptance intervals are effect/shape requirements, NOT required p-values; do not chase significance or label unplanned demographic differences noise."
+  },
+  "reference_findings": [
+    {
+      "finding_id": "M1",
+      "tier": "mandatory",
+      "proposition": "Budget and effort needs overlap materially; household support is a bundle of tasks rather than an exclusive set of personas.",
+      "evidence": [
+        "three-state prevalence and pairwise joint-valid overlap",
+        "N1 weighted respondent incidences, including all-zero cases"
+      ],
+      "acceptance_ids": [
+        "D01",
+        "D02",
+        "D03",
+        "D04",
+        "D05"
+      ],
+      "narrative_credit": "Must mention overlap and that flags do not partition households; summing need flags to 100% is not acceptable."
+    },
+    {
+      "finding_id": "M2",
+      "tier": "mandatory",
+      "proposition": "Effort-relief households report more unplanned top-up days and fewer ahead-planned meal days; households with children are a relevant, but not synonymous, context.",
+      "evidence": [
+        "NEED_EFFORT_TOPUPS",
+        "NEED_EFFORT_PLANNING",
+        "CHILDREN_TOPUPS",
+        "CHILDREN_PLANNING"
+      ],
+      "acceptance_ids": [
+        "D06",
+        "D07",
+        "D08",
+        "D09"
+      ],
+      "narrative_credit": "Use external behaviour rather than A5/A6; avoid implying every household with children belongs to the effort state."
+    },
+    {
+      "finding_id": "M3",
+      "tier": "mandatory",
+      "proposition": "Budget pressure is associated with reported overspending and a stronger request for budget support; this is not proof that any proposed tool will reduce spending.",
+      "evidence": [
+        "NEED_BUDGET_OVERSPEND",
+        "support_budget incidence by need_budget"
+      ],
+      "acceptance_ids": [
+        "D10",
+        "D11"
+      ],
+      "narrative_credit": "B4 is a binary self-reported experience, not expenditure amount or income. Support selection is external to the need definition."
+    },
+    {
+      "finding_id": "M4",
+      "tier": "mandatory",
+      "proposition": "Attitudes to digital meal suggestions are divided into sizeable favourable and unfavourable poles, not neutral consensus; pilot a format rather than assume universal digital uptake.",
+      "evidence": [
+        "Full A9 weighted five-category distribution",
+        "A9 bottom-two, midpoint and top-two with valid bases",
+        "current use and conditional satisfaction as context only"
+      ],
+      "acceptance_ids": [
+        "D12",
+        "D13",
+        "D14",
+        "D15"
+      ],
+      "narrative_credit": "FULL credit requires the opposing poles to appear in the actual selected finding or narrative. Computing a distribution in an unused table, reporting only the mean, or saying some people disagree is insufficient. Describe the split; exact word 'polarisation' is not required."
+    },
+    {
+      "finding_id": "S1",
+      "tier": "secondary",
+      "proposition": "The waste-help need is associated with more reported discard days and demand for use-up support, suggesting a distinct task alongside cost and effort.",
+      "evidence": [
+        "NEED_WASTE_DISCARD",
+        "support_use_up by need_waste"
+      ],
+      "acceptance_ids": [
+        "D16",
+        "D17",
+        "D18"
+      ]
+    },
+    {
+      "finding_id": "S2",
+      "tier": "secondary",
+      "proposition": "Correctly oriented planning attitudes are positively associated with ahead-planned meal days; reversal matters, but association is not intervention effectiveness.",
+      "evidence": [
+        "Pairwise-valid weighted planning_orientation vs B1 association"
+      ],
+      "acceptance_ids": [
+        "D19"
+      ]
+    },
+    {
+      "finding_id": "S3",
+      "tier": "secondary",
+      "proposition": "Current digital-tool users tend to report good satisfaction, but they are a selected minority; shared-list use is a separate conditional behaviour, not all-household penetration.",
+      "evidence": [
+        "U1 prevalence",
+        "U2 valid current-user distribution",
+        "U3 valid current-user incidence"
+      ],
+      "acceptance_ids": [
+        "D20",
+        "D21"
+      ]
+    },
+    {
+      "finding_id": "C1",
+      "tier": "context",
+      "proposition": "Need derivation and reverse keying must exclude 97/98; an unknown flag is not No. Need-state versus defining-item differences provide no independent validation.",
+      "evidence": [
+        "codebook derivations and missingness audit"
+      ],
+      "acceptance_ids": [
+        "D26"
+      ]
+    },
+    {
+      "finding_id": "C2",
+      "tier": "context",
+      "proposition": "Use valid-case weighted research bases, eligible-respondent MR denominators and current-user routes, reporting unweighted N, weighted N and Kish ESS.",
+      "evidence": [
+        "survey design and denominator audits"
+      ],
+      "acceptance_ids": [
+        "D24",
+        "D25",
+        "D27"
+      ]
+    },
+    {
+      "finding_id": "R1",
+      "tier": "do_not_elevate",
+      "proposition": "An attractive exclusive budget/time/waste segmentation, or a claim validated only by the items used to define that state, is not supported.",
+      "failure": "Priority-assign overlapping flags to named personas or treat self-definition as external evidence",
+      "acceptance_ids": [
+        "D03",
+        "D04"
+      ]
+    },
+    {
+      "finding_id": "R2",
+      "tier": "do_not_elevate",
+      "proposition": "An average-looking digital-attitude mean or good satisfaction among current users does not justify a universal digital-first rollout or a conversion forecast.",
+      "failure": "Erase the two poles, generalise routed satisfaction, or infer observed adoption from stated interest",
+      "acceptance_ids": [
+        "D12",
+        "D13",
+        "D15",
+        "D20",
+        "D21"
+      ]
+    },
+    {
+      "finding_id": "R3",
+      "tier": "do_not_elevate",
+      "proposition": "The apparently attractive satisfaction of older paid-tool users is a suppressed tiny cell, not evidence of the winning target audience.",
+      "failure": "Publish/rank its rate despite valid n<40 or use it as the launch target",
+      "acceptance_ids": [
+        "D22",
+        "D23"
+      ]
+    }
+  ],
+  "reference_number_policy": "No author-supplied numbers in these propositions. Codex must independently compute realised values and all valid bases before binding evidence. Local author checks, if supplied, are separate non-gold diagnostics.",
+  "synthesis_test": "Distinguish available analysis from narrative selection: for M4 score whether the actual narrative uses both poles, not whether an intermediate distribution happened to be computed.",
+  "privacy_and_leakage": {
+    "allowlist": [
+      "respondents.csv",
+      "codebook.json",
+      "questionnaire.md",
+      "study_materials.json"
+    ],
+    "exclude": [
+      "hidden_design.json",
+      "generate_sbt004.py",
+      "author_check.py",
+      "test_sbt004.py",
+      "author check results",
+      "reference artifacts"
+    ]
+  },
+  "scope_limits": [
+    "Synthetic within-version realised data, not UK empirical facts",
+    "cross-sectional self-report, no causality",
+    "demographics may have meaningful descriptive associations",
+    "no exclusive need-state segments or inferred latent-class labels",
+    "no behavioural response to an untested intervention",
+    "no SBT-005+ or presentation work"
+  ]
+}

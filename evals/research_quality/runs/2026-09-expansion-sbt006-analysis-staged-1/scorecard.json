@@ -1,0 +1,147 @@
+{
+  "run_id": "2026-09-expansion-sbt006-analysis-staged-1",
+  "study_id": "SBT-006",
+  "status": "provisional_agent_adjudication",
+  "scorer_version": "selection-1.1",
+  "scorer_sha256": "c1f68ac6c2baaf31ef7272cc49d5d63cb773317094c00ccfd5e165e9fb75aa40",
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "universe_weight_routing": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "inference_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_completeness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    }
+  },
+  "selection_metrics": {
+    "mandatory_recall": 1.0,
+    "selected_precision": 1.0,
+    "unsupported_rate": 0.0,
+    "do_not_elevate_rate": 0.0,
+    "redundancy_adjusted_coverage": 0.7142857142857143
+  },
+  "finding_matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": "M2",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "rationale": "Gross and contribution middle-price point leaders jointly retained with the cheapest-price tradeoff."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "M1",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F2"
+      ],
+      "rationale": "Selected intent gradient and full distribution evidence remain stated preferences, not demand."
+    },
+    {
+      "model_finding_id": "F3",
+      "reference_finding_id": "M3",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F3"
+      ],
+      "rationale": "All fixed costs, unresolved mid-price comparisons and behavioural-test recommendation selected."
+    },
+    {
+      "model_finding_id": "F4",
+      "reference_finding_id": "M4",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F4"
+      ],
+      "rationale": "Missingness, all-assigned sensitivity, completion ranges and fixed-weight limitations explicit."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "S1",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F5"
+      ],
+      "rationale": "Prespecified audience associations qualified by nonrandom attributes, bases and unknown-group exclusions."
+    },
+    {
+      "model_finding_id": "F6",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F6"
+      ],
+      "rationale": "Routed price/free-alternative reasons inform interviews without causal or all-household claims."
+    }
+  ],
+  "hard_failures": [],
+  "provenance_coverage": 1.0,
+  "unresolved_references": [],
+  "missed_mandatory_findings": [],
+  "correction_burden": {
+    "human_active_minutes": null,
+    "human_corrections": null,
+    "proposed_agent_corrections": [
+      "Researchers should judge whether omitting diagnostic correlations and routed follow-up findings improves focus or loses relevant context."
+    ]
+  },
+  "costs": {
+    "elapsed_seconds": 757.982930624974,
+    "input_tokens": 267203,
+    "cached_input_tokens": 34560,
+    "output_tokens": 24438,
+    "incremental_usd": null,
+    "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+  },
+  "notes": [
+    "Primary Codex adjudication is provisional; independent researchers have not assessed these outputs. Dimension ratings remain null.",
+    "Full mandatory credit concerns selected findings and story, with joint support explicitly linked. Numerically correct unselected tables do not earn full selection credit.",
+    "Numeric mappings are non-exhaustive and bound to original output SHA-256. No original output or frozen reference was edited.",
+    "Secondary S2 and S3 are not selected findings. Routing caveats for certainty and imagined use occur only in method notes; intermediate/method-only material does not earn selected finding recall.",
+    "All three restraints retained, including premium-niche suppression in method notes. No unsupported selected claim or wrong-base interpretation identified."
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "study_id": "SBT-004",
+  "protocol_version": "2026-09-expansion-1",
+  "declared_before_model_exposure": true,
+  "question": "Does staged verification and prioritisation retain important research findings beyond one pass, and does supplying audited analyses remove calculation/base errors on three orthogonal new studies?",
+  "matrix": [
+    {
+      "surface": "analysis",
+      "workflow": "one_pass",
+      "replicate": 1
+    },
+    {
+      "surface": "analysis",
+      "workflow": "staged",
+      "replicate": 1
+    },
+    {
+      "surface": "raw",
+      "workflow": "one_pass",
+      "replicate": 1
+    },
+    {
+      "surface": "raw",
+      "workflow": "staged",
+      "replicate": 1
+    }
+  ],
+  "cap": {
+    "completed_outputs_per_study": 4,
+    "stages_per_study": 10,
+    "timeout_seconds_per_stage": 360,
+    "technical_retry_policy": "Preserve failed attempts; at most one replacement for transport/runtime failure, no retries for poor research content."
+  },
+  "model": {
+    "provider": "existing Codex access",
+    "model_id": "gpt-6-astra",
+    "reasoning_effort": "low"
+  },
+  "inputs": "Same public questionnaire, codebook and brief in each arm; approved numerical tables OR raw respondents. Both arms receive the same declared inference and denominator policy. All material hash-bound. No author/generator/hidden/reference/score files.",
+  "workflow": "Existing pilot_runner.py TASK/STAGES unchanged except expanding study ID choices; each stage fresh context with prior output and same public files.",
+  "primary_readouts": [
+    "Mandatory full finding recall",
+    "Selected finding precision",
+    "Unsupported claims",
+    "Wrong bases or estimands",
+    "Inappropriate promotion of do_not_elevate claims",
+    "Missed high-priority narrative findings",
+    "Reviewer correction burden separately"
+  ],
+  "scoring": "Existing frozen 1.1 semantic selection rules. Explicit full/partial/novel adjudication by Codex is provisional; no automatic topic-string matching or independent-human claim. M4 full credit requires both digital-attitude poles in a selected finding or narrative, not only intermediate analysis.",
+  "interpretation_limits": [
+    "One replicate per arm is a capped workflow comparison, not E5 stability or a model ranking.",
+    "This is newly exposed development data, not a secret holdout.",
+    "Human validation and real-world transfer remain pending.",
+    "Costs remain unavailable when CLI reports only tokens; record null rather than invent dollars."
+  ],
+  "next_step": "Blinded review pack and one evidence-bound approval-to-native-deck prototype per study, with QA approvals clearly marked as software checks."
+}

@@ -1,0 +1,158 @@
+{
+  "adjudicator": "Codex primary agent; provisional and uncalibrated against researchers",
+  "matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1"
+      ],
+      "rationale": "Correct weighted MR task shortlist, valid respondent denominator and restrained ranking."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "M2",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F2",
+        "F5"
+      ],
+      "rationale": "Selected F2 and F5 jointly recover effort-linked external behaviour and the distinct children context; inferential calculations match frozen evidence."
+    },
+    {
+      "model_finding_id": "F3",
+      "reference_finding_id": "M3",
+      "match_state": "partial",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F3"
+      ],
+      "rationale": "Correct overspending association and limits, but omits the differential request for budget support within the budget state."
+    },
+    {
+      "model_finding_id": "F4",
+      "reference_finding_id": "S1",
+      "match_state": "partial",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F4"
+      ],
+      "rationale": "Correct discard-day contrast and general use-up interest; does not compute or select the within-waste-state use-up support difference."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "M2",
+      "match_state": "partial",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F5"
+      ],
+      "rationale": "Correct complementary children-context result. Joint full M2 credit recorded on F2; no extra cluster credit."
+    },
+    {
+      "model_finding_id": "F6",
+      "reference_finding_id": "M1",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F6",
+        "F1"
+      ],
+      "rationale": "Explicit overlapping flags and multiple-state prevalence; does not create exclusive personas."
+    },
+    {
+      "model_finding_id": "F7",
+      "reference_finding_id": "M4",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F7"
+      ],
+      "rationale": "Selected finding and narrative explicitly retain both opposing digital-attitude poles."
+    },
+    {
+      "model_finding_id": "F8",
+      "reference_finding_id": "S3",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F8"
+      ],
+      "rationale": "Correct current-use prevalence and conditional satisfaction/sharing with separate valid bases and no commercial extrapolation."
+    },
+    {
+      "model_finding_id": "F9",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F9"
+      ],
+      "rationale": "Correct near-equal barrier incidences, materiality and multiple-response qualifications."
+    }
+  ],
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "universe_weight_routing": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "inference_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_completeness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    }
+  },
+  "hard_failures": [],
+  "proposed_corrections": [
+    "Add the budget-state versus other-households support_budget contrast to complete M3.",
+    "Consider the within-waste-state use-up support difference (S1) and correctly reverse-keyed planning association (S2); independent reviewers should assess their narrative value."
+  ],
+  "notes": [
+    "Primary Codex adjudication, not independent researcher validation. Original outputs and frozen reference tiers unchanged.",
+    "Joint selected findings may recover a reference proposition; supporting finding IDs are explicit and reference-cluster coverage is deduplicated.",
+    "Raw and analysis one-pass outputs both retained polarisation. This is a different study with an explicit full-distribution instruction; it does not establish improvement over SBT-002 or reliability.",
+    "The analysis package exposes valid-U1 current-use bases but lacks the U1 DK/refusal split and complete eligible metadata in some prefiltered summaries. The analysis one-pass model identified this limitation rather than inventing it. Freeze v1.0.0 is preserved; correct this in a future study version, and avoid attributing this information difference to workflow quality.",
+    "Scorer/reviewer now resolve exact analysis_results.json#/ JSON pointers and local #/ fragments. This transport-notation extension preserves output bytes and does not change semantic scoring.",
+    "Do-not-elevate traps score inappropriate promotion, not an accurate warning that the prohibited inference is unsupported."
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "status": "verified_prototype_not_validated_or_promoted",
+  "date": "2026-09-22",
+  "checks": {
+    "python_research_tests": {
+      "status": "PASS",
+      "passed": 67
+    },
+    "npm_run_ci_full": {
+      "status": "PASS",
+      "vitest_passed": 1591,
+      "vitest_todo": 3,
+      "additional_agent_workflow_tests": 8,
+      "playwright_journeys": 27,
+      "log": "ci-full.log"
+    },
+    "npm_run_ci_after_final_export_label_fix": {
+      "status": "PASS",
+      "log": "ci-final.log"
+    },
+    "blinded_review_browser": {
+      "status": "PASS",
+      "studies": 3,
+      "candidates": 12,
+      "details": "browser-verification.json",
+      "checks": [
+        "independent baseline before candidates",
+        "preparation required",
+        "all candidate references resolve",
+        "pending decision blocks approval",
+        "reason required for revision",
+        "original wording and evidence preserved",
+        "mobile viewport without document overflow",
+        "changed evidence clears all approvals while preserving edits",
+        "no page errors"
+      ]
+    },
+    "frozen_hashes": {
+      "status": "PASS",
+      "studies": [
+        "SBT-002",
+        "SBT-003",
+        "SBT-004",
+        "SBT-005",
+        "SBT-006",
+        "FSA-CIT-2025-03"
+      ]
+    },
+    "original_reviewer_zip": {
+      "status": "unchanged",
+      "sha256": "a9342f89cd3fc93ad1b1d24feaa23fce966f12da3c47c3cc4f84e0d2518710cd"
+    },
+    "new_reviewer_zip": {
+      "status": "PASS",
+      "pack_id": "e50c5a2a55413775",
+      "files": 18,
+      "candidates": 12,
+      "sha256": "715b8789a288592e92b3d9b7658d9d1006e9218bac13fdf23494fa345af0442e",
+      "private_key_and_gold_excluded": true
+    },
+    "git_diff_check": {
+      "status": "intentional_frozen_exceptions",
+      "detail": "All reports are unchanged Markdown double-space hard breaks in SBT-004 questionnaire copies and exact recorded prompts; frozen bytes preserved.",
+      "files": [
+        "evals/research_quality/projects/synthetic/SBT-004/model_inputs/questionnaire.md",
+        "evals/research_quality/projects/synthetic/SBT-004/questionnaire.md",
+        "evals/research_quality/review/2026-09-expansion/reviewer_pack/materials/SBT-004/questionnaire.md",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-onepass-1/01-researcher/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/01-analyst/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/02-verifier/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/03-prioritiser/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/04-story_editor/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-raw-onepass-1/01-researcher/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-raw-staged-1/01-analyst/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-raw-staged-1/02-verifier/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-raw-staged-1/03-prioritiser/prompt.txt",
+        "evals/research_quality/runs/2026-09-expansion-sbt004-raw-staged-1/04-story_editor/prompt.txt"
+      ]
+    }
+  },
+  "exports": [
+    {
+      "study_id": "SBT-004",
+      "native_charts": 4,
+      "slides": 5,
+      "pptx_sha256": "21014f1cc39835baed31c0204944ad96debbc66d48569a9ca2815b82115930e3",
+      "approval_sha256": "d7ef81484eddfabf0f41baef20614e0464c3699fc57766fd07aa0b58e0ec1053",
+      "slide_png_sha256": {
+        "slide-1.png": "1735fbd2c2a3bb37b56a2e448792502ac848e01c01a2313085e62b3bb2ab932f",
+        "slide-2.png": "fd4a43e58d7f6e137c0fe11bfa5a63803c38036b8365370bb48bbd5d5a1f7ec4",
+        "slide-3.png": "2e56701a2bde14d37a28c12b94b22ed2c73c47889a129ef67a2842292d9aab45",
+        "slide-4.png": "41276c4140e55f7ef95c30ee3d371ee00b3cd4932390d5b89ae2025be73513cf",
+        "slide-5.png": "7387ae2b3f0e2bc47a6475258cecff1109cdec922b4e3b82820022d8b7c02c83"
+      },
+      "direct_inspection": "PASS for prototype legibility: titles, axis labels, categories and values inspected. Final renders identical to inspected iterations. One representative chart per beat; full evidence and qualifications in notes. Not publication-quality validation."
+    },
+    {
+      "study_id": "SBT-005",
+      "native_charts": 5,
+      "slides": 6,
+      "pptx_sha256": "46b33ffff6d501efa4831413db832d405e1056a3c826395daa72bb459e915509",
+      "approval_sha256": "b9017af847960eb6a425f3f2eb582aed435fe4e0b9c05238b7f33ebd9b12999a",
+      "slide_png_sha256": {
+        "slide-1.png": "2cb1a93d2622a9fb2c96f53843226d17651d965d05d613bb095e813586b9e8ed",
+        "slide-2.png": "fd9c21210f6a1f5af5522bb6d9c5a60c279c0dbbd908c36190c808a3f2f93861",
+        "slide-3.png": "15e2b967ca8cf51dde0c897ed303d7bd392d95a46591b09a0d40e0050c12453a",
+        "slide-4.png": "393aba56bd211c15f02a51861a2e215ff0a6eafa02f2997a16749a07c119ed7e",
+        "slide-5.png": "e2e7b1fe5f88347192b2391696d0f21106249e096471d30aea2428025b9f148a",
+        "slide-6.png": "3891ed2fa9da5789b7497b4551b88acb14df54ee023d9613be21683bd9315fa0"
+      },
+      "direct_inspection": "PASS for prototype legibility: titles, axis labels, categories and values inspected. Final renders identical to inspected iterations. One representative chart per beat; full evidence and qualifications in notes. Not publication-quality validation."
+    },
+    {
+      "study_id": "SBT-006",
+      "native_charts": 5,
+      "slides": 6,
+      "pptx_sha256": "795169b6d997096475731ec7db4031bb0315681c699fb96f81499a2fd0b012bc",
+      "approval_sha256": "a5cd0f59b50cc6da05f7279a30170b67a5000ff27643b31ea42219ec945b038c",
+      "slide_png_sha256": {
+        "slide-1.png": "b2e54306409f934b5d15bf832d4fc521314da1d945d0bc4a8d8ea2805b6b376b",
+        "slide-2.png": "4bc9346da67cdcb3a29df333fd7a31a9ee04404837e145d9e60dc98a04bf5e76",
+        "slide-3.png": "c073296f34ecf63b4c166de0475290496ddbb3c4307b1786d1e2616731bd01df",
+        "slide-4.png": "e747282ee43230e40141cbb2e4902be4e0ecba843e5b2432c4ac53586646c2e1",
+        "slide-5.png": "497461e2e434bfcf0150da9557d88923d75e3708a23250958df0bfb3efc603f9",
+        "slide-6.png": "45be9b4e3e70c69de1ab5081c0aec9e6aee504b639184b83fb2ec0d9e5e8fabe"
+      },
+      "direct_inspection": "PASS for prototype legibility: titles, axis labels, categories and values inspected. Final renders identical to inspected iterations. One representative chart per beat; full evidence and qualifications in notes. Not publication-quality validation."
+    }
+  ],
+  "resolved_verification_failures": [
+    {
+      "check": "Initial full browser suite",
+      "observed": "Boot prerequisite reload aborted with net::ERR_ABORTED; 24 dependent journeys did not run.",
+      "evidence": "initial-browser-failure/trace.zip",
+      "diagnosis": "Trace changed Vite dependency hashes across reload, consistent with a cold dependency-optimisation race. No product code changed for this failure.",
+      "followup": "Focused boot prerequisite rerun passed all 3; subsequent full suite passed all 27."
+    },
+    {
+      "check": "Native charts in LibreOffice",
+      "observed": "Short category labels absent with multilevel cache, and long pricing audience labels clipped.",
+      "fix": "Flat categories now use a native single-level string cache. Pricing audience labels use family, qualified by the time-pressed-family table title; original labels/data retained in cited evidence.",
+      "followup": "All final slide renders inspected or byte-identical to inspected images."
+    }
+  ],
+  "limitations": [
+    "Approvals are clearly labelled software QA, not researcher decisions.",
+    "Only analysis candidates with approved table references feed the bounded native-deck adapter.",
+    "Prototype uses one representative chart per beat; other evidence, inferential qualifications and original reviewer records remain in notes.",
+    "No Velocity session migration, production UI integration, independent researcher validation or fine-tuning is claimed."
+  ]
+}

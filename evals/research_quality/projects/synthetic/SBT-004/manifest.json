@@ -1,0 +1,14 @@
+{
+  "project_id": "SBT-004",
+  "version": "1.0.0",
+  "title": "Household grocery and meal-planning needs",
+  "status": "data_reference_frozen",
+  "presentation_in_scope": false,
+  "design": {
+    "type": "cross_sectional_usage_and_attitudes",
+    "target_n": 2700,
+    "seed": 2026092204,
+    "weight_variable": "wt_final"
+  },
+  "freeze_rule": "Independent numerical audit and all prospectively specified realised checks must pass before evaluated model exposure."
+}

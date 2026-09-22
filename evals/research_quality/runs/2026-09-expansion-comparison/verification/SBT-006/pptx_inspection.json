@@ -1,0 +1,160 @@
+{
+  "status": "needs_review",
+  "pptxPath": "/Users/cobro/code/Velocity-expansion/evals/research_quality/runs/2026-09-expansion-comparison/verification/SBT-006-qa-reviewed.pptx",
+  "inspectedAt": "2026-09-22T06:33:23.026Z",
+  "fileSizeBytes": 103877,
+  "slideCount": 6,
+  "notesSlideCount": 6,
+  "mediaCount": 0,
+  "editableTextBoxCount": 11,
+  "tableCount": 0,
+  "chartCount": 5,
+  "pictureCount": 0,
+  "remainingTokens": [],
+  "emptySlides": [],
+  "overflowWarnings": [
+    {
+      "slideNumber": 1,
+      "shapeIndex": 1,
+      "textLength": 35,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 2,
+      "shapeIndex": 1,
+      "textLength": 59,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 2,
+      "shapeIndex": 2,
+      "textLength": 173,
+      "roughCapacity": 161,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 3,
+      "shapeIndex": 1,
+      "textLength": 46,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 3,
+      "shapeIndex": 2,
+      "textLength": 165,
+      "roughCapacity": 161,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 4,
+      "shapeIndex": 1,
+      "textLength": 78,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 4,
+      "shapeIndex": 2,
+      "textLength": 188,
+      "roughCapacity": 161,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 5,
+      "shapeIndex": 1,
+      "textLength": 81,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 5,
+      "shapeIndex": 2,
+      "textLength": 166,
+      "roughCapacity": 161,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 6,
+      "shapeIndex": 1,
+      "textLength": 71,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    }
+  ],
+  "fonts": [
+    "Arial"
+  ],
+  "colors": [
+    "24302A",
+    "666666"
+  ],
+  "themeFonts": [
+    "Angsana New",
+    "Arial",
+    "Calibri",
+    "Calibri Light",
+    "Cordia New",
+    "DaunPenh",
+    "DokChampa",
+    "Ebrima",
+    "Estrangelo Edessa",
+    "Euphemia",
+    "Gautami",
+    "Iskoola Pota",
+    "Javanese Text",
+    "Kalinga",
+    "Kartika",
+    "Latha",
+    "Leelawadee UI",
+    "Mangal",
+    "Microsoft Himalaya",
+    "Microsoft JhengHei",
+    "Microsoft New Tai Lue",
+    "Microsoft Tai Le",
+    "Microsoft Uighur",
+    "Microsoft Yi Baiti",
+    "Mongolian Baiti",
+    "MoolBoran",
+    "MV Boli",
+    "Myanmar Text",
+    "Nirmala UI",
+    "Nyala",
+    "Phagspa",
+    "Plantagenet Cherokee",
+    "Raavi",
+    "Segoe UI",
+    "Shruti",
+    "Sylfaen",
+    "Times New Roman",
+    "Tunga",
+    "Vrinda",
+    "맑은 고딕",
+    "新細明體",
+    "游ゴシック",
+    "游ゴシック Light",
+    "等线",
+    "等线 Light"
+  ],
+  "themeColors": [
+    "000000",
+    "0563C1",
+    "44546A",
+    "4472C4",
+    "5B9BD5",
+    "70AD47",
+    "954F72",
+    "A5A5A5",
+    "E7E6E6",
+    "ED7D31",
+    "FFC000"
+  ],
+  "fontCount": 1,
+  "paletteSize": 2,
+  "media": [],
+  "warnings": [
+    "Potential text overflow detected."
+  ]
+}

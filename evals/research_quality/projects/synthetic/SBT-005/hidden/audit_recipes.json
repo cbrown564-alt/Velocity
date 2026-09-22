@@ -1,0 +1,587 @@
+[
+  {
+    "table": "age_band",
+    "recipe": {
+      "kind": "describe",
+      "variable": "age_band",
+      "codes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "route": "age_band"
+    }
+  },
+  {
+    "table": "children_under18",
+    "recipe": {
+      "kind": "describe",
+      "variable": "children_under18",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "children_under18"
+    }
+  },
+  {
+    "table": "work_pattern",
+    "recipe": {
+      "kind": "describe",
+      "variable": "work_pattern",
+      "codes": [
+        1,
+        2,
+        3
+      ],
+      "route": "work_pattern"
+    }
+  },
+  {
+    "table": "online_grocery_pre",
+    "recipe": {
+      "kind": "describe",
+      "variable": "online_grocery_pre",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "online_grocery_pre"
+    }
+  },
+  {
+    "table": "digital_confidence_pre",
+    "recipe": {
+      "kind": "describe",
+      "variable": "digital_confidence_pre",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "digital_confidence_pre"
+    }
+  },
+  {
+    "table": "budget_pressure_pre",
+    "recipe": {
+      "kind": "describe",
+      "variable": "budget_pressure_pre",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "budget_pressure_pre"
+    }
+  },
+  {
+    "table": "mealplan_days_pre",
+    "recipe": {
+      "kind": "describe",
+      "variable": "mealplan_days_pre",
+      "codes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "route": "mealplan_days_pre"
+    }
+  },
+  {
+    "table": "assignment",
+    "recipe": {
+      "kind": "describe",
+      "variable": "assignment",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "assignment"
+    }
+  },
+  {
+    "table": "followup_status",
+    "recipe": {
+      "kind": "describe",
+      "variable": "followup_status",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "followup_status"
+    }
+  },
+  {
+    "table": "followup_attempts",
+    "recipe": {
+      "kind": "describe",
+      "variable": "followup_attempts",
+      "codes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "route": "followup_attempts"
+    }
+  },
+  {
+    "table": "receipt_log",
+    "recipe": {
+      "kind": "describe",
+      "variable": "receipt_log",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "receipt_log"
+    }
+  },
+  {
+    "table": "receipt_count",
+    "recipe": {
+      "kind": "describe",
+      "variable": "receipt_count",
+      "codes": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "route": "receipt_count"
+    }
+  },
+  {
+    "table": "recall_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "recall_post",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "recall_post"
+    }
+  },
+  {
+    "table": "awareness_pre",
+    "recipe": {
+      "kind": "describe",
+      "variable": "awareness_pre",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "awareness_pre"
+    }
+  },
+  {
+    "table": "awareness_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "awareness_post",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "awareness_post"
+    }
+  },
+  {
+    "table": "consideration_pre",
+    "recipe": {
+      "kind": "describe",
+      "variable": "consideration_pre",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "consideration_pre"
+    }
+  },
+  {
+    "table": "consideration_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "consideration_post",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "consideration_post"
+    }
+  },
+  {
+    "table": "usage_pre",
+    "recipe": {
+      "kind": "describe",
+      "variable": "usage_pre",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "usage_pre"
+    }
+  },
+  {
+    "table": "usage_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "usage_post",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "usage_post"
+    }
+  },
+  {
+    "table": "meal_stress_pre",
+    "recipe": {
+      "kind": "describe",
+      "variable": "meal_stress_pre",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "meal_stress_pre"
+    }
+  },
+  {
+    "table": "meal_stress_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "meal_stress_post",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "meal_stress_post"
+    }
+  },
+  {
+    "table": "campaign_clear_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "campaign_clear_post",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "campaign_clear_post"
+    }
+  },
+  {
+    "table": "campaign_relevant_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "campaign_relevant_post",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "campaign_relevant_post"
+    }
+  },
+  {
+    "table": "campaign_trust_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "campaign_trust_post",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "campaign_trust_post"
+    }
+  },
+  {
+    "table": "campaign_channel_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "campaign_channel_post",
+      "codes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "route": "campaign_channel_post"
+    }
+  },
+  {
+    "table": "info_search_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "info_search_post",
+      "codes": [
+        0,
+        1
+      ],
+      "route": "info_search_post"
+    }
+  },
+  {
+    "table": "usage_days_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "usage_days_post",
+      "codes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "route": "usage_days_post"
+    }
+  },
+  {
+    "table": "satisfaction_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "satisfaction_post",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "satisfaction_post"
+    }
+  },
+  {
+    "table": "planning_confidence_post",
+    "recipe": {
+      "kind": "describe",
+      "variable": "planning_confidence_post",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "route": "planning_confidence_post"
+    }
+  },
+  {
+    "table": "ITT_awareness",
+    "recipe": {
+      "kind": "paired",
+      "endpoint": "awareness"
+    }
+  },
+  {
+    "table": "ITT_consideration",
+    "recipe": {
+      "kind": "paired",
+      "endpoint": "consideration"
+    }
+  },
+  {
+    "table": "ITT_usage",
+    "recipe": {
+      "kind": "paired",
+      "endpoint": "usage"
+    }
+  },
+  {
+    "table": "HET_awareness",
+    "recipe": {
+      "kind": "heterogeneity",
+      "endpoint": "awareness"
+    }
+  },
+  {
+    "table": "HET_consideration",
+    "recipe": {
+      "kind": "heterogeneity",
+      "endpoint": "consideration"
+    }
+  },
+  {
+    "table": "HET_usage",
+    "recipe": {
+      "kind": "heterogeneity",
+      "endpoint": "usage"
+    }
+  },
+  {
+    "table": "OBS_receipt_log",
+    "recipe": {
+      "kind": "observational",
+      "group": "receipt_log"
+    }
+  },
+  {
+    "table": "OBS_recall_post",
+    "recipe": {
+      "kind": "observational",
+      "group": "recall_post"
+    }
+  },
+  {
+    "table": "followup_status_by_assignment",
+    "recipe": {
+      "kind": "by_group",
+      "variable": "followup_status",
+      "codes": [
+        0,
+        1
+      ],
+      "group": "assignment",
+      "route": "followup_status"
+    }
+  },
+  {
+    "table": "receipt_log_by_assignment",
+    "recipe": {
+      "kind": "by_group",
+      "variable": "receipt_log",
+      "codes": [
+        0,
+        1
+      ],
+      "group": "assignment",
+      "route": "receipt_log"
+    }
+  },
+  {
+    "table": "recall_post_by_assignment",
+    "recipe": {
+      "kind": "by_group",
+      "variable": "recall_post",
+      "codes": [
+        0,
+        1
+      ],
+      "group": "assignment",
+      "route": "recall_post"
+    }
+  },
+  {
+    "table": "log_recall_concordance",
+    "recipe": {
+      "kind": "concordance"
+    }
+  },
+  {
+    "table": "profile_followup_status_baseline",
+    "recipe": {
+      "kind": "profile",
+      "group": "followup_status",
+      "returned_only": false,
+      "variables": [
+        "awareness_pre",
+        "consideration_pre",
+        "usage_pre",
+        "children_under18",
+        "digital_confidence_pre",
+        "budget_pressure_pre"
+      ]
+    }
+  },
+  {
+    "table": "profile_assignment_baseline",
+    "recipe": {
+      "kind": "profile",
+      "group": "assignment",
+      "returned_only": false,
+      "variables": [
+        "awareness_pre",
+        "consideration_pre",
+        "usage_pre",
+        "children_under18",
+        "digital_confidence_pre",
+        "budget_pressure_pre"
+      ]
+    }
+  },
+  {
+    "table": "profile_assignment_returners",
+    "recipe": {
+      "kind": "profile",
+      "group": "assignment",
+      "returned_only": true,
+      "variables": [
+        "awareness_pre",
+        "consideration_pre",
+        "usage_pre",
+        "children_under18",
+        "digital_confidence_pre",
+        "budget_pressure_pre"
+      ]
+    }
+  },
+  {
+    "table": "children_stress",
+    "recipe": {
+      "kind": "by_group",
+      "variable": "meal_stress_pre",
+      "codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "group": "children_under18",
+      "route": "meal_stress_pre"
+    }
+  },
+  {
+    "table": "message_correlations",
+    "recipe": {
+      "kind": "correlations",
+      "variables": [
+        "campaign_clear_post",
+        "campaign_relevant_post",
+        "campaign_trust_post"
+      ]
+    }
+  },
+  {
+    "table": "older_digital_online",
+    "recipe": {
+      "kind": "tiny"
+    }
+  }
+]

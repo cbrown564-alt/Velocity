@@ -1,0 +1,518 @@
+{
+  "study_id": "SBT-004",
+  "analysis_claims": [
+    {
+      "analysis_id": "SUPPORT_TASKS",
+      "values": {
+        "eligible_n": 2700,
+        "eligible_weighted_n": 2700,
+        "valid_n": 2596,
+        "valid_weighted_n": 2595.958,
+        "kish_ess": 2045.542,
+        "selected_pct": {
+          "quick_meals_and_replanning": 60.817,
+          "use_up_food": 59.162,
+          "budget": 57.115,
+          "shared_plan": 47.231
+        },
+        "none_pct": 5.033,
+        "dont_know_n": 80,
+        "refusal_n": 24
+      },
+      "universe": "All eligible households; valid denominator is needs_block_status=1, including all-zero None responses.",
+      "weighting": "Unchanged wt_final; selected weight divided by answered respondent weight."
+    },
+    {
+      "analysis_id": "PRESPECIFIED_CONTRASTS",
+      "values": {
+        "group_base_fields": [
+          "eligible_n",
+          "eligible_weighted_n",
+          "valid_n",
+          "valid_weighted_n",
+          "kish_ess",
+          "outcome_dont_know_n",
+          "outcome_refusal_n"
+        ],
+        "NEED_EFFORT_TOPUPS": {
+          "family": "needs_external",
+          "unit": "days",
+          "group_1_base": [904, 809.73, 878, 782.548, 661.071, 18, 8],
+          "group_0_base": [1642, 1729.285, 1588, 1669.182, 1286.984, 42, 12],
+          "group_1_mean": 2.190919,
+          "group_0_mean": 0.969212,
+          "difference": 1.221707,
+          "se": 0.062624,
+          "unadjusted_95_ci": [1.098965, 1.344448],
+          "p": 9.299701e-85,
+          "holm_p": 3.719881e-84
+        },
+        "NEED_EFFORT_PLANNING": {
+          "family": "needs_external",
+          "unit": "days",
+          "group_1_base": [904, 809.73, 872, 779.094, 656.408, 22, 10],
+          "group_0_base": [1642, 1729.285, 1586, 1666.861, 1285.522, 40, 16],
+          "group_1_mean": 3.725306,
+          "group_0_mean": 4.926145,
+          "difference": -1.200839,
+          "se": 0.082043,
+          "unadjusted_95_ci": [-1.36164, -1.040037],
+          "p": 1.638271e-48,
+          "holm_p": 3.276542e-48
+        },
+        "NEED_BUDGET_OVERSPEND": {
+          "family": "needs_external",
+          "unit": "percentage_points",
+          "group_1_base": [717, 667.294, 678, 631.585, 522.168, 33, 6],
+          "group_0_base": [1840, 1896.952, 1708, 1769.77, 1368.259, 107, 25],
+          "group_1_pct": 72.308718,
+          "group_0_pct": 35.028697,
+          "difference": 37.280021,
+          "se": 2.338458,
+          "unadjusted_95_ci": [32.696727, 41.863314],
+          "p": 3.231079e-57,
+          "holm_p": 9.693236e-57
+        },
+        "NEED_WASTE_DISCARD": {
+          "family": "needs_external",
+          "unit": "days",
+          "group_1_base": [821, 775.509, 797, 754.718, 615.001, 14, 10],
+          "group_0_base": [1728, 1785.8, 1664, 1721.13, 1331.129, 41, 23],
+          "group_1_mean": 1.869203,
+          "group_0_mean": 0.867971,
+          "difference": 1.001232,
+          "se": 0.069,
+          "unadjusted_95_ci": [0.865994, 1.13647],
+          "p": 1.039047e-47,
+          "holm_p": 1.039047e-47
+        },
+        "CHILDREN_TOPUPS": {
+          "family": "household_context",
+          "unit": "days",
+          "group_1_base": [1296, 702, 1258, 681.167, 1216.302, 29, 9],
+          "group_0_base": [1404, 1998, 1356, 1926.491, 1273.98, 36, 12],
+          "group_1_mean": 1.909371,
+          "group_0_mean": 1.174944,
+          "difference": 0.734428,
+          "se": 0.055168,
+          "unadjusted_95_ci": [0.6263, 0.842555],
+          "p": 1.956172e-40,
+          "holm_p": 3.912344e-40
+        },
+        "CHILDREN_PLANNING": {
+          "family": "household_context",
+          "unit": "days",
+          "group_1_base": [1296, 702, 1254, 679.467, 1212.622, 30, 12],
+          "group_0_base": [1404, 1998, 1355, 1923.927, 1272.597, 35, 14],
+          "group_1_mean": 4.233811,
+          "group_0_mean": 4.637281,
+          "difference": -0.40347,
+          "se": 0.069565,
+          "unadjusted_95_ci": [-0.539815, -0.267125],
+          "p": 6.635017e-09,
+          "holm_p": 6.635017e-09
+        }
+      },
+      "universe": "Each contrast compares group 1 against group 0 on valid outcome responses. Group 1 meets the specified need definition or has children under 16; group 0 has a valid absent flag or no children. Eligible group bases precede outcome exclusions. Unknown need flags are excluded from both groups; all 2700 sampled rows remain in variance strata.",
+      "weighting": "Unchanged wt_final; weighted valid-case group-1 minus group-0 means. Fixed-quota stratified ratio linearisation; Holm adjustment separately within the four-test needs_external and two-test household_context families."
+    },
+    {
+      "analysis_id": "NEED_PREVALENCE_AND_OVERLAP",
+      "values": {
+        "eligible_n": 2700,
+        "eligible_weighted_n": 2700,
+        "states": {
+          "budget": {
+            "pct": 26.023,
+            "valid_n": 2557,
+            "valid_weighted_n": 2564.245,
+            "kish_ess": 2020.876,
+            "unknown_derived_n": 143
+          },
+          "effort": {
+            "pct": 31.892,
+            "valid_n": 2546,
+            "valid_weighted_n": 2539.015,
+            "kish_ess": 2006.677,
+            "unknown_derived_n": 154
+          },
+          "waste": {
+            "pct": 30.278,
+            "valid_n": 2549,
+            "valid_weighted_n": 2561.309,
+            "kish_ess": 2012.917,
+            "unknown_derived_n": 151
+          }
+        },
+        "joint": {
+          "valid_n": 2280,
+          "valid_weighted_n": 2290.139,
+          "kish_ess": 1799.622,
+          "one_or_more_unknown_flags_n": 420,
+          "combination_order": ["budget", "effort", "waste"],
+          "combination_pct": {
+            "000": 41.105,
+            "001": 10.778,
+            "010": 12.224,
+            "011": 9.175,
+            "100": 11.452,
+            "101": 4.454,
+            "110": 4.881,
+            "111": 5.932
+          },
+          "two_or_more_states_pct": 24.441
+        }
+      },
+      "universe": "Individual prevalence uses each flag's valid respondents; joint combinations require all three flags valid. Each state requires codes 4/5 on both defining items: A3/A4 for budget, A5/A6 for effort, A7/A8 for waste. Either item being nonvalid makes that state unknown.",
+      "weighting": "Unchanged wt_final; percentages use the respective valid respondent weight."
+    },
+    {
+      "analysis_id": "ATTITUDE_DISTRIBUTIONS",
+      "values": {
+        "eligible_n_each": 2700,
+        "eligible_weighted_n_each": 2700,
+        "response_order": [
+          "strongly_disagree",
+          "tend_to_disagree",
+          "neither",
+          "tend_to_agree",
+          "strongly_agree"
+        ],
+        "items": {
+          "att_plan_ahead_5": {
+            "pct": [15.603, 20.875, 26.265, 22.238, 15.019],
+            "valid_n": 2617,
+            "valid_weighted_n": 2623.518,
+            "kish_ess": 2065.383,
+            "dont_know_n": 60,
+            "refusal_n": 23
+          },
+          "att_spontaneous_5": {
+            "pct": [14.854, 20.329, 28.463, 22.329, 14.024],
+            "valid_n": 2632,
+            "valid_weighted_n": 2628.958,
+            "kish_ess": 2076.133,
+            "dont_know_n": 50,
+            "refusal_n": 18
+          },
+          "att_budget_worry_5": {
+            "pct": [12.621, 18.516, 27.247, 21.541, 20.076],
+            "valid_n": 2628,
+            "valid_weighted_n": 2632.088,
+            "kish_ess": 2075.234,
+            "dont_know_n": 52,
+            "refusal_n": 20
+          },
+          "att_price_tradeoffs_5": {
+            "pct": [16.482, 21.052, 25.666, 20.333, 16.466],
+            "valid_n": 2627,
+            "valid_weighted_n": 2630.512,
+            "kish_ess": 2074.763,
+            "dont_know_n": 45,
+            "refusal_n": 28
+          },
+          "att_time_short_5": {
+            "pct": [13.864, 15.739, 23.204, 22.295, 24.898],
+            "valid_n": 2612,
+            "valid_weighted_n": 2608.355,
+            "kish_ess": 2060.533,
+            "dont_know_n": 63,
+            "refusal_n": 25
+          },
+          "att_decision_fatigue_5": {
+            "pct": [14.053, 19.044, 24.847, 21.067, 20.989],
+            "valid_n": 2632,
+            "valid_weighted_n": 2628.661,
+            "kish_ess": 2075.494,
+            "dont_know_n": 44,
+            "refusal_n": 24
+          },
+          "att_waste_concern_5": {
+            "pct": [1.799, 10.609, 23.922, 33.461, 30.208],
+            "valid_n": 2625,
+            "valid_weighted_n": 2629.139,
+            "kish_ess": 2071.957,
+            "dont_know_n": 57,
+            "refusal_n": 18
+          },
+          "att_waste_difficult_5": {
+            "pct": [11.326, 15.797, 24.272, 23.159, 25.445],
+            "valid_n": 2623,
+            "valid_weighted_n": 2631.77,
+            "kish_ess": 2071.228,
+            "dont_know_n": 45,
+            "refusal_n": 32
+          },
+          "att_digital_help_5": {
+            "pct": [34.494, 12.89, 5.798, 12.185, 34.634],
+            "valid_n": 2610,
+            "valid_weighted_n": 2609.194,
+            "kish_ess": 2057.46,
+            "dont_know_n": 67,
+            "refusal_n": 23
+          }
+        },
+        "digital_help_summary_pct": {
+          "disagree": 47.384,
+          "neutral": 5.798,
+          "agree": 46.819
+        }
+      },
+      "universe": "All eligible households; each item distribution uses its valid codes 1–5.",
+      "weighting": "Unchanged wt_final; original item wording and coding retained, including A2."
+    },
+    {
+      "analysis_id": "DIGITAL_BARRIERS",
+      "values": {
+        "eligible_n": 2700,
+        "eligible_weighted_n": 2700,
+        "valid_n": 2570,
+        "valid_weighted_n": 2574.373,
+        "kish_ess": 2029.065,
+        "selected_pct": {
+          "setup_and_upkeep": 47.896,
+          "rigidity": 49.556,
+          "cost": 49.556,
+          "privacy": 48.721
+        },
+        "none_pct": 7.753,
+        "dont_know_n": 101,
+        "refusal_n": 29
+      },
+      "universe": "All eligible households, including users and nonusers; valid denominator is barriers_block_status=1, including all-zero None responses.",
+      "weighting": "Unchanged wt_final; selected weight divided by answered respondent weight."
+    },
+    {
+      "analysis_id": "CURRENT_TOOLS",
+      "values": {
+        "most_used_type": {
+          "eligible_n": 2700,
+          "eligible_weighted_n": 2700,
+          "valid_n": 2635,
+          "valid_weighted_n": 2636.336,
+          "kish_ess": 2080.042,
+          "pct": {
+            "none": 61.097,
+            "retailer": 17.025,
+            "free_recipe_or_list": 16.543,
+            "paid_meal_planning": 5.336
+          },
+          "any_tool_pct": 38.903,
+          "dont_know_n": 44,
+          "refusal_n": 21
+        },
+        "satisfaction": {
+          "eligible_n": 1040,
+          "eligible_weighted_n": 1025.615,
+          "valid_n": 999,
+          "valid_weighted_n": 981.282,
+          "kish_ess": 780.903,
+          "response_order": [
+            "very_dissatisfied",
+            "fairly_dissatisfied",
+            "neither",
+            "fairly_satisfied",
+            "very_satisfied"
+          ],
+          "pct": [0.704, 4.85, 11.293, 21.569, 61.584],
+          "top_two_pct": 83.153,
+          "dont_know_n": 35,
+          "refusal_n": 6
+        },
+        "shared_function_use": {
+          "eligible_n": 1040,
+          "eligible_weighted_n": 1025.615,
+          "valid_n": 996,
+          "valid_weighted_n": 980.227,
+          "kish_ess": 779.907,
+          "yes_pct": 54.268,
+          "no_pct": 45.732,
+          "dont_know_n": 36,
+          "refusal_n": 8
+        },
+        "unasked_followups_each_n": {
+          "nonuser": 1595,
+          "unknown_screener": 65
+        },
+        "paid_tool_satisfaction_age_65_plus": {
+          "eligible_n": 20,
+          "eligible_weighted_n": 20.364,
+          "valid_n": 18,
+          "valid_weighted_n": 18.273,
+          "kish_ess": 17.731,
+          "dont_know_n": 2,
+          "refusal_n": 0,
+          "estimate": null,
+          "suppression_reason": "Valid n below 40; Kish ESS also below 50."
+        }
+      },
+      "universe": "Tool prevalence uses valid U1 among all households and records the most-used type in the past 28 days. Satisfaction and sharing use valid follow-ups among recorded U1=1,2,3 users.",
+      "weighting": "Unchanged wt_final within each valid universe; conditional user percentages are not all-household prevalence."
+    }
+  ],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Start pilot exploration with quick meals/replanning, using up food and budget support, requested by 60.8%, 59.2% and 57.1%. Retain shared planning for testing at 47.2%; no winning task is established.",
+      "evidence_refs": [
+        "$.analysis_claims[0].values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive shortlist; research recommendation",
+      "qualification": "Answered n=2596, weighted n=2595.958, Kish ESS=2045.542. Multiple selections were allowed. The first three span 3.7 percentage points, below the 8-point attention threshold; no task superiority tests were conducted. Requests for help do not establish concept preference or unmet commercial demand.",
+      "topic_cluster": "pilot_tasks"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Recruit effort-need households for quick-meal and replanning tests: they report 2.19 versus 0.97 unplanned-top-up days and 3.73 versus 4.93 days with the evening meal decided by the previous evening, across the past seven days.",
+      "evidence_refs": [
+        "$.analysis_claims[1].values.NEED_EFFORT_TOPUPS",
+        "$.analysis_claims[1].values.NEED_EFFORT_PLANNING"
+      ],
+      "importance": "primary",
+      "claim_strength": "Prespecified associations supported after Holm adjustment",
+      "qualification": "Effort need versus valid absence: top-up difference +1.22 days, unadjusted 95% CI 1.10–1.34, valid n=878/1588; planning difference −1.20 days, CI −1.36 to −1.04, n=872/1586. Both Holm p<0.001; both intervals lie beyond the 0.5-day attention threshold. Associations establish neither causation nor greater responsiveness to support.",
+      "topic_cluster": "priority_audiences"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Include budget- and waste-need households in task testing. Overspending in at least one of the past four weeks is reported by 72.3% with budget need versus 35.0% without it. Those with waste need report 1.87 versus 0.87 food-discard days in the past seven days.",
+      "evidence_refs": [
+        "$.analysis_claims[1].values.NEED_BUDGET_OVERSPEND",
+        "$.analysis_claims[1].values.NEED_WASTE_DISCARD"
+      ],
+      "importance": "primary",
+      "claim_strength": "Prespecified associations supported after Holm adjustment",
+      "qualification": "Budget difference +37.28 percentage points, unadjusted 95% CI 32.70–41.86, valid n=678/1708; waste difference +1.00 day, CI 0.87–1.14, n=797/1664. Both Holm p<0.001; both intervals lie beyond the respective 8-point and 0.5-day attention thresholds. Comparators have valid absent flags. Overspending is relative to intentions, without monetary amounts; discard days exclude unavoidable peelings and bones and measure neither quantity nor financial loss. Intervention benefits remain untested.",
+      "topic_cluster": "priority_audiences"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Recruit across overlapping needs: budget, effort and waste states occur in 26.0%, 31.9% and 30.3% of their respective valid bases. Among households with all three flags known, 24.4% meet at least two definitions, including 5.9% meeting all three.",
+      "evidence_refs": [
+        "$.analysis_claims[2].values"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive prevalence and overlap",
+      "qualification": "Individual valid n=2557/2546/2549. Joint valid n=2280, weighted n=2290.139, Kish ESS=1799.622, excluding 420 households with at least one unknown flag. Denominators differ. States require agreement on both defining items and are not exclusive personas; overlapping states were not compared as independent groups.",
+      "topic_cluster": "audience_design"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Include households with children under 16 as a planning context: they report 1.91 versus 1.17 top-up days in the past seven days. Advance planning averages 4.23 versus 4.64 days, a smaller difference against the study's attention threshold.",
+      "evidence_refs": [
+        "$.analysis_claims[1].values.CHILDREN_TOPUPS",
+        "$.analysis_claims[1].values.CHILDREN_PLANNING"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Prespecified associations with different materiality conclusions",
+      "qualification": "Children versus no children: top-up difference +0.73 day, unadjusted 95% CI 0.63–0.84, valid n=1258/1356; planning difference −0.40 day, CI −0.54 to −0.27, n=1254/1355. Both Holm p<0.001. The planning point estimate falls below 0.5 day, but its interval includes larger differences; practical equivalence is not established. Children status is neither a need-state rule nor a causal explanation.",
+      "topic_cluster": "household_context"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Keep participation optional and test willingness directly: 46.8% welcome digital cooking and shopping suggestions, 47.4% disagree and 5.8% are neutral. Strong agreement and strong disagreement account for 34.6% and 34.5%, respectively.",
+      "evidence_refs": [
+        "$.analysis_claims[3].values.items.att_digital_help_5",
+        "$.analysis_claims[3].values.digital_help_summary_pct"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive polarisation; research recommendation",
+      "qualification": "Valid n=2610, weighted n=2609.194, Kish ESS=2057.460; 67 don't know and 23 refuse. Near-equal sides do not establish statistical equivalence. Stated interest is not observed uptake, willingness to pay or preference for a tested delivery format.",
+      "topic_cluster": "delivery_uncertainty"
+    },
+    {
+      "model_finding_id": "F7",
+      "proposition": "Test setup effort, flexibility, cost and privacy together: the corresponding barriers are selected by 47.9%, 49.6%, 49.6% and 48.7%. No single dominant barrier is demonstrated.",
+      "evidence_refs": [
+        "$.analysis_claims[4].values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive constraints; design recommendation",
+      "qualification": "Answered n=2570, weighted n=2574.373, Kish ESS=2029.065. Multiple responses include users and nonusers. The 1.7-point spread is below the 8-point attention threshold; no ranking inference was performed. Cost concern does not quantify willingness to pay.",
+      "topic_cluster": "pilot_constraints"
+    },
+    {
+      "model_finding_id": "F8",
+      "proposition": "Include current users and nonusers in format testing: 61.1% report no digital planning tool in the past 28 days. Retailer, free recipe/list and paid planning tools are the most-used types for 17.0%, 16.5% and 5.3%. Among valid current-user follow-ups, 83.2% are satisfied and 54.3% used sharing.",
+      "evidence_refs": [
+        "$.analysis_claims[5].values.most_used_type",
+        "$.analysis_claims[5].values.satisfaction",
+        "$.analysis_claims[5].values.shared_function_use"
+      ],
+      "importance": "context",
+      "claim_strength": "Descriptive usage and conditional experience",
+      "qualification": "Tool-type valid n=2635, weighted n=2636.336, Kish ESS=2080.042. Among 1040 recorded users, satisfaction valid n=999, weighted n=981.282, ESS=780.903; sharing valid n=996, weighted n=980.227, ESS=779.907. Type shares describe the most-used type, not any use of each type. Selection into use prevents satisfaction from establishing format superiority, retained usage or all-household acceptance.",
+      "topic_cluster": "delivery_uncertainty"
+    },
+    {
+      "model_finding_id": "F9",
+      "proposition": "Use the optional pilot to compare delivery formats through realistic task completion, setup burden, flexibility and repeat use. Before commercial claims, obtain controlled longitudinal evidence on spending, waste, purchasing and costs; test price separately if charging is contemplated.",
+      "evidence_refs": [
+        "$.analysis_claims[0].values",
+        "$.analysis_claims[1].values",
+        "$.analysis_claims[3].values.digital_help_summary_pct",
+        "$.analysis_claims[4].values",
+        "$.analysis_claims[5].values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Research recommendation; no estimated intervention effect",
+      "qualification": "The brief identifies no randomised concept or treatment, price test, observed purchase, revenue or longitudinal change. These results support task and recruitment hypotheses, but cannot select a winning format or estimate pilot effectiveness or commercial uplift.",
+      "topic_cluster": "next_evidence"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": ["F1"],
+        "headline_intent": "Start with three requested tasks and retain shared planning for testing",
+        "analytical_relationship": "Establish a descriptive task shortlist without converting numerical leads into superiority."
+      },
+      {
+        "order": 2,
+        "finding_refs": ["F2", "F3"],
+        "headline_intent": "Recruit need audiences with associated reported difficulties",
+        "analytical_relationship": "Connect audience recommendations to prespecified external outcomes, effect sizes and uncertainty."
+      },
+      {
+        "order": 3,
+        "finding_refs": ["F4", "F5"],
+        "headline_intent": "Preserve overlapping needs and include children as household context",
+        "analytical_relationship": "Refine recruitment without creating exclusive personas or causal explanations."
+      },
+      {
+        "order": 4,
+        "finding_refs": ["F6", "F7"],
+        "headline_intent": "Test willingness and several adoption constraints",
+        "analytical_relationship": "Qualify requests for support with polarised digital interest and closely grouped barriers."
+      },
+      {
+        "order": 5,
+        "finding_refs": ["F8"],
+        "headline_intent": "Include users and nonusers when comparing delivery formats",
+        "analytical_relationship": "Distinguish all-household prevalence from selected users' conditional satisfaction and sharing."
+      },
+      {
+        "order": 6,
+        "finding_refs": ["F9"],
+        "headline_intent": "Resolve format and commercial questions through further testing",
+        "analytical_relationship": "Translate the evidence and its limits into experience testing, controlled longitudinal research and separate price evidence."
+      }
+    ]
+  },
+  "method_notes": [
+    "Numerical results are retained from the supplied prior-stage output, interpreted against the supplied codebook, questionnaire and study materials. They were not independently recalculated from respondents.csv in this response. No browsing, connectors, file discovery or delegated agents were used.",
+    "This is a synthetic cross-sectional study of 2700 eligible households, with one adult grocery/meal planner reporting per household. Targets and quotas are fictional; results do not describe real UK prevalence.",
+    "Findings follow the business argument from task priorities through recruitment, adoption constraints and further evidence. Evidence references are exact JSONPaths into the embedded analysis tables; all story finding references resolve. Recommendations are interpretations, not additional empirical results.",
+    "All estimates retain unchanged wt_final within subgroups. Weighted N is an equivalent sample count, not a population count. Eligible and valid unweighted and weighted bases, valid Kish ESS and separate nonresponse counts appear in the analysis tables. Kish ESS describes weight dispersion; it is not the prescribed variance estimator.",
+    "Valid-case analysis excludes codes 97, 98 and 99. Don't-know, refusal, derived-unknown and structural/unasked counts remain distinct. Unknown need flags are excluded from both sides of need-state contrasts. The supplied prior-stage output reports that stored flags matched the specified derivations; that check was not repeated here.",
+    "Contrast inference uses fixed-weight ratio linearisation: a_i,g=w_i I_g(Y_i−mu_g)/W_g, with contrast influence a_i,1−a_i,0. Variance sums n_h/(n_h−1) times squared centred influences within all eight full-sample age-by-children strata, retaining zero influences for excluded rows. No finite-population correction applies.",
+    "Two-sided normal p-values use erfc. Holm adjustment applies separately to exactly four needs_external and two household_context tests; all six are reported as estimable. The 95% intervals are unadjusted, not simultaneous. Inference is conditional on observed valid cases and fixed synthetic targets; it does not remove nonresponse, selection or causal uncertainty.",
+    "The 0.5-day and 8-percentage-point attention thresholds guide prioritisation. They are not economic thresholds or equivalence margins. No additional confirmatory task, barrier or overlapping-state comparisons are claimed.",
+    "Full five-category valid distributions are retained for all nine attitudes and tool satisfaction. A2 retains its original spontaneous-planning wording. No planning-orientation index claim is made. Defining attitude items are not external corroboration of their need states.",
+    "Support and barrier percentages use answered respondents, including all-zero None responses; selections may sum above 100%. Tool follow-ups are conditional on recorded current use. Each follow-up has 1660 structural blanks: 1595 nonusers and 65 unknown screeners, separate from user item nonresponse.",
+    "Valid n<40 requires suppression; valid n=40–74 or Kish ESS<50 requires a warning. Age-65+ paid-tool satisfaction remains suppressed at valid n=18 and ESS=17.731. Other retained estimate bases exceed these warning thresholds.",
+    "Behavioural counts are days, not numbers of meals, shops or discarded items. Overspending is self-reported relative to intentions, without monetary amounts. Cross-sectional responses cannot establish intervention effects, observed conversion, revenue or retained usage. Rounded percentages may not sum exactly to 100%."
+  ]
+}

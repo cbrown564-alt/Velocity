@@ -1,0 +1,1141 @@
+{
+  "output_sha256": "19c37693e1270b5daaa51b860e6e943649f72f11d2ea4be76bbe9be8e53b2793",
+  "method": "Explicit inspected mappings for primary paired levels, distributions, contrasts, interactions, reach, selection and message diagnostics. Other prose reviewed separately.",
+  "entries": [
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/paired_n/0",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/weighted_N/0",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/kish_ESS/0",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/change_pp/0",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/pre_yes_pct/0",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/post_yes_pct/0",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/paired_n/1",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/weighted_N/1",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/kish_ESS/1",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/change_pp/1",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/pre_yes_pct/1",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/post_yes_pct/1",
+      "reference_pointer": "/tables/ITT_awareness/values/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/contrast_pp",
+      "reference_pointer": "/tables/ITT_awareness/values/estimate_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/SE_pp",
+      "reference_pointer": "/tables/ITT_awareness/values/se_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/raw_p",
+      "reference_pointer": "/tables/ITT_awareness/values/p_raw",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/holm_p",
+      "reference_pointer": "/tables/ITT_awareness/values/p_holm",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/pointwise_95_CI_pp/0",
+      "reference_pointer": "/tables/ITT_awareness/values/ci95_pp/0",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/awareness/pointwise_95_CI_pp/1",
+      "reference_pointer": "/tables/ITT_awareness/values/ci95_pp/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/0/0",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/0/1",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/0/2",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/0/3",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/0/4",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/0/5",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/1/0",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/1/1",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/1/2",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/1/3",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/1/4",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/1/5",
+      "reference_pointer": "/tables/HET_awareness/values/groups/0/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/2/0",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/2/1",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/2/2",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/2/3",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/2/4",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/2/5",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/3/0",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/3/1",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/3/2",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/3/3",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/3/4",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/cells/3/5",
+      "reference_pointer": "/tables/HET_awareness/values/groups/1/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/interaction_pp",
+      "reference_pointer": "/tables/HET_awareness/values/estimate_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/interaction_SE_pp",
+      "reference_pointer": "/tables/HET_awareness/values/se_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/interaction_raw_p",
+      "reference_pointer": "/tables/HET_awareness/values/p_raw",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/interaction_holm_p",
+      "reference_pointer": "/tables/HET_awareness/values/p_holm",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/interaction_pointwise_95_CI_pp/0",
+      "reference_pointer": "/tables/HET_awareness/values/ci95_pp/0",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/awareness/interaction_pointwise_95_CI_pp/1",
+      "reference_pointer": "/tables/HET_awareness/values/ci95_pp/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_n/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/weighted_N/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/kish_ESS/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/change_pp/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/pre_top2_pct/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/0/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/pre_distribution_pct/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/0/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/pre_distribution_pct/2",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/0/2",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/pre_distribution_pct/3",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/0/3",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/pre_distribution_pct/4",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/0/4",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/pre_distribution_pct/5",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/post_top2_pct/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/0/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/post_distribution_pct/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/0/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/post_distribution_pct/2",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/0/2",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/post_distribution_pct/3",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/0/3",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/post_distribution_pct/4",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/0/4",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/0/post_distribution_pct/5",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_n/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/weighted_N/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/kish_ESS/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/change_pp/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/pre_top2_pct/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/1/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/pre_distribution_pct/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/1/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/pre_distribution_pct/2",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/1/2",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/pre_distribution_pct/3",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/1/3",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/pre_distribution_pct/4",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_pre_category_1_to_5_pct/1/4",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/pre_distribution_pct/5",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/post_top2_pct/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/1/0",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/post_distribution_pct/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/1/1",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/post_distribution_pct/2",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/1/2",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/post_distribution_pct/3",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/1/3",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/post_distribution_pct/4",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/paired_post_category_1_to_5_pct/1/4",
+      "reference_pointer": "/tables/ITT_consideration/values/arms/1/post_distribution_pct/5",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/contrast_pp",
+      "reference_pointer": "/tables/ITT_consideration/values/estimate_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/SE_pp",
+      "reference_pointer": "/tables/ITT_consideration/values/se_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/raw_p",
+      "reference_pointer": "/tables/ITT_consideration/values/p_raw",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/holm_p",
+      "reference_pointer": "/tables/ITT_consideration/values/p_holm",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/pointwise_95_CI_pp/0",
+      "reference_pointer": "/tables/ITT_consideration/values/ci95_pp/0",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/consideration/pointwise_95_CI_pp/1",
+      "reference_pointer": "/tables/ITT_consideration/values/ci95_pp/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/0/0",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/0/1",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/0/2",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/0/3",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/0/4",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/0/5",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/1/0",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/1/1",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/1/2",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/1/3",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/1/4",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/1/5",
+      "reference_pointer": "/tables/HET_consideration/values/groups/0/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/2/0",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/2/1",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/2/2",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/2/3",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/2/4",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/2/5",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/3/0",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/3/1",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/3/2",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/3/3",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/3/4",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/cells/3/5",
+      "reference_pointer": "/tables/HET_consideration/values/groups/1/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/interaction_pp",
+      "reference_pointer": "/tables/HET_consideration/values/estimate_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/interaction_SE_pp",
+      "reference_pointer": "/tables/HET_consideration/values/se_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/interaction_raw_p",
+      "reference_pointer": "/tables/HET_consideration/values/p_raw",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/interaction_holm_p",
+      "reference_pointer": "/tables/HET_consideration/values/p_holm",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/interaction_pointwise_95_CI_pp/0",
+      "reference_pointer": "/tables/HET_consideration/values/ci95_pp/0",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/consideration/interaction_pointwise_95_CI_pp/1",
+      "reference_pointer": "/tables/HET_consideration/values/ci95_pp/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/paired_n/0",
+      "reference_pointer": "/tables/ITT_usage/values/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/weighted_N/0",
+      "reference_pointer": "/tables/ITT_usage/values/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/kish_ESS/0",
+      "reference_pointer": "/tables/ITT_usage/values/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/change_pp/0",
+      "reference_pointer": "/tables/ITT_usage/values/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/pre_yes_pct/0",
+      "reference_pointer": "/tables/ITT_usage/values/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/post_yes_pct/0",
+      "reference_pointer": "/tables/ITT_usage/values/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/paired_n/1",
+      "reference_pointer": "/tables/ITT_usage/values/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/weighted_N/1",
+      "reference_pointer": "/tables/ITT_usage/values/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/kish_ESS/1",
+      "reference_pointer": "/tables/ITT_usage/values/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/change_pp/1",
+      "reference_pointer": "/tables/ITT_usage/values/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/pre_yes_pct/1",
+      "reference_pointer": "/tables/ITT_usage/values/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/post_yes_pct/1",
+      "reference_pointer": "/tables/ITT_usage/values/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/contrast_pp",
+      "reference_pointer": "/tables/ITT_usage/values/estimate_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/SE_pp",
+      "reference_pointer": "/tables/ITT_usage/values/se_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/raw_p",
+      "reference_pointer": "/tables/ITT_usage/values/p_raw",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/holm_p",
+      "reference_pointer": "/tables/ITT_usage/values/p_holm",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/pointwise_95_CI_pp/0",
+      "reference_pointer": "/tables/ITT_usage/values/ci95_pp/0",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/usage/pointwise_95_CI_pp/1",
+      "reference_pointer": "/tables/ITT_usage/values/ci95_pp/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/0/0",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/0/1",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/0/2",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/0/3",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/0/4",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/0/5",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/1/0",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/1/1",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/1/2",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/1/3",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/1/4",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/1/5",
+      "reference_pointer": "/tables/HET_usage/values/groups/0/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/2/0",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/2/1",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/2/2",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/2/3",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/2/4",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/2/5",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/0/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/3/0",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/3/1",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/3/2",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/3/3",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/3/4",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/cells/3/5",
+      "reference_pointer": "/tables/HET_usage/values/groups/1/arms/1/change_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/interaction_pp",
+      "reference_pointer": "/tables/HET_usage/values/estimate_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/interaction_SE_pp",
+      "reference_pointer": "/tables/HET_usage/values/se_pp",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/interaction_raw_p",
+      "reference_pointer": "/tables/HET_usage/values/p_raw",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/interaction_holm_p",
+      "reference_pointer": "/tables/HET_usage/values/p_holm",
+      "probability": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/interaction_pointwise_95_CI_pp/0",
+      "reference_pointer": "/tables/HET_usage/values/ci95_pp/0",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/usage/interaction_pointwise_95_CI_pp/1",
+      "reference_pointer": "/tables/HET_usage/values/ci95_pp/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/receipt/eligible_and_valid_n/0",
+      "reference_pointer": "/tables/receipt_log_by_assignment/values/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/receipt/weighted_N/0",
+      "reference_pointer": "/tables/receipt_log_by_assignment/values/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/receipt/kish_ESS/0",
+      "reference_pointer": "/tables/receipt_log_by_assignment/values/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/receipt/yes_pct/0",
+      "reference_pointer": "/tables/receipt_log_by_assignment/values/0/pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/receipt/eligible_and_valid_n/1",
+      "reference_pointer": "/tables/receipt_log_by_assignment/values/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/receipt/weighted_N/1",
+      "reference_pointer": "/tables/receipt_log_by_assignment/values/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/receipt/kish_ESS/1",
+      "reference_pointer": "/tables/receipt_log_by_assignment/values/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/receipt/yes_pct/1",
+      "reference_pointer": "/tables/receipt_log_by_assignment/values/1/pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/eligible_and_valid_n_by_group/0",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/weighted_N/0",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/kish_ESS/0",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/pre_top2_pct/0",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/post_top2_pct/0",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/eligible_and_valid_n_by_group/1",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/weighted_N/1",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/kish_ESS/1",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/pre_top2_pct/1",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_receipt/post_top2_pct/1",
+      "reference_pointer": "/tables/OBS_receipt_log/values/groups/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/recall/valid_n/0",
+      "reference_pointer": "/tables/recall_post_by_assignment/values/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/recall/weighted_N/0",
+      "reference_pointer": "/tables/recall_post_by_assignment/values/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/recall/kish_ESS/0",
+      "reference_pointer": "/tables/recall_post_by_assignment/values/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/recall/yes_pct/0",
+      "reference_pointer": "/tables/recall_post_by_assignment/values/0/pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/recall/valid_n/1",
+      "reference_pointer": "/tables/recall_post_by_assignment/values/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/recall/weighted_N/1",
+      "reference_pointer": "/tables/recall_post_by_assignment/values/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/recall/kish_ESS/1",
+      "reference_pointer": "/tables/recall_post_by_assignment/values/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/recall/yes_pct/1",
+      "reference_pointer": "/tables/recall_post_by_assignment/values/1/pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/eligible_and_valid_n_by_group/0",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/0/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/weighted_N/0",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/0/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/kish_ESS/0",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/0/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/pre_top2_pct/0",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/0/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/post_top2_pct/0",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/0/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/eligible_and_valid_n_by_group/1",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/1/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/weighted_N/1",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/1/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/kish_ESS/1",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/1/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/pre_top2_pct/1",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/1/pre_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/consideration_by_recall/post_top2_pct/1",
+      "reference_pointer": "/tables/OBS_recall_post/values/groups/1/post_pct",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/0",
+      "reference_pointer": "/tables/campaign_clear_post/values/eligible_n",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/1",
+      "reference_pointer": "/tables/campaign_clear_post/values/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/2",
+      "reference_pointer": "/tables/campaign_clear_post/values/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/3",
+      "reference_pointer": "/tables/campaign_clear_post/values/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/5/0",
+      "reference_pointer": "/tables/campaign_clear_post/values/distribution_pct/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/5/1",
+      "reference_pointer": "/tables/campaign_clear_post/values/distribution_pct/2",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/5/2",
+      "reference_pointer": "/tables/campaign_clear_post/values/distribution_pct/3",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/5/3",
+      "reference_pointer": "/tables/campaign_clear_post/values/distribution_pct/4",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/clarity/5/4",
+      "reference_pointer": "/tables/campaign_clear_post/values/distribution_pct/5",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/0",
+      "reference_pointer": "/tables/campaign_relevant_post/values/eligible_n",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/1",
+      "reference_pointer": "/tables/campaign_relevant_post/values/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/2",
+      "reference_pointer": "/tables/campaign_relevant_post/values/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/3",
+      "reference_pointer": "/tables/campaign_relevant_post/values/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/5/0",
+      "reference_pointer": "/tables/campaign_relevant_post/values/distribution_pct/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/5/1",
+      "reference_pointer": "/tables/campaign_relevant_post/values/distribution_pct/2",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/5/2",
+      "reference_pointer": "/tables/campaign_relevant_post/values/distribution_pct/3",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/5/3",
+      "reference_pointer": "/tables/campaign_relevant_post/values/distribution_pct/4",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/relevance/5/4",
+      "reference_pointer": "/tables/campaign_relevant_post/values/distribution_pct/5",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/0",
+      "reference_pointer": "/tables/campaign_trust_post/values/eligible_n",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/1",
+      "reference_pointer": "/tables/campaign_trust_post/values/n_unweighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/2",
+      "reference_pointer": "/tables/campaign_trust_post/values/n_weighted",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/3",
+      "reference_pointer": "/tables/campaign_trust_post/values/n_eff",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/5/0",
+      "reference_pointer": "/tables/campaign_trust_post/values/distribution_pct/1",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/5/1",
+      "reference_pointer": "/tables/campaign_trust_post/values/distribution_pct/2",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/5/2",
+      "reference_pointer": "/tables/campaign_trust_post/values/distribution_pct/3",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/5/3",
+      "reference_pointer": "/tables/campaign_trust_post/values/distribution_pct/4",
+      "probability": false
+    },
+    {
+      "output_pointer": "/analysis_claims/6/values/message_agreement_category_1_to_5/believability/5/4",
+      "reference_pointer": "/tables/campaign_trust_post/values/distribution_pct/5",
+      "probability": false
+    }
+  ]
+}

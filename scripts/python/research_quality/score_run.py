@@ -18,7 +18,29 @@ def read(p):
 
 def resolve(output, analysis, path):
     path = path.removeprefix("analysis_results.json.")
-    if path.startswith("analysis_claims."):
+    if path.startswith("#/"):
+        path = path[1:]
+    if path.startswith("analysis_results.json#/"):
+        value = analysis
+        parts = [
+            x.replace("~1", "/").replace("~0", "~")
+            for x in path.split("#/", 1)[1].split("/")
+        ]
+    elif path.startswith("$.analysis_claims["):
+        value = output
+        parts = re.sub(r"\[(\d+)\]", r".\1", path[2:]).split(".")
+    elif path.startswith("analysis_claims/"):
+        parts = [x.replace("~1", "/").replace("~0", "~") for x in path.split("/")]
+        value = next(
+            (
+                c
+                for c in output.get("analysis_claims", [])
+                if c["analysis_id"] == parts[1]
+            ),
+            None,
+        )
+        parts = parts[2:]
+    elif path.startswith("analysis_claims."):
         parts = path.split(".")
         value = next(
             (

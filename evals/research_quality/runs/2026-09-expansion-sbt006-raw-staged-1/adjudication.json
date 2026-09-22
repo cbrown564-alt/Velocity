@@ -1,0 +1,123 @@
+{
+  "adjudicator": "Codex primary agent; provisional and uncalibrated against researchers",
+  "matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": "M2",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F5",
+        "F2"
+      ],
+      "rationale": "Gross and contribution point leaders and the cheapest-price interest tradeoff are selected jointly."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "M3",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F5"
+      ],
+      "rationale": "All fixed cost scenarios, uncertain adjusted contrasts and conservative sensitivity retain both middle-price candidates."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "M1",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F2"
+      ],
+      "rationale": "Full intent gradient and opposing distribution extremes selected with stated-intent and observation limits."
+    },
+    {
+      "model_finding_id": "F3",
+      "reference_finding_id": "M4",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F3",
+        "F5"
+      ],
+      "rationale": "Missingness, recorded-positive sensitivity, logical ranges and fixed-weight denominators explicitly qualify interpretation."
+    },
+    {
+      "model_finding_id": "F6",
+      "reference_finding_id": "S1",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F6"
+      ],
+      "rationale": "Both prespecified audience contrasts retained with correct bases, unknown exclusions and noncausal qualification."
+    },
+    {
+      "model_finding_id": "F7",
+      "reference_finding_id": "R2",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F7"
+      ],
+      "rationale": "The small premium niche supports suppression rather than rates, economic comparisons or targeting."
+    }
+  ],
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "universe_weight_routing": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "inference_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_completeness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    }
+  },
+  "hard_failures": [],
+  "proposed_corrections": [
+    "Researchers should assess the omitted diagnostic and routed-follow-up context and the prominence of the small-niche restraint."
+  ],
+  "notes": [
+    "Primary Codex adjudication is provisional; independent researchers have not assessed these outputs. Dimension ratings remain null.",
+    "Full mandatory credit concerns selected findings and story, with joint support explicitly linked. Numerically correct unselected tables do not earn full selection credit.",
+    "Numeric mappings are non-exhaustive and bound to original output SHA-256. No original output or frozen reference was edited.",
+    "Secondary diagnostic correlations S2 and routed certainty/imagined-use S3 are not selected; no credit from unselected material.",
+    "All three restraints retained. Recorded raw calculations in analyst and verifier read only respondents.csv and use local scientific libraries. Prioritiser/editor performed no commands.",
+    "Numeric audit covers 428 mapped estimates, distributions, bases, intervals and adjusted tests; selected prose also inspected."
+  ]
+}

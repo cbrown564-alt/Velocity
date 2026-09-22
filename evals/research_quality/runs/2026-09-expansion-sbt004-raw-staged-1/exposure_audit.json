@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "scope": "Completed traces manually inspected. Analysis stages use no tools; raw analyst/verifier commands import scientific libraries and read only supplied respondents.csv, study_materials.json and codebook.json. No hidden/reference or external reads observed. This is trace evidence, not an OS-isolation proof. Startup skill-catalog warnings do not show private file reads.",
+  "command_count": 4,
+  "command_sha256": [
+    "21f97c5ebbb79539dbe55c302ace42730fce513214cc7035953825dfa3621fca",
+    "44ee2ef83b74f0c80ccea171b8fc34a840995d87eca3d2e343f8187ed83bb203",
+    "eef662515980a54a8d57fef838dcc4f5fe6e8c2c285cfb8042e46c85c361930c",
+    "b2b24c034248503950226bc9616842c1afcc3ece718af79b930355b939be7635"
+  ],
+  "item_types": [
+    "agent_message",
+    "command_execution",
+    "error"
+  ],
+  "warnings": [
+    "Skill descriptions were shortened to fit the skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+  ],
+  "model_completed": true
+}

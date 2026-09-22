@@ -1,0 +1,160 @@
+{
+  "run_id": "2026-09-expansion-sbt005-raw-staged-1",
+  "study_id": "SBT-005",
+  "status": "provisional_agent_adjudication",
+  "scorer_version": "selection-1.1",
+  "scorer_sha256": "c1f68ac6c2baaf31ef7272cc49d5d63cb773317094c00ccfd5e165e9fb75aa40",
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "universe_weight_routing": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "inference_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_completeness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    }
+  },
+  "selection_metrics": {
+    "mandatory_recall": 1.0,
+    "selected_precision": 1.0,
+    "unsupported_rate": 0.0,
+    "do_not_elevate_rate": 0.0,
+    "redundancy_adjusted_coverage": 0.8571428571428571
+  },
+  "finding_matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": "CAM_M1_INCREMENTAL_AWARENESS",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1"
+      ],
+      "rationale": "Both paired arm changes and incremental assignment contrast retain observed-pair uncertainty."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "CAM_M2_DOWNSTREAM_BOUND",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F2"
+      ],
+      "rationale": "Opening story jointly contrasts awareness with uncertain downstream consideration and use; no equivalence or harm conclusion."
+    },
+    {
+      "model_finding_id": "F3",
+      "reference_finding_id": "CAM_M4_ATTRITION_LIMIT",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "rationale": "Baseline selection and separate paired/missing/attrition denominators qualify full-cohort claims."
+    },
+    {
+      "model_finding_id": "F4",
+      "reference_finding_id": "CAM_S3_FAMILY_CONTEXT",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F4"
+      ],
+      "rationale": "Descriptive family need is separated from formal interaction results and targeting claims."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "CAM_M3_SELECTION_CONTRAST",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F5"
+      ],
+      "rationale": "Receipt and recall follow-up gaps compared with baseline; both remain observational."
+    },
+    {
+      "model_finding_id": "F6",
+      "reference_finding_id": "CAM_S2_SELECTED_DIAGNOSTICS",
+      "match_state": "partial",
+      "model_importance": "context",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F6"
+      ],
+      "rationale": "Routed recaller ratings and user satisfaction are selected with correct scope, but correlation interpretation and use-frequency component remain outside the final finding."
+    },
+    {
+      "model_finding_id": "F7",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F7"
+      ],
+      "rationale": "Further controlled-test recommendation follows evidence limits; no sales/ROI or tiny-group claim."
+    }
+  ],
+  "hard_failures": [],
+  "provenance_coverage": 1.0,
+  "unresolved_references": [],
+  "missed_mandatory_findings": [],
+  "correction_burden": {
+    "human_active_minutes": null,
+    "human_corrections": null,
+    "proposed_agent_corrections": [
+      "Avoid rounding already-rounded intermediates when preparing final reported percentages.",
+      "Researchers should judge the decision relevance and priority of family context versus selected diagnostic detail."
+    ]
+  },
+  "costs": {
+    "elapsed_seconds": 1284.9642656659707,
+    "input_tokens": 374214,
+    "cached_input_tokens": 264448,
+    "output_tokens": 40859,
+    "incremental_usd": null,
+    "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+  },
+  "notes": [
+    "Primary Codex adjudication is provisional; independent researchers have not assessed these outputs. Dimension ratings remain null.",
+    "Full mandatory credit concerns selected findings and story, with joint support explicitly linked. Numerically correct unselected tables do not earn full selection credit.",
+    "Numeric mappings are non-exhaustive and bound to original output SHA-256. No original output or frozen reference was edited.",
+    "One-reference-per-finding scoring undercredits secondary reach evidence bundled into F5.",
+    "The rounded receipt figure 24.55% follows a 24.545 intermediate; the unrounded reference rounds to 24.54%. Difference is 0.0053 percentage points and does not change the conclusion."
+  ]
+}

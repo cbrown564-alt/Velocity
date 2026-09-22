@@ -1,0 +1,601 @@
+{
+  "status": "PASS",
+  "scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+  "output_sha256": "a3f19796b481150a2ac9d054997b6c2de0bca9c21c0e6c07f7f1b325378acab6",
+  "checks": [
+    {
+      "id": "/findings/0/proposition",
+      "reported": 3.63,
+      "reference": 3.6327156423107367,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 3.36,
+      "reference": 3.362941969377527,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 2.67,
+      "reference": 2.6734333344040087,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 2.58,
+      "reference": 2.5763373822064572,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 0.27,
+      "reference": 0.26977367293320986,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": -0.189,
+      "reference": -0.18874641420030158,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 0.728,
+      "reference": 0.7282937600667213,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 0.498,
+      "reference": 0.49769004637089553,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 7.47e-09,
+      "reference": 7.470112431863738e-09,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 9.7e-05,
+      "reference": 9.69582633554708e-05,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 0.00264,
+      "reference": 0.002644654798988892,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/proposition",
+      "reported": 0.0139,
+      "reference": 0.01393014623302137,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 66.84,
+      "reference": 66.83583336010021,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 51.9,
+      "reference": 51.89593774729624,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 33.63,
+      "reference": 33.62941969377527,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 19.82,
+      "reference": 19.817979863126595,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 18.27,
+      "reference": 18.26651805352097,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 12.9,
+      "reference": 12.90421047100586,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 23.63,
+      "reference": 23.628825636036076,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 7.34e-11,
+      "reference": 7.338952576821014e-11,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 10.98,
+      "reference": 10.981916294607009,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 10.44,
+      "reference": 10.4390839302348,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 11.74,
+      "reference": 11.743166415057978,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 23.96,
+      "reference": 23.95528860052035,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 42.88,
+      "reference": 42.88054475957986,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 18.97,
+      "reference": 18.96597203903983,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 17.1,
+      "reference": 17.103007122131363,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 12.04,
+      "reference": 12.035083091532577,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 26.88,
+      "reference": 26.876154049063572,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 25.02,
+      "reference": 25.019783698232658,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 33.44,
+      "reference": 33.43586907683268,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 19.48,
+      "reference": 19.47603082984827,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 13.46,
+      "reference": 13.458680399543773,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 17.25,
+      "reference": 17.24674247399163,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 16.38,
+      "reference": 16.382677219783638,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 55.81,
+      "reference": 55.806370704790574,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 18.22,
+      "reference": 18.22351212870401,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 6.15,
+      "reference": 6.152137303378838,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 12.73,
+      "reference": 12.7342434340177,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/proposition",
+      "reported": 7.08,
+      "reference": 7.083736429108891,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 2.339,
+      "reference": 2.3392541676035075,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 3.373,
+      "reference": 3.3732359535742553,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 3.195,
+      "reference": 3.1947948709086504,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 2.477,
+      "reference": 2.4772474828908244,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 1.337,
+      "reference": 1.3367166672020043,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 2.595,
+      "reference": 2.594796887364812,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 2.69,
+      "reference": 2.6903535755020216,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 2.18,
+      "reference": 2.1799777849439255,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 0.668,
+      "reference": 0.6683583336010022,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 2.076,
+      "reference": 2.0758375098918496,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 2.354,
+      "reference": 2.3540593785642687,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 1.982,
+      "reference": 1.9817979863126594,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 0.178,
+      "reference": 0.17844108266560488,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": -0.254,
+      "reference": -0.2537075112109561,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 0.611,
+      "reference": 0.6105896765421659,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": -0.096,
+      "reference": -0.09555668813720963,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": -0.449,
+      "reference": -0.4489883231474848,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 0.258,
+      "reference": 0.25787494687306556,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": -0.278,
+      "reference": -0.27822186867241916,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": -0.58,
+      "reference": -0.5796797406370484,
+      "pass": true
+    },
+    {
+      "id": "/findings/2/proposition",
+      "reported": 0.023,
+      "reference": 0.023236003292210095,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 63.11,
+      "reference": 63.10617778182148,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 47.23,
+      "reference": 47.2302244628496,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 29.48,
+      "reference": 29.475023477022816,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 16.75,
+      "reference": 16.75349851578118,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 17.76,
+      "reference": 17.75520098582678,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 12.79,
+      "reference": 12.788415052431692,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 22.72,
+      "reference": 22.721986919221866,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 7.33e-12,
+      "reference": 7.333044687191551e-12,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 2.362,
+      "reference": 2.3615112231424797,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 2.177,
+      "reference": 2.1767864860853425,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 2.546,
+      "reference": 2.546235960199617,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 2.358,
+      "reference": 2.3580018781618253,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 2.092,
+      "reference": 2.0924347583194485,
+      "pass": true
+    },
+    {
+      "id": "/findings/3/proposition",
+      "reported": 2.624,
+      "reference": 2.623568998004202,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 62.74,
+      "reference": 62.73881833241304,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 47.1,
+      "reference": 47.096804823624375,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 15.64,
+      "reference": 15.642013508788665,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 8.01,
+      "reference": 8.014206721909169,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 23.27,
+      "reference": 23.26982029566816,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 5.84e-05,
+      "reference": 5.8392768724846364e-05,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 46.23,
+      "reference": 46.23075155136751,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 28.26,
+      "reference": 28.260651629072687,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 17.97,
+      "reference": 17.970099922294825,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 10.36,
+      "reference": 10.361127284604933,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 25.58,
+      "reference": 25.579072559984716,
+      "pass": true
+    },
+    {
+      "id": "/findings/4/proposition",
+      "reported": 7.35e-06,
+      "reference": 7.3542465808624166e-06,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/qualification",
+      "reported": 704.0,
+      "reference": 704,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/qualification",
+      "reported": 682.0,
+      "reference": 682,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/qualification",
+      "reported": 655.0,
+      "reference": 655,
+      "pass": true
+    },
+    {
+      "id": "/findings/0/qualification",
+      "reported": 633.0,
+      "reference": 633,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/qualification",
+      "reported": 704.0,
+      "reference": 704,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/qualification",
+      "reported": 682.0,
+      "reference": 682,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/qualification",
+      "reported": 655.0,
+      "reference": 655,
+      "pass": true
+    },
+    {
+      "id": "/findings/1/qualification",
+      "reported": 633.0,
+      "reference": 633,
+      "pass": true
+    },
+    {
+      "id": "/findings/6/proposition",
+      "reported": 20.0,
+      "reference": 20,
+      "pass": true
+    },
+    {
+      "id": "/findings/6/proposition",
+      "reported": 15.0,
+      "reference": 15,
+      "pass": true
+    },
+    {
+      "id": "/findings/6/proposition",
+      "reported": 20.0,
+      "reference": 20,
+      "pass": true
+    },
+    {
+      "id": "/findings/6/proposition",
+      "reported": 16.0,
+      "reference": 16,
+      "pass": true
+    }
+  ]
+}

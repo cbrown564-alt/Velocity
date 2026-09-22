@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "scope": "Recorded completed actions inspected: analysis has no tools; raw commands use supplied CSV/codebook and scientific libraries. No hidden/reference/external reads observed. This is trace evidence, not an OS-isolation claim.",
+  "command_count": 5,
+  "command_sha256": [
+    "21f97c5ebbb79539dbe55c302ace42730fce513214cc7035953825dfa3621fca",
+    "fb543c1ead0e1ffd9357b2fd6ecd57919bd4bce7b11a6b10ac9e17efa0a16c4c",
+    "82172d007e50abd99f8ac0a9baa08bdf3475f87f0f8e8e0b6e873ba2c140970b",
+    "fbc6582f5669e9212f0caae43bc10f7a34f12d80cd1fb9dce77d393fbc90b8bc",
+    "a9bf61090b26a6f6f66e2ff41411d15b566eb579c1e8181aa85d5f40eff7f868"
+  ],
+  "item_types": [
+    "agent_message",
+    "command_execution"
+  ],
+  "model_completed": true
+}

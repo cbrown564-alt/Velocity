@@ -1,0 +1,99 @@
+{
+  "run_id": "2026-09-expansion-sbt004-raw-onepass-1",
+  "study_id": "SBT-004",
+  "study_version": "1.0.0",
+  "arm": "E4_RAW_DATA",
+  "input_surface": "raw",
+  "workflow": "one_pass",
+  "model": {
+    "provider": "codex_chatgpt",
+    "model_id": "gpt-6-astra"
+  },
+  "replicate": 1,
+  "input_artifacts": [
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/study_materials.json",
+      "sha256": "3887fa6ab6f4535dca6d4d84de979779bf7f0295fdbc6b59eb4a850f59b60af4",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/questionnaire.md",
+      "sha256": "06dfa43d9e907728a7b307acd600973ff0131280a3df86b9b6e08474e11adc7a",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/codebook.json",
+      "sha256": "c1e0edc250b036ddfb20c530872afcce104f8bcbbf5370a74e1ca0366cd04a52",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/respondents.csv",
+      "sha256": "6394f992f4eeddf376413b0ca394466f4a2ca9151304a015930adf658b3aa20a",
+      "exposure_class": "raw_data"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-raw-onepass-1/01-researcher/events.jsonl",
+      "sha256": "e22130588609746b084c0fc98bee3e662f26d3d70bf53b367a9b6d0f0f0be6d5",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-raw-onepass-1/01-researcher/output.json",
+      "sha256": "99b3a54df143c450b2c347c2931e084902dc981432d99c40ded62ddc454086b3",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-raw-onepass-1/01-researcher/prompt.txt",
+      "sha256": "b13d483742347978be8b30141172642ed32c431d1f63c7c1cedebc2956a7b301",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-raw-onepass-1/01-researcher/response.txt",
+      "sha256": "2c7ea060ab2e4c1d7a4defa4e03fd33924bd752c4b03463eb43bb2ed4cd2fefb",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-raw-onepass-1/01-researcher/stderr.txt",
+      "sha256": "113f482c8bf43c590a440469ff089bfe14abea87a5af1dc550713245148be631",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-raw-onepass-1/output.json",
+      "sha256": "99b3a54df143c450b2c347c2931e084902dc981432d99c40ded62ddc454086b3",
+      "artifact_type": "json"
+    }
+  ],
+  "stage_runs": [
+    {
+      "stage": "researcher",
+      "elapsed_seconds": 274.3151802079519,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 102089,
+          "cached_input_tokens": 82944,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8480,
+          "reasoning_output_tokens": 211
+        }
+      ],
+      "prompt_sha256": "b13d483742347978be8b30141172642ed32c431d1f63c7c1cedebc2956a7b301"
+    }
+  ],
+  "status": "complete",
+  "created_at": "2026-09-22T05:16:09.975946+00:00",
+  "freeze_sha256": "6a2bd911ae13469aa137f959e23ef2856df7dd9e89721d6c3a7cf6d229eec045",
+  "started_at": "2026-09-22T05:16:10.223713+00:00",
+  "runner_sha256": "0dd829c87d986d4b299a53c880dec91c062df3fde5425cf006305389fac755e7",
+  "cli_version": "codex-cli 0.154.0-alpha.6.2",
+  "reasoning_effort": "low",
+  "timeout_per_stage_seconds": 360,
+  "cost": {
+    "billing": "existing ChatGPT Codex access",
+    "incremental_usd": null,
+    "reason": "CLI reports token usage, not monetary cost"
+  },
+  "exposure_audit": "PASS; manual trace review recorded in exposure_audit.json",
+  "completed_at": "2026-09-22T05:20:44.619391+00:00"
+}

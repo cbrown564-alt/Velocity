@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "scope": "Manual review of completed event traces: analysis arm no tools; raw arm two Python commands importing scientific libraries and reading supplied respondents.csv only. No hidden/reference or external reads observed. Trace evidence is not a proof of operating-system isolation.",
+  "command_count": 2,
+  "command_sha256": [
+    "21f97c5ebbb79539dbe55c302ace42730fce513214cc7035953825dfa3621fca",
+    "5d396d7abb746c36c5627daff52ca0886ba4f63540d2699f792b97c78ec17eac"
+  ],
+  "item_types": [
+    "command_execution"
+  ],
+  "model_completed": true
+}
