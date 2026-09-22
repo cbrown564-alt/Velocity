@@ -48,6 +48,14 @@ Reference proportions exclude routed missing values and use supplied weights. Un
 
 ## Stability
 
+### RQ-COVERAGE-01 second-pass development pilot
+
+The predeclared protocol is `evals/research_quality/runs/2026-09-completeness-comparison/protocol.json`. Six calls compare a general review with a study-neutral completeness checklist on SBT-004–006. Each pair receives identical frozen public evidence and the exact original approved-analysis one-pass draft. The checklist is derived from the public decision questions; hidden findings, scores and corrections are excluded. The coordinator has already seen prior failures, so this is explicitly a development experiment.
+
+`completeness_pilot.py RUN_ID` verifies the protocol dependencies, prior manifest/output hashes and frozen public inputs without calling a model. `--execute` consumes the corresponding declared slot using existing Codex access. The protocol must already be committed. Each slot permits one call, 360 seconds, with no retry; existing run directories fail closed. The model receives all evidence inline in an empty temporary directory and is instructed not to call tools. Any recorded tool action or failed turn invalidates the review. Exact prompts, responses, events, prior-output provenance, runtime and available usage are retained, including failures.
+
+Keep baseline and paired review results separate. Score gained and lost mandatory findings, partial secondary coverage, unsupported claims, wrong bases, restraint, provenance and numeric support. Also report extra findings, words, tokens and latency: a longer checklist is a burden, not free completeness. Human preference and correction minutes stay null. One pair per exposed study cannot establish reliability, unseen transfer or product readiness. Preserve the original studies, outputs and distributed reviewer packs.
+
 E5 should use at least five replicates per mature arm/model configuration. Report selection frequency for every mandatory finding and pairwise/Jaccard agreement of selected topic clusters; do not report only average total score.
 
 ## Cross-study reporting
