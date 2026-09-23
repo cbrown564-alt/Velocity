@@ -1,0 +1,59 @@
+{
+  "study": "SBT-002",
+  "archetype": "concept_test",
+  "report_title": "Everyday meal-kit concept test",
+  "brief_title": "Concept readout",
+  "source_note": "Synthetic randomised monadic concept test (SBT-002); concepts and figures are fictitious.",
+  "low_base": { "suppress": 30, "indicative": 50 },
+  "cells": {
+    "var": "concept",
+    "labels": { "1": "Flex", "2": "Plus", "3": "Simple" },
+    "colors": { "1": "1F4E79", "2": "C2410C", "3": "64748B" }
+  },
+  "materiality_pp": 5.0,
+  "primary": ["purchase_intent_5", "appeal_5"],
+  "diagnostics": ["uniqueness_5", "relevance_5", "credibility_5", "value_5", "understanding_5"],
+  "routed": ["premium_value_5"],
+  "strategic_subgroup": { "var": "food_explorer", "yes": 1, "label": "Food explorers", "no_label": "Other buyers" },
+  "likes_set": "likes",
+  "dislikes_set": "dislikes",
+  "banner_scope": null,
+  "banner": [
+    { "group": "Total", "total": true },
+    { "group": "Concept", "var": "concept", "adjust": "holm" },
+    {
+      "group": "Food explorer",
+      "var": "food_explorer",
+      "cols": [
+        { "label": "Explorer", "codes": [1] },
+        { "label": "Not explorer", "codes": [0] }
+      ]
+    },
+    {
+      "group": "Age",
+      "var": "age",
+      "cols": [
+        { "label": "18–34", "codes": [1, 2] },
+        { "label": "35–54", "codes": [3, 4] },
+        { "label": "55–64", "codes": [5] }
+      ]
+    },
+    {
+      "group": "Meal-kit usage",
+      "var": "mealkit_usage",
+      "cols": [
+        { "label": "Never used", "codes": [1] },
+        { "label": "Used before", "codes": [2] },
+        { "label": "Current user", "codes": [3, 4] }
+      ]
+    }
+  ],
+  "layout": [
+    [
+      "Sample profile",
+      ["age", "gender", "region", "mealkit_open_5", "mealkit_usage", "food_exploration", "food_explorer", "concept"]
+    ],
+    ["Concept evaluation", ["concept_evaluation", "premium_value_5"]],
+    ["Likes and concerns", ["likes", "dislikes"]]
+  ]
+}

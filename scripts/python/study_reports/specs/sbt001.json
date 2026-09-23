@@ -1,0 +1,259 @@
+{
+  "study": "SBT-001",
+  "archetype": "tracker",
+  "report_title": "UK mobile network brand tracker",
+  "brief": "research_briefs/category_board.md",
+  "brief_title": "Category board readout",
+  "source_note": "Synthetic five-wave tracker (SBT-001); brands and figures are fictitious.",
+  "low_base": {
+    "suppress": 30,
+    "indicative": 50
+  },
+  "waves": {
+    "var": "wave",
+    "current": 5,
+    "previous": 4,
+    "first": 1,
+    "labels": {
+      "1": "W1",
+      "2": "W2",
+      "3": "W3",
+      "4": "W4",
+      "5": "W5"
+    }
+  },
+  "banner_scope": "wave == 5",
+  "banner": [
+    {
+      "group": "Wave",
+      "var": "wave",
+      "all_rows": true,
+      "compare_prev_only": true
+    },
+    {
+      "group": "Age",
+      "var": "S1_age",
+      "cols": [
+        {
+          "label": "18–34",
+          "codes": [1, 2]
+        },
+        {
+          "label": "35–54",
+          "codes": [3, 4]
+        },
+        {
+          "label": "55+",
+          "codes": [5, 6]
+        }
+      ]
+    },
+    {
+      "group": "Gender",
+      "var": "S2_gender"
+    },
+    {
+      "group": "Contract",
+      "var": "S7_contract_type"
+    },
+    {
+      "group": "Current provider",
+      "var": "S8_current_provider"
+    }
+  ],
+  "entities": [
+    {
+      "id": "northstar",
+      "label": "Northstar",
+      "code": 1,
+      "color": "1F4E79"
+    },
+    {
+      "id": "pulse",
+      "label": "Pulse",
+      "code": 2,
+      "color": "C2410C"
+    },
+    {
+      "id": "mosaic",
+      "label": "Mosaic",
+      "code": 3,
+      "color": "0F766E"
+    },
+    {
+      "id": "lumen",
+      "label": "Lumen",
+      "code": 4,
+      "color": "7C3AED"
+    },
+    {
+      "id": "harbour",
+      "label": "Harbour",
+      "code": 5,
+      "color": "B45309"
+    }
+  ],
+  "measures": [
+    {
+      "id": "unaided",
+      "label": "Unaided awareness",
+      "kind": "share",
+      "num": "A1_{id} == 1",
+      "base": null,
+      "base_text": "All respondents",
+      "stage": "funnel",
+      "title": "unaided awareness"
+    },
+    {
+      "id": "aware",
+      "label": "Aided awareness",
+      "kind": "share",
+      "num": "A2_{id} == 1",
+      "base": null,
+      "base_text": "All respondents",
+      "stage": "funnel",
+      "title": "aided awareness"
+    },
+    {
+      "id": "consider",
+      "label": "Would seriously consider",
+      "kind": "share",
+      "num": "F2_{id} == 1",
+      "base": null,
+      "base_text": "All respondents; not aware counted as not considering",
+      "stage": "funnel",
+      "title": "consideration"
+    },
+    {
+      "id": "current",
+      "label": "Current provider",
+      "kind": "share",
+      "num": "S8_current_provider == {code}",
+      "base": null,
+      "base_text": "All respondents",
+      "stage": "funnel",
+      "title": "customer share"
+    },
+    {
+      "id": "pref",
+      "label": "Most preferred",
+      "kind": "share",
+      "num": "F3_preference == {code}",
+      "base": null,
+      "base_text": "All respondents",
+      "stage": "funnel",
+      "title": "preference share"
+    },
+    {
+      "id": "consider_aware",
+      "label": "Consideration among aware",
+      "kind": "share",
+      "num": "F2_{id} == 1",
+      "base": "A2_{id} == 1",
+      "base_text": "Aware of the brand",
+      "stage": "conversion",
+      "title": "consideration among those aware"
+    },
+    {
+      "id": "adaware",
+      "label": "Prompted ad awareness",
+      "kind": "share",
+      "num": "M2_{id} == 1",
+      "base": null,
+      "base_text": "All respondents",
+      "stage": "marketing",
+      "title": "prompted ad awareness"
+    },
+    {
+      "id": "nps",
+      "label": "Net Promoter Score",
+      "kind": "nps",
+      "var": "E2_nps",
+      "base": "S8_current_provider == {code}",
+      "base_text": "Current customers of the brand",
+      "stage": "experience",
+      "title": "NPS"
+    },
+    {
+      "id": "sat",
+      "label": "Satisfaction (mean, 0–10)",
+      "kind": "mean",
+      "var": "E1_satisfaction",
+      "base": "S8_current_provider == {code}",
+      "base_text": "Current customers of the brand",
+      "stage": "experience",
+      "title": "average satisfaction",
+      "scale_max": 10
+    },
+    {
+      "id": "problem",
+      "label": "Had a network/service problem",
+      "kind": "share",
+      "num": "E3_problem == 1",
+      "base": "S8_current_provider == {code} and E3_problem < 97",
+      "base_text": "Current customers of the brand",
+      "stage": "experience",
+      "title": "share reporting a network problem",
+      "polarity": -1
+    }
+  ],
+  "image": {
+    "set": "image",
+    "attribute_labels": {
+      "reliable": "Reliable network",
+      "value": "Good value for money",
+      "innovative": "Innovative",
+      "trust": "A brand I trust",
+      "customer_service": "Good customer service",
+      "premium": "Premium",
+      "environmental": "Environmentally responsible",
+      "people_like_me": "For people like me"
+    }
+  },
+  "subgroups": [
+    {
+      "group": "Age",
+      "var": "S1_age",
+      "cols": [
+        {
+          "label": "18–34",
+          "codes": [1, 2]
+        },
+        {
+          "label": "35–54",
+          "codes": [3, 4]
+        },
+        {
+          "label": "55+",
+          "codes": [5, 6]
+        }
+      ]
+    },
+    {
+      "group": "Gender",
+      "var": "S2_gender"
+    }
+  ],
+  "materiality": {
+    "share": 0.03,
+    "nps": 10,
+    "mean": 0.3
+  },
+  "layout": [
+    [
+      "Sample profile",
+      ["S1_age", "S2_gender", "S3_region", "S5_income", "S4_employment", "S6_decision_role", "S7_contract_type"]
+    ],
+    [
+      "Brand funnel",
+      ["unaided", "aided", "familiarity", "consider", "F3_preference", "S8_current_provider", "S9_provider_tenure"]
+    ],
+    ["Brand image", ["image"]],
+    [
+      "Customer experience",
+      ["E1_satisfaction", "E2_nps", "E3_problem", "E4_contacted_service", "E5_service_satisfaction"]
+    ],
+    ["Advertising", ["ad_awareness", "M3_pulse_campaign_recognition"]],
+    ["Reasons", ["O1_reason_code"]]
+  ]
+}
