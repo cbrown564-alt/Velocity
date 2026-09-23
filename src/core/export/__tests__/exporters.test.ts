@@ -148,6 +148,11 @@ describe('formatCell', () => {
     expect(formatCell(cell, false, true, true)).toBe('30 (60.0%)');
   });
 
+  it('shows weighted counts to one decimal without changing their percent', () => {
+    expect(formatCell({ count: 284.0367089787048, percent: 33.4 }, false, true, true)).toBe('284.0 (33.4%)');
+    expect(formatCell({ count: 284.0367089787048, percent: 33.4 }, false, false, true)).toBe('284.0');
+  });
+
   it('shows count with sig arrow when both are enabled', () => {
     expect(formatCell(cell, true, true, true)).toBe('30 (60.0% ▲)');
   });
@@ -444,11 +449,45 @@ describe('exportXlsx', () => {
     await workbook.xlsx.load(await exportXlsx(config));
     const sheet = workbook.worksheets[0];
 
-    expect(sheet.getCell('B1').value).toBe('Agree');
-    expect(sheet.getCell('D1').value).toBe('Total (count)');
-    expect(sheet.getCell('D2').value).toBe(50);
-    expect(sheet.getCell('D2').numFmt).toBe('#,##0.0');
-    expect(sheet.getCell('B1').fill).toMatchObject({ fgColor: { argb: 'FF245FA7' } });
+    expect(sheet.getCell('A1').value).toBe('Gender by Agreement');
+    expect(sheet.getCell('B4').value).toBe('Agree');
+    expect(sheet.getCell('D4').value).toBe('Total (count)');
+    expect(sheet.getCell('D5').value).toBe(50);
+    expect(sheet.getCell('D5').numFmt).toBe('#,##0.0');
+    expect(sheet.getCell('B4').fill).toMatchObject({ fgColor: { argb: 'FF245FA7' } });
+    expect(sheet.views[0]).toMatchObject({ state: 'frozen', xSplit: 1, ySplit: 4 });
+  });
+
+  it('keeps significant percentages numeric and explains their highlighting', async () => {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(
+      await exportXlsx({ ...config, analyses: [{ ...config.analyses[0], subtitle: 'Weighted by wt · base n=100' }] }),
+    );
+    const sheet = workbook.worksheets[0];
+    expect(sheet.getCell('A2').value).toBe('Weighted by wt · base n=100');
+    expect(sheet.getCell('B5').value).toBe(60);
+    expect(sheet.getCell('B5').numFmt).toBe('0.0"%"');
+    expect(sheet.getCell('B5').fill).toMatchObject({ fgColor: { argb: 'FFE8F5E9' } });
+    expect(sheet.getCell('B5').note).toContain('Higher at 95%');
+    expect(sheet.getCell('C6').note).toContain('Lower at 95%');
+    expect(sheet.getCell('A8').value).toContain('95%');
+  });
+
+  it('exports apostrophe-led and duplicate long labels as unique valid sheet names', async () => {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(
+      await exportXlsx({
+        title: 'Tracker',
+        analyses: [
+          { label: "'Innovative' associations rose beyond the category", result: mockData },
+          { label: "'Innovative' associations rose beyond the category", result: mockData },
+        ],
+      }),
+    );
+    expect(workbook.worksheets.map((sheet) => sheet.name)).toEqual([
+      "Innovative' associations rose b",
+      "Innovative' associations rose-2",
+    ]);
   });
 
   it('produces a valid XLSX (ZIP) file', async () => {

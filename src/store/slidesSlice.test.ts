@@ -206,7 +206,7 @@ describe('slidesSlice', () => {
     expect(afterWorkbook.worksheets.map((sheet) => sheet.getSheetValues())).toEqual(
       beforeWorkbook.worksheets.map((sheet) => sheet.getSheetValues()),
     );
-    expect(afterWorkbook.worksheets[0].getCell('A2').value).toBe('Male');
+    expect(afterWorkbook.worksheets[0].getCell('A5').value).toBe('Male');
 
     const unweightedRecipe = {
       ...initialRecipe,

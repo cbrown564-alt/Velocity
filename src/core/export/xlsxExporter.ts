@@ -2,11 +2,11 @@ import ExcelJS from 'exceljs';
 import { ExportConfig, AnalysisExportItem, ExportError } from './types';
 import { ProcessedRow } from '../../types/processedData';
 
-const SIG_LETTERS: Record<string, string> = {
-  high_95: '▲',
-  high_80: '△',
-  low_95: '▼',
-  low_80: '▽',
+const SIGNIFICANCE_NOTES: Record<string, string> = {
+  high_95: 'Higher at 95% confidence (▲)',
+  high_80: 'Higher at 80% confidence (△)',
+  low_95: 'Lower at 95% confidence (▼)',
+  low_80: 'Lower at 80% confidence (▽)',
 };
 
 function flattenRows(rows: ProcessedRow[], result: ProcessedRow[] = []): ProcessedRow[] {
@@ -19,18 +19,55 @@ function flattenRows(rows: ProcessedRow[], result: ProcessedRow[] = []): Process
   return result;
 }
 
+function worksheetName(label: string, index: number, usedNames: Set<string>): string {
+  const cleaned =
+    label
+      .replace(/[\\/*?[\]:]/g, '_')
+      .replace(/^'+|'+$/g, '')
+      .trim() || `Analysis ${index + 1}`;
+  let name = cleaned.slice(0, 31).replace(/'+$/g, '').trimEnd();
+  let suffix = 2;
+  while (usedNames.has(name.toLowerCase())) {
+    const ending = `-${suffix++}`;
+    name = `${cleaned
+      .slice(0, 31 - ending.length)
+      .replace(/'+$/g, '')
+      .trimEnd()}${ending}`;
+  }
+  usedNames.add(name.toLowerCase());
+  return name;
+}
+
 function addAnalysisSheet(
   workbook: ExcelJS.Workbook,
   item: AnalysisExportItem,
   index: number,
   headerColorArgb: string,
   headerTextArgb: string,
+  usedNames: Set<string>,
 ): void {
   const showSig = item.options?.showSignificance !== false;
-  const sheetName = item.label.slice(0, 31).replace(/[\\/*?[\]:]/g, '_');
-  const sheet = workbook.addWorksheet(sheetName || `Analysis ${index + 1}`);
+  const sheet = workbook.addWorksheet(worksheetName(item.label, index, usedNames));
 
   const columns = item.result.columns;
+  const lastColumn = columns.length + 2;
+
+  sheet.mergeCells(1, 1, 1, lastColumn);
+  const title = sheet.getCell(1, 1);
+  title.value = item.label;
+  title.font = { bold: true, size: 15, color: { argb: 'FF17212B' } };
+  title.alignment = { vertical: 'middle', wrapText: true };
+  sheet.getRow(1).height = 38;
+
+  sheet.mergeCells(2, 1, 2, lastColumn);
+  const context = sheet.getCell(2, 1);
+  context.value = item.subtitle || '';
+  context.font = { size: 10, color: { argb: 'FF555F68' } };
+  context.alignment = { vertical: 'middle', wrapText: true };
+  sheet.getRow(2).height = item.subtitle ? 30 : 16;
+  sheet.getRow(3).height = 12;
+  sheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 4 }];
+  sheet.pageSetup.printTitlesRow = '1:4';
 
   // Header row
   const headerValues = ['', ...columns.map((c) => c.label), 'Total (count)'];
@@ -62,8 +99,7 @@ function addAnalysisSheet(
       if (!cell) {
         values.push('');
       } else {
-        const sig = showSig && cell.sig ? ` ${SIG_LETTERS[cell.sig] || ''}` : '';
-        values.push(sig ? `${cell.percent.toFixed(1)}%${sig}` : cell.percent);
+        values.push(cell.percent);
       }
     }
     values.push(row.total);
@@ -92,7 +128,7 @@ function addAnalysisSheet(
     // Significance conditional formatting - highlight sig cells
     for (let i = 0; i < columns.length; i++) {
       const cell = row.cells[columns[i].key];
-      if (cell?.sig) {
+      if (showSig && cell?.sig) {
         const excelCell = excelRow.getCell(i + 2);
         const isHigh = cell.sig.startsWith('high');
         excelCell.fill = {
@@ -100,6 +136,7 @@ function addAnalysisSheet(
           pattern: 'solid',
           fgColor: { argb: isHigh ? 'FFE8F5E9' : 'FFFCE4EC' },
         };
+        excelCell.note = SIGNIFICANCE_NOTES[cell.sig] || `Significance: ${cell.sig}`;
       }
     }
   }
@@ -109,7 +146,15 @@ function addAnalysisSheet(
     col.width = 14;
   });
   if (sheet.columns[0]) {
-    sheet.columns[0].width = 30;
+    sheet.columns[0].width = 38;
+  }
+
+  if (showSig && flatRows.some((row) => columns.some((column) => row.cells[column.key]?.sig))) {
+    const legendRow = sheet.addRow([]);
+    legendRow.height = 10;
+    const legend = sheet.addRow(['Green: higher; pink: lower. Open a highlighted cell note for its 95% or 80% level.']);
+    sheet.mergeCells(legend.number, 1, legend.number, lastColumn);
+    legend.getCell(1).font = { size: 9, color: { argb: 'FF555F68' } };
   }
 }
 
@@ -124,8 +169,9 @@ export async function exportXlsx(config: ExportConfig): Promise<Uint8Array> {
     const headerColorArgb = `FF${headerHex}`;
     const headerTextArgb = 'FFFFFFFF';
 
+    const usedNames = new Set<string>();
     config.analyses.forEach((item, index) => {
-      addAnalysisSheet(workbook, item, index, headerColorArgb, headerTextArgb);
+      addAnalysisSheet(workbook, item, index, headerColorArgb, headerTextArgb, usedNames);
     });
 
     const buffer = await workbook.xlsx.writeBuffer();

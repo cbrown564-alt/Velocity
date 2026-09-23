@@ -51,6 +51,12 @@ Study the two formats separately. A PowerPoint chart communicates a finding in a
 
 B1–B3 are research and diagnosis; they do not authorize a broad exporter restyle. B4 answers what to build. B5 proves one slice before B6 spreads it. If a useful reference is inaccessible or cannot be copied, record its observable characteristics and use a permitted example instead. Avoid treating vendor marketing screenshots as evidence of typical exported quality.
 
+### Track B first-slice evidence — 23 September 2026
+
+The [public source inventory, visual comparison board, baseline audit, format rubrics, and review artifacts](assets/output-quality/track-b-evidence.md) record B1–B5 for the synthetic Atlas aided-awareness analysis. The baseline full XLSX failed on an apostrophe-led worksheet name. The revised exporter produces all 18 sheets, keeps significant percentages numeric, and includes title/context rows and frozen headings. The compact PowerPoint table has a readable title, larger cells, and a visible source/base/weight line; combined count-and-percent tables retain their denser layout and fractional weighted counts display to one decimal. Focused export tests pass, and the revised 28-page PowerPoint output was rendered through Microsoft PowerPoint and inspected. The workbook's final native Excel view remains to be checked because Excel stopped responding during the later UI inspection; file structure and values were checked independently.
+
+B6 remains active. `npm run ci` passed. The first parallel browser run had four boot/teardown timeouts; each affected journey passed on a one-worker rerun. The product owner can now judge the [PowerPoint exhibit](assets/output-quality/atlas-awareness-exhibit.pptx) and [spreadsheet sheet](assets/output-quality/atlas-awareness-sheet.xlsx) as starting points. Apply further format rules only after that judgement and inspection of wide, sparse, chart and multi-slide exceptions.
+
 ## Dependencies and next pull
 
 | Start now | Depends on | Can run alongside |

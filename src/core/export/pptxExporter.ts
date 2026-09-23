@@ -49,6 +49,10 @@ function flattenRows(rows: ProcessedRow[], result: ProcessedRow[] = []): Process
   return result;
 }
 
+function formatCount(count: number): string {
+  return Number.isInteger(count) ? String(count) : count.toFixed(1);
+}
+
 /**
  * Format a single data cell for PPTX output.
  * Exported for unit testing.
@@ -64,13 +68,13 @@ export function formatCell(
   const sig = showSig && showPercents && cell.sig ? ` ${SIG_LETTERS[cell.sig] || ''}` : '';
   if (showCounts && showPercents) {
     // count (percent sig) — count-first for readability in combined mode
-    return `${cell.count} (${cell.percent.toFixed(1)}%${sig})`;
+    return `${formatCount(cell.count)} (${cell.percent.toFixed(1)}%${sig})`;
   }
   if (showPercents) {
     return `${cell.percent.toFixed(1)}%${sig}`;
   }
   if (showCounts) {
-    return `${cell.count}`;
+    return formatCount(cell.count);
   }
   return '';
 }
@@ -127,7 +131,7 @@ function buildSlideTable(
         options: { ...cellStyle, align: 'right' as const },
       })),
       ...(showCounts
-        ? [{ text: String(row.total), options: { ...cellStyle, align: 'right' as const, bold: true } }]
+        ? [{ text: formatCount(row.total), options: { ...cellStyle, align: 'right' as const, bold: true } }]
         : []),
     ];
     tableRows.push(dataRow);
@@ -349,24 +353,33 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
     lastSectionId = item.sectionId;
 
     const slide = pptx.addSlide();
-    const contentY = item.subtitle ? 1.3 : 1.0;
+    const compactTable =
+      item.viewType !== 'chart' &&
+      item.visualizationType !== 'chart' &&
+      item.options?.showCounts !== true &&
+      flattenRows(item.result.rows).length <= 6 &&
+      item.result.columns.length <= 5;
+    const contentY = compactTable ? 1.75 : item.subtitle ? 1.3 : 1.0;
 
     slide.addText(item.label, {
-      x: 0.5,
+      x: compactTable ? 0.7 : 0.5,
       y: 0.3,
-      w: '90%',
-      fontSize: 18,
+      w: compactTable ? 11.9 : '90%',
+      h: compactTable ? 0.9 : undefined,
+      fontSize: compactTable ? 20 : 18,
       fontFace: branding.fontFamily,
       color: branding.primaryColor,
       bold: true,
+      breakLine: false,
     });
 
     if (item.subtitle) {
       slide.addText(item.subtitle, {
-        x: 0.5,
-        y: 0.68,
-        w: '90%',
-        fontSize: 10,
+        x: compactTable ? 0.7 : 0.5,
+        y: compactTable ? 6.9 : 0.68,
+        w: compactTable ? 11.9 : '90%',
+        h: compactTable ? 0.38 : undefined,
+        fontSize: compactTable ? 9 : 10,
         fontFace: branding.fontFamily,
         color: '666666',
       });
@@ -380,18 +393,24 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
       buildSlideChart(pptx, slide, item, branding, contentY);
     } else {
       const showCounts = item.options?.showCounts === true;
-      const tableRows = buildSlideTable(item, item.result.columns, branding);
+      const tableRows = buildSlideTable(
+        item,
+        item.result.columns,
+        compactTable ? { ...branding, fontSize: 12, headerFontSize: 11 } : branding,
+      );
       // label column gets a fixed width; remaining width split among data cols (+ Total col when showCounts)
       const dataColCount = item.result.columns.length + (showCounts ? 1 : 0);
-      const dataColWidth = (SLIDE_TABLE_WIDTH - LABEL_COL_WIDTH) / dataColCount;
-      const colW = [LABEL_COL_WIDTH, ...Array(dataColCount).fill(dataColWidth)];
+      const tableWidth = compactTable ? 9.7 : SLIDE_TABLE_WIDTH;
+      const labelWidth = compactTable ? 3.2 : LABEL_COL_WIDTH;
+      const dataColWidth = (tableWidth - labelWidth) / dataColCount;
+      const colW = [labelWidth, ...Array(dataColCount).fill(dataColWidth)];
 
       slide.addTable(tableRows, {
-        x: 0.5,
+        x: compactTable ? 0.7 : 0.5,
         y: contentY,
-        w: SLIDE_TABLE_WIDTH,
+        w: tableWidth,
         colW,
-        rowH: 0.35,
+        rowH: compactTable ? 0.52 : 0.35,
         autoPage: true,
         autoPageRepeatHeader: true,
       });

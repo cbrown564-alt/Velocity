@@ -331,6 +331,8 @@ exportDeck(deck, { format: 'pptx' })
   └─ Return: Uint8Array (PPTX blob)
 ```
 
+The current default PPTX exporter gives compact percent tables (up to six rows and five banner columns) larger cells and places their subtitle below the exhibit as a visible context note. Tables with combined counts and percentages keep the denser full-width layout; fractional weighted counts display to one decimal. XLSX export uses one sheet per analysis, with a title and subtitle above the numeric table, frozen headings, and valid unique worksheet names. Significance colors have a legend and cell notes identifying the confidence level; percentage cells remain numeric so researchers can reuse them in Excel. These layout rules do not change processed values or the deck recipe.
+
 ### 5.4 Speaker Notes — The Agent's Voice
 
 Speaker notes are the single highest-value addition for agent-generated decks. An agent's real strength is interpretation — explaining what the numbers mean, why a finding matters, what the caveats are.

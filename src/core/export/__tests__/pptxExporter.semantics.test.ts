@@ -8,7 +8,7 @@ import JSZip from 'jszip';
 type TableRow = Array<{ text: string }>;
 
 interface RecordedSlide {
-  texts: Array<{ text: string }>;
+  texts: Array<{ text: string; opts: any }>;
   tables: Array<{ rows: TableRow[]; opts: any }>;
   charts: Array<{ type: string; data: any; opts: any }>;
   notes: string[];
@@ -24,8 +24,8 @@ vi.mock('pptxgenjs', () => {
       this.record = record;
     }
 
-    addText(text: string) {
-      this.record.texts.push({ text });
+    addText(text: string, opts: any) {
+      this.record.texts.push({ text, opts });
     }
 
     addTable(rows: TableRow[], opts: any) {
@@ -127,6 +127,48 @@ describe('exportPptx semantics', () => {
     expect(header).toEqual(['', 'Agree', 'Disagree']);
     expect(dataRow).toEqual(['Male', '60.0% ▲', '40.0%']);
     expect(table.opts.colW).toHaveLength(3);
+  });
+
+  it('uses a readable short-table layout with the source context below the exhibit', async () => {
+    await exportPptx({
+      title: 'Tracker',
+      analyses: [{ label: 'Growth leads the mix', subtitle: 'Source: tracker · weighted · n=100', result: mockData }],
+    });
+    const slide = lastDeck().slides[1];
+    expect(slide.tables[0].opts).toMatchObject({ x: 0.7, y: 1.75, w: 9.7, rowH: 0.52 });
+    expect(slide.texts.find((entry) => entry.text.startsWith('Source:'))?.opts.y).toBeGreaterThan(6.5);
+  });
+
+  it('keeps dense tables on the existing full-width layout', async () => {
+    const wideData = {
+      ...mockData,
+      columns: Array.from({ length: 7 }, (_, index) => ({ key: String(index), label: `Group ${index}`, total: 20 })),
+    };
+    await exportPptx({ title: 'Tracker', analyses: [{ label: 'Wide result', result: wideData }] });
+    expect(lastDeck().slides[1].tables[0].opts).toMatchObject({ w: 12.3, rowH: 0.35 });
+  });
+
+  it('uses the full-width layout for combined count and percent cells', async () => {
+    await exportPptx({
+      title: 'Tracker',
+      analyses: [{ label: 'Appendix', result: mockData, options: { showCounts: true, showPercents: true } }],
+    });
+    expect(lastDeck().slides[1].tables[0].opts).toMatchObject({ w: 12.3, rowH: 0.35 });
+  });
+
+  it('formats fractional weighted row totals without long machine precision', async () => {
+    await exportPptx({
+      title: 'Tracker',
+      analyses: [
+        {
+          label: 'Weighted appendix',
+          result: { ...mockData, rows: [{ ...mockData.rows[0], total: 284.0367089787048 }] },
+          options: { showCounts: true, showPercents: true },
+        },
+      ],
+    });
+    const row = lastDeck().slides[1].tables[0].rows[1];
+    expect(row[row.length - 1].text).toBe('284.0');
   });
 
   it('renders count-only cells and includes total column when showCounts is true', async () => {
