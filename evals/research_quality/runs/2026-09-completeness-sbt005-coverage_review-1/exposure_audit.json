@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "completed_turns": 1,
+  "tool_actions": 0,
+  "scope": "Recorded model actions only; not a claim of operating-system isolation",
+  "public_input_count": 4,
+  "prior_output_sha256": "0f98a140a8182c8099bf87acf3b10036f974488a51489ba1a8a710cfc79bf3f5",
+  "protocol_sha256": "bd052854abe8edd851fda98bb5b9d30d3fc966cb9362f0b9e7f018e030437f89"
+}

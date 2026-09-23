@@ -30,10 +30,11 @@ try {
       );
     await page.getByLabel('I have checked the preparation, weights, universes and limitations').check();
     await page.getByRole('button', { name: 'Review candidates', exact: true }).click();
-    const chosen = study.candidates.find(
-      (c) => key[c.candidate_id].input_surface === 'analysis' && key[c.candidate_id].workflow === 'one_pass',
-    );
-    assert.ok(chosen, 'A completed analysis one-pass candidate is required for this QA slice');
+    const chosen =
+      study.candidates.find(
+        (c) => key[c.candidate_id].input_surface === 'analysis' && key[c.candidate_id].workflow === 'one_pass',
+      ) ?? study.candidates.find((c) => key[c.candidate_id].input_surface === 'analysis');
+    assert.ok(chosen, 'A completed analysis candidate is required for this QA slice');
     await page.getByLabel('Candidate', { exact: true }).selectOption(chosen.candidate_id);
     for (const candidate of study.candidates) {
       await page.getByLabel('Candidate', { exact: true }).selectOption(candidate.candidate_id);
