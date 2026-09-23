@@ -44,10 +44,10 @@ npm run test:ui       # Interactive UI
 npm run test:e2e      # Playwright product gates (excludes @visual; CI e2e job)
 npm run test:e2e:visual  # Screenshot regression (@visual tag; informational CI only)
 npm run test:parity   # WASM vs Node adapter parity on golden fixtures (CI unit-coverage job)
-npm run ci            # Full test workflow locally (lint through build)
-npm run ci:lint       # lint-format job only (STAB-CI-14)
+npm run ci            # lint, app typecheck, smoke tests, build
+npm run ci:lint       # lint only
 npm run ci:e2e        # Playwright product gates
-npm run ci:full       # ci + ci:e2e (STAB-CI-14)
+npm run ci:full       # lint, all typechecks, full Vitest suite, build, Playwright
 ```
 
 **Local bootstrap (matches CI):**

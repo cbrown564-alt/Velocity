@@ -6,21 +6,17 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 
 | Need | Read |
 | :--- | :--- |
-| What to work on | `tracker_00_implementation_status.md` (active redesign-convergence board, pilot gate, stabilization, gated work) |
-| Cursor capacity sprint | `cursor-capacity-sprint/PLAN.md` + `cursor-capacity-sprint/R0_RECONCILIATION.md` (execution aid; tracker remains canonical status) |
+| What to work on | `tracker_00_implementation_status.md` (short current-work board and parked work) |
+| Historical cursor capacity sprint | `cursor-capacity-sprint/PLAN.md` + `cursor-capacity-sprint/R0_RECONCILIATION.md` (past execution aid; tracker owns current work) |
 | **Engine boot / CI truth incident** | **`audit_10_engine_boot_ci_truth_rca_2026-07-14.md`** — closed July 15, 2026; canonical root cause, protected-promotion, and ten-pair soak evidence |
-| **Historical pilot UI presentation gate** | **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — pre-reset baseline and PPR fix evidence; not final redesign photography |
+| **Historical pilot UI presentation review** | **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — pre-reset baseline and PPR fix evidence; not final redesign photography |
 | **User journey screenshots** | **`user_journey_screenshots.md`** — current reset-era journey, evidence screenshots, and known gaps |
-| Pilot contract (PILOT-0) | `pilot_00_brief.md` — SAV-to-deck thesis, scope, metrics, ICP screen |
-| Trust evidence (PILOT-2) | `pilot_02_trust_pack.md` — parity, benchmarks, limitations, reproduce commands |
-| Pilot packaging (PILOT-1) | `pilot_01_packaging.md` — build, host, browser matrix, event log |
-| Paid pilot ops kit (PILOT-6) | `pilot_06_paid_pilot_program.md` — outreach, screener, offer scope, runbook, evidence template |
-| Pilot evidence execution checklist | `pilot_evidence_collection_checklist.md` — week-by-week ops playbook for PILOT-4a and PILOT-6 evidence capture |
-| Deck-native multi-agent plan | `deck_native_multi_agent_plan.md` — planner/designer/builder/evaluator protocol and phased deck-native gates |
+| Historical pilot preparation | `pilot_00_brief.md`, `pilot_01_packaging.md`, `pilot_02_trust_pack.md`, `pilot_06_paid_pilot_program.md`, and `pilot_evidence_collection_checklist.md` — reference material; external pilot work is inactive |
+| Historical deck-native plan | `deck_native_multi_agent_plan.md` — past planner/designer/builder/evaluator protocol |
 | What has shipped | `completed_foundations_summary.md` |
 | Code quality remediation | `kanban_thermo_nuclear_remediation.md` (June 2026 thermo-nuclear review board) |
 | Why and sequencing | `roadmap_00_strategic_guide.md` |
-| Scope gates | `blue_02_feature_matrix.md` |
+| Feature decisions | `blue_02_feature_matrix.md` (historical Keep/Delay/Reject record; current choices live in the tracker and strategic guide) |
 | Local setup | `dev_01_contributing.md` |
 | MCP / agent workflow | `guide_agent_quickstart.md` + `AGENTS.md` |
 | Research-quality benchmark | `workstreams/research_quality/00_strategy.md` + `../evals/research_quality/README.md` (experimental; SBT-001 generation/preparation/analysis checks) |
@@ -37,7 +33,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | `arch_05_visualisation_engine.md` | Charts and rendering |
 | `arch_06_local_first_persistence.md` | Persistence strategy |
 | `arch_07_agent_architecture.md` | Engine, MCP, deck, session, workspace, provenance |
-| `arch_08_testing.md` | Testing and CI gates |
+| `arch_08_testing.md` | Testing and CI checks |
 
 ## Design (`design_*`)
 
@@ -53,9 +49,9 @@ Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Hist
 ## Procedures
 
 - `plan_01_comprehensive_ui_ux_review.md` — multi-session UI/UX review program (May 2026; UXR complete)
-- `plan_02_ui_presentation_workstream.md` — **active** presentation & activation (`STAB-UI-F`, tracker §4.3)
-- `plan_03_ui_technical_foundation.md` — technical UI foundation (`STAB-UI-T`, tracker §4.4)
-- `plan_05_design_reset_implementation.md` — **active context** for the implemented reset foundation and incomplete validation; current convergence sequencing lives in the tracker
+- `plan_02_ui_presentation_workstream.md` — historical presentation plan; check the tracker for current work
+- `plan_03_ui_technical_foundation.md` — historical technical UI plan; check the tracker for current work
+- `plan_05_design_reset_implementation.md` — implemented reset foundation and remaining validation context; the tracker owns current sequencing
 - **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — historical pre-reset presentation baseline (Linear bar, PPR fixes, screenshots in `assets/ui-pilot-readiness-audit/`)
 - `reviews/ui_ux_review_2026-05/` — findings register and session notes for that program
 - `playbooks/` — refactors, stats, engine API, UI modes, worker migration, agent analysis, triage
@@ -74,7 +70,7 @@ Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Hist
 | `evals/eval-NN/scripts/` | Optional engine repro scripts (e.g. EVAL-02) |
 | `evals/templates/` | Result and synthesis templates |
 
-Phase 4 synthesis (historical): `archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md`. Current claims: roadmap §2.1 and tracker.
+Phase 4 synthesis (historical): `archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md`. Check the tracker and strategic guide for current claims.
 
 ## Archive
 

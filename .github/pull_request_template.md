@@ -1,86 +1,11 @@
 ## Summary
-- What problem does this PR solve?
-- What is intentionally out of scope?
 
-## Change Type
-- [ ] Feature
-- [ ] Bug fix
-- [ ] Refactor (no behavior change)
-- [ ] Docs-only
-- [ ] Test-only
+What changed and why?
 
-## Scope + Required Docs Read
-List docs read based on touched areas (per `AGENTS.md`):
-- [ ] `docs/arch_01_system_architecture.md` (new feature / major refactor)
-- [ ] `docs/arch_02_data_model.md` (data structures / ingestion / types)
-- [ ] `docs/arch_03_headless_core.md` (`src/core/*` or `adapters/*`)
-- [ ] `docs/arch_04_statistical_engine.md` (stats, weights, significance)
-- [ ] `docs/arch_05_visualisation_engine.md` (charts / D3 / canvas)
-- [ ] `docs/arch_08_testing.md` (CI gates, test strategy, pre-PR verification)
-- [ ] `docs/roadmap_00_strategic_guide.md`
-- [ ] `docs/blue_02_feature_matrix.md`
-- [ ] `docs/design_01_system.md` (React UI / CSS / theme tokens)
-- [ ] `docs/design_02_ux_modes.md` (mode separation)
+## Contracts and risks
 
-## Architectural Invariants (required)
-- [ ] `src/core/*` has no React/DOM/browser API dependencies.
-- [ ] Heavy compute stays in Worker (not main thread).
-- [ ] Dual-state data model preserved (raw codes + labels).
-- [ ] Dependency direction preserved across core/adapters/UI seams.
+Name any changed interface, saved-file format, statistical meaning, or migration. Note a material risk or write "none identified."
 
-## Contracts Changed
-Describe interface/schema/type contract deltas.
-- Public interfaces changed: [ ] Yes [ ] No
-- Data/schema changed: [ ] Yes [ ] No
-- If yes, list exact contracts and migration impact:
+## Verification
 
-## Test Plan
-Commands run and outcomes. The default required check is documented in the [pre-PR verification playbook](docs/playbooks/pre_pr_verification.md).
-
-```bash
-npm run ci              # lint → app typecheck → Vitest smoke set → build
-# Add targeted browser, parity, MCP, coverage, or mutation checks when relevant.
-```
-
-Results:
-- [ ] `npm run ci` passed for a code change
-- [ ] Relevant targeted checks passed
-- [ ] Manual verification completed (if applicable)
-
-## Risks + Mitigations
-- Known risks:
-- Mitigations / follow-up:
-
-## Performance / Threading Notes
-- Any heavy processing introduced or moved?
-- Evidence that main thread remains render/state only:
-
-### Performance Change (required if this PR claims or risks a perf change)
-- [ ] No performance-relevant change (skip the rest of this section).
-- **Hypothesis:** what should get faster/lighter, and why?
-- **Measurement:** how was it measured? (e.g. `npm run benchmark:perf`,
-  `benchmark:sav`, `benchmark:crosstab`, `test:e2e:production`, browser trace)
-- **Before/after evidence:** paste the relevant numbers (initial bytes, worker
-  ready, upload→ready, first crosstab, export modal open, or benchmark deltas).
-
-| Metric | Before | After |
-| :--- | ---: | ---: |
-|  |  |  |
-
-- [ ] First-load byte budget still passes (`npm run test:e2e:production`).
-- [ ] `*_latest.json` benchmark artifacts regenerated if this PR moves the baseline (see `validation/README.md`).
-
-## Docs-to-Code Sync
-- [ ] No contract/invariant changed, so no docs update needed.
-- [ ] Contract/invariant changed and docs were updated in this PR.
-- Docs updated:
-
-## Reviewer Checklist Seed
-Checked in this PR to speed reviewer pass:
-- [ ] Dual-state model behavior validated
-- [ ] Portable logic remains in `src/core/*`
-- [ ] Stats invariants validated (if touched)
-- [ ] UX modes/theme token rules respected (if touched)
-
-## Rollback Plan (for risky changes)
-If rollback is needed, what is the safest immediate action?
+List commands run and direct checks, with outcomes. Use `docs/playbooks/pre_pr_verification.md` for the relevant checks.
