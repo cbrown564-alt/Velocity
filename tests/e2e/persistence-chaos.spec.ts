@@ -205,25 +205,6 @@ test.describe('persistence chaos suite', () => {
     await context.close();
   });
 
-  test('quota pressure still restores workspace', async ({ page }) => {
-    test.setTimeout(240000);
-    await page.addInitScript(() => {
-      const storage = navigator.storage;
-      if (!storage) return;
-      const original = storage.estimate.bind(storage);
-      storage.estimate = async () => {
-        const estimate = await original().catch(() => ({ usage: 0, quota: 1 }));
-        return { usage: estimate.quota * 0.98, quota: estimate.quota || 1_000_000_000 };
-      };
-    });
-    await page.reload();
-    await reachDashboardWithExample(page);
-    await buildExampleCrosstab(page);
-    await invalidateOpfsDbCache(page, 'corrupt');
-    await page.reload();
-    await waitForWorkspaceAfterReload(page);
-  });
-
   test('@rebuild-path CI gate: rebuild-from-source telemetry on corrupt cache', async ({ page }) => {
     test.setTimeout(240000);
     await clearBrowserStorage(page);

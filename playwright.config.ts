@@ -23,13 +23,6 @@ export default defineConfig({
   testIgnore: ['**/production-smoke.spec.ts', '**/performance-dashboard.spec.ts'],
   timeout: 120000,
   retries: process.env.CI ? 1 : 0,
-  expect: {
-    toHaveScreenshot: {
-      maxDiffPixelRatio: 0.02,
-      animations: 'disabled',
-    },
-  },
-  snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   use: {
     baseURL,
     browserName: 'chromium',

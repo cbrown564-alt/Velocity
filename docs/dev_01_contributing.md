@@ -105,7 +105,7 @@ Run **`npm run ci`** before handing off a code change. Add targeted browser or s
 
 *   **Unit/integration tests:** Vitest
 *   **Golden/parity tests:** Vitest suites under `tests/` (including `tests/e2e/agentWorkflow.test.ts`)
-*   **End-to-End:** Playwright (`tests/e2e/*.spec.ts`; `@visual` specs are informational only)
+*   **End-to-End:** Playwright (`tests/e2e/*.spec.ts`)
 
 ```bash
 npm run ci              # lint, format, all typechecks, boundaries, Vitest, build

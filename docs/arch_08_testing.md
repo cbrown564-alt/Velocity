@@ -13,7 +13,6 @@ Use a more specific check when the change calls for it:
 | All Vitest tests | `npm run test:run` |
 | Browser journeys | `npm run test:e2e` |
 | Production browser smoke | `npm run test:e2e:production` |
-| Screenshot comparisons | `npm run test:e2e:visual` |
 | Node/WASM statistical parity | `npm run test:parity` |
 | Coverage investigation | `npm run test:coverage` |
 | Core mutation investigation | `npm run test:mutation` |
@@ -28,5 +27,6 @@ These specialist checks remain available without running on every change. A pass
 - Use `src/test/fixtures/variables.ts` for typed survey fixtures. Preserve categorical codes and labels in tests that cross ingestion, session, or export boundaries.
 - Put browser journeys in `tests/e2e/*.spec.ts`. `tests/e2e/agentWorkflow.test.ts` is a Vitest engine test despite its directory name.
 - Use `tests/parity/` for comparisons between Node and browser adapters.
+- Golden results compare against committed expected files. A missing expected file fails the test.
 
 `docs/playbooks/pre_pr_verification.md` gives the short local checklist. Historical CI designs and incident evidence remain in the archived audits; they do not define current branch requirements.

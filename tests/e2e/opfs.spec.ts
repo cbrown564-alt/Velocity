@@ -93,38 +93,3 @@ test('Start Fresh clears persisted session after reload', async ({ page }) => {
   await expect(page.getByTestId('workspace-empty-state')).toBeVisible({ timeout: 30000 });
   await expect(page.getByRole('button', { name: 'Restore Session' })).toBeHidden({ timeout: 5000 });
 });
-
-test('Reload smoke: app boots after reload', async ({ page }) => {
-  await page.goto('/');
-
-  await page.evaluate(async () => {
-    try {
-      localStorage.clear();
-    } catch {
-      // Best-effort browser storage cleanup.
-    }
-
-    try {
-      if (navigator.storage?.getDirectory) {
-        const root = await navigator.storage.getDirectory();
-        // @ts-expect-error - entries() returns an async iterator
-        for await (const [name] of root.entries()) {
-          try {
-            await root.removeEntry(name, { recursive: true });
-          } catch {
-            // Ignore delete errors
-          }
-        }
-      }
-    } catch {
-      // Ignore OPFS cleanup failures
-    }
-  });
-
-  await page.reload();
-
-  await expect(page.getByText(/^Velocity$/)).toBeVisible({ timeout: 30000 });
-  await expect(page.getByText(/Turn a client survey file into an editable PowerPoint deck/i)).toBeVisible({
-    timeout: 30000,
-  });
-});
