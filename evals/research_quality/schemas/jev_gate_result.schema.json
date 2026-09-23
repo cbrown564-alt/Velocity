@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "jev_gate_result.schema.json",
+  "title": "Velocity Jev gate result",
+  "type": "object",
+  "required": ["stage", "model", "candidate_id", "answers", "disposition"],
+  "properties": {
+    "stage": {"enum": ["cleaning", "verifier", "prioritiser"]},
+    "model": {"type": "string"},
+    "candidate_id": {"type": "string"},
+    "study_id": {"type": "string"},
+    "answers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {"enum": ["noul", "choice", "score"]},
+          "noul": {"type": "number"},
+          "choice": {"type": "string"},
+          "score": {"type": "number"},
+          "confidence": {"type": "number"}
+        }
+      }
+    },
+    "disposition": {"type": "string"},
+    "escalate": {"type": "boolean"},
+    "notes": {"type": "array", "items": {"type": "string"}},
+    "raw_typesafe_ref": {"type": "string"}
+  }
+}

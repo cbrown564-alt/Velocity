@@ -1,0 +1,174 @@
+{
+  "project_id": "SBT-002",
+  "version": "1.0.0",
+  "rule": "Frozen before first model exposure; numerical evidence bindings are deterministic.",
+  "findings": [
+    {
+      "finding_id": "F_A_BROAD",
+      "tier": "mandatory",
+      "proposition": "Flex has the strongest broad development case: higher total-sample appeal and numerically higher purchase intent, with no established purchase-intent advantage over Plus.",
+      "evidence_required": [
+        "appeal_5 concept comparison",
+        "purchase_intent_5 concept comparison"
+      ],
+      "claim_boundary": "May describe randomised concept-cell differences; do not claim real-market sales impact.",
+      "analytical_relationship": "multi_metric_concept_comparison",
+      "topic_cluster": "F_A_BROAD",
+      "evidence_ids": [
+        "SBT-002:concept_metrics.appeal_5",
+        "SBT-002:concept_metrics.purchase_intent_5",
+        "SBT-002:pairwise.appeal_5",
+        "SBT-002:pairwise.purchase_intent_5"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_B_DIFFERENTIATED",
+      "tier": "mandatory",
+      "proposition": "Plus is more differentiated than the other concepts and its response is more polarised, so top-2-box alone is incomplete.",
+      "evidence_required": [
+        "uniqueness_5 full distribution",
+        "appeal/purchase full distribution"
+      ],
+      "claim_boundary": "Do not equate uniqueness with universal preference or causal conversion.",
+      "analytical_relationship": "distribution_and_diagnostic_tradeoff",
+      "topic_cluster": "F_B_DIFFERENTIATED",
+      "evidence_ids": [
+        "SBT-002:concept_metrics.uniqueness_5",
+        "SBT-002:concept_metrics.appeal_5",
+        "SBT-002:concept_metrics.purchase_intent_5"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_B_EXPLORER",
+      "tier": "mandatory",
+      "proposition": "Plus performs materially better among the pre-specified food-explorer subgroup, creating a genuine targeted opportunity alongside Flex's broader strength.",
+      "evidence_required": [
+        "food_explorer \u00d7 concept purchase intent",
+        "food_explorer \u00d7 concept appeal"
+      ],
+      "claim_boundary": "Subgroup membership is observational; concept assignment remains randomised.",
+      "analytical_relationship": "pre_specified_interaction",
+      "topic_cluster": "F_B_EXPLORER",
+      "evidence_ids": [
+        "SBT-002:strategic_subgroup",
+        "SBT-002:interactions"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_C_POSITION",
+      "tier": "secondary",
+      "proposition": "Simple is easy to understand and credible but lacks a sufficiently strong multi-measure case to displace the two more strategically distinctive options.",
+      "evidence_required": [
+        "understanding_5",
+        "credibility_5",
+        "primary appeal/purchase comparisons"
+      ],
+      "claim_boundary": "Do not call Simple a failure if its absolute ratings are respectable.",
+      "analytical_relationship": "strengths_vs_decision_criteria",
+      "topic_cluster": "F_C_POSITION",
+      "evidence_ids": [
+        "SBT-002:concept_metrics.understanding_5",
+        "SBT-002:concept_metrics.credibility_5",
+        "SBT-002:concept_metrics.appeal_5",
+        "SBT-002:concept_metrics.purchase_intent_5"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_WEIGHTING",
+      "tier": "context",
+      "proposition": "Weighting changes selected top-line estimates enough that weighted results should be treated as primary, without overturning the major concept story.",
+      "evidence_required": [
+        "weighted/unweighted audit"
+      ],
+      "claim_boundary": "Do not turn weighting itself into a management finding.",
+      "analytical_relationship": "methodological_context",
+      "topic_cluster": "F_WEIGHTING",
+      "evidence_ids": [
+        "SBT-002:weighting_audit"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_ROUTED_PREMIUM",
+      "tier": "context",
+      "proposition": "Premium-value diagnostics use a routed understanding-qualified universe and must not be compared as though they share the unconditional purchase-intent denominator.",
+      "evidence_required": [
+        "premium_value routing rates and bases"
+      ],
+      "claim_boundary": "Methodological qualification only unless routing differences materially alter interpretation.",
+      "analytical_relationship": "universe_qualification",
+      "topic_cluster": "F_ROUTED_PREMIUM",
+      "evidence_ids": [
+        "SBT-002:routing",
+        "SBT-002:concept_metrics.premium_value_5"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_CAUSAL_BOUNDARY",
+      "tier": "context",
+      "proposition": "Diagnostic associations may explain the pattern descriptively but do not establish that uniqueness, value or ease causes purchase intent.",
+      "evidence_required": [
+        "diagnostic associations if analysed"
+      ],
+      "claim_boundary": "No driver/causal language without separately specified modelling assumptions.",
+      "analytical_relationship": "claim_boundary",
+      "topic_cluster": "F_CAUSAL_BOUNDARY",
+      "evidence_ids": [
+        "SBT-002:diagnostic_associations"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_TRIVIAL_SIG",
+      "tier": "do_not_elevate",
+      "proposition": "A statistically detectable but sub-5pp difference is not a major commercial finding solely because it is significant.",
+      "evidence_required": [
+        "pairwise significance and materiality fields"
+      ],
+      "claim_boundary": "Can be mentioned as secondary detail if relevant; must not outrank materially larger findings.",
+      "analytical_relationship": "significance_vs_materiality",
+      "topic_cluster": "F_TRIVIAL_SIG",
+      "evidence_ids": [
+        "SBT-002:pairwise.understanding_5"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_EXPLORATORY_NOISE",
+      "tier": "do_not_elevate",
+      "proposition": "Unplanned demographic subgroup spikes require exploratory qualification and corroboration before driving the development decision.",
+      "evidence_required": [
+        "exploratory subgroup analyses"
+      ],
+      "claim_boundary": "Do not elevate solely on nominal p-value.",
+      "analytical_relationship": "subgroup_restraint",
+      "topic_cluster": "F_EXPLORATORY_NOISE",
+      "evidence_ids": [
+        "SBT-002:exploratory"
+      ],
+      "claim_strength": "bounded_descriptive"
+    },
+    {
+      "finding_id": "F_SIMPLE_SEDUCTION",
+      "tier": "do_not_elevate",
+      "proposition": "Simple's isolated diagnostic or noisy subgroup strength does not make it the hidden overall winner.",
+      "evidence_required": [
+        "Simple diagnostic strength plus primary outcomes"
+      ],
+      "claim_boundary": "Preserve genuine Simple strengths while resisting reversal of the evidence hierarchy.",
+      "analytical_relationship": "isolated_vs_total_evidence",
+      "topic_cluster": "F_SIMPLE_SEDUCTION",
+      "evidence_ids": [
+        "SBT-002:exploratory",
+        "SBT-002:concept_metrics.credibility_5",
+        "SBT-002:concept_metrics.purchase_intent_5"
+      ],
+      "claim_strength": "bounded_descriptive"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "study_id": "FSA-CIT-2025-03",
+  "title": "Food affordability, concerns and confidence \u2014 March 2025",
+  "synthetic": false,
+  "decision_question": "What should an FSA research manager prioritise from this March snapshot, and what does the evidence not establish?",
+  "population": "Adults aged 16+ in England, Wales and Northern Ireland; Scotland excluded",
+  "fieldwork": "7\u201311 March 2025",
+  "design": "Online YouGov quota sample, n=2051; published weighted aggregate tables",
+  "analysis_policy": {
+    "inference": "Descriptive only for this extract. No new significance tests or trend claims: microdata, design variances and comparison waves are not supplied.",
+    "bases": "Use each table base. Retain net and constituent response definitions. Do not conflate general concern with household experience.",
+    "small_base": "Do not report percentages for unweighted bases below 50.",
+    "causality": "Cross-sectional associations and attitudes do not identify effects."
+  },
+  "scope": "Nine preselected whole-sample question tables; inference is limited to this slice. This is a published-data transfer check, not an unseen holdout or raw-preparation test."
+}

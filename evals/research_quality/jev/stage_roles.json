@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "provider": "typesafe",
+  "default_model": "jev-latest",
+  "principle": "Jev decides and gates; LLMs/engine generate and execute.",
+  "stages": {
+    "cleaning": {
+      "purpose": "Raw variable / analysis-readiness triage before E3 surface or engine recipes",
+      "questions_file": "cleaning_questions.json",
+      "feeds": ["E4_RAW_DATA", "PILOT-4a processing discovery", "analysis surface construction"],
+      "forbidden_outputs": ["recode expressions", "SQL", "new conceptual nets not in recipe enum"]
+    },
+    "verifier": {
+      "purpose": "E2 verifier: support, universe/weight/routing, hard failures, disposition",
+      "questions_file": "verifier_questions.json",
+      "feeds": ["E2_STAGED.verifier"],
+      "forbidden_outputs": ["new propositions", "story beats"]
+    },
+    "prioritiser": {
+      "purpose": "E2 prioritiser: importance tier and restraint; may reuse verifier pack fields plus tier choice",
+      "questions_file": "verifier_questions.json",
+      "required_question_ids": ["importance_tier", "do_not_elevate", "redundant_with_selected"],
+      "feeds": ["E2_STAGED.prioritiser"],
+      "forbidden_outputs": ["slide layout", "chart type"]
+    }
+  },
+  "non_goals": [
+    "Sole E1 researcher",
+    "Story synthesis",
+    "Autonomous presentation production",
+    "Writing transform code"
+  ]
+}

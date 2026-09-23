@@ -1,0 +1,102 @@
+{
+  "SBT-002-01": {
+    "run_id": "2026-09-21-sbt002-analysis-one-r2",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 2
+  },
+  "SBT-002-02": {
+    "run_id": "2026-09-21-sbt002-analysis-one-r4",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 4
+  },
+  "SBT-002-03": {
+    "run_id": "2026-09-21-sbt002-analysis-one-r3",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 3
+  },
+  "SBT-002-04": {
+    "run_id": "2026-09-21-sbt002-raw-staged-r1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "raw",
+    "workflow": "staged",
+    "replicate": 1
+  },
+  "SBT-002-05": {
+    "run_id": "2026-09-21-sbt002-raw-one-r1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "raw",
+    "workflow": "one_pass",
+    "replicate": 1
+  },
+  "SBT-002-06": {
+    "run_id": "2026-09-21-sbt002-analysis-one-r5",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 5
+  },
+  "SBT-002-07": {
+    "run_id": "2026-09-21-sbt002-analysis-one-r1b",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 1
+  },
+  "SBT-002-08": {
+    "run_id": "2026-09-21-sbt002-analysis-staged-r1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "staged",
+    "replicate": 1
+  },
+  "SBT-003-01": {
+    "run_id": "2026-09-21-sbt003-analysis-one-r1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 1
+  },
+  "FSA-CIT-2025-03-01": {
+    "run_id": "2026-09-22-fsa-analysis-one-r1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 1
+  }
+}

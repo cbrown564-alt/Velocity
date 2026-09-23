@@ -1,0 +1,219 @@
+{
+  "run_id": "2026-09-21-sbt002-analysis-staged-r1",
+  "study_id": "SBT-002",
+  "study_version": "1.0.0",
+  "arm": "E2_STAGED",
+  "input_surface": "analysis",
+  "workflow": "staged",
+  "model": {
+    "provider": "codex_chatgpt",
+    "model_id": "gpt-6-astra"
+  },
+  "replicate": 1,
+  "input_artifacts": [
+    {
+      "path": "/Users/cobro/code/Velocity-research/evals/research_quality/projects/synthetic/SBT-002/model_inputs/study_materials.json",
+      "sha256": "5b1bc5bddcb78139cc7260d6313bcffe9490975b84e0e6bdf33a83aed4ef6077",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-research/evals/research_quality/projects/synthetic/SBT-002/model_inputs/questionnaire.md",
+      "sha256": "4fc7c6dfc39626c1d876a0d3c9d7d4db1bb77b85b65a76962b46c103399b3164",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-research/evals/research_quality/projects/synthetic/SBT-002/model_inputs/codebook.json",
+      "sha256": "96f1262da3bb905f12cb7bfc315e7e2577d65547dd6a0c5d70d83d09c7db64ca",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-research/evals/research_quality/projects/synthetic/SBT-002/model_inputs/analysis_results.json",
+      "sha256": "bec90db369d2781aa2575a10ffb9d098861d676a5eea8fbaa4711a422bcb6037",
+      "exposure_class": "analysis_surface"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/01-analyst/events.jsonl",
+      "sha256": "49569553002672275dbfbe2ae0ef2cbe7dce6a987b97f95e377e630694e65002",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/01-analyst/output.json",
+      "sha256": "b4a20d132212be38220cb1f8638720ffdd4b785e357a8056a6a72a6e36a3e3f5",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/01-analyst/prompt.txt",
+      "sha256": "3da95eae556ac1a655da24306c12ce034ae6b285a608d890ad58fe4512351175",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/01-analyst/response.txt",
+      "sha256": "908c35ec50a30fd49b85d2b36ce5e77ddbe42e4afe7e21c5e63b2c1ca73995bb",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/01-analyst/stderr.txt",
+      "sha256": "5a265bb1c74d159d7c618a520af9631a701289d11f5d2ccbb7462223147629ec",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/02-verifier/events.jsonl",
+      "sha256": "ac87f1130229a0462ef3e9115a9d0b3c377d34fff9b521c7c4b82977a70a0f3b",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/02-verifier/output.json",
+      "sha256": "af759737d7bd4909d7cd32ff79f70dffa0195e0d1d769f82e01f4b9088b277d3",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/02-verifier/prompt.txt",
+      "sha256": "08b33ec73a862c3e31690aeb95a1454d4a6af0eee0c0fef8a2072801a4337e97",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/02-verifier/response.txt",
+      "sha256": "c3ba3b4e1bf41ba565112b5b962243cb9e8d29ffc47e78c5c65a74dcbfeaa3f3",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/02-verifier/stderr.txt",
+      "sha256": "450da8336756edefa5dc98ab50187a24fd69934cfa1118ff98ce98c5d51d7f8e",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/03-prioritiser/events.jsonl",
+      "sha256": "c7b387119b53f119e31aa54e60df33212f8723195d3f89aa2640a8d27c0365f4",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/03-prioritiser/output.json",
+      "sha256": "421067121a8bb8541b935334b0559186a2718ba2310b89cbf6e471bb43139fbb",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/03-prioritiser/prompt.txt",
+      "sha256": "acea73fef2d890a75d8e8c24e42d8dfdb9712a72df0e3f18b91c56af9940b851",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/03-prioritiser/response.txt",
+      "sha256": "5ad48430725d24175a5e72c03f3da65652919f2051cfd6e439c39acaa92d3743",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/03-prioritiser/stderr.txt",
+      "sha256": "9790a5e94cdb64edaca7d687cc38eb4ef95460e2cbeb46e2fef9be4f1410b450",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/04-story_editor/events.jsonl",
+      "sha256": "ef7ad6d1a56bc9cf1521d5fd35c3af35d280e8ab90ad3b860df4979a495d0773",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/04-story_editor/output.json",
+      "sha256": "8b0e6cb7ef753c1e4f85ab2f9e6d4adf8104dafd94a16603e8f919d34651c7c5",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/04-story_editor/prompt.txt",
+      "sha256": "fa7b5c78cba4043e31bc620b17700e0a54b79da1c8dd5c48597d9eba3e67030d",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/04-story_editor/response.txt",
+      "sha256": "ba01602743d855998b8df13d8d62479b30f809f05257e818bad284f0ee658779",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/04-story_editor/stderr.txt",
+      "sha256": "e5c1d6cc78318f78251b19a396404b5ff54e1f54ed595d1d3808c865f35109a2",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-staged-r1/output.json",
+      "sha256": "8b0e6cb7ef753c1e4f85ab2f9e6d4adf8104dafd94a16603e8f919d34651c7c5",
+      "artifact_type": "json"
+    }
+  ],
+  "stage_runs": [
+    {
+      "stage": "analyst",
+      "elapsed_seconds": 87.54622066603042,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 41059,
+          "cached_input_tokens": 11520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2774,
+          "reasoning_output_tokens": 138
+        }
+      ],
+      "prompt_sha256": "3da95eae556ac1a655da24306c12ce034ae6b285a608d890ad58fe4512351175"
+    },
+    {
+      "stage": "verifier",
+      "elapsed_seconds": 89.21373987488914,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 43399,
+          "cached_input_tokens": 11520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2809,
+          "reasoning_output_tokens": 26
+        }
+      ],
+      "prompt_sha256": "08b33ec73a862c3e31690aeb95a1454d4a6af0eee0c0fef8a2072801a4337e97"
+    },
+    {
+      "stage": "prioritiser",
+      "elapsed_seconds": 83.3602231660625,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 43539,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2652,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "prompt_sha256": "acea73fef2d890a75d8e8c24e42d8dfdb9712a72df0e3f18b91c56af9940b851"
+    },
+    {
+      "stage": "story_editor",
+      "elapsed_seconds": 84.50558383297175,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 43412,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2687,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "prompt_sha256": "fa7b5c78cba4043e31bc620b17700e0a54b79da1c8dd5c48597d9eba3e67030d"
+    }
+  ],
+  "status": "complete",
+  "created_at": "2026-09-21T22:56:02.800427+00:00",
+  "freeze_sha256": "d4b8a64dfa733e249e69c9bfaa462cda454c35d0ec0c08aaa3115ae5c1133d73",
+  "started_at": "2026-09-21T22:56:02.963727+00:00",
+  "runner_sha256": "7cd7032eda32cd5a74d5b0003f8c3b66dbb31aa16647e2f8c6d3ba63ebe3bee3",
+  "cli_version": "codex-cli 0.154.0-alpha.6.2",
+  "reasoning_effort": "low",
+  "timeout_per_stage_seconds": 360,
+  "cost": {
+    "billing": "existing ChatGPT Codex access",
+    "incremental_usd": null,
+    "reason": "CLI reports token usage, not monetary cost"
+  },
+  "exposure_audit": "pending tool-trace review",
+  "completed_at": "2026-09-21T23:01:47.675865+00:00"
+}

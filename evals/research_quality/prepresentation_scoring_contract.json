@@ -1,0 +1,29 @@
+{
+  "version":"1.0",
+  "scope":"research reasoning through presentation-neutral story",
+  "presentation_score":0,
+  "dimensions":[
+    {"id":"analysis_correctness","weight":20},
+    {"id":"universe_weight_routing","weight":15},
+    {"id":"inference_correctness","weight":15},
+    {"id":"finding_correctness","weight":15},
+    {"id":"finding_completeness","weight":15},
+    {"id":"prioritisation_redundancy","weight":10},
+    {"id":"synthesis_provenance","weight":10}
+  ],
+  "selection_metrics":{
+    "mandatory_recall":"matched mandatory reference findings / mandatory reference findings",
+    "selected_precision":"supported reportable selected findings / selected findings",
+    "unsupported_rate":"unsupported selected findings / selected findings",
+    "do_not_elevate_rate":"do_not_elevate reference findings promoted to primary / do_not_elevate opportunities",
+    "redundancy_adjusted_coverage":"unique mandatory/secondary topic clusters covered after duplicate collapse"
+  },
+  "matching_policy":{
+    "unit":"semantic proposition + evidence compatibility, not wording",
+    "mandatory_conditions":["same substantive direction","compatible universe/estimand","supporting evidence resolves to correct analysis family"],
+    "partial_match":"allowed only for secondary scoring; never counts as full mandatory recall",
+    "contradiction":"wrong direction, universe, treatment or causal strength"
+  },
+  "hard_failures":["fabricated evidence","wrong routed universe presented as unconditional","causal claim unsupported by design","suppressed/low-base evidence elevated contrary to study policy"],
+  "aggregate_reporting":["dimension scores","mandatory recall","selected precision","unsupported rate","do-not-elevate rate","story beat count","provenance coverage"]
+}

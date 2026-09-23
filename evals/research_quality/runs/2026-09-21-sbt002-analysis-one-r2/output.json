@@ -1,0 +1,160 @@
+{
+  "study_id": "SBT-002",
+  "analysis_claims": [],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Prioritise Flex for broad-audience advancement, while retaining Plus for targeted development. Flex leads Plus on appeal, 61.0% versus 54.0% top-2-box (+7.0 pp; Holm p=0.0112), but its purchase-intent lead, 53.2% versus 50.4% (+2.8 pp; p=0.311), establishes neither statistical superiority nor a commercially material difference.",
+      "evidence_refs": [
+        "concept_metrics.appeal_5",
+        "concept_metrics.purchase_intent_5",
+        "pairwise.appeal_5[0]",
+        "pairwise.purchase_intent_5[0]"
+      ],
+      "importance": "primary",
+      "claim_strength": "Advancement recommendation supported by primary-outcome comparisons; purchase-intent superiority is not established.",
+      "qualification": "Each concept has unweighted n=700; effective n=650.1 Flex, 645.6 Plus and 645.2 Simple. Failure to detect a purchase-intent difference does not establish equivalence. Purchase intent assumes a reasonable price and is not observed purchasing.",
+      "topic_cluster": "advancement"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Develop Plus specifically for food explorers. Among explorers, Plus exceeds Flex numerically on appeal, 72.1% versus 60.1% (+12.0 pp), and purchase intent, 63.9% versus 52.4% (+11.5 pp). Among non-explorers, the direction reverses: appeal is 48.4% versus 61.2%, and purchase intent 46.2% versus 53.5%. The pre-specified interactions support this audience distinction: +24.8 pp for appeal (Holm p=0.0000137) and +18.8 pp for purchase intent (p=0.000968).",
+      "evidence_refs": [
+        "strategic_subgroup.food_explorer.appeal_5",
+        "strategic_subgroup.food_explorer.purchase_intent_5",
+        "strategic_subgroup.non_explorer.appeal_5",
+        "strategic_subgroup.non_explorer.purchase_intent_5",
+        "interactions.appeal_5",
+        "interactions.purchase_intent_5"
+      ],
+      "importance": "primary",
+      "claim_strength": "Confirmatory evidence of heterogeneity; targeted advancement is a research recommendation.",
+      "qualification": "Explorers were defined before exposure by mean food-orientation agreement >=4.0. Explorer bases: Flex n=236, effective n=225.4; Plus n=234, effective n=223.5. Non-explorer bases: Flex n=464, effective n=446.3; Plus n=466, effective n=449.1. Interaction tests establish differences between audience contrasts, not separately adjusted within-audience pairwise superiority. The definition includes willingness to pay more for distinctive food; actual payment was not tested.",
+      "topic_cluster": "audience"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Preserve Plus's distinctiveness during development: uniqueness reaches 81.4% top-2-box, versus 47.9% for Flex and 34.3% for Simple. Plus's advantages are +33.5 pp over Flex (Holm p=5.20e-41) and +47.1 pp over Simple (p=2.65e-84), both commercially material.",
+      "evidence_refs": [
+        "concept_metrics.uniqueness_5",
+        "pairwise.uniqueness_5[0]",
+        "pairwise.uniqueness_5[2]"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Statistically supported, commercially material diagnostic advantage.",
+      "qualification": "Full assigned-cell bases, n=700 each. Uniqueness does not establish demand superiority or prove that distinctiveness causes appeal. The result supports retaining the proposition's differentiation, without identifying which individual feature produces it.",
+      "topic_cluster": "differentiation"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Make comprehension and delivery credibility priorities before broader advancement of Plus. Only 32.3% rate Plus easy to understand, versus 95.7% for Flex; 32.1% rate Plus difficult and 35.6% choose the midpoint. Plus also trails Flex on relevance, 49.4% versus 63.7%, and credibility, 42.2% versus 62.3%. Flex's corresponding advantages are +63.5, +14.3 and +20.1 pp, all commercially material and Holm-significant.",
+      "evidence_refs": [
+        "concept_metrics.understanding_5",
+        "concept_metrics.relevance_5",
+        "concept_metrics.credibility_5",
+        "pairwise.understanding_5[0]",
+        "pairwise.relevance_5[0]",
+        "pairwise.credibility_5[0]"
+      ],
+      "importance": "primary",
+      "claim_strength": "Strong comparative diagnostic evidence; improvement priorities are inferred.",
+      "qualification": "Full assigned-cell bases, n=700 each. Holm p-values are 1.17e-219 for understanding, 3.23e-7 for relevance and 4.25e-13 for credibility. These measures do not prove that clearer communication would increase purchase intent; revise and retest rather than assume recovery.",
+      "topic_cluster": "development_priorities"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Treat Plus's premium-conviction result as conditional evidence, not a whole-audience victory. Among respondents eligible for the routed question, 78.8% rate Plus's premium proposition convincing, versus 50.1% for Flex and 37.7% for Simple. However, only 69.0% of Plus respondents reached this question, compared with 99.1% for Flex and 99.7% for Simple.",
+      "evidence_refs": [
+        "concept_metrics.premium_value_5",
+        "routing.premium_value_5",
+        "pairwise.premium_value_5[0]",
+        "pairwise.premium_value_5[2]"
+      ],
+      "importance": "primary",
+      "claim_strength": "Conditional descriptive advantage with supplied significant tests; unconditional superiority is not supported.",
+      "qualification": "Universe is understanding_5 >=3, including midpoint respondents, not only those rating the concept easy. Valid unweighted bases/effective bases: Plus 483/444.4, Flex 694/644.6, Simple 698/643.4. Routing percentages are unweighted. Conditional Plus advantages are +28.7 pp over Flex (Holm p=5.08e-25) and +41.1 pp over Simple (p=5.14e-51), but conditioning on a post-exposure response selects different populations. Excluded respondents cannot be classified as rejecting the premium proposition.",
+      "topic_cluster": "premium_evidence"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Do not interpret Plus's conditional premium conviction as superior value for money. On the full-cell value question, Plus scores 56.7% and Flex 56.3% top-2-box: a +0.3 pp numerical difference for Plus, with Holm p=0.900, below the 5 pp materiality threshold.",
+      "evidence_refs": [
+        "concept_metrics.value_5",
+        "pairwise.value_5[0]"
+      ],
+      "importance": "secondary",
+      "claim_strength": "No statistically supported or commercially material value advantage is established.",
+      "qualification": "Unweighted n=700 per concept. This question assumes a modest premium over a standard subscription; it does not estimate willingness to pay at a specified price. Nonsignificance does not prove equivalence.",
+      "topic_cluster": "premium_evidence"
+    },
+    {
+      "model_finding_id": "F7",
+      "proposition": "Deprioritise Simple in its current form. Appeal is 41.1%, below Flex by 19.9 pp and Plus by 12.9 pp; purchase intent is 40.4%, below Flex by 12.8 pp and Plus by 10.0 pp. All four gaps are commercially material and Holm-significant. Simple's strong understanding score, 92.9%, and credibility, 57.3%, have not translated into competitive primary outcomes.",
+      "evidence_refs": [
+        "concept_metrics.appeal_5",
+        "concept_metrics.purchase_intent_5",
+        "pairwise.appeal_5[1]",
+        "pairwise.appeal_5[2]",
+        "pairwise.purchase_intent_5[1]",
+        "pairwise.purchase_intent_5[2]",
+        "concept_metrics.understanding_5",
+        "concept_metrics.credibility_5",
+        "pairwise.understanding_5[1]",
+        "pairwise.credibility_5[1]"
+      ],
+      "importance": "primary",
+      "claim_strength": "Deprioritisation recommendation supported by both primary outcomes.",
+      "qualification": "Full assigned-cell bases, n=700 each. Appeal Holm p-values are 8.45e-13 versus Flex and 5.45e-6 versus Plus; purchase-intent p-values are 9.54e-6 and 0.000576. Flex's understanding advantage over Simple is significant but immaterial (+2.8 pp; p=0.0297); its credibility advantage is neither significant nor above the materiality threshold (+4.95 pp; p=0.0690). Results concern the tested proposition, not every possible familiar, convenient meal-kit offer.",
+      "topic_cluster": "advancement"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": [
+          "F1",
+          "F7"
+        ],
+        "headline_intent": "Advance Flex broadly and deprioritise the current Simple concept, without claiming Flex wins purchase intent over Plus.",
+        "analytical_relationship": "Primary outcomes establish the advancement shortlist and its uncertainty."
+      },
+      {
+        "order": 2,
+        "finding_refs": [
+          "F2"
+        ],
+        "headline_intent": "Retain Plus for food explorers because the audience changes the relative response.",
+        "analytical_relationship": "Pre-specified heterogeneity qualifies the overall recommendation."
+      },
+      {
+        "order": 3,
+        "finding_refs": [
+          "F3",
+          "F4"
+        ],
+        "headline_intent": "Preserve Plus's differentiation while improving comprehension and credibility.",
+        "analytical_relationship": "Diagnostic strengths and weaknesses inform development priorities without establishing causal drivers."
+      },
+      {
+        "order": 4,
+        "finding_refs": [
+          "F5",
+          "F6"
+        ],
+        "headline_intent": "Keep premium conviction conditional and distinguish it from full-audience value perceptions.",
+        "analytical_relationship": "Routing and question wording limit the commercial interpretation of apparent premium strength."
+      }
+    ]
+  },
+  "method_notes": [
+    "Only the four supplied study materials were used. No tools, external sources or raw-data analyses were used; analysis_claims is therefore empty. Evidence references are exact paths within analysis_results.json, with zero-based array indices.",
+    "This is a fictional, synthetic randomised monadic study of 2,100 UK adults aged 18\u201364 open to meal-kit use in the next 12 months, with 700 assigned to each concept. Findings are research-workflow conclusions, not market or customer evidence.",
+    "Percentages use wt_final unless explicitly labelled unweighted. Full-cell weighted bases are Flex 703.52, Plus 696.32 and Simple 700.16; effective bases are 650.13, 645.63 and 645.23. Weighted bases are sums of weights, not respondent counts.",
+    "Top-2-box means responses 4\u20135; bottom-2-box means 1\u20132. Full ordinal distributions remain available in the referenced concept tables; means were not used to determine advancement. Percentages and percentage-point differences are rounded independently.",
+    "Inference follows the supplied Kish effective-sample-size Wald independent-cell analysis, with alpha=0.05 and Holm adjustment across three concept pairs within each metric. The two pre-specified Plus-minus-Flex interactions form a separate Holm-adjusted family. There is no stated correction across all metrics collectively.",
+    "Statistical significance and commercial materiality are separate: the declared materiality threshold is 5 percentage points. Numerical leads and nonsignificant comparisons are not evidence of superiority or equivalence.",
+    "Food explorer is the only pre-specified strategic subgroup. Exploratory demographic tables were not promoted to headline findings. Diagnostic associations were not interpreted causally.",
+    "Advancement means further concept development and testing. These data do not establish actual uptake, price tolerance, delivery feasibility or a production-launch case."
+  ]
+}

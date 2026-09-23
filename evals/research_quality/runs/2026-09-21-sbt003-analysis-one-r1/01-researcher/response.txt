@@ -1,0 +1,115 @@
+{
+  "study_id": "SBT-003",
+  "analysis_claims": [],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Prioritise a company-wide customer experience response: weighted NPS is −54.7, comprising 11.6% promoters, 22.1% passives and 66.3% detractors. Satisfaction is 34.6% top-two-box versus 42.0% bottom-two-box; renewal intent is 33.4% versus 40.8%.",
+      "evidence_refs": [
+        "analysis_results.json.company",
+        "analysis_results.json.satisfaction",
+        "analysis_results.json.renewal"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive evidence of widespread weak outcomes",
+      "qualification": "Each outcome has unweighted n=2,400 and effective n=2,232.6. Renewal measures stated intent, not observed churn. These outcomes establish breadth but do not identify causes.",
+      "topic_cluster": "company_wide_priority"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Make unsuccessful first-contact resolution a focused operational priority. The table-defined unresolved-contact group has NPS −87.4 and renewal top-two-box of 7.6%, compared with −52.6 and 33.8% among resolved contacts. Its severity is substantial, but its reach is limited: 8.5% of customers and 11.6% of company detractors.",
+      "evidence_refs": [
+        "analysis_results.json.groups.unresolved_contact",
+        "analysis_results.json.groups.resolved_contact"
+      ],
+      "importance": "primary",
+      "claim_strength": "Large descriptive association; causal effect unestablished",
+      "qualification": "Unresolved-contact n=323, effective n=316.0; resolved-contact n=359, effective n=351.5. No comparative significance tests are supplied. Resolution is measured at first contact, so failure does not establish that an issue remained unresolved. Differences may reflect issue severity or customer mix; they do not estimate the benefit of an intervention.",
+      "topic_cluster": "support_resolution"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Review support quality alongside resolution. Among recent support contacts, 52.7% report first-contact resolution, while support quality is 34.8% top-two-box and 43.8% bottom-two-box. Even the resolved-contact group retains 65.6% detractors, indicating that resolution status alone does not distinguish a broadly positive customer experience.",
+      "evidence_refs": [
+        "analysis_results.json.support",
+        "analysis_results.json.groups.resolved_contact.nps"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive operational diagnostic",
+      "qualification": "Support measures cover only customers contacting support in the past 90 days: n=682, weighted base=434.0, effective n=667.4. Resolved-contact n=359. These are overall recommendation outcomes, not a causal evaluation of support.",
+      "topic_cluster": "support_quality"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Investigate legacy-plan experiences before targeting tenure alone. Customers with 6+ years of tenure have renewal top-two-box of 30.7%, versus 37.4% among customers with under one year, but legacy-plan prevalence is also much higher: 53.2% versus 3.0%. Among non-legacy customers, renewal top-two-box spans only 35.5%–37.7% across tenure bands and NPS spans −51.0 to −49.1.",
+      "evidence_refs": [
+        "analysis_results.json.tenure"
+      ],
+      "importance": "primary",
+      "claim_strength": "Stratified descriptive evidence consistent with customer-mix confounding",
+      "qualification": "Overall tenure bases are n=380, 593, 763 and 664 for <1y, 1–2y, 3–5y and 6+y; non-legacy bases are 369, 542, 563 and 303. This pattern weakens a tenure-only explanation but does not isolate a legacy-plan effect. Numerical similarity is not evidence of statistical equivalence. The legacy <1y cell, n=11, is suppressed from interpretation.",
+      "topic_cluster": "legacy_and_tenure"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Include the table-defined legacy-contact group in targeted investigation: NPS is −78.5, renewal top-two-box is 14.4% and bottom-two-box is 67.6%. It represents 6.6% of customers and 8.4% of company detractors, making it a severe but relatively narrow problem area.",
+      "evidence_refs": [
+        "analysis_results.json.groups.legacy_contact"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive targeting signal",
+      "qualification": "Unweighted n=251; effective n=245.2. The table does not explicitly document this group's filter. Confirm its definition before operational targeting. It may overlap with unresolved contacts and long-tenure customers; shares must not be added. No causal effect or statistically distinct ranking is established.",
+      "topic_cluster": "legacy_and_tenure"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Treat premium unresolved contacts as a monitoring subgroup rather than a separate leading priority. NPS is −89.2 and renewal top-two-box is 7.4%, but the group represents only 1.3% of customers and 1.8% of company detractors.",
+      "evidence_refs": [
+        "analysis_results.json.groups.premium_unresolved",
+        "analysis_results.json.groups.unresolved_contact"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Small-base descriptive signal",
+      "qualification": "Unweighted n=67, below the warning threshold of 75; effective n=66.7. The numerically worse NPS does not establish greater severity than unresolved contacts overall. The subgroup overlaps the broader resolution priority, and no revenue or customer-value evidence supports preferential treatment.",
+      "topic_cluster": "priority_limits"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": ["F1"],
+        "headline_intent": "Establish the breadth of weak customer outcomes",
+        "analytical_relationship": "Company-wide outcomes set the scale against which targeted priorities should be judged."
+      },
+      {
+        "order": 2,
+        "finding_refs": ["F2", "F3"],
+        "headline_intent": "Prioritise support resolution while examining the wider support experience",
+        "analytical_relationship": "Resolution groups show a large descriptive contrast, but limited population reach and poor outcomes among resolved contacts constrain a support-only explanation."
+      },
+      {
+        "order": 3,
+        "finding_refs": ["F4", "F5"],
+        "headline_intent": "Investigate legacy-plan experiences before treating tenure as the problem",
+        "analytical_relationship": "Stratification qualifies the aggregate tenure pattern; the legacy-contact group adds a focused investigation opportunity."
+      },
+      {
+        "order": 4,
+        "finding_refs": ["F6", "F2", "F1"],
+        "headline_intent": "Allocate attention using reach and uncertainty as well as severity",
+        "analytical_relationship": "A small subgroup's extreme score should not displace the broader resolution priority or the company-wide response."
+      }
+    ]
+  },
+  "method_notes": [
+    "Used only the supplied study content; no tools, external sources or respondent-level data were used. Evidence references identify supplied analysis tables; analysis_claims is empty because no raw-data analysis was performed.",
+    "All reported estimates use wt_final. Bases labelled n are unweighted respondent counts; weighted totals and effective bases are distinguished where reported. Overall weighted base is 2,400.",
+    "NPS is weighted promoter percentage (9–10) minus detractor percentage (0–6). Top-two-box denotes responses 4–5 and bottom-two-box responses 1–2 on the supplied five-point measures.",
+    "Applied the declared small-base policy: warn below n=75 and suppress results below n=40. No outcome interpretation uses the n=11 legacy-plan, under-one-year cell.",
+    "Comparisons are descriptive: no significance tests or multiplicity policy are supplied. Numerical ordering does not prove superiority, inferiority or equivalence.",
+    "Cross-sectional associations cannot establish causes or intervention returns. Priorities are researcher judgments combining severity, reach and uncertainty; group shares can overlap.",
+    "Diagnostic correlations were not used to rank problems because the supplied correlation table does not identify the outcome being correlated or provide comparative uncertainty.",
+    "This is a fictional current-customer study. Results do not constitute real market claims, represent former customers or establish observed churn."
+  ]
+}

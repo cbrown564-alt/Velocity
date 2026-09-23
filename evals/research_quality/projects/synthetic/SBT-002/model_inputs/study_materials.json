@@ -1,0 +1,32 @@
+{
+  "study_id": "SBT-002",
+  "title": "Everyday meal-kit concept test",
+  "synthetic": true,
+  "design": {
+    "type": "randomised_monadic",
+    "target_n": 2100,
+    "cells": [
+      "Flex",
+      "Plus",
+      "Simple"
+    ],
+    "allocation": "1:1:1",
+    "weight_variable": "wt_final"
+  },
+  "primary_outcomes": [
+    "appeal_5",
+    "purchase_intent_5"
+  ],
+  "analysis_policy": {
+    "primary_summary": "weighted distributions and top-2-box for pre-specified 5-point outcomes",
+    "ordinal_distribution_retained": true,
+    "means": "secondary only",
+    "pairwise_alpha": 0.05,
+    "multiplicity": "Holm correction within each pre-specified concept-comparison family",
+    "commercial_materiality_pp": 5.0,
+    "exploratory_subgroups": "labelled exploratory; not eligible for primary headline findings without corroboration"
+  },
+  "decision_question": "Which meal-kit concepts should advance, for whom, and with what qualifications?",
+  "data_note": "Fictional study for a research workflow experiment; no market or customer claims.",
+  "output_note": "Evidence references are analysis table paths, for example concept_metrics.appeal_5 or groups.unresolved_contact. Raw-data runs may define analysis_claims with stable IDs and explicit values, universe and weighting."
+}

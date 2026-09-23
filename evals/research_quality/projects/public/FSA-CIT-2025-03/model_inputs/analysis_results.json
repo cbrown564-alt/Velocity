@@ -1,0 +1,592 @@
+{
+  "study_id": "FSA-CIT-2025-03",
+  "source_sha256": "affa2345fb55e332653decd246f41c0f1564ebc50aceb6d4bc316e3c45dba633",
+  "source_url": "https://fsaopendata.blob.core.windows.net/opendatacatalog/FSA-ConsumerInsightsSurvey-March25-Tablesv1.0.xlsx",
+  "tables": {
+    "Q2m": {
+      "question": "Q2m. To what extent, if at all, are you worried about there not being enough food available for you/your household to buy in the next month?Please select one answer only",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "Very worried",
+          "percent": 5.59,
+          "weighted_count": 114.62,
+          "source_cell": "Percents!B11",
+          "count_cell": "Counts!B11"
+        },
+        {
+          "response": "Somewhat worried",
+          "percent": 13.05,
+          "weighted_count": 267.59,
+          "source_cell": "Percents!B13",
+          "count_cell": "Counts!B13"
+        },
+        {
+          "response": "Not very worried",
+          "percent": 33.019999999999996,
+          "weighted_count": 677.26,
+          "source_cell": "Percents!B15",
+          "count_cell": "Counts!B15"
+        },
+        {
+          "response": "Not at all worried",
+          "percent": 46.27,
+          "weighted_count": 948.97,
+          "source_cell": "Percents!B17",
+          "count_cell": "Counts!B17"
+        },
+        {
+          "response": "Don't know",
+          "percent": 1.1900000000000002,
+          "weighted_count": 24.37,
+          "source_cell": "Percents!B19",
+          "count_cell": "Counts!B19"
+        },
+        {
+          "response": "Prefer not to answer",
+          "percent": 0.89,
+          "weighted_count": 18.18,
+          "source_cell": "Percents!B21",
+          "count_cell": "Counts!B21"
+        },
+        {
+          "response": "Net: Worried",
+          "percent": 18.64,
+          "weighted_count": 382.21,
+          "source_cell": "Percents!B23",
+          "count_cell": "Counts!B23"
+        },
+        {
+          "response": "Net: Not worried",
+          "percent": 79.29,
+          "weighted_count": 1626.23,
+          "source_cell": "Percents!B25",
+          "count_cell": "Counts!B25"
+        }
+      ]
+    },
+    "Q3m": {
+      "question": "Q3m. To what extent, if at all, are you worried you/your household will not be able to afford food in the next month?Please select one answer only",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "Very worried",
+          "percent": 5.99,
+          "weighted_count": 122.85,
+          "source_cell": "Percents!B30",
+          "count_cell": "Counts!B30"
+        },
+        {
+          "response": "Somewhat worried",
+          "percent": 14.899999999999999,
+          "weighted_count": 305.67,
+          "source_cell": "Percents!B32",
+          "count_cell": "Counts!B32"
+        },
+        {
+          "response": "Not very worried",
+          "percent": 29.630000000000003,
+          "weighted_count": 607.79,
+          "source_cell": "Percents!B34",
+          "count_cell": "Counts!B34"
+        },
+        {
+          "response": "Not at all worried",
+          "percent": 47.8,
+          "weighted_count": 980.41,
+          "source_cell": "Percents!B36",
+          "count_cell": "Counts!B36"
+        },
+        {
+          "response": "Don't know",
+          "percent": 0.89,
+          "weighted_count": 18.26,
+          "source_cell": "Percents!B38",
+          "count_cell": "Counts!B38"
+        },
+        {
+          "response": "Prefer not to answer",
+          "percent": 0.7799999999999999,
+          "weighted_count": 16.03,
+          "source_cell": "Percents!B40",
+          "count_cell": "Counts!B40"
+        },
+        {
+          "response": "Net: Worried",
+          "percent": 20.89,
+          "weighted_count": 428.52,
+          "source_cell": "Percents!B42",
+          "count_cell": "Counts!B42"
+        },
+        {
+          "response": "Net: Not worried",
+          "percent": 77.44,
+          "weighted_count": 1588.19,
+          "source_cell": "Percents!B44",
+          "count_cell": "Counts!B44"
+        }
+      ]
+    },
+    "Q12_8": {
+      "question": "Q12_8. Food prices",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "Highly concerned",
+          "percent": 46.22,
+          "weighted_count": 947.9,
+          "source_cell": "Percents!B336",
+          "count_cell": "Counts!B336"
+        },
+        {
+          "response": "Somewhat concerned",
+          "percent": 40.98,
+          "weighted_count": 840.47,
+          "source_cell": "Percents!B338",
+          "count_cell": "Counts!B338"
+        },
+        {
+          "response": "Not very concerned",
+          "percent": 7.68,
+          "weighted_count": 157.49,
+          "source_cell": "Percents!B340",
+          "count_cell": "Counts!B340"
+        },
+        {
+          "response": "Not concerned at all",
+          "percent": 2.34,
+          "weighted_count": 47.93,
+          "source_cell": "Percents!B342",
+          "count_cell": "Counts!B342"
+        },
+        {
+          "response": "Don't know",
+          "percent": 1.28,
+          "weighted_count": 26.28,
+          "source_cell": "Percents!B344",
+          "count_cell": "Counts!B344"
+        },
+        {
+          "response": "I don't know enough to comment",
+          "percent": 1.51,
+          "weighted_count": 30.93,
+          "source_cell": "Percents!B346",
+          "count_cell": "Counts!B346"
+        },
+        {
+          "response": "Net: Concerned",
+          "percent": 87.2,
+          "weighted_count": 1788.37,
+          "source_cell": "Percents!B348",
+          "count_cell": "Counts!B348"
+        },
+        {
+          "response": "Net: Unconcerned",
+          "percent": 10.02,
+          "weighted_count": 205.42,
+          "source_cell": "Percents!B350",
+          "count_cell": "Counts!B350"
+        }
+      ]
+    },
+    "Q12_14": {
+      "question": "Q12_14. Ultra-processed, or over-processing of food",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "Highly concerned",
+          "percent": 39.45,
+          "weighted_count": 809.09,
+          "source_cell": "Percents!B431",
+          "count_cell": "Counts!B431"
+        },
+        {
+          "response": "Somewhat concerned",
+          "percent": 38.39,
+          "weighted_count": 787.45,
+          "source_cell": "Percents!B433",
+          "count_cell": "Counts!B433"
+        },
+        {
+          "response": "Not very concerned",
+          "percent": 11.469999999999999,
+          "weighted_count": 235.34,
+          "source_cell": "Percents!B435",
+          "count_cell": "Counts!B435"
+        },
+        {
+          "response": "Not concerned at all",
+          "percent": 3.34,
+          "weighted_count": 68.52,
+          "source_cell": "Percents!B437",
+          "count_cell": "Counts!B437"
+        },
+        {
+          "response": "Don't know",
+          "percent": 2.83,
+          "weighted_count": 58.13,
+          "source_cell": "Percents!B439",
+          "count_cell": "Counts!B439"
+        },
+        {
+          "response": "I don't know enough to comment",
+          "percent": 4.51,
+          "weighted_count": 92.45,
+          "source_cell": "Percents!B441",
+          "count_cell": "Counts!B441"
+        },
+        {
+          "response": "Net: Concerned",
+          "percent": 77.84,
+          "weighted_count": 1596.55,
+          "source_cell": "Percents!B443",
+          "count_cell": "Counts!B443"
+        },
+        {
+          "response": "Net: Unconcerned",
+          "percent": 14.82,
+          "weighted_count": 303.86,
+          "source_cell": "Percents!B445",
+          "count_cell": "Counts!B445"
+        }
+      ]
+    },
+    "Q13": {
+      "question": "Q13. How confident are you in the food supply chain? That is all the processes involved in bringing food to your table.Please select one answer only",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "Very confident",
+          "percent": 8.07,
+          "weighted_count": 165.5,
+          "source_cell": "Percents!B450",
+          "count_cell": "Counts!B450"
+        },
+        {
+          "response": "Fairly confident",
+          "percent": 55.010000000000005,
+          "weighted_count": 1128.29,
+          "source_cell": "Percents!B452",
+          "count_cell": "Counts!B452"
+        },
+        {
+          "response": "Not very confident",
+          "percent": 19.27,
+          "weighted_count": 395.2,
+          "source_cell": "Percents!B454",
+          "count_cell": "Counts!B454"
+        },
+        {
+          "response": "Not at all confident",
+          "percent": 4.109999999999999,
+          "weighted_count": 84.33,
+          "source_cell": "Percents!B456",
+          "count_cell": "Counts!B456"
+        },
+        {
+          "response": "It varies",
+          "percent": 7.89,
+          "weighted_count": 161.75,
+          "source_cell": "Percents!B458",
+          "count_cell": "Counts!B458"
+        },
+        {
+          "response": "Don't know",
+          "percent": 5.65,
+          "weighted_count": 115.93,
+          "source_cell": "Percents!B460",
+          "count_cell": "Counts!B460"
+        },
+        {
+          "response": "Net: Confident",
+          "percent": 63.080000000000005,
+          "weighted_count": 1293.79,
+          "source_cell": "Percents!B462",
+          "count_cell": "Counts!B462"
+        },
+        {
+          "response": "Net: Unconfident",
+          "percent": 23.380000000000003,
+          "weighted_count": 479.53,
+          "source_cell": "Percents!B464",
+          "count_cell": "Counts!B464"
+        }
+      ]
+    },
+    "Q14_1": {
+      "question": "Q14_1. Ensure that food is safe to eat",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "Very confident",
+          "percent": 15.160000000000002,
+          "weighted_count": 310.83,
+          "source_cell": "Percents!B470",
+          "count_cell": "Counts!B470"
+        },
+        {
+          "response": "Fairly confident",
+          "percent": 59.19,
+          "weighted_count": 1213.89,
+          "source_cell": "Percents!B472",
+          "count_cell": "Counts!B472"
+        },
+        {
+          "response": "Not very confident",
+          "percent": 12.86,
+          "weighted_count": 263.66,
+          "source_cell": "Percents!B474",
+          "count_cell": "Counts!B474"
+        },
+        {
+          "response": "Not at all confident",
+          "percent": 2.77,
+          "weighted_count": 56.74,
+          "source_cell": "Percents!B476",
+          "count_cell": "Counts!B476"
+        },
+        {
+          "response": "It varies",
+          "percent": 6.0,
+          "weighted_count": 123.08,
+          "source_cell": "Percents!B478",
+          "count_cell": "Counts!B478"
+        },
+        {
+          "response": "Don't know",
+          "percent": 4.04,
+          "weighted_count": 82.79,
+          "source_cell": "Percents!B480",
+          "count_cell": "Counts!B480"
+        },
+        {
+          "response": "Net: Confident",
+          "percent": 74.33999999999999,
+          "weighted_count": 1524.72,
+          "source_cell": "Percents!B482",
+          "count_cell": "Counts!B482"
+        },
+        {
+          "response": "Net: Unconfident",
+          "percent": 15.620000000000001,
+          "weighted_count": 320.4,
+          "source_cell": "Percents!B484",
+          "count_cell": "Counts!B484"
+        }
+      ]
+    },
+    "Q14_3": {
+      "question": "Q14_3. Ensure there are affordable food options for everyone",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "Very confident",
+          "percent": 6.17,
+          "weighted_count": 126.61,
+          "source_cell": "Percents!B508",
+          "count_cell": "Counts!B508"
+        },
+        {
+          "response": "Fairly confident",
+          "percent": 37.6,
+          "weighted_count": 771.2,
+          "source_cell": "Percents!B510",
+          "count_cell": "Counts!B510"
+        },
+        {
+          "response": "Not very confident",
+          "percent": 33.62,
+          "weighted_count": 689.62,
+          "source_cell": "Percents!B512",
+          "count_cell": "Counts!B512"
+        },
+        {
+          "response": "Not at all confident",
+          "percent": 11.63,
+          "weighted_count": 238.6,
+          "source_cell": "Percents!B514",
+          "count_cell": "Counts!B514"
+        },
+        {
+          "response": "It varies",
+          "percent": 5.63,
+          "weighted_count": 115.53,
+          "source_cell": "Percents!B516",
+          "count_cell": "Counts!B516"
+        },
+        {
+          "response": "Don't know",
+          "percent": 5.34,
+          "weighted_count": 109.45,
+          "source_cell": "Percents!B518",
+          "count_cell": "Counts!B518"
+        },
+        {
+          "response": "Net: Confident",
+          "percent": 43.769999999999996,
+          "weighted_count": 897.81,
+          "source_cell": "Percents!B520",
+          "count_cell": "Counts!B520"
+        },
+        {
+          "response": "Net: Unconfident",
+          "percent": 45.26,
+          "weighted_count": 928.22,
+          "source_cell": "Percents!B522",
+          "count_cell": "Counts!B522"
+        }
+      ]
+    },
+    "Q14a": {
+      "question": "Q14a. How much, if anything, do you know about the Food Standards Agency, also known as the FSA?Please select one answer only",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "I know a lot about the FSA and what it does",
+          "percent": 4.3999999999999995,
+          "weighted_count": 90.34,
+          "source_cell": "Percents!B546",
+          "count_cell": "Counts!B546"
+        },
+        {
+          "response": "I know a little about the FSA and what it does",
+          "percent": 49.62,
+          "weighted_count": 1017.66,
+          "source_cell": "Percents!B548",
+          "count_cell": "Counts!B548"
+        },
+        {
+          "response": "I've heard of the FSA but know nothing about it",
+          "percent": 34.489999999999995,
+          "weighted_count": 707.49,
+          "source_cell": "Percents!B550",
+          "count_cell": "Counts!B550"
+        },
+        {
+          "response": "I hadn't heard of the FSA until I was contacted to take part in this survey",
+          "percent": 5.71,
+          "weighted_count": 117.17,
+          "source_cell": "Percents!B552",
+          "count_cell": "Counts!B552"
+        },
+        {
+          "response": "I've never heard of the FSA",
+          "percent": 5.7700000000000005,
+          "weighted_count": 118.34,
+          "source_cell": "Percents!B554",
+          "count_cell": "Counts!B554"
+        },
+        {
+          "response": "Net: I know a lot/a little about the FSA",
+          "percent": 54.02,
+          "weighted_count": 1108,
+          "source_cell": "Percents!B556",
+          "count_cell": "Counts!B556"
+        },
+        {
+          "response": "Net: Heard of the FSA",
+          "percent": 88.52,
+          "weighted_count": 1815.49,
+          "source_cell": "Percents!B558",
+          "count_cell": "Counts!B558"
+        },
+        {
+          "response": "Net: Not heard of the FSA",
+          "percent": 11.48,
+          "weighted_count": 235.51,
+          "source_cell": "Percents!B560",
+          "count_cell": "Counts!B560"
+        }
+      ]
+    },
+    "Q16": {
+      "question": "Q16. The Food Standards Agency (FSA) is the Government Agency responsible for food safety in England, Wales and Northern Ireland. How much do you trust or distrust the Food Standards Agency to do its job? That is to make sure that food is safe and what it says it is.Please select one answer only",
+      "universe": "All respondents",
+      "n_unweighted": 2051,
+      "n_weighted": 2051,
+      "weighting": "Publisher final weights",
+      "rows": [
+        {
+          "response": "I trust it a lot",
+          "percent": 7.04,
+          "weighted_count": 144.31,
+          "source_cell": "Percents!B617",
+          "count_cell": "Counts!B617"
+        },
+        {
+          "response": "I trust it",
+          "percent": 45.64,
+          "weighted_count": 936.05,
+          "source_cell": "Percents!B619",
+          "count_cell": "Counts!B619"
+        },
+        {
+          "response": "I neither trust nor distrust it",
+          "percent": 29.82,
+          "weighted_count": 611.58,
+          "source_cell": "Percents!B621",
+          "count_cell": "Counts!B621"
+        },
+        {
+          "response": "I distrust it",
+          "percent": 4.19,
+          "weighted_count": 86.01,
+          "source_cell": "Percents!B623",
+          "count_cell": "Counts!B623"
+        },
+        {
+          "response": "I distrust it a lot",
+          "percent": 1.5699999999999998,
+          "weighted_count": 32.27,
+          "source_cell": "Percents!B625",
+          "count_cell": "Counts!B625"
+        },
+        {
+          "response": "Don't know / Don't know enough to say",
+          "percent": 11.74,
+          "weighted_count": 240.78,
+          "source_cell": "Percents!B627",
+          "count_cell": "Counts!B627"
+        },
+        {
+          "response": "Net: Trust",
+          "percent": 52.669999999999995,
+          "weighted_count": 1080.36,
+          "source_cell": "Percents!B629",
+          "count_cell": "Counts!B629"
+        },
+        {
+          "response": "Net: Distrust",
+          "percent": 5.7700000000000005,
+          "weighted_count": 118.28,
+          "source_cell": "Percents!B631",
+          "count_cell": "Counts!B631"
+        }
+      ]
+    }
+  }
+}

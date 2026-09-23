@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "principle": "Evaluated models receive the research materials a researcher would reasonably receive, never hidden generator truth, reference findings or scoring keys.",
+  "allowed_classes": [
+    "public study brief",
+    "questionnaire/codebook",
+    "respondent dataset or approved analysis surface according to experiment arm",
+    "declared analysis policy"
+  ],
+  "forbidden_classes": [
+    "hidden generator/DGP source",
+    "latent truth/trap truth",
+    "freeze validator expected truths",
+    "reference evidence inventory",
+    "reference finding inventory",
+    "scoring keys",
+    "other model outputs from the same evaluation"
+  ],
+  "experiment_arms": {
+    "analysis_surface": {
+      "input": "study materials + frozen deterministic analysis surface",
+      "tests": "finding selection, verification, prioritisation and synthesis"
+    },
+    "raw_data": {
+      "input": "study materials + frozen respondent data",
+      "tests": "analysis plus downstream reasoning"
+    },
+    "staged": {
+      "input": "same allowed materials partitioned across analyst/verifier/prioritiser/editor roles",
+      "tests": "architectural benefit versus one-call"
+    }
+  },
+  "anti_leakage_checks": [
+    "resolve supplied paths against allowlist",
+    "reject any path containing /hidden/ or /reference/ unless explicitly public reference analysis is part of the arm",
+    "record exact input artifact hashes with every run"
+  ]
+}

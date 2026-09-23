@@ -1,0 +1,214 @@
+{
+  "respondent_id": {
+    "type": "identifier"
+  },
+  "tenure_band": {
+    "type": "categorical",
+    "codes": {
+      "1-2y": "1-2y",
+      "3-5y": "3-5y",
+      "6+y": "6+y",
+      "<1y": "<1y"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "plan_tier": {
+    "type": "categorical",
+    "codes": {
+      "Essential": "Essential",
+      "Premium": "Premium",
+      "Standard": "Standard"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "legacy_plan": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "nps_0_10": {
+    "type": "ordinal",
+    "codes": {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "10": "10"
+    },
+    "groups": {
+      "0-6": "detractor",
+      "7-8": "passive",
+      "9-10": "promoter"
+    }
+  },
+  "overall_satisfaction_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "renewal_intent_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "reliability_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "value_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "ease_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "trust_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "outage_90d": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "support_contact_90d": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "support_quality_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "resolved_first_contact": {
+    "type": "categorical",
+    "codes": {
+      "0.0": "No/not selected",
+      "1.0": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "wt_final": {
+    "type": "weight",
+    "role": "supplied calibration weight; use as primary"
+  },
+  "region": {
+    "type": "categorical",
+    "codes": {
+      "England": "England",
+      "Northern Ireland": "Northern Ireland",
+      "Scotland": "Scotland",
+      "Wales": "Wales"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "household_type": {
+    "type": "categorical",
+    "codes": {
+      "Adults only": "Adults only",
+      "Single adult": "Single adult",
+      "With children": "With children"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "outage_severity_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "support_channel": {
+    "type": "categorical",
+    "codes": {
+      "Chat": "Chat",
+      "Email": "Email",
+      "Not asked": "Not asked",
+      "Phone": "Phone"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "formal_complaint_90d": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  }
+}

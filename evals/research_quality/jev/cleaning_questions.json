@@ -1,0 +1,81 @@
+{
+  "version": "1.0",
+  "stage": "cleaning",
+  "state_paths_required": [
+    "variable.name",
+    "variable.label",
+    "variable.type",
+    "variable.value_labels",
+    "variable.missing_codes",
+    "variable.frequencies_summary",
+    "variable.routing_hint",
+    "dataset.weight_candidates",
+    "allowed_recipes"
+  ],
+  "questions": {
+    "variable_role": {
+      "type": "choice",
+      "instructions": "What role should `variable.name` (`variable.label`) play in analysis?",
+      "criteria": {
+        "id": "Respondent or case identifier",
+        "weight": "Sampling or rim weight",
+        "banner": "Banner / break / segment",
+        "outcome": "Primary outcome or KPI",
+        "diagnostic": "Attribute, driver, or diagnostic rating",
+        "open_end": "Verbatim / unstructured text",
+        "admin": "Admin, timing, or non-analytical field",
+        "other": "Unclear; escalate"
+      }
+    },
+    "missing_semantics": {
+      "type": "choice",
+      "instructions": "How should `variable.missing_codes` and `variable.frequencies_summary` be treated?",
+      "criteria": {
+        "none": "No meaningful missingness",
+        "system_missing": "System / skipped / not-asked missing",
+        "user_missing": "Explicit DK/REF/user missing",
+        "mixed": "Both system and user missing present",
+        "unclear": "Escalate; do not invent missing policy"
+      }
+    },
+    "is_routed": {
+      "type": "noul",
+      "instructions": "Is `variable.name` a routed or conditional measure given `variable.routing_hint` and frequencies?"
+    },
+    "label_code_risk": {
+      "type": "noul",
+      "instructions": "Is there a material risk of label/code mismatch or sparse-code confusion for `variable.name`?"
+    },
+    "low_base_risk": {
+      "type": "noul",
+      "instructions": "Does `variable.frequencies_summary` suggest low-base risk for standard crosstabs?"
+    },
+    "analysis_ready": {
+      "type": "noul",
+      "instructions": "Is `variable.name` analysis-ready without a further transform recipe?"
+    },
+    "recommended_recipe": {
+      "type": "choice",
+      "instructions": "Pick at most one recipe from `allowed_recipes` (or none/escalate). Do not invent a recipe outside that set.",
+      "criteria": {
+        "none": "No transform; use as-is",
+        "top2box": "Collapse to top-2 box",
+        "collapse_sparse": "Collapse sparse trailing codes",
+        "drop_empty": "Drop empty/near-empty codes from banners",
+        "recode_labels": "Repair label mapping only",
+        "set_weight": "Mark as active weight",
+        "escalate": "Needs human or LLM recipe authoring"
+      }
+    },
+    "cleaning_disposition": {
+      "type": "choice",
+      "instructions": "Cleaning control-plane disposition for `variable.name` given `recommended_recipe` judgements and risk flags.",
+      "criteria": {
+        "auto_apply": "Clear case; apply recommended_recipe via engine",
+        "queue": "Include on analysis surface with flags only",
+        "escalate": "Human/LLM must decide before use",
+        "exclude": "Exclude from analytical surface"
+      }
+    }
+  }
+}

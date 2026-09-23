@@ -1,0 +1,123 @@
+{
+  "study_id": "FSA-CIT-2025-03",
+  "analysis_claims": [],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Prioritise affordability research: 87.20% were concerned about food prices, including 46.22% highly concerned. Confidence that the supply chain ensures affordable options for everyone was divided: 43.77% confident and 45.26% unconfident.",
+      "evidence_refs": [
+        "analysis_results.json.tables.Q12_8",
+        "analysis_results.json.tables.Q14_3"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive evidence supporting a research priority",
+      "qualification": "Both bases: all respondents, unweighted n=2,051 and weighted n=2,051; publisher final weights. The numerical balance of confidence does not establish a population difference. These attitudes do not measure actual affordability or establish an FSA intervention's effectiveness.",
+      "topic_cluster": "affordability"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Keep household vulnerability distinct from general price concern: 20.89% worried about affording food in the next month, including 5.99% very worried; 18.64% worried about enough food being available to buy, including 5.59% very worried.",
+      "evidence_refs": [
+        "analysis_results.json.tables.Q3m",
+        "analysis_results.json.tables.Q2m",
+        "analysis_results.json.tables.Q12_8"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive distinction between different measures",
+      "qualification": "Each base: all respondents, unweighted and weighted n=2,051; publisher final weights. Next-month worry is not observed food deprivation. Aggregate tables cannot identify overlap, affected subgroups or whether the numerical difference between affordability and availability worry is meaningful.",
+      "topic_cluster": "household_vulnerability"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Investigate confidence by supply-chain function: 74.34% were confident that food is safe to eat, compared with 43.77% confident in affordable options for everyone. Overall supply-chain confidence was 63.08%, comprising 55.01% fairly confident and 8.07% very confident.",
+      "evidence_refs": [
+        "analysis_results.json.tables.Q14_1",
+        "analysis_results.json.tables.Q14_3",
+        "analysis_results.json.tables.Q13"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive contrast across attitude measures",
+      "qualification": "Each base: all respondents, unweighted and weighted n=2,051; publisher final weights. Numerical contrasts are not significance-tested. These are perceptions, not evidence of actual safety performance, and the tables cannot explain what drives overall confidence.",
+      "topic_cluster": "supply_chain_confidence"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Include ultra-processing in the research agenda: 77.84% were concerned about ultra-processed or over-processed food, including 39.45% highly concerned.",
+      "evidence_refs": [
+        "analysis_results.json.tables.Q12_14"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive evidence of widespread concern",
+      "qualification": "Base: all respondents, unweighted and weighted n=2,051; publisher final weights. The item combines ultra-processing and over-processing; it does not establish respondents' understanding, consumption, health effects or preferred policy. The preselected extract cannot establish its rank among all food concerns.",
+      "topic_cluster": "processing_concern"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "For FSA trust research, examine neutral and uncertain views alongside distrust: 52.67% trusted the FSA, 5.77% distrusted it, 29.82% neither trusted nor distrusted it, and 11.74% did not know or lacked enough knowledge to say.",
+      "evidence_refs": [
+        "analysis_results.json.tables.Q16"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive evidence supporting follow-up research",
+      "qualification": "Base: all respondents, unweighted and weighted n=2,051; publisher final weights. Trust was asked after a description of the FSA's safety and authenticity remit. Neutrality and uncertainty are distinct from distrust; neither their causes nor ways to change them are established.",
+      "topic_cluster": "fsa_trust"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Distinguish FSA recognition from knowledge when planning communication research: 88.52% had heard of the FSA under the published net, but 54.02% knew a lot or a little. Only 4.40% knew a lot, while 34.49% had heard of it but knew nothing about it.",
+      "evidence_refs": [
+        "analysis_results.json.tables.Q14a"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive evidence of limited self-reported knowledge",
+      "qualification": "Base: all respondents, unweighted and weighted n=2,051; publisher final weights. Knowledge is self-reported. The published heard-of net excludes those first hearing of the FSA through survey contact. No respondent-level evidence links knowledge to trust or shows that communication would improve trust.",
+      "topic_cluster": "fsa_knowledge"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": [
+          "F1",
+          "F2"
+        ],
+        "headline_intent": "Prioritise affordability while distinguishing broad concern from household worry",
+        "analytical_relationship": "General food-price concern and confidence in affordable provision establish the research context; next-month household worry measures a separate, more personal issue."
+      },
+      {
+        "order": 2,
+        "finding_refs": [
+          "F3"
+        ],
+        "headline_intent": "Explore why confidence differs across supply-chain functions",
+        "analytical_relationship": "Function-specific confidence provides context for the overall confidence measure without establishing its drivers."
+      },
+      {
+        "order": 3,
+        "finding_refs": [
+          "F4"
+        ],
+        "headline_intent": "Keep processing concerns in the follow-up agenda",
+        "analytical_relationship": "A separate area of widespread concern broadens the agenda beyond affordability without implying a comprehensive priority ranking."
+      },
+      {
+        "order": 4,
+        "finding_refs": [
+          "F5",
+          "F6"
+        ],
+        "headline_intent": "Investigate trust, uncertainty and knowledge before choosing communication responses",
+        "analytical_relationship": "Trust and awareness distributions identify complementary research questions; their relationship and responsiveness to communication remain untested."
+      }
+    ]
+  },
+  "method_notes": [
+    "Only the four supplied study files were used. No raw-data analysis was undertaken, so analysis_claims is empty; evidence_refs identify exact supplied analysis table paths.",
+    "Population: adults aged 16+ in England, Wales and Northern Ireland; Scotland excluded. Fieldwork: 7\u201311 March 2025. Online YouGov quota sample; all nine tables have unweighted and weighted bases of 2,051 and use publisher final weights.",
+    "Analysis is descriptive only. No new significance tests, confidence intervals or trend claims were made because microdata, design variances and comparison waves were not supplied. Numerical leads do not establish population superiority.",
+    "Published nets were retained: worried combines very and somewhat; concerned combines highly and somewhat; confident combines very and fairly; unconfident combines not very and not at all; trust and distrust each combine their two respective categories. Nets were not added to constituents.",
+    "Percentages and weighted counts were independently rounded by the publisher; published nets can differ slightly from sums of displayed constituents. All reported percentages retain the full table denominator.",
+    "Nine preselected whole-sample tables cannot establish comprehensive issue rankings, subgroup differences, respondent-level overlap, causal relationships or intervention effects. Recommended priorities are researcher judgments for follow-up, not validated policy prescriptions."
+  ]
+}

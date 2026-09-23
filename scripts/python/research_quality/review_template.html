@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>
+    Velocity · Research review
+  </title>
+  <style>
+    :root {
+      --bg-app: #f1efea;
+      --bg-panel: #fdfcfa;
+      --bg-panel-tint: #f7f5f0;
+      --bg-rail: #ece9e3;
+      --text-primary: #24302a;
+      --text-secondary: #56635b;
+      --border-color: #e3dfd7;
+      --color-accent: #b54e33;
+      --viz-fill-primary: #6f8177;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      font:
+        15px/1.6 system-ui,
+        sans-serif;
+    }
+    header {
+      padding: 28px 40px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: center;
+    }
+    h1 {
+      font-size: 25px;
+      letter-spacing: -0.8px;
+      margin: 3px 0;
+    }
+    h2 {
+      font-size: 22px;
+      margin: 0 0 18px;
+    }
+    h3 {
+      font-size: 16px;
+    }
+    p {
+      margin: 8px 0 18px;
+    }
+    .eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      color: var(--text-secondary);
+    }
+    main {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      max-width: 1500px;
+      margin: auto;
+      min-height: 90vh;
+    }
+    nav {
+      padding: 28px 20px;
+      position: sticky;
+      top: 0;
+      align-self: start;
+    }
+    nav button {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 8px;
+    }
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+      color: inherit;
+    }
+    button,
+    .file-label {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      padding: 10px 14px;
+      cursor: pointer;
+      min-height: 44px;
+    }
+    button:hover,
+    .file-label:hover {
+      background: var(--bg-rail);
+    }
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    summary:focus-visible {
+      outline: 2px solid var(--text-primary);
+      outline-offset: 3px;
+    }
+    .primary {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+    button.primary:hover {
+      filter: brightness(0.95);
+      background: var(--color-accent);
+    }
+    button[aria-current='true'] {
+      border-color: var(--text-primary);
+      background: var(--bg-rail);
+    }
+    article {
+      max-width: 1050px;
+      padding: 32px 36px 100px;
+      min-width: 0;
+    }
+    section,
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 24px;
+      margin: 0 0 20px;
+    }
+    .muted {
+      color: var(--text-secondary);
+    }
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: 550;
+    }
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      padding: 10px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+      line-height: 1.6;
+    }
+    input[type='checkbox'] {
+      width: auto;
+      margin-right: 10px;
+    }
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--bg-panel-tint);
+      padding: 14px;
+      font-size: 12px;
+      max-height: 460px;
+      overflow: auto;
+      font-variant-numeric: tabular-nums;
+    }
+    summary {
+      cursor: pointer;
+      padding: 8px 0;
+    }
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .row > * {
+      flex: 1;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      background: var(--bg-rail);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      display: inline-block;
+    }
+    .evidence {
+      padding: 5px 10px;
+      font:
+        12px ui-monospace,
+        monospace;
+      min-height: 34px;
+      margin: 4px 4px 0 0;
+    }
+    #notice {
+      padding: 12px 20px;
+      background: var(--bg-panel);
+      border-left: 4px solid var(--text-primary);
+      margin: 0 0 20px;
+      white-space: pre-wrap;
+    }
+    .hidden {
+      display: none;
+    }
+    footer {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 24px 0;
+    }
+    dialog {
+      width: min(950px, 90vw);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-panel);
+      color: var(--text-primary);
+      padding: 24px;
+    }
+    dialog::backdrop {
+      background: #24302a66;
+    }
+    @media (max-width: 760px) {
+      header {
+        padding: 20px;
+        display: block;
+      }
+      main {
+        display: block;
+      }
+      nav {
+        position: static;
+        padding: 18px 20px;
+        display: flex;
+        gap: 10px;
+        overflow: auto;
+      }
+      nav button {
+        min-width: 180px;
+      }
+      article {
+        padding: 8px 20px 60px;
+      }
+      .card,
+      section {
+        padding: 18px;
+      }
+      header .toolbar {
+        margin-top: 15px;
+      }
+    }
+  </style>
+  <header>
+    <div>
+      <div class="eyebrow">Velocity / Research quality</div>
+      <h1>Independent research review</h1>
+      <div class="muted">Inspect the evidence. Make the editorial decisions.</div>
+    </div>
+    <div class="toolbar">
+      <button id="save">Export progress</button
+      ><label class="file-label" style="margin: 0; font-weight: 400"
+        >Import review<input id="import" type="file" accept=".json" hidden
+      /></label>
+    </div>
+  </header>
+  <main>
+    <nav aria-label="Studies" id="nav"></nav>
+    <article id="content"></article>
+  </main>
+  <dialog id="evidence-dialog">
+    <div class="row">
+      <h2 id="evidence-title">Evidence</h2>
+      <button id="close-dialog">Close</button>
+    </div>
+    <pre id="evidence-body"></pre>
+  </dialog>
+  <script id="data" type="application/json">
+    __PAYLOAD__
+  </script>
+  <script>
+    'use strict';
+    const pack = JSON.parse(document.getElementById('data').textContent),
+      key = 'velocity-review-' + pack.pack_id;
+    const initial = {
+      version: 1,
+      pack_id: pack.pack_id,
+      reviewer: '',
+      cases: {},
+      candidates: {},
+      created_at: new Date().toISOString(),
+    };
+    let state = initial,
+      active = pack.cases[0].study_id,
+      selected = null,
+      storageError = '';
+    try {
+      const saved = JSON.parse(localStorage.getItem(key) || 'null');
+      if (saved) {
+        validateProgress(saved);
+        state = saved;
+      }
+    } catch {
+      storageError = 'Browser storage is unavailable. Export progress before closing.';
+    }
+    const el = (tag, text, cls) => {
+      const n = document.createElement(tag);
+      if (text !== undefined) n.textContent = text;
+      if (cls) n.className = cls;
+      return n;
+    };
+    const persist = () => {
+      try {
+        localStorage.setItem(key, JSON.stringify(state));
+      } catch {
+        storageError = 'Browser storage is unavailable. Export progress before closing.';
+      }
+    };
+    const current = () => pack.cases.find((c) => c.study_id === active);
+    const review = () =>
+      state.cases[active] ||
+      (state.cases[active] = { baseline: '', prepared: false, revisedEvidence: null, revision: 0 });
+    const candidate = () => current().candidates.find((c) => c.candidate_id === selected);
+    const draft = () =>
+      state.candidates[selected] ||
+      (state.candidates[selected] = {
+        findings: {},
+        beats: {},
+        missed: '',
+        minutes: '',
+        notes: '',
+        approved: false,
+        started_at: new Date().toISOString(),
+      });
+    function notice(text) {
+      let n = document.getElementById('notice');
+      if (!n) {
+        n = el('div');
+        n.id = 'notice';
+        n.setAttribute('role', 'status');
+        document.getElementById('content').prepend(n);
+      }
+      n.textContent = text;
+      n.scrollIntoView({ block: 'nearest' });
+    }
+    function field(parent, label, value, onchange, tag = 'textarea') {
+      const id = 'field-' + Math.random().toString(36).slice(2);
+      const l = el('label', label);
+      l.htmlFor = id;
+      const n = el(tag);
+      n.id = id;
+      n.value = value || '';
+      n.oninput = () => {
+        onchange(n.value);
+        persist();
+      };
+      parent.append(l, n);
+      return n;
+    }
+    function box(parent, label, checked, onchange) {
+      const l = el('label');
+      const n = el('input');
+      n.type = 'checkbox';
+      n.checked = checked;
+      n.onchange = () => {
+        onchange(n.checked);
+        persist();
+      };
+      l.append(n, document.createTextNode(label));
+      parent.append(l);
+      return n;
+    }
+    function resolve(path, output) {
+      const original = path;
+      path = path.replace(/^analysis_results\.json\./, '').replace(/^SBT-00[23]:/, '');
+      let value = review().revisedEvidence || current().evidence,
+        parts = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+      if (path.startsWith('/analysis_claims/')) {
+        value = review().revision === 0 ? output : null;
+        parts = path
+          .slice(1)
+          .split('/')
+          .map((x) => x.replace(/~1/g, '/').replace(/~0/g, '~'));
+      } else if (path.startsWith('analysis_claims.')) {
+        value = review().revision === 0 ? output?.analysis_claims?.find((a) => a.analysis_id === parts[1]) : null;
+        parts = parts.slice(2);
+      }
+      for (const part of parts) {
+        value = value && typeof value === 'object' && Object.hasOwn(value, part) ? value[part] : undefined;
+      }
+      if (value !== undefined && value !== null) return value;
+      const claim = review().revision === 0 ? output?.analysis_claims?.find((a) => a.analysis_id === path) : null;
+      return (
+        claim || {
+          unresolved_reference: original,
+          note: 'Locate this claim in the supplied analysis tables or refresh raw-data analysis before accepting it.',
+        }
+      );
+    }
+    function showEvidence(path, output) {
+      document.getElementById('evidence-title').textContent = path;
+      document.getElementById('evidence-body').textContent = JSON.stringify(resolve(path, output), null, 2);
+      document.getElementById('evidence-dialog').showModal();
+    }
+    function exportFile(value, name) {
+      const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' }));
+      const a = el('a');
+      a.href = url;
+      a.download = name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    function invalidate(d) {
+      document.getElementById('notice')?.remove();
+      d.approved = false;
+    }
+    function render() {
+      const nav = document.getElementById('nav');
+      nav.replaceChildren();
+      for (const c of pack.cases) {
+        const b = el('button', c.study_id);
+        b.setAttribute('aria-current', String(c.study_id === active));
+        b.onclick = () => {
+          active = c.study_id;
+          selected = null;
+          render();
+        };
+        nav.append(b);
+      }
+      const root = document.getElementById('content');
+      root.replaceChildren();
+      const c = current(),
+        r = review();
+      root.append(el('div', 'BLINDED REVIEW · ' + c.study_id, 'eyebrow'), el('h2', c.materials.title));
+      if (storageError) notice(storageError);
+      const prep = el('section');
+      prep.append(el('h3', '1. Inspect preparation and form your own view'), el('p', c.materials.decision_question));
+      const details = el('details');
+      details.append(
+        el('summary', 'Brief, methods and questionnaire'),
+        el('pre', JSON.stringify(c.materials, null, 2) + '\n\n' + c.questionnaire),
+      );
+      prep.append(details);
+      const tableButton = el('button', 'Inspect all approved tables');
+      tableButton.onclick = () => showEvidence('', null);
+      prep.append(tableButton);
+      tableButton.onclick = () => {
+        document.getElementById('evidence-title').textContent = 'Approved analysis';
+        document.getElementById('evidence-body').textContent = JSON.stringify(r.revisedEvidence || c.evidence, null, 2);
+        document.getElementById('evidence-dialog').showModal();
+      };
+      field(prep, 'Your important findings and unacceptable claims — before reading candidates', r.baseline, (v) => {
+        r.baseline = v;
+      });
+      box(prep, 'I have checked the preparation, weights, universes and limitations', r.prepared, (v) => {
+        r.prepared = v;
+        for (const x of c.candidates) {
+          if (state.candidates[x.candidate_id]) invalidate(state.candidates[x.candidate_id]);
+        }
+      });
+      const open = el('button', 'Review candidates');
+      open.onclick = () => {
+        if (r.baseline.trim().length < 10) {
+          notice('Record your independent findings first.');
+          return;
+        }
+        selected = c.candidates[0].candidate_id;
+        render();
+      };
+      prep.append(open);
+      root.append(prep);
+      if (!selected) {
+        root.append(
+          el(
+            'p',
+            'Candidate identities and provisional scores are withheld. Record your own view first, then assess each output independently.',
+            'muted',
+          ),
+        );
+        return;
+      }
+      const choose = el('section');
+      choose.append(el('h3', '2. Review evidence and findings'));
+      const menu = el('select');
+      menu.setAttribute('aria-label', 'Candidate');
+      for (const x of c.candidates) {
+        const o = el('option', x.candidate_id);
+        o.value = x.candidate_id;
+        menu.append(o);
+      }
+      menu.value = selected;
+      menu.onchange = () => {
+        selected = menu.value;
+        render();
+      };
+      choose.append(menu);
+      root.append(choose);
+      const x = candidate(),
+        d = draft();
+      for (const f of x.output.findings) {
+        const v =
+          d.findings[f.model_finding_id] ||
+          (d.findings[f.model_finding_id] = {
+            decision: 'pending',
+            text: f.proposition,
+            reason: '',
+            importance: f.importance,
+          });
+        const card = el('section');
+        card.append(el('span', f.model_finding_id + ' · proposed ' + f.importance, 'pill'));
+        field(card, 'Finding', v.text, (value) => {
+          v.text = value;
+          invalidate(d);
+        });
+        card.append(el('p', f.qualification || '', 'muted'));
+        const refs = el('div');
+        for (const ref of f.evidence_refs) {
+          const b = el('button', ref, 'evidence');
+          b.onclick = () => showEvidence(ref, x.output);
+          refs.append(b);
+        }
+        card.append(refs);
+        const row = el('div', undefined, 'row');
+        const decision = el('select');
+        decision.setAttribute('aria-label', 'Decision ' + f.model_finding_id);
+        for (const value of ['pending', 'accept', 'revise', 'reject']) {
+          const o = el('option', value[0].toUpperCase() + value.slice(1));
+          o.value = value;
+          decision.append(o);
+        }
+        decision.value = v.decision;
+        decision.onchange = () => {
+          v.decision = decision.value;
+          invalidate(d);
+          persist();
+        };
+        const importance = el('select');
+        importance.setAttribute('aria-label', 'Importance ' + f.model_finding_id);
+        for (const value of ['primary', 'secondary', 'context']) {
+          const o = el('option', value);
+          o.value = value;
+          importance.append(o);
+        }
+        importance.value = v.importance;
+        importance.onchange = () => {
+          v.importance = importance.value;
+          invalidate(d);
+          persist();
+        };
+        row.append(decision, importance);
+        card.append(row);
+        field(card, 'Reason or required correction', v.reason, (value) => {
+          v.reason = value;
+          invalidate(d);
+        });
+        root.append(card);
+      }
+      const story = el('section');
+      story.append(el('h3', '3. Approve the narrative'));
+      for (const beat of x.output.story.beats) {
+        const id = String(beat.order);
+        const b = d.beats[id] || (d.beats[id] = { include: true, title: beat.headline_intent, order: beat.order });
+        box(story, 'Include beat ' + beat.order + ' · ' + beat.finding_refs.join(', '), b.include, (v) => {
+          b.include = v;
+          invalidate(d);
+        });
+        field(
+          story,
+          'Headline ' + beat.order,
+          b.title,
+          (v) => {
+            b.title = v;
+            invalidate(d);
+          },
+          'input',
+        );
+        const order = field(
+          story,
+          'Position ' + beat.order,
+          b.order,
+          (v) => {
+            b.order = Number(v);
+            invalidate(d);
+          },
+          'input',
+        );
+        order.type = 'number';
+        order.min = '1';
+        story.append(el('p', beat.analytical_relationship, 'muted'));
+      }
+      field(story, 'Missed important findings', d.missed, (v) => {
+        d.missed = v;
+        invalidate(d);
+      });
+      field(
+        story,
+        'Active review minutes',
+        d.minutes,
+        (v) => {
+          d.minutes = v;
+        },
+        'input',
+      ).type = 'number';
+      field(story, 'Overall judgement and candidate preference (ties allowed)', d.notes, (v) => {
+        d.notes = v;
+      });
+      const approve = el('button', 'Approve narrative and export', 'primary');
+      approve.onclick = () => approveNarrative(x, d, r);
+      story.append(approve);
+      root.append(story);
+      const revisions = el('section');
+      revisions.append(
+        el('h3', 'Evidence revisions'),
+        el(
+          'p',
+          'Load replacement analysis results to review a data update. Every approval is cleared; your edits and reasons are preserved. The replacement must carry this study ID and a source fingerprint.',
+        ),
+      );
+      const upload = el('input');
+      upload.type = 'file';
+      upload.accept = '.json';
+      upload.setAttribute('aria-label', 'Revised analysis');
+      upload.onchange = async () => {
+        try {
+          const next = JSON.parse(await upload.files[0].text());
+          if ((next.project_id || next.study_id) !== active || !next.source_sha256)
+            throw Error('Wrong study or missing source fingerprint.');
+          r.revisedEvidence = next;
+          r.revision++;
+          r.prepared = false;
+          for (const target of c.candidates) {
+            const old = state.candidates[target.candidate_id];
+            if (old) {
+              old.approved = false;
+              for (const f of Object.values(old.findings)) f.decision = 'pending';
+            }
+          }
+          persist();
+          render();
+          notice('Evidence updated. Preparation and every finding need review again. Your edits were preserved.');
+        } catch (err) {
+          notice('No data changed: ' + err.message);
+        }
+      };
+      revisions.append(upload);
+      root.append(
+        revisions,
+        el(
+          'footer',
+          'Evaluation prototype · No reviewer assessment is presumed. Progress stays in this browser until exported. This file is not a Velocity workspace/session.',
+        ),
+      );
+    }
+    async function approveNarrative(x, d, r) {
+      const problems = [];
+      if (!r.prepared) problems.push('Review preparation first.');
+      for (const f of x.output.findings) {
+        const v = d.findings[f.model_finding_id];
+        if (!v || v.decision === 'pending') problems.push('Decide ' + f.model_finding_id + '.');
+        else if (
+          (v.decision !== 'accept' || v.text !== f.proposition || v.importance !== f.importance) &&
+          !v.reason.trim()
+        )
+          problems.push('Give a reason for ' + f.model_finding_id + '.');
+      }
+      for (const f of x.output.findings) {
+        if (
+          d.findings[f.model_finding_id]?.decision !== 'reject' &&
+          f.evidence_refs.some((ref) => resolve(ref, x.output)?.unresolved_reference)
+        )
+          problems.push(
+            'Resolve the current evidence for ' +
+              f.model_finding_id +
+              ' before approval. A raw-data draft needs refreshed analysis after a data change.',
+          );
+      }
+      const beats = x.output.story.beats.filter((b) => d.beats[String(b.order)]?.include);
+      if (!beats.length) problems.push('Keep at least one story beat.');
+      const positions = beats.map((b) => d.beats[String(b.order)].order);
+      if (positions.some((n) => !Number.isInteger(n) || n < 1) || new Set(positions).size !== positions.length)
+        problems.push('Use unique positive narrative positions.');
+      for (const beat of beats) {
+        for (const id of beat.finding_refs) {
+          if (!['accept', 'revise'].includes(d.findings[id]?.decision))
+            problems.push('Beat ' + beat.order + ' uses unaccepted finding ' + id + '.');
+        }
+      }
+      if (problems.length) {
+        const unique = [...new Set(problems)];
+        notice(
+          unique.slice(0, 4).join('\n') +
+            (unique.length > 4 ? `\n${unique.length - 4} more items require review.` : ''),
+        );
+        return;
+      }
+      d.approved = true;
+      d.approved_at = new Date().toISOString();
+      persist();
+      const evidence = r.revisedEvidence || current().evidence;
+      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(evidence)));
+      const analysisFingerprint = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
+      const approved = {
+        schema_version: 1,
+        analysis_sha256: analysisFingerprint,
+        kind: 'reviewed_research_prototype',
+        study_id: active,
+        pack_id: pack.pack_id,
+        candidate_id: selected,
+        source_sha256: evidence.source_sha256,
+        evidence_revision: r.revision,
+        approved_at: d.approved_at,
+        preparation_review: r,
+        findings: x.output.findings
+          .filter((f) => d.findings[f.model_finding_id].decision !== 'reject')
+          .map((f) => ({
+            ...f,
+            original_proposition: f.proposition,
+            original_importance: f.importance,
+            proposition: d.findings[f.model_finding_id].text,
+            importance: d.findings[f.model_finding_id].importance,
+            review: d.findings[f.model_finding_id],
+            evidence: f.evidence_refs.map((ref) => ({ analysis_id: ref, values: resolve(ref, x.output) })),
+          })),
+        story: {
+          beats: beats
+            .map((b) => ({
+              ...b,
+              original_order: b.order,
+              original_headline_intent: b.headline_intent,
+              order: d.beats[String(b.order)].order,
+              headline_intent: d.beats[String(b.order)].title,
+            }))
+            .sort((a, b) => a.order - b.order),
+        },
+        review: d,
+      };
+      exportFile(approved, selected + '-approved-review.json');
+      notice('Narrative approved for this evidence revision. Exported evidence and original wording remain attached.');
+    }
+    function validateProgress(value) {
+      const object = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
+      if (
+        !object(value) ||
+        value.pack_id !== pack.pack_id ||
+        value.version !== 1 ||
+        !object(value.cases) ||
+        !object(value.candidates)
+      )
+        throw Error('This review belongs to another pack or has an invalid format.');
+      for (const [id, c] of Object.entries(value.cases)) {
+        if (
+          !pack.cases.some((x) => x.study_id === id) ||
+          !object(c) ||
+          typeof c.baseline !== 'string' ||
+          typeof c.prepared !== 'boolean' ||
+          !Number.isInteger(c.revision)
+        )
+          throw Error('Invalid study review.');
+      }
+      for (const [id, c] of Object.entries(value.candidates)) {
+        const source = pack.cases.flatMap((x) => x.candidates).find((x) => x.candidate_id === id);
+        if (!source || !object(c) || !object(c.findings) || !object(c.beats)) throw Error('Invalid candidate review.');
+        for (const [fid, f] of Object.entries(c.findings)) {
+          if (
+            !source.output.findings.some((x) => x.model_finding_id === fid) ||
+            !object(f) ||
+            !['pending', 'accept', 'revise', 'reject'].includes(f.decision) ||
+            typeof f.text !== 'string' ||
+            typeof f.reason !== 'string' ||
+            !['primary', 'secondary', 'context'].includes(f.importance)
+          )
+            throw Error('Invalid finding review.');
+        }
+        for (const b of Object.values(c.beats)) {
+          if (!object(b) || typeof b.include !== 'boolean' || typeof b.title !== 'string' || !Number.isFinite(b.order))
+            throw Error('Invalid narrative review.');
+        }
+      }
+    }
+    document.getElementById('save').onclick = () => exportFile(state, 'research-review-' + pack.pack_id + '.json');
+    document.getElementById('close-dialog').onclick = () => document.getElementById('evidence-dialog').close();
+    document.getElementById('import').onchange = async (event) => {
+      try {
+        const incoming = JSON.parse(await event.target.files[0].text());
+        validateProgress(incoming);
+        state = incoming;
+        persist();
+        render();
+        notice('Progress restored.');
+      } catch (err) {
+        notice('No progress changed: ' + err.message);
+      }
+    };
+    render();
+  </script>
+</html>

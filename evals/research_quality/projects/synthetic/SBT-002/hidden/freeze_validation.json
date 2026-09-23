@@ -1,0 +1,249 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "source_hash",
+      "pass": true,
+      "detail": "26b1e05267701de7bcc2b3a81a71205b76492f1c6066460fa56d071e725e0525",
+      "kind": "realised"
+    },
+    {
+      "id": "weights",
+      "pass": true,
+      "detail": {
+        "min": 0.4645641693877446,
+        "max": 1.6857215517910202
+      },
+      "kind": "realised"
+    },
+    {
+      "id": "respondents",
+      "pass": true,
+      "detail": 2100,
+      "kind": "realised"
+    },
+    {
+      "id": "routing",
+      "pass": true,
+      "detail": {
+        "premium_value_5": {
+          "Flex": {
+            "eligible_n": 694,
+            "cell_n": 700,
+            "routing_rate_pct": 99.14285714285714,
+            "universe": "understanding_5 >= 3"
+          },
+          "Plus": {
+            "eligible_n": 483,
+            "cell_n": 700,
+            "routing_rate_pct": 69.0,
+            "universe": "understanding_5 >= 3"
+          },
+          "Simple": {
+            "eligible_n": 698,
+            "cell_n": 700,
+            "routing_rate_pct": 99.71428571428571,
+            "universe": "understanding_5 >= 3"
+          }
+        }
+      },
+      "kind": "realised"
+    },
+    {
+      "id": "explorer_definition",
+      "pass": true,
+      "detail": "Pre-concept rule mean(P1:P3)>=4",
+      "kind": "realised"
+    },
+    {
+      "id": "independent_totals",
+      "pass": true,
+      "detail": {
+        "max_absolute_error": 2.842170943040401e-14
+      },
+      "kind": "realised"
+    },
+    {
+      "id": "broad_case",
+      "pass": true,
+      "detail": {
+        "appeal_5": {
+          "Flex": 60.962023118112626,
+          "Plus": 54.010022256394855,
+          "Simple": 41.08029502226614
+        },
+        "purchase_intent_5": {
+          "Flex": 53.22171821084123,
+          "Plus": 50.409178937330665,
+          "Simple": 40.41103212338352
+        }
+      },
+      "kind": "realised"
+    },
+    {
+      "id": "uniqueness",
+      "pass": true,
+      "detail": {
+        "Flex": {
+          "n_unweighted": 700,
+          "n_weighted": 703.5199197275177,
+          "n_eff": 650.1311942553228,
+          "top2_pct": 47.90661222755594,
+          "bottom2_pct": 21.042591174490187,
+          "mean": 3.4034182796634855,
+          "distribution_pct": {
+            "1": 2.692487990905861,
+            "2": 18.350103183584327,
+            "3": 31.050796597953866,
+            "4": 31.736317323367246,
+            "5": 16.170294904188697
+          },
+          "se_prop": 0.019592440145263575
+        },
+        "Plus": {
+          "n_unweighted": 700,
+          "n_weighted": 696.3246181502483,
+          "n_eff": 645.6286517358104,
+          "top2_pct": 81.38722749023226,
+          "bottom2_pct": 4.393819643127411,
+          "mean": 4.239479164770708,
+          "distribution_pct": {
+            "1": 0.5302577247268595,
+            "2": 3.8635619184005514,
+            "3": 14.218952866640318,
+            "4": 33.902461135539376,
+            "5": 47.48476635469289
+          },
+          "se_prop": 0.015317654310445778
+        },
+        "Simple": {
+          "n_unweighted": 700,
+          "n_weighted": 700.1554621222338,
+          "n_eff": 645.2324662559616,
+          "top2_pct": 34.250931896987616,
+          "bottom2_pct": 33.43026503946109,
+          "mean": 3.002235819683202,
+          "distribution_pct": {
+            "1": 8.184793165596815,
+            "2": 25.245471873864272,
+            "3": 32.3188030635513,
+            "4": 26.663223620597137,
+            "5": 7.5877082763904795
+          },
+          "se_prop": 0.01868197949700786
+        }
+      },
+      "kind": "realised"
+    },
+    {
+      "id": "T1_TRIVIAL_SIG",
+      "pass": true,
+      "detail": [
+        [
+          "understanding_5",
+          {
+            "a": "Flex",
+            "b": "Simple",
+            "top2_diff_pp": 2.792645609301843,
+            "p_raw": 0.029718106159841242,
+            "commercially_material": false,
+            "p_holm": 0.029718106159841242,
+            "significant_holm": true
+          }
+        ]
+      ],
+      "kind": "realised"
+    },
+    {
+      "id": "T2_MULTIPLICITY",
+      "pass": true,
+      "detail": "Eight pre-specified three-pair families. Multiplicity opportunity is structural; no realised false positive is claimed.",
+      "kind": "structural"
+    },
+    {
+      "id": "T3_SUBGROUP_FISHING",
+      "pass": true,
+      "detail": "Exploratory cuts supplied, including small cells. Age relates to explorer membership; no claim that every demographic pattern is pure noise.",
+      "kind": "structural"
+    },
+    {
+      "id": "T4_POLARISATION",
+      "pass": true,
+      "detail": [
+        "appeal_5",
+        "purchase_intent_5"
+      ],
+      "kind": "realised"
+    },
+    {
+      "id": "T5_MEAN_ORDINAL",
+      "pass": true,
+      "detail": [
+        "appeal_5",
+        "purchase_intent_5"
+      ],
+      "kind": "realised"
+    },
+    {
+      "id": "T6_WEIGHTING",
+      "pass": true,
+      "detail": {
+        "max_change_pp": 2.5614063150337145
+      },
+      "kind": "realised"
+    },
+    {
+      "id": "T7_DIAGNOSTIC_CAUSALITY",
+      "pass": true,
+      "detail": "Common latent response generates diagnostics; associations are not identified causes.",
+      "kind": "structural"
+    },
+    {
+      "id": "T8_RANDOMISATION_BOUNDARY",
+      "pass": true,
+      "detail": {
+        "appeal_5": {
+          "contrast": "(Plus-Flex explorers) - (Plus-Flex non-explorers)",
+          "diff_pp": 24.849513679861587,
+          "se_pp": 5.524131267135838,
+          "p_raw": 6.848068539827387e-06,
+          "p_holm": 1.3696137079654774e-05,
+          "significant_holm": true
+        },
+        "purchase_intent_5": {
+          "contrast": "(Plus-Flex explorers) - (Plus-Flex non-explorers)",
+          "diff_pp": 18.809076777725295,
+          "se_pp": 5.7001582177888634,
+          "p_raw": 0.0009677222048503331,
+          "p_holm": 0.0009677222048503331,
+          "significant_holm": true
+        }
+      },
+      "kind": "realised"
+    },
+    {
+      "id": "T9_ROUTED_BASE",
+      "pass": true,
+      "detail": [
+        99.14285714285714,
+        69.0,
+        99.71428571428571
+      ],
+      "kind": "realised"
+    },
+    {
+      "id": "T10_SIMPLE_SEDUCTION",
+      "pass": true,
+      "detail": [
+        [
+          "region",
+          "Northern Ireland",
+          "purchase_intent_5",
+          24,
+          56.580765935451126
+        ]
+      ],
+      "kind": "realised"
+    }
+  ]
+}

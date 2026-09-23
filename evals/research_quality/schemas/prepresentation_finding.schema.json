@@ -1,0 +1,20 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"prepresentation_finding.schema.json",
+  "title":"Velocity reference/model finding",
+  "type":"object",
+  "required":["finding_id","proposition","evidence_ids","tier","claim_strength","analytical_relationship"],
+  "properties":{
+    "finding_id":{"type":"string"},
+    "proposition":{"type":"string"},
+    "evidence_ids":{"type":"array","items":{"type":"string"}},
+    "context_evidence_ids":{"type":"array","items":{"type":"string"}},
+    "tier":{"enum":["mandatory","secondary","context","do_not_elevate"]},
+    "claim_strength":{"type":"string"},
+    "qualification":{"type":"string"},
+    "analytical_relationship":{"type":"string"},
+    "topic_cluster":{"type":"string"},
+    "inclusion_reason":{"type":"string"},
+    "unsupported_extensions":{"type":"array","items":{"type":"string"}}
+  }
+}

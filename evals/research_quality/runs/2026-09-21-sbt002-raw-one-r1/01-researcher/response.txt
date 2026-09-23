@@ -1,0 +1,269 @@
+{
+  "study_id": "SBT-002",
+  "analysis_claims": [
+    {
+      "analysis_id": "overall_primary",
+      "values": {
+        "concept_order": ["Flex", "Plus", "Simple"],
+        "unweighted_n": [700, 700, 700],
+        "weighted_base": [703.52, 696.325, 700.155],
+        "effective_n": [650.13, 645.63, 645.23],
+        "appeal_5": {
+          "distribution_pct_1_to_5": [[1.78, 14.62, 22.64, 34.22, 26.74], [10.38, 13.38, 22.22, 22.75, 31.26], [5.87, 21.03, 32.03, 28.88, 12.2]],
+          "top2_pct": [60.962, 54.01, 41.08],
+          "comparisons": [
+            {"contrast": "Flex-Plus", "difference_pp": 6.952, "ci95_unadjusted_pp": [1.574, 12.33], "p_holm": 0.011293, "meets_5pp_threshold": true},
+            {"contrast": "Flex-Simple", "difference_pp": 19.882, "ci95_unadjusted_pp": [14.552, 25.212], "p_holm": 7.914e-13, "meets_5pp_threshold": true},
+            {"contrast": "Plus-Simple", "difference_pp": 12.93, "ci95_unadjusted_pp": [7.518, 18.342], "p_holm": 0.000005656, "meets_5pp_threshold": true}
+          ]
+        },
+        "purchase_intent_5": {
+          "distribution_pct_1_to_5": [[3.84, 16.22, 26.72, 30.1, 23.12], [9.35, 15.81, 24.43, 24.6, 25.81], [8.79, 17.75, 33.04, 26.72, 13.69]],
+          "top2_pct": [53.222, 50.409, 40.411],
+          "comparisons": [
+            {"contrast": "Flex-Plus", "difference_pp": 2.813, "ci95_unadjusted_pp": [-2.632, 8.258], "p_holm": 0.311274, "meets_5pp_threshold": false},
+            {"contrast": "Flex-Simple", "difference_pp": 12.811, "ci95_unadjusted_pp": [7.422, 18.2], "p_holm": 0.000009528, "meets_5pp_threshold": true},
+            {"contrast": "Plus-Simple", "difference_pp": 9.998, "ci95_unadjusted_pp": [4.594, 15.402], "p_holm": 0.000575796, "meets_5pp_threshold": true}
+          ]
+        }
+      },
+      "universe": "All 2,100 eligible respondents, evaluated within their randomly assigned concept; no missing primary outcomes.",
+      "weighting": "wt_final; percentages normalised within concept. Effective n = (sum w)^2 / sum(w^2)."
+    },
+    {
+      "analysis_id": "strategic_subgroup",
+      "values": {
+        "concept_order": ["Flex", "Plus", "Simple"],
+        "explorers": {
+          "unweighted_n": [236, 234, 227],
+          "weighted_base": [175.567, 164.367, 160.58],
+          "appeal_distribution_pct_1_to_5": [[2.72, 14.66, 22.52, 37.02, 23.08], [4.31, 7.49, 16.08, 22.86, 49.25], [5.87, 19.04, 31.81, 32.22, 11.06]],
+          "appeal_top2_pct": [60.099, 72.115, 43.283],
+          "purchase_distribution_pct_1_to_5": [[5.29, 14.75, 27.56, 27.29, 25.11], [2.6, 14.41, 19.05, 22.53, 41.41], [4.68, 22.62, 29.26, 27.9, 15.54]],
+          "purchase_top2_pct": [52.398, 63.94, 43.436],
+          "plus_minus_flex": {
+            "appeal_difference_pp": 12.016,
+            "appeal_ci95_unadjusted_pp": [3.338, 20.694],
+            "appeal_p_holm": 0.006647,
+            "purchase_difference_pp": 11.542,
+            "purchase_ci95_unadjusted_pp": [2.441, 20.643],
+            "purchase_p_holm": 0.025869,
+            "both_point_estimates_meet_5pp_threshold": true
+          },
+          "plus_minus_simple": {
+            "appeal_difference_pp": 28.832,
+            "appeal_p_holm": 4.569e-10,
+            "purchase_difference_pp": 20.504,
+            "purchase_p_holm": 0.000032177
+          }
+        },
+        "non_explorers": {
+          "unweighted_n": [464, 466, 473],
+          "weighted_base": [527.953, 531.958, 539.575],
+          "appeal_distribution_pct_1_to_5": [[1.46, 14.61, 22.68, 33.29, 27.96], [12.26, 15.2, 24.12, 22.71, 25.7], [5.87, 21.62, 32.09, 27.89, 12.53]],
+          "appeal_top2_pct": [61.249, 48.416, 40.425],
+          "purchase_distribution_pct_1_to_5": [[3.36, 16.71, 26.44, 31.04, 22.46], [11.43, 16.24, 26.09, 25.24, 20.99], [10.01, 16.3, 34.17, 26.37, 13.14]],
+          "purchase_top2_pct": [53.496, 46.228, 39.511],
+          "flex_minus_plus": {
+            "appeal_difference_pp": 12.833,
+            "appeal_p_holm": 0.000200233,
+            "purchase_difference_pp": 7.268,
+            "purchase_p_holm": 0.058671,
+            "both_point_estimates_meet_5pp_threshold": true
+          }
+        },
+        "interaction_plus_minus_flex_explorers_minus_non_explorers": {
+          "appeal_difference_in_differences_pp": 24.849,
+          "appeal_p_holm": 0.000020319,
+          "purchase_difference_in_differences_pp": 18.81,
+          "purchase_p_holm": 0.003006
+        },
+        "explorer_total_unweighted_n": 697,
+        "explorer_weighted_sample_pct": 23.834
+      },
+      "universe": "Pre-concept food_explorer=1 when mean(food_p1, food_p2, food_p3)>=4; complementary group food_explorer=0.",
+      "weighting": "wt_final; outcome percentages normalised within concept-by-subgroup cells; subgroup share normalised across all respondents."
+    },
+    {
+      "analysis_id": "concept_diagnostics",
+      "values": {
+        "concept_order": ["Flex", "Plus", "Simple"],
+        "unweighted_n": [700, 700, 700],
+        "weighted_base": [703.52, 696.325, 700.155],
+        "uniqueness_5": {
+          "distribution_pct_1_to_5": [[2.69, 18.35, 31.05, 31.74, 16.17], [0.53, 3.86, 14.22, 33.9, 47.48], [8.18, 25.25, 32.32, 26.66, 7.59]],
+          "top2_pct": [47.907, 81.387, 34.251],
+          "plus_minus_flex_pp": 33.48,
+          "plus_minus_flex_p_holm": 1.585e-40
+        },
+        "relevance_5": {
+          "distribution_pct_1_to_5": [[2.68, 10.8, 22.82, 35.89, 27.81], [8.11, 16.73, 25.73, 26.68, 22.74], [5.66, 23.63, 29.78, 28.42, 12.51]],
+          "top2_pct": [63.701, 49.423, 40.932],
+          "flex_minus_plus_pp": 14.278,
+          "flex_minus_plus_p_holm": 0.0000002973
+        },
+        "credibility_5": {
+          "distribution_pct_1_to_5": [[2.15, 10.51, 25.09, 39.4, 22.85], [7.87, 20.1, 29.87, 24.16, 17.99], [2.46, 11.16, 29.07, 36.78, 20.52]],
+          "top2_pct": [62.254, 42.151, 57.306],
+          "flex_minus_plus_pp": 20.103,
+          "flex_minus_plus_p_holm": 3.487e-13
+        },
+        "value_5": {
+          "distribution_pct_1_to_5": [[3.14, 14.22, 26.31, 36.47, 19.87], [3.64, 14.89, 24.8, 27.55, 29.13], [6.43, 18.84, 30.23, 30.67, 13.82]],
+          "top2_pct": [56.333, 56.68, 44.496],
+          "flex_minus_plus_pp": -0.347,
+          "flex_minus_plus_p_holm": 0.900083
+        },
+        "understanding_5": {
+          "distribution_pct_1_to_5": [[0, 0.9, 3.39, 20.71, 75.01], [7.92, 24.23, 35.6, 23.87, 8.38], [0, 0.25, 6.83, 39.3, 53.62]],
+          "top2_pct": [95.714, 32.252, 92.921],
+          "flex_minus_plus_pp": 63.462,
+          "flex_minus_plus_p_holm": 5.785e-224
+        }
+      },
+      "universe": "All respondents within assigned concept; no missing responses on these diagnostic ratings.",
+      "weighting": "wt_final; percentages normalised within concept."
+    },
+    {
+      "analysis_id": "premium_routing",
+      "values": {
+        "concept_order": ["Flex", "Plus", "Simple"],
+        "eligible_unweighted_n": [694, 483, 698],
+        "eligible_weighted_base": [697.216, 472.47, 698.438],
+        "eligible_share_of_concept_weighted_pct": [99.104, 67.852, 99.755],
+        "premium_value_distribution_pct_1_to_5": [[2.73, 14.66, 32.52, 33.12, 16.97], [0.3, 6.61, 14.27, 35.32, 43.5], [6.93, 21.66, 33.68, 27.98, 9.75]],
+        "premium_value_top2_pct_among_eligible": [50.09, 78.82, 37.731],
+        "routing_mismatches": 0
+      },
+      "universe": "Only respondents with understanding_5>=3; 225 other respondents were correctly not asked premium_value_5.",
+      "weighting": "wt_final; premium ratings normalised within each eligible concept cell. Eligibility shares use the full assigned concept denominator."
+    },
+    {
+      "analysis_id": "likes_concerns",
+      "values": {
+        "concept_order": ["Flex", "Plus", "Simple"],
+        "unweighted_n": [700, 700, 700],
+        "weighted_base": [703.52, 696.325, 700.155],
+        "selected_pct": {
+          "like_flexibility": [59.55, 26.53, 20.02],
+          "like_ease": [52.24, 30.41, 53.75],
+          "like_broad_choice": [52.63, 31.6, 28.06],
+          "like_familiar": [29.89, 24.21, 50.47],
+          "like_new_flavours": [27.12, 62.48, 24.55],
+          "like_chef": [20.08, 53.88, 24.53],
+          "like_provenance": [19.11, 48.22, 19.09],
+          "dislike_expensive": [32.39, 38.8, 35.26],
+          "dislike_complicated": [15.91, 40.87, 15.69],
+          "dislike_too_adventurous": [12.72, 40.66, 10.78],
+          "dislike_not_different": [25.58, 19.97, 40.74],
+          "dislike_limited_choice": [14.7, 14.94, 35.44],
+          "dislike_unclear_benefit": [18.51, 17.92, 30.33]
+        }
+      },
+      "universe": "All respondents within assigned concept; multiple selections permitted.",
+      "weighting": "wt_final; selected percentages normalised within concept. Descriptive only; no significance tests."
+    }
+  ],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Advance Flex as the broad-audience lead and retain Plus for targeted development. Flex leads overall appeal, 61.0% versus 54.0% for Plus (+7.0pp; Holm p=.011), but its purchase-intent lead is only 2.8pp (53.2% versus 50.4%; p=.311).",
+      "evidence_refs": ["analysis_claims.overall_primary.values"],
+      "importance": "primary",
+      "claim_strength": "Recommendation supported by adjusted appeal inference; purchase superiority is not established.",
+      "qualification": "Each concept has n=700. The appeal point estimate exceeds the 5pp materiality threshold, but its unadjusted 95% interval spans 1.6–12.3pp. The purchase interval spans -2.6–8.3pp: neither superiority nor equivalence is established.",
+      "topic_cluster": "advancement"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Prioritise Plus for food explorers: appeal reaches 72.1% and purchase intent 63.9%, exceeding Flex by 12.0pp and 11.5pp respectively (Holm p=.0066 and .0259). Significant interactions support a genuinely different concept response by this pre-specified subgroup.",
+      "evidence_refs": ["analysis_claims.strategic_subgroup.values"],
+      "importance": "primary",
+      "claim_strength": "Supported pre-specified heterogeneity; targeted advancement recommendation.",
+      "qualification": "Explorer bases are Flex 236, Plus 234 and Simple 227; explorers constitute 23.8% of the weighted sample, not an estimated addressable market. Plus-versus-Flex interactions are +24.8pp for appeal (p=.0000203) and +18.8pp for purchase (p=.0030). Among non-explorers, Flex's 7.3pp purchase lead does not survive Holm adjustment (p=.0587).",
+      "topic_cluster": "audience"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Hold Simple from advancement in its current form. Its appeal is 41.1% and purchase intent 40.4%; both Flex and Plus outperform it on both primary measures, with observed gaps of 10.0–19.9pp and all Holm p<.001.",
+      "evidence_refs": ["analysis_claims.overall_primary.values", "analysis_claims.concept_diagnostics.values", "analysis_claims.likes_concerns.values"],
+      "importance": "primary",
+      "claim_strength": "Adjusted primary-outcome evidence supports deprioritisation; redesign priorities are descriptive.",
+      "qualification": "Simple is understandable (92.9% top-two-box), so clarity alone does not explain its weak result. At n=700, 40.7% select insufficient differentiation, 35.4% limited choice and 30.3% unclear benefit. These concerns suggest redesign questions, not proven causes.",
+      "topic_cluster": "advancement"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Preserve Flex's practical proposition while developing Plus's distinctive offer. Flex exceeds Plus on relevance (63.7% versus 49.4%) and credibility (62.3% versus 42.2%); Plus leads uniqueness (81.4% versus 47.9%). All three differences exceed 5pp and survive Holm adjustment.",
+      "evidence_refs": ["analysis_claims.concept_diagnostics.values", "analysis_claims.likes_concerns.values"],
+      "importance": "secondary",
+      "claim_strength": "Adjusted diagnostic differences; descriptive development interpretation.",
+      "qualification": "Bases are n=700 per concept. Flex's flexibility, broad choice and ease attract 59.6%, 52.6% and 52.2%; Plus's new flavours, chef inspiration and provenance attract 62.5%, 53.9% and 48.2%. These selections do not establish what causes appeal or purchase intent.",
+      "topic_cluster": "positioning"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Make Plus's comprehension and delivery credibility the immediate development priorities. Only 32.3% rate it easy to understand; 32.1% rate it difficult. Its 78.8% premium-conviction result applies only to respondents who passed the understanding route.",
+      "evidence_refs": ["analysis_claims.concept_diagnostics.values", "analysis_claims.premium_routing.values", "analysis_claims.likes_concerns.values"],
+      "importance": "primary",
+      "claim_strength": "Strong observed comprehension weakness; conditional premium result and descriptive concerns.",
+      "qualification": "Plus premium ratings have n=483, representing 67.9% of its weighted cell, versus n=694/99.1% for Flex and n=698/99.8% for Simple. Selection occurs after exposure, so conditional premium results cannot establish an unconditional randomised advantage. Plus concerns include complexity (40.9%) and adventurousness (40.7%); simplifying communication should be retested rather than assumed to lift demand.",
+      "topic_cluster": "development_conditions"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Require a concrete price-and-offer test before commercial advancement. Flex and Plus have similar observed value ratings (56.3% and 56.7%; Holm p=.900), while expense concerns affect 32.4% and 38.8% respectively.",
+      "evidence_refs": ["analysis_claims.concept_diagnostics.values", "analysis_claims.likes_concerns.values", "analysis_claims.overall_primary.values"],
+      "importance": "secondary",
+      "claim_strength": "Descriptive commercial qualification and research recommendation; no value superiority established.",
+      "qualification": "Bases are n=700 per concept. Purchase intent assumes a reasonable price and value assumes a modest premium; neither is a response to an actual price. This fictional study supplies no conversion, willingness-to-pay, retention or profitability evidence.",
+      "topic_cluster": "commercial_conditions"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": ["F1", "F3"],
+        "headline_intent": "Advance Flex and targeted Plus; hold Simple for redesign.",
+        "analytical_relationship": "Establish the portfolio recommendation from the two primary outcomes, separating appeal superiority from uncertain purchase differences."
+      },
+      {
+        "order": 2,
+        "finding_refs": ["F2"],
+        "headline_intent": "Audience changes the preferred concept.",
+        "analytical_relationship": "Qualify the overall result with pre-specified subgroup comparisons and direct interaction tests."
+      },
+      {
+        "order": 3,
+        "finding_refs": ["F4"],
+        "headline_intent": "Retain the distinct benefits that each advancing concept communicates.",
+        "analytical_relationship": "Use diagnostic ratings and selected likes to inform development without claiming causal drivers."
+      },
+      {
+        "order": 4,
+        "finding_refs": ["F5"],
+        "headline_intent": "Plus needs clearer communication before its premium promise can be judged broadly.",
+        "analytical_relationship": "Identify the comprehension weakness and explain why routed premium ratings cannot offset it."
+      },
+      {
+        "order": 5,
+        "finding_refs": ["F6"],
+        "headline_intent": "Make advancement conditional on testing a real offer and price.",
+        "analytical_relationship": "Translate hypothetical stated intent into the next research decision while retaining commercial uncertainty."
+      }
+    ]
+  },
+  "method_notes": [
+    "Only supplied respondents.csv and the questionnaire, codebook and study materials supplied in the prompt were used. No browsing, connectors, file discovery, delegated agents or package installation.",
+    "Evidence paths resolve by stable analysis_id within analysis_claims. All percentages are weighted with wt_final; n denotes actual respondent counts, not weighted totals.",
+    "Top-two-box means ratings 4–5; bottom-two-box means 1–2. Full five-point distributions are retained for analysed rating outcomes. Rounding can cause totals to differ slightly from 100%.",
+    "Inference uses independent-cell, two-sided normal Wald tests with fixed-weight robust variance n/(n-1) × sum[w²(y-p)²]/(sum w)² for binary top-two-box responses. Calibration-weight estimation uncertainty is not modelled; design details beyond the supplied weights were unavailable.",
+    "The brief specifies Holm adjustment but does not enumerate family membership. Operationally, each outcome's three concept pairs form one family; subgroup comparisons use a separate three-pair family for each outcome and subgroup. Each outcome's three concept-by-explorer interaction contrasts form another family. No global adjustment across outcomes was applied.",
+    "Reported 95% confidence intervals are unadjusted and do not determine multiplicity-adjusted significance. Tests used differences rounded to 0.001 percentage points, an immaterial numerical approximation.",
+    "Commercial materiality is assessed separately against the declared 5pp threshold using point estimates; statistical significance does not demonstrate that the true difference exceeds 5pp. Non-significance does not establish equivalence.",
+    "Food-explorer definitions matched all respondent records. There were no duplicate respondent IDs, no ineligible openness responses and no premium-routing mismatches. All weights were positive, ranging from 0.465 to 1.686.",
+    "Likes and concerns are multiple-response descriptive measures. No causal diagnostic model or exploratory demographic headline analysis was used.",
+    "This is a synthetic study of UK adults aged 18–64 open to meal kits. Recommendations concern further fictional concept development, not validated market demand or launch approval."
+  ]
+}

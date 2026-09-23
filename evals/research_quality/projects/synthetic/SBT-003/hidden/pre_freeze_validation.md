@@ -1,0 +1,3 @@
+# Pre-model candidate corrections
+
+Candidate 0.1 changed weighted NPS by only 1.37 points, failing its declared >=2-point weighting trap. Candidate 0.2 changes the contact calibration factor from 0.82 to 0.60 (all random streams and outcome values preserved). The realised change is 2.26 points. Region, household type, outage severity, support channel and complaints now match the questionnaire, using an independent random stream. Routing is checked row by row. The premium unresolved-contact group has 67 respondents, between the suppression threshold of 40 and warning threshold of 75. No model output informed these corrections.

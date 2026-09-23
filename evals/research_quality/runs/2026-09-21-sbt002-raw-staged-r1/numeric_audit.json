@@ -1,0 +1,1687 @@
+{
+  "status": "PASS",
+  "scope": "Reported top-two proportions, five-point distributions and binary diagnostics; raw CSV direct weighted sums. Narrative semantics and inferential p-values are separate reviews.",
+  "tolerance_pp": 0.011,
+  "checks": [
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Flex.1",
+      "reported": 1.78,
+      "reference": 1.7771053129955576,
+      "error_pp": 0.002894687004442398,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Flex.2",
+      "reported": 14.62,
+      "reference": 14.619029424118118,
+      "error_pp": 0.0009705758818814303,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Flex.3",
+      "reported": 22.64,
+      "reference": 22.641842144773697,
+      "error_pp": 0.0018421447736969299,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Flex.4",
+      "reported": 34.22,
+      "reference": 34.217967905634765,
+      "error_pp": 0.002032094365233661,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Flex.5",
+      "reported": 26.74,
+      "reference": 26.744055212477857,
+      "error_pp": 0.004055212477858561,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Plus.1",
+      "reported": 10.38,
+      "reference": 10.384860830143369,
+      "error_pp": 0.004860830143368133,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Plus.2",
+      "reported": 13.38,
+      "reference": 13.38191298992998,
+      "error_pp": 0.0019129899299787922,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Plus.3",
+      "reported": 22.22,
+      "reference": 22.2232039235318,
+      "error_pp": 0.0032039235317995463,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Plus.4",
+      "reported": 22.75,
+      "reference": 22.74871400711597,
+      "error_pp": 0.0012859928840285306,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Plus.5",
+      "reported": 31.26,
+      "reference": 31.261308249278876,
+      "error_pp": 0.0013082492788747402,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Simple.1",
+      "reported": 5.87,
+      "reference": 5.867752861258137,
+      "error_pp": 0.0022471387418629973,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Simple.2",
+      "reported": 21.03,
+      "reference": 21.026036100258597,
+      "error_pp": 0.003963899741403765,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Simple.3",
+      "reported": 32.03,
+      "reference": 32.02591601621712,
+      "error_pp": 0.004083983782884104,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Simple.4",
+      "reported": 28.88,
+      "reference": 28.883021502221226,
+      "error_pp": 0.0030215022212267684,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.distribution_pct.Simple.5",
+      "reported": 12.2,
+      "reference": 12.19727352004492,
+      "error_pp": 0.002726479955079242,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.top2_pct.Flex",
+      "reported": 60.962,
+      "reference": 60.962023118112626,
+      "error_pp": 2.3118112622455556e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.top2_pct.Plus",
+      "reported": 54.01,
+      "reference": 54.01002225639485,
+      "error_pp": 2.2256394849762273e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.appeal_5.top2_pct.Simple",
+      "reported": 41.0803,
+      "reference": 41.08029502226616,
+      "error_pp": 4.977733844668819e-06,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Flex.1",
+      "reported": 3.84,
+      "reference": 3.841861358247791,
+      "error_pp": 0.0018613582477913226,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Flex.2",
+      "reported": 16.22,
+      "reference": 16.21705445340184,
+      "error_pp": 0.0029455465981591544,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Flex.3",
+      "reported": 26.72,
+      "reference": 26.719365977509142,
+      "error_pp": 0.000634022490856978,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Flex.4",
+      "reported": 30.1,
+      "reference": 30.102671055130795,
+      "error_pp": 0.002671055130793576,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Flex.5",
+      "reported": 23.12,
+      "reference": 23.119047155710433,
+      "error_pp": 0.0009528442895678779,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Plus.1",
+      "reported": 9.35,
+      "reference": 9.348676913657114,
+      "error_pp": 0.0013230863428859152,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Plus.2",
+      "reported": 15.81,
+      "reference": 15.811351737169353,
+      "error_pp": 0.0013517371693527735,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Plus.3",
+      "reported": 24.43,
+      "reference": 24.43079241184285,
+      "error_pp": 0.0007924118428519478,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Plus.4",
+      "reported": 24.6,
+      "reference": 24.601373558337883,
+      "error_pp": 0.001373558337881775,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Plus.5",
+      "reported": 25.81,
+      "reference": 25.80780537899279,
+      "error_pp": 0.002194621007209463,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Simple.1",
+      "reported": 8.79,
+      "reference": 8.791503306420687,
+      "error_pp": 0.0015033064206875224,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Simple.2",
+      "reported": 17.75,
+      "reference": 17.75341939388654,
+      "error_pp": 0.0034193938865385576,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Simple.3",
+      "reported": 33.04,
+      "reference": 33.044045176309254,
+      "error_pp": 0.004045176309254828,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Simple.4",
+      "reported": 26.72,
+      "reference": 26.718934382164704,
+      "error_pp": 0.0010656178352945744,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.distribution_pct.Simple.5",
+      "reported": 13.69,
+      "reference": 13.692097741218813,
+      "error_pp": 0.0020977412188134537,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.top2_pct.Flex",
+      "reported": 53.2217,
+      "reference": 53.22171821084123,
+      "error_pp": 1.8210841233212705e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.top2_pct.Plus",
+      "reported": 50.4092,
+      "reference": 50.40917893733067,
+      "error_pp": 2.106266932599965e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.purchase_intent_5.top2_pct.Simple",
+      "reported": 40.411,
+      "reference": 40.411032123383514,
+      "error_pp": 3.212338351232802e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Flex.1",
+      "reported": 2.69,
+      "reference": 2.692487990905861,
+      "error_pp": 0.0024879909058612704,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Flex.2",
+      "reported": 18.35,
+      "reference": 18.350103183584327,
+      "error_pp": 0.00010318358432570562,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Flex.3",
+      "reported": 31.05,
+      "reference": 31.050796597953866,
+      "error_pp": 0.0007965979538653301,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Flex.4",
+      "reported": 31.74,
+      "reference": 31.736317323367246,
+      "error_pp": 0.0036826766327529015,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Flex.5",
+      "reported": 16.17,
+      "reference": 16.170294904188697,
+      "error_pp": 0.00029490418869571045,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Plus.1",
+      "reported": 0.53,
+      "reference": 0.5302577247268595,
+      "error_pp": 0.00025772472685947623,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Plus.2",
+      "reported": 3.86,
+      "reference": 3.8635619184005514,
+      "error_pp": 0.0035619184005515336,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Plus.3",
+      "reported": 14.22,
+      "reference": 14.218952866640318,
+      "error_pp": 0.0010471333596822063,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Plus.4",
+      "reported": 33.9,
+      "reference": 33.902461135539376,
+      "error_pp": 0.0024611355393773238,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Plus.5",
+      "reported": 47.48,
+      "reference": 47.48476635469289,
+      "error_pp": 0.004766354692890218,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Simple.1",
+      "reported": 8.18,
+      "reference": 8.184793165596815,
+      "error_pp": 0.004793165596815641,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Simple.2",
+      "reported": 25.25,
+      "reference": 25.245471873864272,
+      "error_pp": 0.004528126135728172,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Simple.3",
+      "reported": 32.32,
+      "reference": 32.3188030635513,
+      "error_pp": 0.0011969364487001144,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Simple.4",
+      "reported": 26.66,
+      "reference": 26.663223620597137,
+      "error_pp": 0.003223620597136545,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.distribution_pct.Simple.5",
+      "reported": 7.59,
+      "reference": 7.5877082763904795,
+      "error_pp": 0.0022917236095203464,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.top2_pct.Flex",
+      "reported": 47.9066,
+      "reference": 47.90661222755595,
+      "error_pp": 1.2227555949095859e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.top2_pct.Plus",
+      "reported": 81.3872,
+      "reference": 81.38722749023226,
+      "error_pp": 2.7490232255900082e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.uniqueness_5.top2_pct.Simple",
+      "reported": 34.2509,
+      "reference": 34.250931896987616,
+      "error_pp": 3.1896987614743466e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Flex.1",
+      "reported": 2.68,
+      "reference": 2.680575161210942,
+      "error_pp": 0.0005751612109419213,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Flex.2",
+      "reported": 10.8,
+      "reference": 10.796543309928127,
+      "error_pp": 0.003456690071873325,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Flex.3",
+      "reported": 22.82,
+      "reference": 22.821904478551552,
+      "error_pp": 0.001904478551551847,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Flex.4",
+      "reported": 35.89,
+      "reference": 35.88855320835186,
+      "error_pp": 0.0014467916481422094,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Flex.5",
+      "reported": 27.81,
+      "reference": 27.812423841957518,
+      "error_pp": 0.0024238419575191017,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Plus.1",
+      "reported": 8.11,
+      "reference": 8.111861041745614,
+      "error_pp": 0.0018610417456148554,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Plus.2",
+      "reported": 16.73,
+      "reference": 16.73201284711416,
+      "error_pp": 0.0020128471141589444,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Plus.3",
+      "reported": 25.73,
+      "reference": 25.733444701974445,
+      "error_pp": 0.003444701974444797,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Plus.4",
+      "reported": 26.68,
+      "reference": 26.680055320733278,
+      "error_pp": 5.5320733277852696e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Plus.5",
+      "reported": 22.74,
+      "reference": 22.7426260884325,
+      "error_pp": 0.0026260884325033373,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Simple.1",
+      "reported": 5.66,
+      "reference": 5.662218919708906,
+      "error_pp": 0.0022189197089055313,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Simple.2",
+      "reported": 23.63,
+      "reference": 23.627755690720125,
+      "error_pp": 0.002244309279873846,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Simple.3",
+      "reported": 29.78,
+      "reference": 29.77830380360317,
+      "error_pp": 0.0016961963968320504,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Simple.4",
+      "reported": 28.42,
+      "reference": 28.422044196119668,
+      "error_pp": 0.0020441961196659975,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.distribution_pct.Simple.5",
+      "reported": 12.51,
+      "reference": 12.50967738984812,
+      "error_pp": 0.000322610151879843,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.top2_pct.Flex",
+      "reported": 63.701,
+      "reference": 63.70097705030938,
+      "error_pp": 2.2949690617224405e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.top2_pct.Plus",
+      "reported": 49.4227,
+      "reference": 49.42268140916578,
+      "error_pp": 1.8590834216070107e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.relevance_5.top2_pct.Simple",
+      "reported": 40.9317,
+      "reference": 40.93172158596779,
+      "error_pp": 2.158596779366917e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Flex.1",
+      "reported": 2.15,
+      "reference": 2.1471444540524836,
+      "error_pp": 0.002855545947516358,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Flex.2",
+      "reported": 10.51,
+      "reference": 10.508448650019124,
+      "error_pp": 0.0015513499808754716,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Flex.3",
+      "reported": 25.09,
+      "reference": 25.089976578825755,
+      "error_pp": 2.342117424447565e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Flex.4",
+      "reported": 39.4,
+      "reference": 39.404308507759225,
+      "error_pp": 0.004308507759226643,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Flex.5",
+      "reported": 22.85,
+      "reference": 22.850121809343413,
+      "error_pp": 0.00012180934341188276,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Plus.1",
+      "reported": 7.87,
+      "reference": 7.873585010237187,
+      "error_pp": 0.0035850102371872694,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Plus.2",
+      "reported": 20.1,
+      "reference": 20.101676563515074,
+      "error_pp": 0.0016765635150726155,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Plus.3",
+      "reported": 29.87,
+      "reference": 29.874120644562286,
+      "error_pp": 0.004120644562284781,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Plus.4",
+      "reported": 24.16,
+      "reference": 24.15654294691742,
+      "error_pp": 0.003457053082581041,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Plus.5",
+      "reported": 17.99,
+      "reference": 17.994074834768035,
+      "error_pp": 0.00407483476803705,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Simple.1",
+      "reported": 2.46,
+      "reference": 2.4566705646508153,
+      "error_pp": 0.0033294353491846174,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Simple.2",
+      "reported": 11.16,
+      "reference": 11.164445158021005,
+      "error_pp": 0.004445158021004758,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Simple.3",
+      "reported": 29.07,
+      "reference": 29.07284734837601,
+      "error_pp": 0.0028473483760080853,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Simple.4",
+      "reported": 36.78,
+      "reference": 36.78318133716003,
+      "error_pp": 0.0031813371600293294,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.distribution_pct.Simple.5",
+      "reported": 20.52,
+      "reference": 20.522855591792137,
+      "error_pp": 0.0028555917921373464,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.top2_pct.Flex",
+      "reported": 62.2544,
+      "reference": 62.25443031710263,
+      "error_pp": 3.0317102634569437e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.top2_pct.Plus",
+      "reported": 42.1506,
+      "reference": 42.15061778168545,
+      "error_pp": 1.778168545030212e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.credibility_5.top2_pct.Simple",
+      "reported": 57.306,
+      "reference": 57.30603692895217,
+      "error_pp": 3.692895217000114e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Flex.1",
+      "reported": 3.14,
+      "reference": 3.13752186170007,
+      "error_pp": 0.002478138299930155,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Flex.2",
+      "reported": 14.22,
+      "reference": 14.223877882149656,
+      "error_pp": 0.003877882149655676,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Flex.3",
+      "reported": 26.31,
+      "reference": 26.30569454920851,
+      "error_pp": 0.004305450791488141,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Flex.4",
+      "reported": 36.47,
+      "reference": 36.46500858612136,
+      "error_pp": 0.004991413878641993,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Flex.5",
+      "reported": 19.87,
+      "reference": 19.86789712082041,
+      "error_pp": 0.0021028791795920654,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Plus.1",
+      "reported": 3.64,
+      "reference": 3.6399143974817805,
+      "error_pp": 8.560251821965181e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Plus.2",
+      "reported": 14.89,
+      "reference": 14.88501391991672,
+      "error_pp": 0.0049860800832810526,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Plus.3",
+      "reported": 24.8,
+      "reference": 24.79554720107364,
+      "error_pp": 0.004452798926362078,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Plus.4",
+      "reported": 27.55,
+      "reference": 27.551165335523955,
+      "error_pp": 0.0011653355239538143,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Plus.5",
+      "reported": 29.13,
+      "reference": 29.128359146003895,
+      "error_pp": 0.0016408539961041413,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Simple.1",
+      "reported": 6.43,
+      "reference": 6.432292931292224,
+      "error_pp": 0.0022929312922244094,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Simple.2",
+      "reported": 18.84,
+      "reference": 18.842878065879198,
+      "error_pp": 0.002878065879198033,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Simple.3",
+      "reported": 30.23,
+      "reference": 30.229211159344477,
+      "error_pp": 0.0007888406555238703,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Simple.4",
+      "reported": 30.67,
+      "reference": 30.674034036197597,
+      "error_pp": 0.0040340361975950145,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.distribution_pct.Simple.5",
+      "reported": 13.82,
+      "reference": 13.821583807286501,
+      "error_pp": 0.0015838072865008712,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.top2_pct.Flex",
+      "reported": 56.3329,
+      "reference": 56.33290570694177,
+      "error_pp": 5.7069417707111825e-06,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.top2_pct.Plus",
+      "reported": 56.6795,
+      "reference": 56.67952448152786,
+      "error_pp": 2.4481527859165908e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.value_5.top2_pct.Simple",
+      "reported": 44.4956,
+      "reference": 44.4956178434841,
+      "error_pp": 1.7843484094726136e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Flex.1",
+      "reported": 0,
+      "reference": 0.0,
+      "error_pp": 0.0,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Flex.2",
+      "reported": 0.9,
+      "reference": 0.8961070585019543,
+      "error_pp": 0.0038929414980457544,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Flex.3",
+      "reported": 3.39,
+      "reference": 3.3897595846170723,
+      "error_pp": 0.00024041538292784992,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Flex.4",
+      "reported": 20.71,
+      "reference": 20.709077325336413,
+      "error_pp": 0.0009226746635881966,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Flex.5",
+      "reported": 75.01,
+      "reference": 75.00505603154454,
+      "error_pp": 0.004943968455464187,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Plus.1",
+      "reported": 7.92,
+      "reference": 7.915187053308508,
+      "error_pp": 0.004812946691491682,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Plus.2",
+      "reported": 24.23,
+      "reference": 24.23285934347471,
+      "error_pp": 0.0028593434747108404,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Plus.3",
+      "reported": 35.6,
+      "reference": 35.60040647521703,
+      "error_pp": 0.0004064752170265251,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Plus.4",
+      "reported": 23.87,
+      "reference": 23.874032728164043,
+      "error_pp": 0.0040327281640415436,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Plus.5",
+      "reported": 8.38,
+      "reference": 8.377514399835704,
+      "error_pp": 0.002485600164296997,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Simple.1",
+      "reported": 0,
+      "reference": 0.0,
+      "error_pp": 0.0,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Simple.2",
+      "reported": 0.25,
+      "reference": 0.24526597710145237,
+      "error_pp": 0.00473402289854763,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Simple.3",
+      "reported": 6.83,
+      "reference": 6.8332462753194525,
+      "error_pp": 0.0032462753194524296,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Simple.4",
+      "reported": 39.3,
+      "reference": 39.29688052782099,
+      "error_pp": 0.0031194721790086533,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.distribution_pct.Simple.5",
+      "reported": 53.62,
+      "reference": 53.62460721975812,
+      "error_pp": 0.004607219758121062,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.top2_pct.Flex",
+      "reported": 95.7141,
+      "reference": 95.71413335688098,
+      "error_pp": 3.335688097649836e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.top2_pct.Plus",
+      "reported": 32.2515,
+      "reference": 32.25154712799975,
+      "error_pp": 4.712799974981863e-05,
+      "pass": true
+    },
+    {
+      "path": "concept_metrics.understanding_5.top2_pct.Simple",
+      "reported": 92.9215,
+      "reference": 92.92148774757909,
+      "error_pp": 1.2252420901859296e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Flex.1",
+      "reported": 2.72,
+      "reference": 2.7236991644391675,
+      "error_pp": 0.0036991644391672907,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Flex.2",
+      "reported": 14.66,
+      "reference": 14.657361108260393,
+      "error_pp": 0.0026388917396076295,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Flex.3",
+      "reported": 22.52,
+      "reference": 22.52017939888182,
+      "error_pp": 0.00017939888181928154,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Flex.4",
+      "reported": 37.02,
+      "reference": 37.018553397499645,
+      "error_pp": 0.0014466025003585514,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Flex.5",
+      "reported": 23.08,
+      "reference": 23.080206930918997,
+      "error_pp": 0.00020693091899914862,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Plus.1",
+      "reported": 4.31,
+      "reference": 4.313647883184651,
+      "error_pp": 0.0036478831846515902,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Plus.2",
+      "reported": 7.49,
+      "reference": 7.493522835811893,
+      "error_pp": 0.0035228358118928327,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Plus.3",
+      "reported": 16.08,
+      "reference": 16.077798006989703,
+      "error_pp": 0.0022019930102956664,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Plus.4",
+      "reported": 22.86,
+      "reference": 22.864851742146552,
+      "error_pp": 0.004851742146552596,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Plus.5",
+      "reported": 49.25,
+      "reference": 49.25017953186719,
+      "error_pp": 0.00017953186718955294,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Simple.1",
+      "reported": 5.87,
+      "reference": 5.868264908049803,
+      "error_pp": 0.001735091950196832,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Simple.2",
+      "reported": 19.04,
+      "reference": 19.037967208331747,
+      "error_pp": 0.0020327916682525426,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Simple.3",
+      "reported": 31.81,
+      "reference": 31.811140978558875,
+      "error_pp": 0.0011409785588760712,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Simple.4",
+      "reported": 32.22,
+      "reference": 32.21907905665794,
+      "error_pp": 0.0009209433420593882,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.distribution_pct.Simple.5",
+      "reported": 11.06,
+      "reference": 11.063547848401633,
+      "error_pp": 0.0035478484016326917,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.top2_pct.Flex",
+      "reported": 60.0988,
+      "reference": 60.098760328418635,
+      "error_pp": 3.9671581362199504e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.top2_pct.Plus",
+      "reported": 72.115,
+      "reference": 72.11503127401376,
+      "error_pp": 3.1274013764459596e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.appeal_5.top2_pct.Simple",
+      "reported": 43.2826,
+      "reference": 43.28262690505956,
+      "error_pp": 2.6905059556270317e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Flex.1",
+      "reported": 5.29,
+      "reference": 5.288296429459636,
+      "error_pp": 0.0017035705403642964,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Flex.2",
+      "reported": 14.75,
+      "reference": 14.749119024362553,
+      "error_pp": 0.0008809756374468236,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Flex.3",
+      "reported": 27.56,
+      "reference": 27.56440667159458,
+      "error_pp": 0.0044066715945803026,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Flex.4",
+      "reported": 27.29,
+      "reference": 27.289711421684842,
+      "error_pp": 0.0002885783151569399,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Flex.5",
+      "reported": 25.11,
+      "reference": 25.108466452898398,
+      "error_pp": 0.0015335471016015845,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Plus.1",
+      "reported": 2.6,
+      "reference": 2.603245055684895,
+      "error_pp": 0.0032450556848950818,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Plus.2",
+      "reported": 14.41,
+      "reference": 14.410448044611247,
+      "error_pp": 0.0004480446112467007,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Plus.3",
+      "reported": 19.05,
+      "reference": 19.04627861416834,
+      "error_pp": 0.003721385831660484,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Plus.4",
+      "reported": 22.53,
+      "reference": 22.53163950569643,
+      "error_pp": 0.0016395056964277899,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Plus.5",
+      "reported": 41.41,
+      "reference": 41.40838877983908,
+      "error_pp": 0.0016112201609175258,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Simple.1",
+      "reported": 4.68,
+      "reference": 4.683134677238394,
+      "error_pp": 0.0031346772383944455,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Simple.2",
+      "reported": 22.62,
+      "reference": 22.620896531119413,
+      "error_pp": 0.0008965311194124581,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Simple.3",
+      "reported": 29.26,
+      "reference": 29.260069769267513,
+      "error_pp": 6.97692675117878e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Simple.4",
+      "reported": 27.9,
+      "reference": 27.895738826292646,
+      "error_pp": 0.004261173707352128,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.distribution_pct.Simple.5",
+      "reported": 15.54,
+      "reference": 15.54016019608203,
+      "error_pp": 0.00016019608203166058,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.top2_pct.Flex",
+      "reported": 52.3982,
+      "reference": 52.39817787458323,
+      "error_pp": 2.2125416769824824e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.top2_pct.Plus",
+      "reported": 63.94,
+      "reference": 63.94002828553552,
+      "error_pp": 2.8285535520922167e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.explorers.purchase_intent_5.top2_pct.Simple",
+      "reported": 43.4359,
+      "reference": 43.43589902237467,
+      "error_pp": 9.776253264703882e-07,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Flex.1",
+      "reported": 1.46,
+      "reference": 1.4623233793018446,
+      "error_pp": 0.0023233793018446747,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Flex.2",
+      "reported": 14.61,
+      "reference": 14.606282540502043,
+      "error_pp": 0.0037174594979560993,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Flex.3",
+      "reported": 22.68,
+      "reference": 22.682300081777974,
+      "error_pp": 0.002300081777974583,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Flex.4",
+      "reported": 33.29,
+      "reference": 33.28665643001158,
+      "error_pp": 0.0033435699884165615,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Flex.5",
+      "reported": 27.96,
+      "reference": 27.96243756840656,
+      "error_pp": 0.0024375684065596204,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Plus.1",
+      "reported": 12.26,
+      "reference": 12.260772812432704,
+      "error_pp": 0.0007728124327037733,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Plus.2",
+      "reported": 15.2,
+      "reference": 15.201335524275116,
+      "error_pp": 0.0013355242751167395,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Plus.3",
+      "reported": 24.12,
+      "reference": 24.122040399140513,
+      "error_pp": 0.002040399140511795,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Plus.4",
+      "reported": 22.71,
+      "reference": 22.712829222536154,
+      "error_pp": 0.002829222536153253,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Plus.5",
+      "reported": 25.7,
+      "reference": 25.703022041615508,
+      "error_pp": 0.003022041615508897,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Simple.1",
+      "reported": 5.87,
+      "reference": 5.8676004738918985,
+      "error_pp": 0.0023995261081015684,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Simple.2",
+      "reported": 21.62,
+      "reference": 21.617694103542167,
+      "error_pp": 0.002305896457833967,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Simple.3",
+      "reported": 32.09,
+      "reference": 32.08983400741553,
+      "error_pp": 0.00016599258447058673,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Simple.4",
+      "reported": 27.89,
+      "reference": 27.89019617332426,
+      "error_pp": 0.00019617332425880818,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.distribution_pct.Simple.5",
+      "reported": 12.53,
+      "reference": 12.534675241826138,
+      "error_pp": 0.004675241826138432,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.top2_pct.Flex",
+      "reported": 61.2491,
+      "reference": 61.24909399841813,
+      "error_pp": 6.001581866144079e-06,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.top2_pct.Plus",
+      "reported": 48.4159,
+      "reference": 48.41585126415167,
+      "error_pp": 4.8735848331205034e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.appeal_5.top2_pct.Simple",
+      "reported": 40.4249,
+      "reference": 40.4248714151504,
+      "error_pp": 2.858484960199803e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Flex.1",
+      "reported": 3.36,
+      "reference": 3.3608613728960046,
+      "error_pp": 0.0008613728960047418,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Flex.2",
+      "reported": 16.71,
+      "reference": 16.705204204412585,
+      "error_pp": 0.004795795587416052,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Flex.3",
+      "reported": 26.44,
+      "reference": 26.438354703953518,
+      "error_pp": 0.0016452960464832245,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Flex.4",
+      "reported": 31.04,
+      "reference": 31.038097448898384,
+      "error_pp": 0.0019025511016153018,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Flex.5",
+      "reported": 22.46,
+      "reference": 22.457482269839502,
+      "error_pp": 0.002517730160498388,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Plus.1",
+      "reported": 11.43,
+      "reference": 11.432912231811292,
+      "error_pp": 0.0029122318112921874,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Plus.2",
+      "reported": 16.24,
+      "reference": 16.244209560780956,
+      "error_pp": 0.004209560780957133,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Plus.3",
+      "reported": 26.09,
+      "reference": 26.094524855442916,
+      "error_pp": 0.004524855442916476,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Plus.4",
+      "reported": 25.24,
+      "reference": 25.24088973795852,
+      "error_pp": 0.0008897379585199872,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Plus.5",
+      "reported": 20.99,
+      "reference": 20.98746361400633,
+      "error_pp": 0.002536385993668233,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Simple.1",
+      "reported": 10.01,
+      "reference": 10.014171791283383,
+      "error_pp": 0.004171791283383186,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Simple.2",
+      "reported": 16.3,
+      "reference": 16.304836894689323,
+      "error_pp": 0.0048368946893226905,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Simple.3",
+      "reported": 34.17,
+      "reference": 34.17017281851313,
+      "error_pp": 0.00017281851312844765,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Simple.4",
+      "reported": 26.37,
+      "reference": 26.368712229152116,
+      "error_pp": 0.0012877708478846728,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.distribution_pct.Simple.5",
+      "reported": 13.14,
+      "reference": 13.142106266362044,
+      "error_pp": 0.00210626636204303,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.top2_pct.Flex",
+      "reported": 53.4956,
+      "reference": 53.49557971873788,
+      "error_pp": 2.0281262123944543e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.top2_pct.Plus",
+      "reported": 46.2284,
+      "reference": 46.22835335196485,
+      "error_pp": 4.664803515197491e-05,
+      "pass": true
+    },
+    {
+      "path": "food_explorer.non_explorers.purchase_intent_5.top2_pct.Simple",
+      "reported": 39.5108,
+      "reference": 39.51081849551416,
+      "error_pp": 1.849551415489259e-05,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Flex.1",
+      "reported": 2.73,
+      "reference": 2.7274985420495335,
+      "error_pp": 0.0025014579504665235,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Flex.2",
+      "reported": 14.66,
+      "reference": 14.66414758546911,
+      "error_pp": 0.004147585469109316,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Flex.3",
+      "reported": 32.52,
+      "reference": 32.518319499864035,
+      "error_pp": 0.0016805001359685434,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Flex.4",
+      "reported": 33.12,
+      "reference": 33.115091038424744,
+      "error_pp": 0.0049089615752535565,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Flex.5",
+      "reported": 16.97,
+      "reference": 16.97494333419257,
+      "error_pp": 0.004943334192571314,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Plus.1",
+      "reported": 0.3,
+      "reference": 0.302846770919822,
+      "error_pp": 0.002846770919821995,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Plus.2",
+      "reported": 6.61,
+      "reference": 6.608578189576015,
+      "error_pp": 0.0014218104239853702,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Plus.3",
+      "reported": 14.27,
+      "reference": 14.268957880704338,
+      "error_pp": 0.0010421192956613368,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Plus.4",
+      "reported": 35.32,
+      "reference": 35.31511859228717,
+      "error_pp": 0.004881407712829855,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Plus.5",
+      "reported": 43.5,
+      "reference": 43.50449856651265,
+      "error_pp": 0.0044985665126517915,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Simple.1",
+      "reported": 6.93,
+      "reference": 6.925103135107767,
+      "error_pp": 0.004896864892232955,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Simple.2",
+      "reported": 21.66,
+      "reference": 21.664103109741284,
+      "error_pp": 0.004103109741283362,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Simple.3",
+      "reported": 33.68,
+      "reference": 33.67984386742166,
+      "error_pp": 0.000156132578339907,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Simple.4",
+      "reported": 27.98,
+      "reference": 27.980537498472142,
+      "error_pp": 0.0005374984721413512,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.distribution_pct.Simple.5",
+      "reported": 9.75,
+      "reference": 9.750412389257143,
+      "error_pp": 0.00041238925714282004,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.top2_pct.Flex",
+      "reported": 50.09,
+      "reference": 50.0900343726173,
+      "error_pp": 3.4372617299993635e-05,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.top2_pct.Plus",
+      "reported": 78.8196,
+      "reference": 78.81961715879982,
+      "error_pp": 1.7158799821004322e-05,
+      "pass": true
+    },
+    {
+      "path": "premium_routed.premium_value_5.top2_pct.Simple",
+      "reported": 37.7309,
+      "reference": 37.73094988772928,
+      "error_pp": 4.988772928271601e-05,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_new_flavours.Flex",
+      "reported": 27.12,
+      "reference": 27.116394715368852,
+      "error_pp": 0.003605284631149175,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_new_flavours.Plus",
+      "reported": 62.48,
+      "reference": 62.4821358830303,
+      "error_pp": 0.002135883030305763,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_new_flavours.Simple",
+      "reported": 24.55,
+      "reference": 24.548250257935965,
+      "error_pp": 0.0017497420640353312,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_chef.Flex",
+      "reported": 20.08,
+      "reference": 20.07524908844216,
+      "error_pp": 0.0047509115578385774,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_chef.Plus",
+      "reported": 53.88,
+      "reference": 53.87785974474773,
+      "error_pp": 0.0021402552522715723,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_chef.Simple",
+      "reported": 24.53,
+      "reference": 24.533680549559705,
+      "error_pp": 0.0036805495597036497,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_provenance.Flex",
+      "reported": 19.11,
+      "reference": 19.114114292948837,
+      "error_pp": 0.0041142929488380275,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_provenance.Plus",
+      "reported": 48.22,
+      "reference": 48.215581271203085,
+      "error_pp": 0.00441872879691374,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.like_provenance.Simple",
+      "reported": 19.09,
+      "reference": 19.08944457710622,
+      "error_pp": 0.0005554228937789674,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_expensive.Flex",
+      "reported": 32.39,
+      "reference": 32.38560418050125,
+      "error_pp": 0.0043958194987538945,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_expensive.Plus",
+      "reported": 38.8,
+      "reference": 38.80119243929767,
+      "error_pp": 0.0011924392976752074,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_expensive.Simple",
+      "reported": 35.26,
+      "reference": 35.259999686134975,
+      "error_pp": 3.138650228606821e-07,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_complicated.Flex",
+      "reported": 15.91,
+      "reference": 15.907089467605822,
+      "error_pp": 0.002910532394178489,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_complicated.Plus",
+      "reported": 40.87,
+      "reference": 40.86766631795241,
+      "error_pp": 0.002333682047584773,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_complicated.Simple",
+      "reported": 15.69,
+      "reference": 15.68624687717556,
+      "error_pp": 0.0037531228244400694,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_too_adventurous.Flex",
+      "reported": 12.72,
+      "reference": 12.716945160370761,
+      "error_pp": 0.0030548396292395807,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_too_adventurous.Plus",
+      "reported": 40.66,
+      "reference": 40.661387235266204,
+      "error_pp": 0.0013872352662076537,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_too_adventurous.Simple",
+      "reported": 10.78,
+      "reference": 10.78485646892222,
+      "error_pp": 0.004856468922220358,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_not_different.Flex",
+      "reported": 25.58,
+      "reference": 25.583132198008744,
+      "error_pp": 0.003132198008746201,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_not_different.Plus",
+      "reported": 19.97,
+      "reference": 19.97483872850274,
+      "error_pp": 0.004838728502740253,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_not_different.Simple",
+      "reported": 40.74,
+      "reference": 40.73894512800748,
+      "error_pp": 0.0010548719925225214,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_limited_choice.Flex",
+      "reported": 14.7,
+      "reference": 14.701619627359928,
+      "error_pp": 0.0016196273599291544,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_limited_choice.Plus",
+      "reported": 14.94,
+      "reference": 14.938821368491084,
+      "error_pp": 0.0011786315089157284,
+      "pass": true
+    },
+    {
+      "path": "diagnostics.selected_pct.dislike_limited_choice.Simple",
+      "reported": 35.44,
+      "reference": 35.442380064727594,
+      "error_pp": 0.0023800647275962206,
+      "pass": true
+    }
+  ]
+}

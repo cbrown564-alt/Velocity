@@ -1,0 +1,847 @@
+{
+  "study_id": "SBT-002",
+  "analysis_claims": [
+    {
+      "analysis_id": "concept_metrics",
+      "values": {
+        "concept_order": [
+          "Flex",
+          "Plus",
+          "Simple"
+        ],
+        "unweighted_n": [
+          700,
+          700,
+          700
+        ],
+        "weight_sum": [
+          703.52,
+          696.325,
+          700.155
+        ],
+        "kish_effective_n": [
+          650.1,
+          645.6,
+          645.2
+        ],
+        "distribution_order": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "appeal_5": {
+          "distribution_pct": [
+            [
+              1.78,
+              14.62,
+              22.64,
+              34.22,
+              26.74
+            ],
+            [
+              10.38,
+              13.38,
+              22.22,
+              22.75,
+              31.26
+            ],
+            [
+              5.87,
+              21.03,
+              32.03,
+              28.88,
+              12.2
+            ]
+          ],
+          "top2_pct": [
+            60.962,
+            54.01,
+            41.0803
+          ],
+          "comparisons": [
+            {
+              "contrast": "Flex-Plus",
+              "difference_pp": 6.952,
+              "ci95_unadjusted_pp": [
+                1.5738,
+                12.3302
+              ],
+              "p_holm": 0.01129346,
+              "material_point_estimate": true
+            },
+            {
+              "contrast": "Flex-Simple",
+              "difference_pp": 19.8817,
+              "ci95_unadjusted_pp": [
+                14.5522,
+                25.2113
+              ],
+              "p_holm": 7.92027e-13,
+              "material_point_estimate": true
+            },
+            {
+              "contrast": "Plus-Simple",
+              "difference_pp": 12.9297,
+              "ci95_unadjusted_pp": [
+                7.5181,
+                18.3414
+              ],
+              "p_holm": 5.65881e-06,
+              "material_point_estimate": true
+            }
+          ]
+        },
+        "purchase_intent_5": {
+          "distribution_pct": [
+            [
+              3.84,
+              16.22,
+              26.72,
+              30.1,
+              23.12
+            ],
+            [
+              9.35,
+              15.81,
+              24.43,
+              24.6,
+              25.81
+            ],
+            [
+              8.79,
+              17.75,
+              33.04,
+              26.72,
+              13.69
+            ]
+          ],
+          "top2_pct": [
+            53.2217,
+            50.4092,
+            40.411
+          ],
+          "comparisons": [
+            {
+              "contrast": "Flex-Plus",
+              "difference_pp": 2.8125,
+              "ci95_unadjusted_pp": [
+                -2.6325,
+                8.2576
+              ],
+              "p_holm": 0.31135293,
+              "material_point_estimate": false
+            },
+            {
+              "contrast": "Flex-Simple",
+              "difference_pp": 12.8107,
+              "ci95_unadjusted_pp": [
+                7.4214,
+                18.2
+              ],
+              "p_holm": 9.53365e-06,
+              "material_point_estimate": true
+            },
+            {
+              "contrast": "Plus-Simple",
+              "difference_pp": 9.9981,
+              "ci95_unadjusted_pp": [
+                4.5939,
+                15.4024
+              ],
+              "p_holm": 0.000575677,
+              "material_point_estimate": true
+            }
+          ]
+        },
+        "uniqueness_5": {
+          "distribution_pct": [
+            [
+              2.69,
+              18.35,
+              31.05,
+              31.74,
+              16.17
+            ],
+            [
+              0.53,
+              3.86,
+              14.22,
+              33.9,
+              47.48
+            ],
+            [
+              8.18,
+              25.25,
+              32.32,
+              26.66,
+              7.59
+            ]
+          ],
+          "top2_pct": [
+            47.9066,
+            81.3872,
+            34.2509
+          ],
+          "Plus_minus_Flex": {
+            "difference_pp": 33.4806,
+            "ci95_unadjusted_pp": [
+              28.5763,
+              38.385
+            ],
+            "p_holm": 1.57995e-40,
+            "material_point_estimate": true
+          }
+        },
+        "relevance_5": {
+          "distribution_pct": [
+            [
+              2.68,
+              10.8,
+              22.82,
+              35.89,
+              27.81
+            ],
+            [
+              8.11,
+              16.73,
+              25.73,
+              26.68,
+              22.74
+            ],
+            [
+              5.66,
+              23.63,
+              29.78,
+              28.42,
+              12.51
+            ]
+          ],
+          "top2_pct": [
+            63.701,
+            49.4227,
+            40.9317
+          ]
+        },
+        "credibility_5": {
+          "distribution_pct": [
+            [
+              2.15,
+              10.51,
+              25.09,
+              39.4,
+              22.85
+            ],
+            [
+              7.87,
+              20.1,
+              29.87,
+              24.16,
+              17.99
+            ],
+            [
+              2.46,
+              11.16,
+              29.07,
+              36.78,
+              20.52
+            ]
+          ],
+          "top2_pct": [
+            62.2544,
+            42.1506,
+            57.306
+          ],
+          "Flex_minus_Plus": {
+            "difference_pp": 20.1038,
+            "ci95_unadjusted_pp": [
+              14.7944,
+              25.4132
+            ],
+            "p_holm": 3.47934e-13,
+            "material_point_estimate": true
+          }
+        },
+        "value_5": {
+          "distribution_pct": [
+            [
+              3.14,
+              14.22,
+              26.31,
+              36.47,
+              19.87
+            ],
+            [
+              3.64,
+              14.89,
+              24.8,
+              27.55,
+              29.13
+            ],
+            [
+              6.43,
+              18.84,
+              30.23,
+              30.67,
+              13.82
+            ]
+          ],
+          "top2_pct": [
+            56.3329,
+            56.6795,
+            44.4956
+          ],
+          "Flex_minus_Plus": {
+            "difference_pp": -0.3466,
+            "ci95_unadjusted_pp": [
+              -5.7634,
+              5.0701
+            ],
+            "p_holm": 0.90019246,
+            "material_point_estimate": false
+          }
+        },
+        "understanding_5": {
+          "distribution_pct": [
+            [
+              0,
+              0.9,
+              3.39,
+              20.71,
+              75.01
+            ],
+            [
+              7.92,
+              24.23,
+              35.6,
+              23.87,
+              8.38
+            ],
+            [
+              0,
+              0.25,
+              6.83,
+              39.3,
+              53.62
+            ]
+          ],
+          "top2_pct": [
+            95.7141,
+            32.2515,
+            92.9215
+          ],
+          "bottom2_pct": [
+            0.9,
+            32.15,
+            0.25
+          ],
+          "Flex_minus_Plus": {
+            "difference_pp": 63.4626,
+            "ci95_unadjusted_pp": [
+              59.5734,
+              67.3517
+            ],
+            "p_holm": 5.73045e-224,
+            "material_point_estimate": true
+          }
+        }
+      },
+      "universe": "Eligible UK adults aged 18\u201364 with meal-kit openness >=3, evaluating their randomly assigned fictional concept; valid Q1\u2013Q7 base is 700 per concept.",
+      "weighting": "Supplied wt_final, normalized within concept and valid outcome base."
+    },
+    {
+      "analysis_id": "food_explorer",
+      "values": {
+        "concept_order": [
+          "Flex",
+          "Plus",
+          "Simple"
+        ],
+        "distribution_order": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "overall_explorer_unweighted_n": 697,
+        "overall_explorer_weighted_pct": 23.83397,
+        "explorers": {
+          "unweighted_n": [
+            236,
+            234,
+            227
+          ],
+          "weight_sum": [
+            175.567,
+            164.367,
+            160.58
+          ],
+          "kish_effective_n": [
+            225.4,
+            223.5,
+            217.5
+          ],
+          "appeal_5": {
+            "distribution_pct": [
+              [
+                2.72,
+                14.66,
+                22.52,
+                37.02,
+                23.08
+              ],
+              [
+                4.31,
+                7.49,
+                16.08,
+                22.86,
+                49.25
+              ],
+              [
+                5.87,
+                19.04,
+                31.81,
+                32.22,
+                11.06
+              ]
+            ],
+            "top2_pct": [
+              60.0988,
+              72.115,
+              43.2826
+            ],
+            "Plus_minus_Flex": {
+              "difference_pp": 12.0163,
+              "ci95_unadjusted_pp": [
+                3.3388,
+                20.6937
+              ],
+              "p_holm": 0.00664575,
+              "material_point_estimate": true
+            }
+          },
+          "purchase_intent_5": {
+            "distribution_pct": [
+              [
+                5.29,
+                14.75,
+                27.56,
+                27.29,
+                25.11
+              ],
+              [
+                2.6,
+                14.41,
+                19.05,
+                22.53,
+                41.41
+              ],
+              [
+                4.68,
+                22.62,
+                29.26,
+                27.9,
+                15.54
+              ]
+            ],
+            "top2_pct": [
+              52.3982,
+              63.94,
+              43.4359
+            ],
+            "Plus_minus_Flex": {
+              "difference_pp": 11.5419,
+              "ci95_unadjusted_pp": [
+                2.4406,
+                20.6431
+              ],
+              "p_holm": 0.02587096,
+              "material_point_estimate": true
+            }
+          }
+        },
+        "non_explorers": {
+          "unweighted_n": [
+            464,
+            466,
+            473
+          ],
+          "weight_sum": [
+            527.953,
+            531.958,
+            539.575
+          ],
+          "kish_effective_n": [
+            446.3,
+            449.1,
+            454
+          ],
+          "appeal_5": {
+            "distribution_pct": [
+              [
+                1.46,
+                14.61,
+                22.68,
+                33.29,
+                27.96
+              ],
+              [
+                12.26,
+                15.2,
+                24.12,
+                22.71,
+                25.7
+              ],
+              [
+                5.87,
+                21.62,
+                32.09,
+                27.89,
+                12.53
+              ]
+            ],
+            "top2_pct": [
+              61.2491,
+              48.4159,
+              40.4249
+            ],
+            "Flex_minus_Plus": {
+              "difference_pp": 12.8332,
+              "ci95_unadjusted_pp": [
+                6.3679,
+                19.2986
+              ],
+              "p_holm": 0.000200173,
+              "material_point_estimate": true
+            }
+          },
+          "purchase_intent_5": {
+            "distribution_pct": [
+              [
+                3.36,
+                16.71,
+                26.44,
+                31.04,
+                22.46
+              ],
+              [
+                11.43,
+                16.24,
+                26.09,
+                25.24,
+                20.99
+              ],
+              [
+                10.01,
+                16.3,
+                34.17,
+                26.37,
+                13.14
+              ]
+            ],
+            "top2_pct": [
+              53.4956,
+              46.2284,
+              39.5108
+            ],
+            "Flex_minus_Plus": {
+              "difference_pp": 7.2672,
+              "ci95_unadjusted_pp": [
+                0.7297,
+                13.8048
+              ],
+              "p_holm": 0.05870575,
+              "material_point_estimate": true
+            }
+          }
+        },
+        "interactions": {
+          "definition": "(Plus-Flex among explorers) minus (Plus-Flex among non-explorers)",
+          "appeal_5": {
+            "difference_pp": 24.8495,
+            "ci95_unadjusted_pp": [
+              14.0283,
+              35.6708
+            ],
+            "p_holm": 2.03102e-05
+          },
+          "purchase_intent_5": {
+            "difference_pp": 18.8091,
+            "ci95_unadjusted_pp": [
+              7.6031,
+              30.015
+            ],
+            "p_holm": 0.00300795
+          }
+        }
+      },
+      "universe": "Eligible assigned-concept respondents split by the pre-exposure definition mean(food_p1, food_p2, food_p3) >=4; all subgroup members have valid primary outcomes.",
+      "weighting": "wt_final normalized within concept and subgroup; overall explorer share uses all 2,100 respondents."
+    },
+    {
+      "analysis_id": "premium_routed",
+      "values": {
+        "concept_order": [
+          "Flex",
+          "Plus",
+          "Simple"
+        ],
+        "eligible_unweighted_n": [
+          694,
+          483,
+          698
+        ],
+        "excluded_unweighted_n": [
+          6,
+          217,
+          2
+        ],
+        "eligible_weight_sum": [
+          697.216,
+          472.47,
+          698.438
+        ],
+        "kish_effective_n": [
+          644.6,
+          444.4,
+          643.4
+        ],
+        "eligible_weighted_pct_of_assigned_cell": [
+          99.1039,
+          67.852,
+          99.7547
+        ],
+        "distribution_order": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "premium_value_5": {
+          "distribution_pct": [
+            [
+              2.73,
+              14.66,
+              32.52,
+              33.12,
+              16.97
+            ],
+            [
+              0.3,
+              6.61,
+              14.27,
+              35.32,
+              43.5
+            ],
+            [
+              6.93,
+              21.66,
+              33.68,
+              27.98,
+              9.75
+            ]
+          ],
+          "top2_pct": [
+            50.09,
+            78.8196,
+            37.7309
+          ]
+        }
+      },
+      "universe": "Only respondents with understanding_5 >=3: a post-exposure, concept-dependent subset.",
+      "weighting": "wt_final normalized within each routed concept base; eligibility percentages use all assigned respondents."
+    },
+    {
+      "analysis_id": "diagnostics",
+      "values": {
+        "concept_order": [
+          "Flex",
+          "Plus",
+          "Simple"
+        ],
+        "unweighted_n": [
+          700,
+          700,
+          700
+        ],
+        "selected_pct": {
+          "like_new_flavours": [
+            27.12,
+            62.48,
+            24.55
+          ],
+          "like_chef": [
+            20.08,
+            53.88,
+            24.53
+          ],
+          "like_provenance": [
+            19.11,
+            48.22,
+            19.09
+          ],
+          "dislike_expensive": [
+            32.39,
+            38.8,
+            35.26
+          ],
+          "dislike_complicated": [
+            15.91,
+            40.87,
+            15.69
+          ],
+          "dislike_too_adventurous": [
+            12.72,
+            40.66,
+            10.78
+          ],
+          "dislike_not_different": [
+            25.58,
+            19.97,
+            40.74
+          ],
+          "dislike_limited_choice": [
+            14.7,
+            14.94,
+            35.44
+          ]
+        }
+      },
+      "universe": "All respondents within assigned concept; Q9/Q10 multiple-response indicators have no missing values in the supplied prior-stage analysis.",
+      "weighting": "wt_final normalized within concept; descriptive selection percentages without significance tests."
+    }
+  ],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Prioritize Flex for broad-audience development. Its overall appeal exceeds Plus's, 60.96% versus 54.01% (+6.95pp; Holm p=.0113), but overall purchase-intent superiority is unresolved: 53.22% versus 50.41% (+2.81pp; p=.311).",
+      "evidence_refs": [
+        "/analysis_claims/0/values/appeal_5",
+        "/analysis_claims/0/values/purchase_intent_5"
+      ],
+      "importance": "primary",
+      "claim_strength": "Supported appeal advantage; development priority is a researcher recommendation.",
+      "qualification": "n=700 per concept. Unadjusted 95% CIs for Flex\u2013Plus are 1.57\u201312.33pp for appeal and \u22122.63\u20138.26pp for intent. Appeal's point estimate exceeds the 5pp materiality threshold, but its interval includes smaller effects; intent's point estimate falls below that threshold. Non-significance does not establish equivalence. The broad audience is eligible adults open to meal kits, not all UK adults.",
+      "topic_cluster": "advancement"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Retain Plus for targeted development among food explorers, 23.83% of the weighted sample. Plus exceeds Flex within this segment on appeal (72.12% versus 60.10%; +12.02pp; Holm p=.00665) and intent (63.94% versus 52.40%; +11.54pp; p=.0259). Outside it, Flex leads on appeal (61.25% versus 48.42%; +12.83pp; p=.000200); its intent lead is inconclusive after correction (53.50% versus 46.23%; +7.27pp; p=.0587).",
+      "evidence_refs": [
+        "/analysis_claims/1/values/overall_explorer_weighted_pct",
+        "/analysis_claims/1/values/explorers",
+        "/analysis_claims/1/values/non_explorers",
+        "/analysis_claims/1/values/interactions"
+      ],
+      "importance": "primary",
+      "claim_strength": "Pre-specified subgroup differences supported by direct interaction tests; targeting is a researcher recommendation.",
+      "qualification": "Flex/Plus bases: 236/234 explorers and 464/466 non-explorers. Explorer advantages exceed 5pp as point estimates, but unadjusted CIs include smaller effects: appeal 3.34\u201320.69pp; intent 2.44\u201320.64pp. Non-explorer Flex advantages have CIs of 6.37\u201319.30pp and 0.73\u201313.80pp, respectively. Direct interaction differences are 24.85pp for appeal (CI 14.03\u201335.67; Holm p=.0000203) and 18.81pp for intent (7.60\u201330.02; p=.00301). Segment share is not an addressable-market estimate.",
+      "topic_cluster": "targeting"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Deprioritize Simple in its current form. Its appeal is 41.08% and intent 40.41%; Flex exceeds it by 19.88pp and 12.81pp, and Plus by 12.93pp and 10.00pp. All four comparisons pass Holm correction (p\u2264.000576). Easy understanding (92.92%) is insufficient to establish competitive primary outcomes.",
+      "evidence_refs": [
+        "/analysis_claims/0/values/appeal_5",
+        "/analysis_claims/0/values/purchase_intent_5",
+        "/analysis_claims/0/values/understanding_5",
+        "/analysis_claims/3/values/selected_pct"
+      ],
+      "importance": "primary",
+      "claim_strength": "Supported disadvantages on both primary outcomes; relative development recommendation.",
+      "qualification": "n=700 per concept. All four point differences exceed 5pp. Unadjusted CIs are 14.55\u201325.21pp and 7.42\u201318.20pp for Flex's appeal and intent advantages, and 7.52\u201318.34pp and 4.59\u201315.40pp for Plus's; the last includes effects below 5pp. Simple's insufficient-differentiation (40.74%) and limited-choice (35.44%) concerns are descriptive development clues, not demonstrated causes. No absolute advancement hurdle was supplied.",
+      "topic_cluster": "simple_decision"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "For Plus, test clearer communication and stronger support for delivery credibility while preserving differentiation. Plus exceeds Flex on uniqueness (81.39% versus 47.91%), but trails on easy understanding (32.25% versus 95.71%) and credibility (42.15% versus 62.25%). All three differences survive Holm correction. Complexity (40.87%) and adventurousness (40.66%) are prominent reported concerns.",
+      "evidence_refs": [
+        "/analysis_claims/0/values/uniqueness_5",
+        "/analysis_claims/0/values/understanding_5",
+        "/analysis_claims/0/values/credibility_5",
+        "/analysis_claims/3/values/selected_pct"
+      ],
+      "importance": "primary",
+      "claim_strength": "Supported rating differences; descriptive development clues and an untested improvement recommendation.",
+      "qualification": "n=700 per concept. Plus's uniqueness advantage is 33.48pp (unadjusted CI 28.58\u201338.39); Flex's understanding and credibility advantages are 63.46pp (59.57\u201367.35) and 20.10pp (14.79\u201325.41). All exceed 5pp, with Holm p<.000001. Plus receives difficult-understanding ratings from 32.15%. Likes for new flavours (62.48%), chef inspiration (53.88%) and provenance (48.22%) suggest content to preserve. These results do not establish causes of intent, actual delivery performance, or redesign effects.",
+      "topic_cluster": "plus_development"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Do not interpret Plus's 78.82% premium-conviction score as an overall premium advantage. The question reached only 67.85% of its weighted assigned cell, versus 99.10% for Flex and 99.75% for Simple; their conditional scores were 50.09% and 37.73%.",
+      "evidence_refs": [
+        "/analysis_claims/2/values/eligible_unweighted_n",
+        "/analysis_claims/2/values/eligible_weighted_pct_of_assigned_cell",
+        "/analysis_claims/2/values/premium_value_5"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive conditional result with a consequential denominator limitation.",
+      "qualification": "Routed bases: Plus 483, Flex 694, Simple 698. Eligibility requires post-exposure understanding >=3, so these selected groups do not preserve an unconditional randomized comparison. Unasked responses are unknown, not negative. No overall premium superiority or inferential comparison is established.",
+      "topic_cluster": "premium_evidence"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Test concrete prices before commercial commitment. Flex and Plus have numerically similar expected-value scores (56.33% and 56.68%; Flex\u2013Plus \u22120.35pp; Holm p=.900), while 32.39% and 38.80%, respectively, select expense concerns.",
+      "evidence_refs": [
+        "/analysis_claims/0/values/value_5",
+        "/analysis_claims/3/values/selected_pct/dislike_expensive"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Pricing research recommendation; neither a value advantage nor equivalence is established.",
+      "qualification": "n=700 per concept. The value-difference unadjusted CI is \u22125.76\u20135.07pp; its point estimate is below the 5pp materiality threshold. Intent assumes a 'reasonable price' and value an unspecified 'modest premium'; neither measures conversion at a concrete price. Expense selections were not significance-tested.",
+      "topic_cluster": "commercial_qualification"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": [
+          "F1",
+          "F3"
+        ],
+        "headline_intent": "Prioritize Flex for broad development and deprioritize current Simple",
+        "analytical_relationship": "Establish relative development priorities from primary outcomes, distinguishing Flex's supported appeal advantage from its unresolved overall intent comparison with Plus."
+      },
+      {
+        "order": 2,
+        "finding_refs": [
+          "F2"
+        ],
+        "headline_intent": "Retain Plus for food explorers",
+        "analytical_relationship": "Qualify the overall recommendation with the pre-specified audience in which Plus leads Flex, supported by direct evidence of heterogeneity on both primary outcomes."
+      },
+      {
+        "order": 3,
+        "finding_refs": [
+          "F4",
+          "F5"
+        ],
+        "headline_intent": "Improve Plus's clarity and credibility without overstating its premium evidence",
+        "analytical_relationship": "Connect supported rating differences and descriptive concerns to development priorities, then explain why understanding-based routing limits the apparent premium advantage."
+      },
+      {
+        "order": 4,
+        "finding_refs": [
+          "F6"
+        ],
+        "headline_intent": "Resolve price-specific demand before commercial commitment",
+        "analytical_relationship": "Close with the commercial evidence gap left by hypothetical pricing and reported expense concerns."
+      }
+    ]
+  },
+  "method_notes": [
+    "This synthesis uses the supplied questionnaire, codebook, study materials and prior-stage numerical output. Respondent-level calculations and the prior stage's data-quality checks were not independently rerun; numerical estimates and inference are inherited.",
+    "The study is fictional: a randomized monadic comparison of three concepts among 2,100 eligible UK adults aged 18\u201364, with 700 assigned per concept. Recommendations concern relative development within this study and do not validate real market demand.",
+    "Percentages use supplied wt_final and valid question-specific bases. Bases are unweighted unless stated otherwise. Arrays follow Flex, Plus, Simple; ordinal distributions retain scores 1 through 5. Top-two-box means scores 4\u20135 and bottom-two-box means 1\u20132. Rounding can produce small discrepancies.",
+    "The declared policy requires Holm correction within concept-comparison families but does not enumerate their exact membership. The inherited implementation uses all three pairwise comparisons within each outcome, separately overall and within each explorer-status group; each primary outcome's three pairwise concept-by-explorer interactions form a separate family. No across-outcome correction is applied. Significance claims are conditional on this implementation, whose family membership is not documented as pre-specified.",
+    "Inherited inference uses independent-cell normal Wald tests with fixed-weight robust proportion variance n/(n\u22121) \u00d7 sum[w_i\u00b2(y_i\u2212p)\u00b2]/sum(w_i)\u00b2, where y indicates scores 4\u20135. Difference variances add across independent cells; interaction variances add across four disjoint cells. Calibration-estimation uncertainty is not represented.",
+    "All reported confidence intervals are unadjusted 95% intervals; significance decisions use Holm-adjusted p-values at .05. Commercial materiality is assessed separately as an absolute top-two-box point difference >=5pp. A material point estimate does not prove the true effect exceeds 5pp; non-significance does not prove equivalence.",
+    "Food explorer, defined before exposure as mean(P1:P3) >=4, is the sole pre-specified strategic subgroup. Heterogeneity claims rely on direct interactions rather than differences in subgroup significance levels.",
+    "Premium ratings describe only respondents with understanding >=3. Multiple-response diagnostics are descriptive, can sum above 100%, and do not establish causal drivers.",
+    "Evidence references are exact JSON Pointer paths to analysis tables within this response. Stable analysis_id fields identify the analyses; every story finding reference resolves."
+  ]
+}

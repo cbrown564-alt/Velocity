@@ -1,0 +1,22 @@
+{
+  "study_id": "FSA-CIT-2025-03",
+  "version": "1.0.0",
+  "status": "FROZEN",
+  "artifacts": {
+    "evals/research_quality/projects/public/FSA-CIT-2025-03/model_inputs/codebook.json": "d4267d853c06c189059d79ac478bb9b639f38bee6b3fe2f3d35625c26598e6a3",
+    "evals/research_quality/projects/public/FSA-CIT-2025-03/model_inputs/study_materials.json": "2b358127cecea272974885751b13ce5301f6e74287881f85b7bd0aefea63ad64",
+    "evals/research_quality/projects/public/FSA-CIT-2025-03/model_inputs/analysis_results.json": "c473500b11d2b6c0ee973348ca52fb12cc7bba0a77a735ce46864b6b97da67d5",
+    "evals/research_quality/projects/public/FSA-CIT-2025-03/model_inputs/questionnaire.md": "0ad7adc6d20eb7028f07fe0868fc3f99a568d60b131edf53adc4f776d4c16f02",
+    "evals/research_quality/projects/public/FSA-CIT-2025-03/reference/reference_findings.json": "068fb672f78948e5feeb98107bb09796f067360e2900c53b550dc114a0cc2791",
+    "evals/research_quality/projects/public/FSA-CIT-2025-03/reference/extraction_checks.json": "c05400ee6ee7b346702071a0d63dd7a6ce142ebc53ef13a494961827f42abf65",
+    "evals/research_quality/projects/public/FSA-CIT-2025-03/manifest.json": "b080946e328b88737b3895e935a505d3347c8c0cdcf7b261de3d645aea5e093d",
+    "evals/research_quality/projects/public/FSA-CIT-2025-03/data_card.json": "48c214446a1a3b242d940f05bc10f16082c855930a0a31447f6a88aa95ec7f87",
+    "scripts/python/research_quality/prepare_public_case.py": "018f37fffdaf7dfb5cc592a8afc9389a68af4673d173e044687ac433c250da01"
+  },
+  "model_allowlist": {
+    "codebook.json": "d4267d853c06c189059d79ac478bb9b639f38bee6b3fe2f3d35625c26598e6a3",
+    "study_materials.json": "2b358127cecea272974885751b13ce5301f6e74287881f85b7bd0aefea63ad64",
+    "analysis_results.json": "c473500b11d2b6c0ee973348ca52fb12cc7bba0a77a735ce46864b6b97da67d5",
+    "questionnaire.md": "0ad7adc6d20eb7028f07fe0868fc3f99a568d60b131edf53adc4f776d4c16f02"
+  }
+}

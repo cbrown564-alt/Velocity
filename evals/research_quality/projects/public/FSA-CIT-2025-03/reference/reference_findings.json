@@ -1,0 +1,78 @@
+{
+  "study_id": "FSA-CIT-2025-03",
+  "version": "1.0.0",
+  "findings": [
+    {
+      "finding_id": "R_CONCERNS",
+      "tier": "mandatory",
+      "proposition": "Food prices lead these general concerns at 87.20%, followed by ultra-processed food at 77.84%; concern is not evidence of measured harm.",
+      "evidence_ids": [
+        "tables.Q12_8",
+        "tables.Q12_14"
+      ],
+      "topic_cluster": "R_CONCERNS",
+      "claim_strength": "descriptive",
+      "analytical_relationship": "published_table_comparison"
+    },
+    {
+      "finding_id": "R_HOUSEHOLD",
+      "tier": "mandatory",
+      "proposition": "Household affordability worry is 20.89% and availability worry 18.64%; distinguish these from general food-price concern.",
+      "evidence_ids": [
+        "tables.Q3m",
+        "tables.Q2m",
+        "tables.Q12_8"
+      ],
+      "topic_cluster": "R_HOUSEHOLD",
+      "claim_strength": "descriptive",
+      "analytical_relationship": "published_table_comparison"
+    },
+    {
+      "finding_id": "R_CONFIDENCE",
+      "tier": "mandatory",
+      "proposition": "Overall supply-chain confidence is 63.08%, while confidence in affordable options is 43.77% versus food safety 74.34%. This identifies an affordability weakness without a causal claim.",
+      "evidence_ids": [
+        "tables.Q13",
+        "tables.Q14_3",
+        "tables.Q14_1"
+      ],
+      "topic_cluster": "R_CONFIDENCE",
+      "claim_strength": "descriptive",
+      "analytical_relationship": "published_table_comparison"
+    },
+    {
+      "finding_id": "R_TRUST",
+      "tier": "secondary",
+      "proposition": "Whole-sample FSA trust is 52.67%; 54.02% know a lot or a little about FSA. This extract does not provide trust among that knowledgeable subset.",
+      "evidence_ids": [
+        "tables.Q16",
+        "tables.Q14a"
+      ],
+      "topic_cluster": "R_TRUST",
+      "claim_strength": "descriptive",
+      "analytical_relationship": "published_table_comparison"
+    },
+    {
+      "finding_id": "R_TREND",
+      "tier": "do_not_elevate",
+      "proposition": "One month cannot establish improvement or worsening.",
+      "evidence_ids": [
+        "tables.Q3m"
+      ],
+      "topic_cluster": "R_TREND",
+      "claim_strength": "descriptive",
+      "analytical_relationship": "published_table_comparison"
+    },
+    {
+      "finding_id": "R_POPULATION",
+      "tier": "context",
+      "proposition": "Findings describe the weighted online quota sample in England, Wales and Northern Ireland, not all UK adults or a probability sample.",
+      "evidence_ids": [
+        "tables.Q2m"
+      ],
+      "topic_cluster": "R_POPULATION",
+      "claim_strength": "descriptive",
+      "analytical_relationship": "published_table_comparison"
+    }
+  ]
+}
