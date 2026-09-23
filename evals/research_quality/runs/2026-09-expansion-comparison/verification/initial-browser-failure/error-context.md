@@ -1,0 +1,103 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e5]:
+  - banner [ref=e6]:
+    - generic [ref=e8]:
+      - img [ref=e9]
+      - text: Velocity
+  - main [ref=e12]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - paragraph [ref=e16]: Survey file to PowerPoint deck
+        - heading "Turn a client survey file into an editable PowerPoint deck — in your browser" [level=1] [ref=e17]
+        - paragraph [ref=e18]: Weighted crosstabs with significance testing. Export slides your stakeholders can edit. Everything stays on your device.
+        - list "Workflow" [ref=e19]:
+          - listitem [ref=e20]:
+            - generic [ref=e21]:
+              - img [ref=e22]
+              - generic [ref=e26]: "1"
+            - paragraph [ref=e27]: Import survey
+            - paragraph [ref=e28]: Supports .sav files
+          - img [ref=e31]
+          - listitem [ref=e33]:
+            - generic [ref=e34]:
+              - img [ref=e35]
+              - generic [ref=e37]: "2"
+            - paragraph [ref=e38]: Build crosstabs
+            - paragraph [ref=e39]: Weighted cuts & significance
+          - img [ref=e42]
+          - listitem [ref=e44]:
+            - generic [ref=e45]:
+              - img [ref=e46]
+              - generic [ref=e49]: "3"
+            - paragraph [ref=e50]: Export deck
+            - paragraph [ref=e51]: Native PowerPoint slides
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - img [ref=e55]
+            - paragraph [ref=e58]: Drop your survey file here
+            - paragraph [ref=e59]: SPSS and CSV files welcome · weights preserved · nothing uploads to a server
+          - generic [ref=e60]:
+            - button "Upload survey file" [ref=e61] [cursor=pointer]:
+              - img [ref=e62]
+              - generic [ref=e66]: Upload survey file
+            - button "Try the brand tracker example — See a weighted crosstab and PowerPoint deck · ~2 min" [ref=e67] [cursor=pointer]:
+              - img [ref=e69]
+              - generic [ref=e71]:
+                - generic [ref=e72]: Try the brand tracker example
+                - generic [ref=e73]: See a weighted crosstab and PowerPoint deck · ~2 min
+              - img [ref=e74]
+        - button "Import a saved session — deck layout only, no respondent data" [ref=e76] [cursor=pointer]:
+          - generic [ref=e77]: Import a saved session
+          - generic [ref=e78]: — deck layout only, no respondent data
+        - paragraph [ref=e79]:
+          - text: Typical file ≤50 MB · Chrome, Edge, or Safari desktop · Press
+          - generic [ref=e80]: "?"
+          - text: for shortcuts
+      - complementary [ref=e81]:
+        - paragraph [ref=e82]: What you'll export
+        - figure "Example export preview" [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - generic [ref=e86]: Editable PowerPoint
+              - generic [ref=e87]: Atlas chilled-coffee · Wave 4
+            - paragraph [ref=e88]: Beacon overtook Meridian on consideration for the first time in four waves
+            - generic [ref=e89]:
+              - paragraph [ref=e90]: Brand preference × segment
+              - table [ref=e91]:
+                - rowgroup [ref=e92]:
+                  - row "Core Growth Value" [ref=e93]:
+                    - columnheader [ref=e94]
+                    - columnheader "Core" [ref=e95]
+                    - columnheader "Growth" [ref=e96]
+                    - columnheader "Value" [ref=e97]
+                - rowgroup [ref=e98]:
+                  - row "Atlas 19% 28% 17%" [ref=e99]:
+                    - rowheader "Atlas" [ref=e100]
+                    - cell "19%" [ref=e101]:
+                      - generic [ref=e102]: 19%
+                    - cell "28%" [ref=e103]:
+                      - generic [ref=e104]:
+                        - text: 28%
+                        - generic [ref=e105]: ▲
+                    - cell "17%" [ref=e106]:
+                      - generic [ref=e107]: 17%
+                  - row "Beacon 24% 22% 21%" [ref=e108]:
+                    - rowheader "Beacon" [ref=e109]
+                    - cell "24%" [ref=e110]:
+                      - generic [ref=e111]: 24%
+                    - cell "22%" [ref=e112]:
+                      - generic [ref=e113]: 22%
+                    - cell "21%" [ref=e114]:
+                      - generic [ref=e115]: 21%
+                  - row "Meridian 25% 20% 23%" [ref=e116]:
+                    - rowheader "Meridian" [ref=e117]
+                    - cell "25%" [ref=e118]:
+                      - generic [ref=e119]: 25%
+                    - cell "20%" [ref=e120]:
+                      - generic [ref=e121]: 20%
+                    - cell "23%" [ref=e122]:
+                      - generic [ref=e123]: 23%
+            - generic [ref=e124]: Column % · α=0.05 · n=1,200 weighted
+```

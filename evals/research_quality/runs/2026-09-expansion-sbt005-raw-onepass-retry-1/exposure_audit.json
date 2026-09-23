@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "scope": "Completed recorded actions inspected: analysis stages no tools; raw commands calculate with scientific libraries and supplied respondents.csv/codebook.json only. No hidden/reference or external reads observed. This is trace evidence, not an OS-isolation claim.",
+  "command_count": 3,
+  "command_sha256": [
+    "21f97c5ebbb79539dbe55c302ace42730fce513214cc7035953825dfa3621fca",
+    "1f69d2cd38297576c0a9885d41e11154d597356273bf60bfc3cfdb8a23ac050b",
+    "65ca25d6992a8b872dd094d92eb2362a20fe22f15d701440d55bf527d7c8f71f"
+  ],
+  "item_types": [
+    "agent_message",
+    "command_execution"
+  ],
+  "model_completed": true
+}

@@ -1,0 +1,166 @@
+{
+  "project_id": "SBT-004",
+  "version": "1.0.0",
+  "findings": [
+    {
+      "finding_id": "M1",
+      "proposition": "Budget and effort needs overlap materially; household support is a bundle of tasks rather than an exclusive set of personas.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-need_budget",
+        "E-need_effort",
+        "E-need_waste",
+        "E-need_overlap",
+        "E-needs"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "M1",
+      "qualification": "Must mention overlap and that flags do not partition households; summing need flags to 100% is not acceptable."
+    },
+    {
+      "finding_id": "M2",
+      "proposition": "Effort-relief households report more unplanned top-up days and fewer ahead-planned meal days; households with children are a relevant, but not synonymous, context.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-NEED_EFFORT_TOPUPS",
+        "E-NEED_EFFORT_PLANNING",
+        "E-CHILDREN_TOPUPS",
+        "E-CHILDREN_PLANNING"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "M2",
+      "qualification": "Use external behaviour rather than A5/A6; avoid implying every household with children belongs to the effort state."
+    },
+    {
+      "finding_id": "M3",
+      "proposition": "Budget pressure is associated with reported overspending and a stronger request for budget support; this is not proof that any proposed tool will reduce spending.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-NEED_BUDGET_OVERSPEND",
+        "E-support_budget_by_need_budget"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "M3",
+      "qualification": "B4 is a binary self-reported experience, not expenditure amount or income. Support selection is external to the need definition."
+    },
+    {
+      "finding_id": "M4",
+      "proposition": "Attitudes to digital meal suggestions are divided into sizeable favourable and unfavourable poles, not neutral consensus; pilot a format rather than assume universal digital uptake.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-att_digital_help_5"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "M4",
+      "qualification": "FULL credit requires the opposing poles to appear in the actual selected finding or narrative. Computing a distribution in an unused table, reporting only the mean, or saying some people disagree is insufficient. Describe the split; exact word 'polarisation' is not required."
+    },
+    {
+      "finding_id": "S1",
+      "proposition": "The waste-help need is associated with more reported discard days and demand for use-up support, suggesting a distinct task alongside cost and effort.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-NEED_WASTE_DISCARD",
+        "E-support_use_up_by_need_waste"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "S1",
+      "qualification": "Cross-sectional self-report; synthetic target profile only."
+    },
+    {
+      "finding_id": "S2",
+      "proposition": "Correctly oriented planning attitudes are positively associated with ahead-planned meal days; reversal matters, but association is not intervention effectiveness.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-planning_index_association"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "S2",
+      "qualification": "Cross-sectional self-report; synthetic target profile only."
+    },
+    {
+      "finding_id": "S3",
+      "proposition": "Current digital-tool users tend to report good satisfaction, but they are a selected minority; shared-list use is a separate conditional behaviour, not all-household penetration.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-current_tool_use",
+        "E-tool_satisfaction_5",
+        "E-shared_list_use_28d"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "S3",
+      "qualification": "Cross-sectional self-report; synthetic target profile only."
+    },
+    {
+      "finding_id": "C1",
+      "proposition": "Need derivation and reverse keying must exclude 97/98; an unknown flag is not No. Need-state versus defining-item differences provide no independent validation.",
+      "tier": "context",
+      "evidence_ids": [
+        "E-need_budget",
+        "E-need_effort",
+        "E-need_waste"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "C1",
+      "qualification": "Cross-sectional self-report; synthetic target profile only."
+    },
+    {
+      "finding_id": "C2",
+      "proposition": "Use valid-case weighted research bases, eligible-respondent MR denominators and current-user routes, reporting unweighted N, weighted N and Kish ESS.",
+      "tier": "context",
+      "evidence_ids": [
+        "E-needs",
+        "E-barriers",
+        "E-current_tool_use"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "C2",
+      "qualification": "Cross-sectional self-report; synthetic target profile only."
+    },
+    {
+      "finding_id": "R1",
+      "proposition": "An attractive exclusive budget/time/waste segmentation, or a claim validated only by the items used to define that state, is not supported.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-need_overlap"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "R1",
+      "qualification": "Priority-assign overlapping flags to named personas or treat self-definition as external evidence"
+    },
+    {
+      "finding_id": "R2",
+      "proposition": "An average-looking digital-attitude mean or good satisfaction among current users does not justify a universal digital-first rollout or a conversion forecast.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-att_digital_help_5",
+        "E-tool_satisfaction_5"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "R2",
+      "qualification": "Erase the two poles, generalise routed satisfaction, or infer observed adoption from stated interest"
+    },
+    {
+      "finding_id": "R3",
+      "proposition": "The apparently attractive satisfaction of older paid-tool users is a suppressed tiny cell, not evidence of the winning target audience.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-older_paid_users"
+      ],
+      "claim_strength": "descriptive_association_or_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "R3",
+      "qualification": "Publish/rank its rate despite valid n<40 or use it as the launch target"
+    }
+  ]
+}

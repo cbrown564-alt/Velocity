@@ -1,0 +1,106 @@
+{
+  "run_id": "2026-09-expansion-sbt005-raw-onepass-retry-1",
+  "study_id": "SBT-005",
+  "study_version": "1.0.0",
+  "arm": "E4_RAW_DATA",
+  "input_surface": "raw",
+  "workflow": "one_pass",
+  "model": {
+    "provider": "codex_chatgpt",
+    "model_id": "gpt-6-astra"
+  },
+  "replicate": 1,
+  "input_artifacts": [
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-005/model_inputs/study_materials.json",
+      "sha256": "88d1226bb8d2bb7f8499b173adf4d3a6d7c10d5eb9955f41509c96637ffebbd5",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-005/model_inputs/questionnaire.md",
+      "sha256": "e0fc3ccb65b6dc1c2489dfc3a32faf7351b72a99ded933c0f49a5390c596c39a",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-005/model_inputs/codebook.json",
+      "sha256": "172d0943ff56fc79213ddaede97441abf533906f5a7570016e1ea0cdc1ab32dc",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-005/model_inputs/respondents.csv",
+      "sha256": "5cc0283b7175366381162dea853bb107f72daee2ccbf7f24523c73b65b2af83c",
+      "exposure_class": "raw_data"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-raw-onepass-retry-1/01-researcher/events.jsonl",
+      "sha256": "75da79046965f5910e83ec66a30a2c4af7f29723f47c9be8e1fabaeb99e1dbed",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-raw-onepass-retry-1/01-researcher/output.json",
+      "sha256": "380c61f1626e99ce2c499c7fea911db617e69620aea978d9729b7586e8b938ea",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-raw-onepass-retry-1/01-researcher/prompt.txt",
+      "sha256": "7b3318bfe8e490b2ce02ed494eff5c87772829eba62192c697f8aea70a29c8f2",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-raw-onepass-retry-1/01-researcher/response.txt",
+      "sha256": "9a4213794792d48b29be0007b252c612bd51de48ca884be42601c8c8f0684d08",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-raw-onepass-retry-1/01-researcher/stderr.txt",
+      "sha256": "92979983e2e948471a98a77f724313c0cae78acad0686cb87bf8bbbd46148ea3",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-raw-onepass-retry-1/output.json",
+      "sha256": "380c61f1626e99ce2c499c7fea911db617e69620aea978d9729b7586e8b938ea",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-raw-onepass-retry-1/technical_attempt.json",
+      "sha256": "740da8edfa04d335d09e56f8ba8ea444fc8286bc44682b990f29f0c4ed0778b4",
+      "artifact_type": "json"
+    }
+  ],
+  "stage_runs": [
+    {
+      "stage": "researcher",
+      "elapsed_seconds": 333.7202114580432,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 185847,
+          "cached_input_tokens": 157952,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 10535,
+          "reasoning_output_tokens": 97
+        }
+      ],
+      "prompt_sha256": "7b3318bfe8e490b2ce02ed494eff5c87772829eba62192c697f8aea70a29c8f2"
+    }
+  ],
+  "status": "complete",
+  "created_at": "2026-09-22T05:47:55.755742+00:00",
+  "freeze_sha256": "ca718f1ea7a5c66327d05703986bfb04a846c26b021cff6fa604f1b085250dcc",
+  "technical_replacement_for": "2026-09-expansion-sbt005-raw-onepass-1",
+  "replacement_reason": "Original attempt reached the prospectively declared 360-second limit; one technical replacement permitted by the frozen experiment plan. Same prompt, files, model, effort and time limit.",
+  "started_at": "2026-09-22T05:47:55.853976+00:00",
+  "runner_sha256": "0dd829c87d986d4b299a53c880dec91c062df3fde5425cf006305389fac755e7",
+  "cli_version": "codex-cli 0.154.0-alpha.6.2",
+  "reasoning_effort": "low",
+  "timeout_per_stage_seconds": 360,
+  "cost": {
+    "billing": "existing ChatGPT Codex access",
+    "incremental_usd": null,
+    "reason": "CLI reports token usage, not monetary cost"
+  },
+  "exposure_audit": "PASS; recorded-action review in exposure_audit.json",
+  "completed_at": "2026-09-22T05:53:29.636947+00:00"
+}

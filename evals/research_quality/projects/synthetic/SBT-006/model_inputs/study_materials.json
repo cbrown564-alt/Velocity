@@ -1,0 +1,390 @@
+{
+  "study_id": "SBT-006",
+  "version": "SBT-006-author-candidate-1.0.0",
+  "title": "PantryPace: choosing prices for a future behavioural validation test",
+  "decision_question": "Which of GBP 4, 7, 10 and 13 monthly merits further real-behaviour testing, considering stated interest, clearly labelled price-times-intent proxies, response uncertainty and assumed variable costs?",
+  "brief": "Compare monadic price assignments on full stated-intent distributions, do not declare an actual market optimum. Deliver a concise evidence-traceable research narrative, not a presentation.",
+  "service": {
+    "name": "PantryPace",
+    "type": "Fictional optional household digital meal-planning subscription",
+    "features": [
+      "Editable weekly meal suggestions",
+      "Shared grocery list",
+      "Use-up reminders"
+    ],
+    "excludes": [
+      "Groceries",
+      "Deliveries",
+      "Discounts",
+      "Human advice"
+    ],
+    "billing": "Per household per month, cancellable before next billing month; no trial or annual commitment."
+  },
+  "population": "Baseline-complete adult main/shared grocery or meal planners in a hypothetical UK-address household frame. Target is the specified synthetic frame, NOT all UK households or actual customers.",
+  "design": {
+    "type": "Randomised monadic pricing",
+    "n_assigned": 3000,
+    "seed": 2026092206,
+    "one_household_one_price": true,
+    "price_levels_gbp": [
+      4,
+      7,
+      10,
+      13
+    ],
+    "allocation": "A random permutation of 750 labels of each price arm, independent of all baseline attributes and fixed baseline weights.",
+    "timing": "Baseline -> random assignment and price display -> possible module exit -> item responses.",
+    "no_reassignment_or_replenishment": true
+  },
+  "sampling": {
+    "kind": "Unequal-probability synthetic frame sample across six baseline design cells",
+    "joint_cells": [
+      {
+        "code": 1,
+        "children": 1,
+        "budget": 1,
+        "sample_share": 0.22,
+        "target_share": 0.16
+      },
+      {
+        "code": 2,
+        "children": 1,
+        "budget": 2,
+        "sample_share": 0.22,
+        "target_share": 0.18
+      },
+      {
+        "code": 3,
+        "children": 1,
+        "budget": 3,
+        "sample_share": 0.08,
+        "target_share": 0.06
+      },
+      {
+        "code": 4,
+        "children": 0,
+        "budget": 1,
+        "sample_share": 0.12,
+        "target_share": 0.18
+      },
+      {
+        "code": 5,
+        "children": 0,
+        "budget": 2,
+        "sample_share": 0.24,
+        "target_share": 0.3
+      },
+      {
+        "code": 6,
+        "children": 0,
+        "budget": 3,
+        "sample_share": 0.12,
+        "target_share": 0.12
+      }
+    ],
+    "joint_shares_status": "EXPLICIT SCENARIO ASSUMPTIONS, not external UK population statistics.",
+    "within_cell": "One independent simulated household per draw; no respondent clustering.",
+    "realised_balance_required": "Report unweighted assigned N, sum(wt_design), Kish ESS and weighted baseline profile distributions by arm. Exact arm n does not imply identical weighted or covariate composition."
+  },
+  "weights": {
+    "variable": "wt_design",
+    "formula": "raw_i = target_share[h_i]/sample_share[h_i]; wt_design_i = raw_i * 3000/sum(raw_all_baseline)",
+    "fixed_at": "Baseline, before price allocation",
+    "use": "Use the same stored positive weight for assigned, valid-case and routed analyses. Never reweight by intent or price arm.",
+    "limitations": "Not an attrition weight, not a nonresponse correction and not proof of external representativeness. Weighted N is a weight sum, not effective or literal population size."
+  },
+  "coding_and_routing": {
+    "authoritative": "codebook.json and questionnaire.md",
+    "nonvalid_numeric_codes": {
+      "97": "Don't know / unable to judge",
+      "98": "Prefer not to answer",
+      "99": "Item not answered after entering module"
+    },
+    "structural_blank": "Empty CSV field outside route; all P fields blank for postprice_responded=0.",
+    "rule": "Never compare 97/98/99 numerically to intent>=4. First restrict to the enumerated valid set. Missing numeric values and structural blanks are counted separately.",
+    "intent_route": "postprice_responded=1",
+    "certainty_route": "Valid intent 1-5",
+    "anticipated_use_route": "Valid intent 3/4/5",
+    "reason_route": "Valid intent 1/2/3",
+    "baseline_subgroup_unknown": "time_pressed_family=97 is unknown, not 0."
+  },
+  "estimands": {
+    "intent_definition": "Positive stated intent Y=1 iff intent_5 in {4,5}; Y=0 iff intent_5 in {1,2,3}. Neither outcome represents an actual purchase.",
+    "valid_case_intent": "q_v(p) = sum_i(w_i * I[intent_i in {4,5}]) / sum_i(w_i) over assigned_price_gbp=p AND intent_i in {1,2,3,4,5}.",
+    "full_distributions": "Within each arm, weighted valid-case shares of EACH category 1,2,3,4,5 (sum=1), plus top-two and bottom-two. DK/refusal/skipped/module-exit shares use all assigned as denominator and remain separate.",
+    "all_assigned_sensitivity": "q_0(p) = weighted count of recorded intent in {4,5} / sum weights of ALL households assigned p. Every nonvalid or structurally absent intent contributes 0 only to this explicitly conservative scoring sensitivity, NOT by relabelling intent or its five-category distribution.",
+    "logical_completion_bounds": "[q_0(p), q_0(p)+weighted_nonvalid_share(p)] brackets possible all-assigned positive-intent means if missing responses were completed as binary outcomes. It is a missing-data range, not a confidence interval and not a bound on actual demand.",
+    "price_contrast": "For ordered pair a<b report q(a)-q(b); positive means the cheaper assignment has more recorded/stated interest. Analyse participants by assigned price, never by perceived affordability or intent.",
+    "gross_proxy": "G_v(p)=p*q_v(p), G_0(p)=p*q_0(p), GBP per hypothetical household-month on that denominator. This is a gross PRICE-TIMES-STATED-INTEREST index, sometimes called a gross-revenue proxy; it is not measured revenue or a forecast.",
+    "contribution_proxy": "C_v(p;c)=(p-c)*q_v(p); C_0(p;c)=(p-c)*q_0(p). c is ASSUMED variable GBP cost per proxy-positive subscriber-month, not a cost per research respondent. These are hypothetical contribution proxies, not profits.",
+    "proxy_assumption": "The mechanical index treats each positive stated response as one subscriber-month and all other scored responses as zero, without conversion calibration. Do NOT infer that this mapping is true.",
+    "subgroup": "At GBP 7 and GBP 10, q_v(time_pressed_family=1,p)-q_v(time_pressed_family=0,p), using valid subgroup and intent. Observational audience contrast at the same assigned price, not an effect of having children or being time-pressed.",
+    "cost_crossing": "Optional descriptive crossing of the two mid-price C lines: c_star=(7*q7-10*q10)/(q7-q10), when denominator nonzero. It is unstable when q7~q10 and has no standalone causal/optimal-price interpretation. Show the three predeclared scenarios first.",
+    "routed": "P08/P10/P11 distributions use route-eligible AND item-valid respondents, report both eligible and valid bases. In particular P10 is a selected hypothetical-use question, not behavioural corroboration of conversion.",
+    "associations": "Diagnostic correlations with intent are fixed-weight valid-pair Pearson DESCRIPTIVE summaries of numeric ordinal codes; preserve ordinal distributions, no causal 'drivers', and no unregistered significance scan."
+  },
+  "financial_scenario_assumptions": {
+    "currency": "GBP",
+    "cost_unit": "Assumed variable cost per proxy-positive subscriber-month",
+    "base_case": 2.0,
+    "sensitivity_costs": [
+      0.5,
+      2.0,
+      3.0
+    ],
+    "source": "Deliberately hypothetical analyst scenarios for this exercise; NOT actual business costs, audited estimates or observed economics.",
+    "constant_across_prices": true,
+    "excludes": [
+      "Fixed development and content costs",
+      "Acquisition/marketing",
+      "Taxes and VAT treatment",
+      "Refunds",
+      "Discounts",
+      "Payment failures",
+      "Retention and churn",
+      "Conversion of stated interest to real paid take-up"
+    ],
+    "instruction": "Retain all scenarios even if one changes the point leader. Do not select a scenario after inspecting results, and do not call C profit or calculate ROI."
+  },
+  "base_reporting": {
+    "every_estimate": [
+      "unweighted eligible N",
+      "weighted eligible N=sum(w)",
+      "eligible Kish ESS",
+      "unweighted valid N",
+      "weighted valid N=sum(w_valid)",
+      "valid Kish ESS"
+    ],
+    "kish": "ESS=(sum w)^2/sum(w^2)",
+    "unknowns": "List counts of codes 97,98,99 and structural blanks separately.",
+    "assignment": "Audit covariate composition and weights before conditioning on module response or valid intent."
+  },
+  "inference": {
+    "alpha": 0.05,
+    "direction": "All named tests two-sided.",
+    "working_variance": "For a weighted mean mu on n independent analysis rows with fixed weights, V(mu)=[n/(n-1)] * sum(w_i^2*(y_i-mu)^2)/(sum(w_i)^2). Use n>=2, otherwise variance unavailable. The rows are intent-valid for q_v and all assigned for q_0. This estimates a working independent-row ratio variance; not exact randomisation inference or a general complex-survey variance.",
+    "proxy_variance": "For a fixed coefficient k (p or p-c), V(k*mu)=k^2*V(mu). For different disjoint price arms, V(k_a*mu_a-k_b*mu_b)=k_a^2*V(mu_a)+k_b^2*V(mu_b). Within an arm, scenarios share the SAME q; never treat them as independent samples.",
+    "interval": "Pointwise normal 95% CI=estimate +/- 1.959963984540054*SE; p=erfc(abs(estimate/SE)/sqrt(2)). Label pointwise CIs as unadjusted, NOT simultaneous. No test when invalid/suppressed. Do not force bounded means/proxies into a Wald CI support by quietly clipping.",
+    "adjustment": "Holm step-down within each fixed family; sort raw p ascending, adjusted p at rank j is min(1, max_{k<=j}((m-k+1)*p_(k))). Unavailable/suppressed family members retain slots with p=1 for adjustment only and no reported test.",
+    "families": [
+      {
+        "id": "P1_VALID_INTENT",
+        "members": [
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            7,
+            10
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            10,
+            13
+          ]
+        ],
+        "m": 6,
+        "statistic": "q_v(a)-q_v(b)"
+      },
+      {
+        "id": "P2_ALL_ASSIGNED_INTENT",
+        "members": [
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            7,
+            10
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            10,
+            13
+          ]
+        ],
+        "m": 6,
+        "statistic": "q_0(a)-q_0(b)"
+      },
+      {
+        "id": "P3_GROSS_PROXY",
+        "members": [
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            7,
+            10
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            10,
+            13
+          ]
+        ],
+        "m": 6,
+        "statistic": "a*q_v(a)-b*q_v(b)"
+      },
+      {
+        "id": "P4_CONTRIBUTION_SCENARIOS",
+        "members": [
+          {
+            "a": 4,
+            "b": 7,
+            "cost": 0.5
+          },
+          {
+            "a": 4,
+            "b": 10,
+            "cost": 0.5
+          },
+          {
+            "a": 4,
+            "b": 13,
+            "cost": 0.5
+          },
+          {
+            "a": 7,
+            "b": 10,
+            "cost": 0.5
+          },
+          {
+            "a": 7,
+            "b": 13,
+            "cost": 0.5
+          },
+          {
+            "a": 10,
+            "b": 13,
+            "cost": 0.5
+          },
+          {
+            "a": 4,
+            "b": 7,
+            "cost": 2.0
+          },
+          {
+            "a": 4,
+            "b": 10,
+            "cost": 2.0
+          },
+          {
+            "a": 4,
+            "b": 13,
+            "cost": 2.0
+          },
+          {
+            "a": 7,
+            "b": 10,
+            "cost": 2.0
+          },
+          {
+            "a": 7,
+            "b": 13,
+            "cost": 2.0
+          },
+          {
+            "a": 10,
+            "b": 13,
+            "cost": 2.0
+          },
+          {
+            "a": 4,
+            "b": 7,
+            "cost": 3.0
+          },
+          {
+            "a": 4,
+            "b": 10,
+            "cost": 3.0
+          },
+          {
+            "a": 4,
+            "b": 13,
+            "cost": 3.0
+          },
+          {
+            "a": 7,
+            "b": 10,
+            "cost": 3.0
+          },
+          {
+            "a": 7,
+            "b": 13,
+            "cost": 3.0
+          },
+          {
+            "a": 10,
+            "b": 13,
+            "cost": 3.0
+          }
+        ],
+        "m": 18,
+        "statistic": "(a-c)*q_v(a)-(b-c)*q_v(b)",
+        "note": "One joint 18-test family, not a newly chosen family for the apparent winning scenario."
+      },
+      {
+        "id": "P5_BASELINE_AUDIENCE",
+        "members": [
+          7,
+          10
+        ],
+        "m": 2,
+        "statistic": "q_v(group=1,p)-q_v(group=0,p)",
+        "interpretation": "Descriptive audience association, not attribute causality."
+      }
+    ],
+    "all_assigned_financial": "Report point estimates and pointwise intervals as sensitivity; no extra confirmatory tests beyond P2. Other demographic and diagnostic comparisons are descriptive/exploratory.",
+    "winner_policy": "A point leader is not a certain optimum. Report contrasts, uncertainty, multiplicity, other candidates and sensitivity. Nonsignificance is not equivalence. Do not pick just one of the four prices after inspecting unadjusted tests."
+  },
+  "small_base_policy": {
+    "suppress_below_n": 40,
+    "warn_below_n": 75,
+    "ess_warning_below": 40,
+    "applies_to": "Unweighted valid denominator of EVERY component cell, not just pooled group total. Suppress rates, proxies, associations and tests if any required cell is below 40; show n and a suppression label. Warn for 40-74; additional precision warning for ESS<40.",
+    "premium_niche": "Exploratory age_band in {3,4} AND budget_band=3 AND current_planning_method=4. Pooling prices cannot rescue price-specific evidence or identify its best price."
+  },
+  "limits": [
+    "Randomised assignment supports price effects on REPORTED responses within this synthetic design when outcome observation is adequate; it does not identify actual buying, demand, demand elasticity, uptake, revenue, sales or profit.",
+    "Valid-case contrasts condition on post-randomisation response and are not automatically full-sample causal effects. Report module and item missingness by assignment. q_0 is the assignment contrast on recorded-positive-response yield, combining response and stated intent, not recovered missing preferences.",
+    "Fixed baseline weights are not nonresponse adjustments. Do not assert a whole-population intent or economic effect from incomplete item observation.",
+    "Household attributes are not randomised; heterogeneous subgroup levels and diagnostic correlations are not causal effects of those attributes or mechanisms.",
+    "No actual transaction, observed uptake, repeat use, retention or business cost data were collected. Do not extrapolate an elasticity curve, interpolate an optimum, or calculate campaign ROI."
+  ],
+  "model_output": "Present the substantive price trade-offs and qualifications with evidence and full distribution context. No slides required. No hidden sources, validation targets or anticipated reference propositions are part of this brief."
+}

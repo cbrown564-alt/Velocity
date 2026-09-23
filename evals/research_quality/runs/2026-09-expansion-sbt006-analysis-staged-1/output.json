@@ -1,0 +1,750 @@
+{
+  "study_id": "SBT-006",
+  "analysis_claims": [
+    {
+      "analysis_id": "price_intent_audit",
+      "values": {
+        "price_order_gbp": [
+          4,
+          7,
+          10,
+          13
+        ],
+        "assigned_n": [
+          750,
+          750,
+          750,
+          750
+        ],
+        "assigned_weight_sum": [
+          747.563,
+          755.521,
+          748.424,
+          748.492
+        ],
+        "assigned_kish_ess": [
+          698.169,
+          699.088,
+          698.452,
+          698.326
+        ],
+        "module_eligible_n": [
+          733,
+          720,
+          709,
+          719
+        ],
+        "module_eligible_weight_sum": [
+          733.257,
+          725.911,
+          711.922,
+          718.679
+        ],
+        "module_eligible_kish_ess": [
+          682.455,
+          671.451,
+          660.574,
+          669.502
+        ],
+        "intent_valid_n": [
+          704,
+          682,
+          655,
+          633
+        ],
+        "intent_valid_weight_sum": [
+          705.846,
+          687.595,
+          655.968,
+          632.752
+        ],
+        "intent_valid_kish_ess": [
+          655.409,
+          635.868,
+          610.938,
+          590.065
+        ],
+        "intent_category_order": [
+          "Definitely would not subscribe",
+          "Probably would not subscribe",
+          "Might or might not subscribe",
+          "Probably would subscribe",
+          "Definitely would subscribe"
+        ],
+        "valid_intent_distribution_pct": {
+          "4": [
+            10.98,
+            10.44,
+            11.74,
+            23.96,
+            42.88
+          ],
+          "7": [
+            18.97,
+            17.1,
+            12.04,
+            26.88,
+            25.02
+          ],
+          "10": [
+            33.44,
+            19.48,
+            13.46,
+            17.25,
+            16.38
+          ],
+          "13": [
+            55.81,
+            18.22,
+            6.15,
+            12.73,
+            7.08
+          ]
+        },
+        "valid_top_two_pct": [
+          66.84,
+          51.9,
+          33.63,
+          19.82
+        ],
+        "valid_bottom_two_pct": [
+          21.42,
+          36.07,
+          52.91,
+          74.03
+        ],
+        "valid_top_two_pointwise_95ci_pct": [
+          [
+            63.17,
+            70.5
+          ],
+          [
+            48.0,
+            55.79
+          ],
+          [
+            29.94,
+            37.32
+          ],
+          [
+            16.73,
+            22.9
+          ]
+        ],
+        "missing_count_order": [
+          "DK_97",
+          "refusal_98",
+          "skipped_99",
+          "module_exit"
+        ],
+        "missing_counts": {
+          "4": [
+            19,
+            7,
+            3,
+            17
+          ],
+          "7": [
+            25,
+            9,
+            4,
+            30
+          ],
+          "10": [
+            45,
+            4,
+            5,
+            41
+          ],
+          "13": [
+            67,
+            8,
+            11,
+            31
+          ]
+        },
+        "weighted_nonvalid_pct_all_assigned": [
+          5.58,
+          8.99,
+          12.35,
+          15.46
+        ],
+        "weighted_module_exit_pct_all_assigned": [
+          1.91,
+          3.92,
+          4.88,
+          3.98
+        ],
+        "all_assigned_recorded_positive_pct": [
+          63.11,
+          47.23,
+          29.48,
+          16.75
+        ],
+        "all_assigned_pointwise_95ci_pct": [
+          [
+            59.49,
+            66.72
+          ],
+          [
+            43.54,
+            50.92
+          ],
+          [
+            26.16,
+            32.79
+          ],
+          [
+            14.11,
+            19.4
+          ]
+        ],
+        "logical_completion_ranges_pct": [
+          [
+            63.11,
+            68.69
+          ],
+          [
+            47.23,
+            56.22
+          ],
+          [
+            29.48,
+            41.83
+          ],
+          [
+            16.75,
+            32.22
+          ]
+        ],
+        "source_tables": [
+          "analysis_results.json#/tables/intent_by_price/values",
+          "analysis_results.json#/tables/intent_5/values/by_price",
+          "analysis_results.json#/tables/postprice_responded/values/by_price"
+        ]
+      },
+      "universe": "All assigned households for assignment and missingness; module entrants for item eligibility; intent codes 1\u20135 for valid-case distributions. All-assigned sensitivity scores nonvalid responses zero without relabelling their original codes.",
+      "weighting": "Stored wt_design, fixed at baseline without nonresponse adjustment. Rounded supplied-table summaries; confidence intervals are unadjusted and pointwise."
+    },
+    {
+      "analysis_id": "financial_scenario_audit",
+      "values": {
+        "price_order_gbp": [
+          4,
+          7,
+          10,
+          13
+        ],
+        "unit": "GBP per hypothetical household-month",
+        "base_analysis_id": "price_intent_audit",
+        "valid_case": {
+          "gross": [
+            2.673,
+            3.633,
+            3.363,
+            2.576
+          ],
+          "cost_0_5": [
+            2.339,
+            3.373,
+            3.195,
+            2.477
+          ],
+          "cost_2_0": [
+            1.337,
+            2.595,
+            2.69,
+            2.18
+          ],
+          "cost_3_0": [
+            0.668,
+            2.076,
+            2.354,
+            1.982
+          ]
+        },
+        "all_assigned": {
+          "gross": {
+            "estimates": [
+              2.524,
+              3.306,
+              2.948,
+              2.178
+            ],
+            "pointwise_95ci": [
+              [
+                2.38,
+                2.669
+              ],
+              [
+                3.048,
+                3.565
+              ],
+              [
+                2.616,
+                3.279
+              ],
+              [
+                1.834,
+                2.522
+              ]
+            ]
+          },
+          "cost_0_5": {
+            "estimates": [
+              2.209,
+              3.07,
+              2.8,
+              2.094
+            ],
+            "pointwise_95ci": [
+              [
+                2.082,
+                2.335
+              ],
+              [
+                2.83,
+                3.31
+              ],
+              [
+                2.485,
+                3.115
+              ],
+              [
+                1.763,
+                2.425
+              ]
+            ]
+          },
+          "cost_2_0": {
+            "estimates": [
+              1.262,
+              2.362,
+              2.358,
+              1.843
+            ],
+            "pointwise_95ci": [
+              [
+                1.19,
+                1.334
+              ],
+              [
+                2.177,
+                2.546
+              ],
+              [
+                2.092,
+                2.624
+              ],
+              [
+                1.552,
+                2.134
+              ]
+            ]
+          },
+          "cost_3_0": {
+            "estimates": [
+              0.631,
+              1.889,
+              2.063,
+              1.675
+            ],
+            "pointwise_95ci": [
+              [
+                0.595,
+                0.667
+              ],
+              [
+                1.741,
+                2.037
+              ],
+              [
+                1.831,
+                2.296
+              ],
+              [
+                1.411,
+                1.94
+              ]
+            ]
+          }
+        },
+        "source_tables": [
+          "analysis_results.json#/tables/gross_proxy/values",
+          "analysis_results.json#/tables/contribution_cost_0_5/values",
+          "analysis_results.json#/tables/contribution_cost_2_0/values",
+          "analysis_results.json#/tables/contribution_cost_3_0/values"
+        ]
+      },
+      "universe": "Intent-valid households for valid-case indices; all assigned households for conservative sensitivity. Gross=p*q; contribution=(p-c)*q. Cost c is hypothetical cost per proxy-positive subscriber-month.",
+      "weighting": "wt_design. Each cost scenario reuses the same intent estimate. All-assigned financial intervals are unadjusted pointwise intervals; no additional confirmatory financial tests."
+    },
+    {
+      "analysis_id": "baseline_balance_audit",
+      "values": {
+        "price_order_gbp": [
+          4,
+          7,
+          10,
+          13
+        ],
+        "assigned_base_analysis_id": "price_intent_audit",
+        "category_order": {
+          "age_band": [
+            "18\u201334",
+            "35\u201354",
+            "55\u201364",
+            "65+"
+          ],
+          "household_children": [
+            "No",
+            "Yes"
+          ],
+          "budget_band": [
+            "Often difficult",
+            "Managing with trade-offs",
+            "Generally comfortable"
+          ],
+          "current_planning_method": [
+            "Paper/memory/printed recipes",
+            "General notes/calendar/spreadsheet",
+            "Free dedicated app",
+            "Paid dedicated service",
+            "No regular method"
+          ],
+          "weekday_time_pressure_5": [
+            "Strongly disagree",
+            "Somewhat disagree",
+            "Neither",
+            "Somewhat agree",
+            "Strongly agree"
+          ],
+          "digital_confidence_5": [
+            "Not at all",
+            "Slightly",
+            "Moderately",
+            "Very",
+            "Extremely"
+          ],
+          "subscription_spend_band": [
+            "None",
+            "Under GBP 10",
+            "GBP 10\u201329",
+            "GBP 30+"
+          ]
+        },
+        "weighted_valid_profile_distributions_pct_by_price": {
+          "4": {
+            "age_band": [
+              30.71,
+              40.15,
+              17.36,
+              11.78
+            ],
+            "household_children": [
+              59.25,
+              40.75
+            ],
+            "budget_band": [
+              34.34,
+              48.35,
+              17.31
+            ],
+            "current_planning_method": [
+              34.65,
+              30.28,
+              16.9,
+              9.98,
+              8.19
+            ],
+            "weekday_time_pressure_5": [
+              6.88,
+              14.48,
+              18.81,
+              22.73,
+              37.11
+            ],
+            "digital_confidence_5": [
+              3.27,
+              10.54,
+              25.58,
+              34.33,
+              26.28
+            ],
+            "subscription_spend_band": [
+              11.94,
+              34.78,
+              35.06,
+              18.21
+            ]
+          },
+          "7": {
+            "age_band": [
+              27.87,
+              41.83,
+              17.03,
+              13.28
+            ],
+            "household_children": [
+              61.43,
+              38.57
+            ],
+            "budget_band": [
+              33.43,
+              48.12,
+              18.45
+            ],
+            "current_planning_method": [
+              34.18,
+              27.11,
+              18.44,
+              11.0,
+              9.27
+            ],
+            "weekday_time_pressure_5": [
+              8.09,
+              13.33,
+              18.65,
+              23.61,
+              36.32
+            ],
+            "digital_confidence_5": [
+              3.48,
+              12.24,
+              22.56,
+              35.47,
+              26.25
+            ],
+            "subscription_spend_band": [
+              15.96,
+              32.47,
+              33.81,
+              17.76
+            ]
+          },
+          "10": {
+            "age_band": [
+              31.12,
+              37.74,
+              17.77,
+              13.37
+            ],
+            "household_children": [
+              60.08,
+              39.92
+            ],
+            "budget_band": [
+              33.98,
+              48.5,
+              17.53
+            ],
+            "current_planning_method": [
+              35.77,
+              25.16,
+              18.13,
+              10.32,
+              10.62
+            ],
+            "weekday_time_pressure_5": [
+              6.09,
+              14.21,
+              18.31,
+              21.84,
+              39.55
+            ],
+            "digital_confidence_5": [
+              4.08,
+              13.01,
+              25.09,
+              30.38,
+              27.44
+            ],
+            "subscription_spend_band": [
+              13.28,
+              36.4,
+              32.21,
+              18.11
+            ]
+          },
+          "13": {
+            "age_band": [
+              30.71,
+              41.82,
+              15.51,
+              11.96
+            ],
+            "household_children": [
+              61.01,
+              38.99
+            ],
+            "budget_band": [
+              34.97,
+              45.07,
+              19.96
+            ],
+            "current_planning_method": [
+              31.67,
+              26.19,
+              20.3,
+              12.76,
+              9.07
+            ],
+            "weekday_time_pressure_5": [
+              6.07,
+              15.3,
+              19.24,
+              22.64,
+              36.75
+            ],
+            "digital_confidence_5": [
+              2.51,
+              11.11,
+              23.43,
+              36.0,
+              26.95
+            ],
+            "subscription_spend_band": [
+              13.33,
+              34.7,
+              35.16,
+              16.81
+            ]
+          }
+        },
+        "item_specific_bases_and_missing_counts_source": "analysis_results.json#/tables/assignment_balance/values"
+      },
+      "universe": "Baseline profiles by assigned price, before conditioning on post-price response. Each distribution excludes that baseline item's nonvalid responses; exact eligible and valid bases and missing counts are in the source table.",
+      "weighting": "wt_design. Equal allocation does not imply identical weighted composition. Nominal category codes are not interpreted as substantive means."
+    }
+  ],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Prioritise \u00a37 and \u00a310 for real-behaviour testing, without selecting a single winner. Their valid-case gross price-times-intent indices are \u00a33.633 and \u00a33.363, versus \u00a32.673 at \u00a34 and \u00a32.576 at \u00a313. Both mid-prices exceed both endpoints after Holm adjustment: \u00a34\u2212\u00a37=\u2212\u00a30.959 (adjusted p=7.47e-9), \u00a34\u2212\u00a310=\u2212\u00a30.690 (p=.00264), \u00a37\u2212\u00a313=\u00a31.056 (p=.0000970), and \u00a310\u2212\u00a313=\u00a30.787 (p=.0139). The \u00a37\u2212\u00a310 difference is \u00a30.270, with unadjusted 95% CI \u2212\u00a30.189 to \u00a30.728 and adjusted p=.498.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/gross_proxy/values/valid_case",
+        "analysis_results.json#/tables/P3_GROSS_PROXY/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Adjusted evidence supports the testing shortlist; superiority between \u00a37 and \u00a310 is unresolved.",
+      "qualification": "Valid n at \u00a34/\u00a37/\u00a310/\u00a313 is 704/682/655/633; assigned n=750 each. Weight sums, ESS and module bases are retained in price_intent_audit. Indices are GBP per hypothetical household-month, not revenue forecasts. Prioritisation is researcher judgment, not an identified market optimum. Nonsignificance does not establish equivalence.",
+      "topic_cluster": "price_test_priority"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Higher prices substantially reduce stated interest. Positive intent among valid respondents is 66.84%, 51.90%, 33.63% and 19.82% at \u00a34/\u00a37/\u00a310/\u00a313; negative intent is 21.42%, 36.07%, 52.91% and 74.03%. All six valid-case contrasts survive Holm adjustment. Adjacent cheaper-minus-dearer differences are 14.94 percentage points (unadjusted 95% CI 9.59\u201320.29; adjusted p=4.41e-8), 18.27 points (12.90\u201323.63; p=7.34e-11), and 13.81 points (9.00\u201318.62; p=3.56e-8).",
+      "evidence_refs": [
+        "analysis_results.json#/tables/intent_by_price/values",
+        "analysis_results.json#/tables/intent_5/values/by_price",
+        "analysis_results.json#/tables/P1_VALID_INTENT/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Multiplicity-adjusted differences in valid-case stated intent.",
+      "qualification": "Full five-category distributions and bases are retained in price_intent_audit. \u00a34 could serve as a high-interest benchmark, although its gross index is below both mid-prices. Valid-case comparisons condition on post-assignment observation and do not establish actual demand.",
+      "topic_cluster": "interest_price_tradeoff"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Cost assumptions change the numerical leader without establishing a superior mid-price. At costs of \u00a30.50/\u00a32/\u00a33 per proxy-positive subscriber-month, valid-case contribution indices for \u00a37 versus \u00a310 are \u00a33.373 versus \u00a33.195, \u00a32.595 versus \u00a32.690, and \u00a32.076 versus \u00a32.354. The \u00a37\u2212\u00a310 differences are \u00a30.178 (unadjusted 95% CI \u2212\u00a30.254 to \u00a30.611; Holm p=1.000), \u2212\u00a30.096 (\u2212\u00a30.449 to \u00a30.258; p=1.000), and \u2212\u00a30.278 (\u2212\u00a30.580 to \u00a30.023; p=.418).",
+      "evidence_refs": [
+        "analysis_results.json#/tables/contribution_cost_0_5/values/valid_case",
+        "analysis_results.json#/tables/contribution_cost_2_0/values/valid_case",
+        "analysis_results.json#/tables/contribution_cost_3_0/values/valid_case",
+        "analysis_results.json#/tables/P4_CONTRIBUTION_SCENARIOS/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Scenario-dependent numerical rankings; no adjusted evidence separating \u00a37 and \u00a310.",
+      "qualification": "One joint Holm family covers 18 tests. Both mid-prices exceed \u00a34 in every scenario. Neither significantly exceeds \u00a313 at costs \u00a32 or \u00a33: adjusted p for \u00a37/\u00a310 versus \u00a313 is .263/.208 at \u00a32 and 1.000/.418 at \u00a33. At \u00a30.50, \u00a37 exceeds \u00a313 (p=.00140), while \u00a310 does not (p=.0623). \u00a313 is lower priority, not conclusively inferior under every scenario. Costs are hypothetical, and contribution indices are not profits. All price estimates and common bases are retained in the audit claims.",
+      "topic_cluster": "cost_sensitivity"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Missing responses make financial rankings less secure. Weighted nonvalid intent is 5.58%, 8.99%, 12.35% and 15.46% at \u00a34/\u00a37/\u00a310/\u00a313. Scoring nonvalid responses zero gives recorded-positive rates of 63.11%, 47.23%, 29.48% and 16.75%; all six contrasts remain significant after Holm adjustment. At the \u00a32 cost assumption, the \u00a310 valid-case numerical lead reverses to a negligible \u00a37 lead: all-assigned contribution is \u00a32.362 versus \u00a32.358.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/intent_by_price/values",
+        "analysis_results.json#/tables/postprice_responded/values/by_price",
+        "analysis_results.json#/tables/P2_ALL_ASSIGNED_INTENT/values",
+        "analysis_results.json#/tables/contribution_cost_2_0/values/all_assigned"
+      ],
+      "importance": "primary",
+      "claim_strength": "Prespecified sensitivity preserves the recorded-interest gradient but exposes financial-ranking fragility.",
+      "qualification": "All-assigned n=750 per price. The \u00a37\u2212\u00a310 recorded-positive contrast is 17.76 percentage points (unadjusted 95% CI 12.79\u201322.72; Holm p=7.33e-12). At \u00a32 cost, contribution pointwise intervals are \u00a32.177\u2013\u00a32.546 at \u00a37 and \u00a32.092\u2013\u00a32.624 at \u00a310; no additional financial test is claimed. Logical completion ranges are 63.11\u201368.69%, 47.23\u201356.22%, 29.48\u201341.83% and 16.75\u201332.22%; these are missing-data ranges, not confidence intervals or actual-demand bounds. Fixed baseline weights do not recover missing preferences.",
+      "topic_cluster": "response_uncertainty"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Include the prespecified time-pressed-family audience in behavioural testing. At \u00a37, households with children under 18 and weekday meal-pressure answers 4 or 5 report 62.74% positive intent, versus 47.10% among other classified households: +15.64 percentage points (unadjusted 95% CI 8.01\u201323.27; Holm p=.0000584). At \u00a310, rates are 46.23% versus 28.26%: +17.97 points (10.36\u201325.58; p=.00000735).",
+      "evidence_refs": [
+        "analysis_results.json#/tables/audience_intent/values/groups",
+        "analysis_results.json#/tables/audience_intent/values/contrasts",
+        "analysis_results.json#/tables/time_pressed_family/values"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Prespecified, multiplicity-adjusted audience associations at both mid-prices.",
+      "qualification": "Audience/other assigned eligible n at \u00a37=299/444, weight sums=229.871/520.163, ESS=298.067/426.148; valid n=267/409, weight sums=205.295/477.540, ESS=266.167/392.231. At \u00a310, assigned eligible n=302/440, weight sums=231.367/510.686, ESS=301.064/421.269; valid n=257/390, weight sums=197.291/452.306, ESS=256.210/373.791. Module bases and separate missing counts are in the group table. Unknown audience status is excluded. Attributes were not randomised; these comparisons establish neither attribute causality nor different price sensitivity between audiences.",
+      "topic_cluster": "audience_priority"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Investigate price and adequate free alternatives in follow-up interviews. Among respondents with intent codes 1\u20133 who answered the reason question, monthly price is the main reason for 26.84% at \u00a37 and 38.71% at \u00a310; adequate free options account for 23.05% and 16.88%.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/reason_not_commit/values/by_price/7",
+        "analysis_results.json#/tables/reason_not_commit/values/by_price/10"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive diagnostic evidence supporting interview topics.",
+      "qualification": "At \u00a37, route-eligible n=314, weight sum=330.761, ESS=291.666; valid n=305, weight sum=320.060, ESS=283.461; DK/refusal/skipped counts=7/0/2; outside-route n=436. At \u00a310, eligible n=421, weight sum=435.370, ESS=392.326; valid n=408, weight sum=422.288, ESS=380.314; missing counts=11/0/2; outside-route n=329. These selected, item-valid respondents differ across arms. No significance test was prespecified; results do not establish all-household barrier prevalence or explain the price contrast causally.",
+      "topic_cluster": "followup_questions"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": [
+          "F1"
+        ],
+        "headline_intent": "Advance \u00a37 and \u00a310 to real-behaviour testing; keep the choice between them open.",
+        "analytical_relationship": "Lead with the testing priority supported by adjusted gross-index comparisons, distinguishing a shortlist from a launch-price recommendation."
+      },
+      {
+        "order": 2,
+        "finding_refs": [
+          "F2",
+          "F1"
+        ],
+        "headline_intent": "The shortlist balances stated interest against the price per hypothetical subscriber.",
+        "analytical_relationship": "Explain why \u00a34's stronger stated interest does not translate into the highest gross index, while preserving the full intent distribution and uncertainty."
+      },
+      {
+        "order": 3,
+        "finding_refs": [
+          "F3",
+          "F4"
+        ],
+        "headline_intent": "Costs and missing responses prevent a defensible single-price winner.",
+        "analytical_relationship": "Qualify the shortlist using all three cost scenarios and the all-assigned sensitivity, including unresolved comparisons with \u00a313 under higher assumed costs."
+      },
+      {
+        "order": 4,
+        "finding_refs": [
+          "F5",
+          "F6"
+        ],
+        "headline_intent": "Include time-pressed families and investigate reasons for hesitation.",
+        "analytical_relationship": "Translate audience associations and routed diagnostic responses into testing and interview priorities without asserting causal mechanisms or observed conversion."
+      }
+    ]
+  },
+  "method_notes": [
+    "Only the four supplied study files reproduced in the prompt were used. No tools, external sources or respondent-level data were accessed. Analysis claims are rounded summaries of supplied tables, not new raw-data analyses.",
+    "The fictional study randomly assigned 3,000 baseline-complete household meal planners to one monthly price each, with 750 per arm. Only price varied. Results concern the specified synthetic household frame, not all UK households or actual customers. No purchase, use or retention outcome supports a launch-price conclusion.",
+    "Baseline composition before conditioning on post-price response is retained in baseline_balance_audit. Exact item-specific eligible and valid bases and missing counts are at analysis_results.json#/tables/assignment_balance/values. Equal allocation does not establish identical composition. Weight sums are neither population counts nor effective sample sizes.",
+    "Positive intent means exactly codes 4 or 5; valid intent means codes 1\u20135. Full distributions are retained. DK, refusal, skipped items and module exits remain distinct. Separate weighted DK/refusal/skipped shares are unavailable in the supplied tables and cannot be recovered from unweighted counts; weighted total-nonvalid and module-exit shares are reported.",
+    "Inference follows the declared fixed-weight independent-row ratio variance, two-sided alpha=.05 and Holm families P1=6, P2=6, P3=6, P4=18 and P5=2. All quoted 95% intervals are unadjusted pointwise normal intervals. Significance decisions use adjusted p-values, not interval overlap; nonsignificance is not equivalence.",
+    "Random assignment supports interpretation by assigned price within the synthetic design, but valid-case analyses condition on post-randomisation observation. All-assigned recorded-positive yield combines response and intent. Fixed baseline weights encode assumed target shares and provide neither nonresponse correction nor external representativeness.",
+    "Gross=p*q and contribution=(p-c)*q mechanically treat each positive response as one subscriber-month without conversion calibration. Costs of \u00a30.50, \u00a32 and \u00a33 are hypothetical, constant across prices and charged per proxy-positive subscriber-month; \u00a32 is the declared base case. Indices exclude fixed development/content costs, acquisition, taxes/VAT, refunds, discounts, payment failures, retention and churn. They are not revenue forecasts or profits; no ROI, elasticity or interpolated optimum is estimated.",
+    "Certainty can accompany negative intent, and anticipated use is routed only to intent codes 3\u20135; neither provides behavioural corroboration. Reason-question percentages use route-eligible and item-valid bases.",
+    "The exploratory older, comfortable, paid-planning niche remains suppressed at every price: valid n=20/15/20/16 at \u00a34/\u00a37/\u00a310/\u00a313, below the n=40 threshold. No niche rates or comparisons are reported; pooling cannot rescue price-specific evidence. Source: analysis_results.json#/tables/premium_niche/values."
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "run_id": "2026-09-completeness-sbt004-general_review-1",
+  "study_id": "SBT-004",
+  "study_version": "1.0.0",
+  "arm": "COMPLETENESS_REVIEW",
+  "input_surface": "analysis",
+  "workflow": "general_review",
+  "model": {
+    "provider": "codex_chatgpt",
+    "model_id": "gpt-6-astra"
+  },
+  "reasoning_effort": "low",
+  "replicate": 1,
+  "input_artifacts": [
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/study_materials.json",
+      "sha256": "3887fa6ab6f4535dca6d4d84de979779bf7f0295fdbc6b59eb4a850f59b60af4",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/questionnaire.md",
+      "sha256": "06dfa43d9e907728a7b307acd600973ff0131280a3df86b9b6e08474e11adc7a",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/codebook.json",
+      "sha256": "c1e0edc250b036ddfb20c530872afcce104f8bcbbf5370a74e1ca0366cd04a52",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/analysis_results.json",
+      "sha256": "c0702ada090a19da18701c5dde3874ad51f5972a8ee4b0cb23dbc7296a3a6037",
+      "exposure_class": "analysis_surface"
+    }
+  ],
+  "prior_output": {
+    "run_id": "2026-09-expansion-sbt004-analysis-onepass-1",
+    "sha256": "e43bf9fac43ef45d9213bc23752c4839dafc5538c1c56616a8872dc95fffc6cd"
+  },
+  "protocol_sha256": "bd052854abe8edd851fda98bb5b9d30d3fc966cb9362f0b9e7f018e030437f89",
+  "protocol_commit": "e057c8390c86e164478a0e2c97858a67204cabc4",
+  "runner_sha256": "600a62775e95b632eb2449f6e0c47430a52d3eaac923a8e90643db3180339144",
+  "cli_version": "codex-cli 0.154.0-alpha.6.2",
+  "freeze_sha256": "6a2bd911ae13469aa137f959e23ef2856df7dd9e89721d6c3a7cf6d229eec045",
+  "status": "complete",
+  "stage_runs": [
+    {
+      "stage": "reviewer",
+      "elapsed_seconds": 210.32016333309002,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 48576,
+          "cached_input_tokens": 11520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 6837,
+          "reasoning_output_tokens": 132
+        }
+      ],
+      "prompt_sha256": "049e6406b5244f948b1068c8e18d950410e0e31f7820ccbacd0b5f2b929f4e83"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "evals/research_quality/runs/2026-09-completeness-sbt004-general_review-1/01-reviewer/command.json",
+      "sha256": "0d340121400f32b0606a021799b92a092a9d00683011514ebd7eafed0f298f87",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-completeness-sbt004-general_review-1/01-reviewer/events.jsonl",
+      "sha256": "70ca55009a995f07c790f0de554d963a2fcfa3eee21311174fcda6edc5a9f223",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-completeness-sbt004-general_review-1/01-reviewer/prompt.txt",
+      "sha256": "049e6406b5244f948b1068c8e18d950410e0e31f7820ccbacd0b5f2b929f4e83",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-completeness-sbt004-general_review-1/01-reviewer/response.txt",
+      "sha256": "92bc12dc74923d691b5853c4e6a20e1e3a778096f894ebb27792f806fe54344a",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-completeness-sbt004-general_review-1/01-reviewer/stderr.txt",
+      "sha256": "711dd9358e50af5c3ffb5c2c467557816b512444c5c675041f65cced8132fc7f",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-completeness-sbt004-general_review-1/exposure_audit.json",
+      "sha256": "112615af6a96b87e4c757bdd7ac19b4c1a8910442258954b57ff76d069d7b909",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-completeness-sbt004-general_review-1/output.json",
+      "sha256": "d4f6f75c70156b248a80739f2bef95b77f83d70ecdc248c41283d4dbbdd0fb9b",
+      "artifact_type": "json"
+    }
+  ],
+  "started_at": "2026-09-22T06:49:56.663875+00:00",
+  "timeout_per_stage_seconds": 360,
+  "cost": {
+    "billing": "existing ChatGPT Codex access",
+    "incremental_usd": null,
+    "reason": "CLI reports usage, not monetary cost"
+  },
+  "completed_at": "2026-09-22T06:53:26.970927+00:00"
+}

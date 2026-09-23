@@ -1,0 +1,122 @@
+{
+  "SBT-004-01": {
+    "run_id": "2026-09-expansion-sbt004-analysis-staged-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "staged",
+    "replicate": 1
+  },
+  "SBT-004-02": {
+    "run_id": "2026-09-expansion-sbt004-raw-staged-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "raw",
+    "workflow": "staged",
+    "replicate": 1
+  },
+  "SBT-004-03": {
+    "run_id": "2026-09-expansion-sbt004-analysis-onepass-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 1
+  },
+  "SBT-004-04": {
+    "run_id": "2026-09-expansion-sbt004-raw-onepass-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "raw",
+    "workflow": "one_pass",
+    "replicate": 1
+  },
+  "SBT-005-01": {
+    "run_id": "2026-09-expansion-sbt005-analysis-staged-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "staged",
+    "replicate": 1
+  },
+  "SBT-005-02": {
+    "run_id": "2026-09-expansion-sbt005-raw-staged-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "raw",
+    "workflow": "staged",
+    "replicate": 1
+  },
+  "SBT-005-03": {
+    "run_id": "2026-09-expansion-sbt005-raw-onepass-retry-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "raw",
+    "workflow": "one_pass",
+    "replicate": 1
+  },
+  "SBT-005-04": {
+    "run_id": "2026-09-expansion-sbt005-analysis-onepass-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 1
+  },
+  "SBT-006-01": {
+    "run_id": "2026-09-expansion-sbt006-raw-staged-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "raw",
+    "workflow": "staged",
+    "replicate": 1
+  },
+  "SBT-006-02": {
+    "run_id": "2026-09-expansion-sbt006-analysis-staged-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "staged",
+    "replicate": 1
+  },
+  "SBT-006-03": {
+    "run_id": "2026-09-expansion-sbt006-raw-onepass-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "raw",
+    "workflow": "one_pass",
+    "replicate": 1
+  },
+  "SBT-006-04": {
+    "run_id": "2026-09-expansion-sbt006-analysis-onepass-1",
+    "model": {
+      "provider": "codex_chatgpt",
+      "model_id": "gpt-6-astra"
+    },
+    "input_surface": "analysis",
+    "workflow": "one_pass",
+    "replicate": 1
+  }
+}

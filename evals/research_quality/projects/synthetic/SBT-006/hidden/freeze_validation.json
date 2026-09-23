@@ -1,0 +1,563 @@
+{
+  "study_id": "SBT-006",
+  "status": "PASS",
+  "threshold_roundoff_tolerance": 1e-10,
+  "checks": [
+    {
+      "check": "C01",
+      "metric": "valid_intent_4",
+      "value": 0.6683583336010022,
+      "bounds": [
+        0.48,
+        0.8
+      ],
+      "pass": true
+    },
+    {
+      "check": "C02",
+      "metric": "valid_intent_7",
+      "value": 0.5189593774729624,
+      "bounds": [
+        0.3,
+        0.65
+      ],
+      "pass": true
+    },
+    {
+      "check": "C03",
+      "metric": "valid_intent_10",
+      "value": 0.3362941969377527,
+      "bounds": [
+        0.16,
+        0.49
+      ],
+      "pass": true
+    },
+    {
+      "check": "C04",
+      "metric": "valid_intent_13",
+      "value": 0.19817979863126595,
+      "bounds": [
+        0.05,
+        0.36
+      ],
+      "pass": true
+    },
+    {
+      "check": "C05",
+      "metric": "interest_gap_4_minus_13",
+      "value": 0.4701785349697362,
+      "bounds": [
+        0.22,
+        0.62
+      ],
+      "pass": true
+    },
+    {
+      "check": "C06",
+      "metric": "interest_4_13_holm_p",
+      "value": 1.2451579741007536e-81,
+      "bounds": [
+        0,
+        0.05
+      ],
+      "pass": true
+    },
+    {
+      "check": "C07",
+      "metric": "interest_nonincreasing",
+      "value": 1.0,
+      "bounds": [
+        1,
+        1
+      ],
+      "pass": true
+    },
+    {
+      "check": "C08",
+      "metric": "gross_mid_best_minus_extremes_best",
+      "value": 0.9592823079067281,
+      "bounds": [
+        0.05,
+        1.5
+      ],
+      "pass": true
+    },
+    {
+      "check": "C09",
+      "metric": "gross_7_minus_10",
+      "value": 0.26977367293320986,
+      "bounds": [
+        0.0,
+        0.65
+      ],
+      "pass": true
+    },
+    {
+      "check": "C10",
+      "metric": "contribution_base_10_minus_7",
+      "value": 0.09555668813720963,
+      "bounds": [
+        0.0,
+        0.65
+      ],
+      "pass": true
+    },
+    {
+      "check": "C11",
+      "metric": "gross_point_leader_is_7",
+      "value": 1.0,
+      "bounds": [
+        1,
+        1
+      ],
+      "pass": true
+    },
+    {
+      "check": "C12",
+      "metric": "base_contribution_point_leader_is_10",
+      "value": 1.0,
+      "bounds": [
+        1,
+        1
+      ],
+      "pass": true
+    },
+    {
+      "check": "C13",
+      "metric": "gross_mid_ci_includes_zero",
+      "value": 1.0,
+      "bounds": [
+        1,
+        1
+      ],
+      "pass": true
+    },
+    {
+      "check": "C14",
+      "metric": "base_contribution_mid_ci_includes_zero",
+      "value": 1.0,
+      "bounds": [
+        1,
+        1
+      ],
+      "pass": true
+    },
+    {
+      "check": "C15",
+      "metric": "contribution_cost_0_5_7_minus_10",
+      "value": 0.17844108266560488,
+      "bounds": [
+        0.0,
+        0.65
+      ],
+      "pass": true
+    },
+    {
+      "check": "C16",
+      "metric": "contribution_cost_3_0_10_minus_7",
+      "value": 0.27822186867241916,
+      "bounds": [
+        0.0,
+        0.75
+      ],
+      "pass": true
+    },
+    {
+      "check": "C17",
+      "metric": "mid_price_cost_crossing",
+      "value": 1.4768751884884244,
+      "bounds": [
+        0.5,
+        3.0
+      ],
+      "pass": true
+    },
+    {
+      "check": "C18",
+      "metric": "intent_valid_fraction_all",
+      "value": 0.8913333333333333,
+      "bounds": [
+        0.77,
+        0.96
+      ],
+      "pass": true
+    },
+    {
+      "check": "C19",
+      "metric": "nonvalid_share_13_minus_4",
+      "value": 0.09882813556215926,
+      "bounds": [
+        0.01,
+        0.13
+      ],
+      "pass": true
+    },
+    {
+      "check": "C20",
+      "metric": "largest_valid_minus_all_assigned_intent",
+      "value": 0.04665713284446643,
+      "bounds": [
+        0.025,
+        0.13
+      ],
+      "pass": true
+    },
+    {
+      "check": "C21",
+      "metric": "module_exit_fraction",
+      "value": 0.03966666666666667,
+      "bounds": [
+        0.012,
+        0.12
+      ],
+      "pass": true
+    },
+    {
+      "check": "C22",
+      "metric": "baseline_audience_share",
+      "value": 0.31020038233345265,
+      "bounds": [
+        0.18,
+        0.42
+      ],
+      "pass": true
+    },
+    {
+      "check": "C23",
+      "metric": "audience_intent_gap_at_7",
+      "value": 0.15642013508788666,
+      "bounds": [
+        0.07,
+        0.35
+      ],
+      "pass": true
+    },
+    {
+      "check": "C24",
+      "metric": "audience_intent_gap_at_10",
+      "value": 0.17970099922294824,
+      "bounds": [
+        0.07,
+        0.35
+      ],
+      "pass": true
+    },
+    {
+      "check": "C25",
+      "metric": "corr_intent_value_weighted",
+      "value": 0.6677770185824508,
+      "bounds": [
+        0.3,
+        0.86
+      ],
+      "pass": true
+    },
+    {
+      "check": "C26",
+      "metric": "corr_value_affordability_weighted",
+      "value": 0.46647849287371795,
+      "bounds": [
+        0.3,
+        0.88
+      ],
+      "pass": true
+    },
+    {
+      "check": "C27",
+      "metric": "anticipated_use_eligible_fraction",
+      "value": 0.508,
+      "bounds": [
+        0.25,
+        0.72
+      ],
+      "pass": true
+    },
+    {
+      "check": "C28",
+      "metric": "anticipated_use_ge3_conditional",
+      "value": 0.8813243679752135,
+      "bounds": [
+        0.35,
+        0.92
+      ],
+      "pass": true
+    },
+    {
+      "check": "C29",
+      "metric": "premium_niche_assigned_n",
+      "value": 78.0,
+      "bounds": [
+        20,
+        110
+      ],
+      "pass": true
+    },
+    {
+      "check": "C30",
+      "metric": "premium_niche_min_valid_cell_n",
+      "value": 15.0,
+      "bounds": [
+        1,
+        39
+      ],
+      "pass": true
+    },
+    {
+      "check": "C31",
+      "metric": "premium_niche_max_valid_cell_n",
+      "value": 20.0,
+      "bounds": [
+        1,
+        39
+      ],
+      "pass": true
+    },
+    {
+      "check": "C32",
+      "metric": "premium_niche_pooled_interest_gap_private",
+      "value": 0.3506625879746946,
+      "bounds": [
+        0.06,
+        0.48
+      ],
+      "pass": true
+    },
+    {
+      "check": "rows_columns_ids",
+      "pass": true
+    },
+    {
+      "check": "balanced_assignment",
+      "pass": true
+    },
+    {
+      "check": "price_code_values",
+      "pass": true
+    },
+    {
+      "check": "weights_positive_finite",
+      "pass": true
+    },
+    {
+      "check": "weights_baseline_only",
+      "pass": true
+    },
+    {
+      "check": "codes_age_band",
+      "pass": true
+    },
+    {
+      "check": "route_age_band",
+      "pass": true
+    },
+    {
+      "check": "codes_household_children",
+      "pass": true
+    },
+    {
+      "check": "route_household_children",
+      "pass": true
+    },
+    {
+      "check": "codes_budget_band",
+      "pass": true
+    },
+    {
+      "check": "route_budget_band",
+      "pass": true
+    },
+    {
+      "check": "codes_meal_planning_role",
+      "pass": true
+    },
+    {
+      "check": "route_meal_planning_role",
+      "pass": true
+    },
+    {
+      "check": "codes_weekday_time_pressure_5",
+      "pass": true
+    },
+    {
+      "check": "route_weekday_time_pressure_5",
+      "pass": true
+    },
+    {
+      "check": "codes_current_planning_method",
+      "pass": true
+    },
+    {
+      "check": "route_current_planning_method",
+      "pass": true
+    },
+    {
+      "check": "codes_digital_confidence_5",
+      "pass": true
+    },
+    {
+      "check": "route_digital_confidence_5",
+      "pass": true
+    },
+    {
+      "check": "codes_plan_ahead_days_7",
+      "pass": true
+    },
+    {
+      "check": "route_plan_ahead_days_7",
+      "pass": true
+    },
+    {
+      "check": "codes_subscription_spend_band",
+      "pass": true
+    },
+    {
+      "check": "route_subscription_spend_band",
+      "pass": true
+    },
+    {
+      "check": "codes_household_size_band",
+      "pass": true
+    },
+    {
+      "check": "route_household_size_band",
+      "pass": true
+    },
+    {
+      "check": "codes_design_stratum",
+      "pass": true
+    },
+    {
+      "check": "route_design_stratum",
+      "pass": true
+    },
+    {
+      "check": "codes_assigned_price_arm",
+      "pass": true
+    },
+    {
+      "check": "route_assigned_price_arm",
+      "pass": true
+    },
+    {
+      "check": "codes_assigned_price_gbp",
+      "pass": true
+    },
+    {
+      "check": "route_assigned_price_gbp",
+      "pass": true
+    },
+    {
+      "check": "codes_postprice_responded",
+      "pass": true
+    },
+    {
+      "check": "route_postprice_responded",
+      "pass": true
+    },
+    {
+      "check": "codes_intent_5",
+      "pass": true
+    },
+    {
+      "check": "route_intent_5",
+      "pass": true
+    },
+    {
+      "check": "codes_value_5",
+      "pass": true
+    },
+    {
+      "check": "route_value_5",
+      "pass": true
+    },
+    {
+      "check": "codes_fit_5",
+      "pass": true
+    },
+    {
+      "check": "route_fit_5",
+      "pass": true
+    },
+    {
+      "check": "codes_affordability_5",
+      "pass": true
+    },
+    {
+      "check": "route_affordability_5",
+      "pass": true
+    },
+    {
+      "check": "codes_ease_5",
+      "pass": true
+    },
+    {
+      "check": "route_ease_5",
+      "pass": true
+    },
+    {
+      "check": "codes_trust_5",
+      "pass": true
+    },
+    {
+      "check": "route_trust_5",
+      "pass": true
+    },
+    {
+      "check": "codes_differentiation_5",
+      "pass": true
+    },
+    {
+      "check": "route_differentiation_5",
+      "pass": true
+    },
+    {
+      "check": "codes_certainty_5",
+      "pass": true
+    },
+    {
+      "check": "route_certainty_5",
+      "pass": true
+    },
+    {
+      "check": "codes_primary_use_goal",
+      "pass": true
+    },
+    {
+      "check": "route_primary_use_goal",
+      "pass": true
+    },
+    {
+      "check": "codes_anticipated_use_days_7",
+      "pass": true
+    },
+    {
+      "check": "route_anticipated_use_days_7",
+      "pass": true
+    },
+    {
+      "check": "codes_reason_not_commit",
+      "pass": true
+    },
+    {
+      "check": "route_reason_not_commit",
+      "pass": true
+    },
+    {
+      "check": "codes_time_pressed_family",
+      "pass": true
+    },
+    {
+      "check": "route_time_pressed_family",
+      "pass": true
+    },
+    {
+      "check": "audience_observed_baseline_derivation",
+      "pass": true
+    },
+    {
+      "check": "pre_execution_design_unchanged",
+      "pass": true
+    }
+  ]
+}

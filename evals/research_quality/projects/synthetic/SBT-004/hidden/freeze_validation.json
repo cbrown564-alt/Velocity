@@ -1,0 +1,473 @@
+{
+  "study_id": "SBT-004",
+  "threshold_roundoff_tolerance": 1e-10,
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "D01",
+      "metric": "budget_need_pct",
+      "lower": 20,
+      "upper": 55,
+      "rationale": "Budget need is neither universal nor negligible",
+      "finding": "M1",
+      "actual": 26.023013444796213,
+      "pass": true
+    },
+    {
+      "id": "D02",
+      "metric": "effort_need_pct",
+      "lower": 20,
+      "upper": 60,
+      "rationale": "Effort need is substantial",
+      "finding": "M1",
+      "actual": 31.891511263613292,
+      "pass": true
+    },
+    {
+      "id": "D03",
+      "metric": "budget_effort_joint_pct",
+      "lower": 10,
+      "upper": 35,
+      "rationale": "Material measured overlap on joint valid base",
+      "finding": "M1",
+      "actual": 10.630589164425022,
+      "pass": true
+    },
+    {
+      "id": "D04",
+      "metric": "overlap_fraction_of_smaller_state",
+      "lower": 0.28,
+      "upper": 0.8,
+      "rationale": "Neither exclusive nor almost identical flags",
+      "finding": "M1",
+      "actual": 0.4042485019774374,
+      "pass": true
+    },
+    {
+      "id": "D05",
+      "metric": "needs_respondent_percent_sum",
+      "lower": 155,
+      "upper": 300,
+      "rationale": "Multiple task selections; respondent percentages legitimately exceed 100",
+      "finding": "M1",
+      "actual": 224.32499947470774,
+      "pass": true
+    },
+    {
+      "id": "D06",
+      "metric": "effort_topup_difference_days",
+      "lower": 0.5,
+      "upper": 2.5,
+      "rationale": "External behaviour difference, not a defining-item contrast",
+      "finding": "M2",
+      "actual": 1.2217066440071123,
+      "pass": true
+    },
+    {
+      "id": "D07",
+      "metric": "effort_planning_difference_days",
+      "lower": -2.8,
+      "upper": -0.5,
+      "rationale": "Incomplete planning associated with effort need",
+      "finding": "M2",
+      "actual": -1.2008385605807912,
+      "pass": true
+    },
+    {
+      "id": "D08",
+      "metric": "children_topup_difference_days",
+      "lower": 0.25,
+      "upper": 1.6,
+      "rationale": "Prespecified household context is relevant",
+      "finding": "M2",
+      "actual": 0.734427567702415,
+      "pass": true
+    },
+    {
+      "id": "D09",
+      "metric": "children_planning_difference_days",
+      "lower": -1.7,
+      "upper": -0.1,
+      "rationale": "Prespecified context, not a universal parent persona",
+      "finding": "M2",
+      "actual": -0.4034699194680398,
+      "pass": true
+    },
+    {
+      "id": "D10",
+      "metric": "budget_overspend_difference_pp",
+      "lower": 15,
+      "upper": 55,
+      "rationale": "External reported outcome linked to budget need",
+      "finding": "M3",
+      "actual": 37.28002087684209,
+      "pass": true
+    },
+    {
+      "id": "D11",
+      "metric": "budget_support_difference_pp",
+      "lower": 15,
+      "upper": 55,
+      "rationale": "Support preference is not a defining attitude item",
+      "finding": "M3",
+      "actual": 28.10346917139216,
+      "pass": true
+    },
+    {
+      "id": "D12",
+      "metric": "digital_agree_pct",
+      "lower": 30,
+      "upper": 65,
+      "rationale": "Substantial favourable pole",
+      "finding": "M4",
+      "actual": 46.8187086688795,
+      "pass": true
+    },
+    {
+      "id": "D13",
+      "metric": "digital_disagree_pct",
+      "lower": 25,
+      "upper": 60,
+      "rationale": "Substantial unfavourable pole",
+      "finding": "M4",
+      "actual": 47.38372700729589,
+      "pass": true
+    },
+    {
+      "id": "D14",
+      "metric": "digital_neutral_pct",
+      "lower": 0,
+      "upper": 25,
+      "rationale": "Midpoint alone is not the population pattern",
+      "finding": "M4",
+      "actual": 5.797564323824611,
+      "pass": true
+    },
+    {
+      "id": "D15",
+      "metric": "digital_mean",
+      "lower": 2.5,
+      "upper": 3.6,
+      "rationale": "An ordinary-looking mean can conceal opposing poles",
+      "finding": "M4",
+      "actual": 2.9957539423530313,
+      "pass": true
+    },
+    {
+      "id": "D16",
+      "metric": "waste_need_pct",
+      "lower": 15,
+      "upper": 50,
+      "rationale": "Waste need remains another overlapping task",
+      "finding": "S1",
+      "actual": 30.277840876824346,
+      "pass": true
+    },
+    {
+      "id": "D17",
+      "metric": "waste_days_difference",
+      "lower": 0.4,
+      "upper": 2.8,
+      "rationale": "External discard-day difference",
+      "finding": "S1",
+      "actual": 1.0012317956872627,
+      "pass": true
+    },
+    {
+      "id": "D18",
+      "metric": "waste_useup_support_difference_pp",
+      "lower": 10,
+      "upper": 45,
+      "rationale": "Support preference corroborates a distinct task",
+      "finding": "S1",
+      "actual": 20.3844159119134,
+      "pass": true
+    },
+    {
+      "id": "D19",
+      "metric": "planning_index_behaviour_weighted_r",
+      "lower": 0.35,
+      "upper": 0.85,
+      "rationale": "Reverse-keyed index relates to external planning behaviour",
+      "finding": "S2",
+      "actual": 0.5934205232161686,
+      "pass": true
+    },
+    {
+      "id": "D20",
+      "metric": "current_tool_user_pct",
+      "lower": 20,
+      "upper": 55,
+      "rationale": "Existing users are a selected minority",
+      "finding": "S3",
+      "actual": 38.903046123465636,
+      "pass": true
+    },
+    {
+      "id": "D21",
+      "metric": "tool_satisfaction_top2_pct",
+      "lower": 55,
+      "upper": 90,
+      "rationale": "Good satisfaction within current users is not all-household demand",
+      "finding": "S3",
+      "actual": 83.15314230304828,
+      "pass": true
+    },
+    {
+      "id": "D22",
+      "metric": "older_paid_user_valid_sat_n",
+      "lower": 5,
+      "upper": 39,
+      "rationale": "Seductive older/paid tool cell is intentionally below suppression threshold",
+      "finding": "R3",
+      "actual": 18,
+      "pass": true
+    },
+    {
+      "id": "D23",
+      "metric": "older_paid_user_top2_private_pct",
+      "lower": 55,
+      "upper": 100,
+      "rationale": "Private-only trap diagnostic; NEVER a publishable subgroup rate",
+      "finding": "R3",
+      "actual": 100.00000000000001,
+      "pass": true
+    },
+    {
+      "id": "D24",
+      "metric": "barriers_respondent_percent_sum",
+      "lower": 135,
+      "upper": 295,
+      "rationale": "Multiple barriers can co-exist",
+      "finding": "C2",
+      "actual": 195.7300572189989,
+      "pass": true
+    },
+    {
+      "id": "D25",
+      "metric": "needs_none_valid_n",
+      "lower": 10,
+      "upper": 500,
+      "rationale": "None rows must survive the MR denominator",
+      "finding": "C2",
+      "actual": 116,
+      "pass": true
+    },
+    {
+      "id": "D26",
+      "metric": "unknown_need_state_any_n",
+      "lower": 40,
+      "upper": 500,
+      "rationale": "Nonresponse is not absence of need",
+      "finding": "C1",
+      "actual": 420,
+      "pass": true
+    },
+    {
+      "id": "D27",
+      "metric": "full_sample_kish_ess_fraction",
+      "lower": 0.72,
+      "upper": 0.95,
+      "rationale": "Unequal positive weighting has a visible design effect",
+      "finding": "C2",
+      "actual": 0.7891904818844916,
+      "pass": true
+    },
+    {
+      "id": "unique_records_columns",
+      "pass": true
+    },
+    {
+      "id": "positive_weights",
+      "pass": true
+    },
+    {
+      "id": "codes_age_band",
+      "pass": true
+    },
+    {
+      "id": "codes_children_u16",
+      "pass": true
+    },
+    {
+      "id": "codes_work_hours_band",
+      "pass": true
+    },
+    {
+      "id": "codes_att_plan_ahead_5",
+      "pass": true
+    },
+    {
+      "id": "codes_att_spontaneous_5",
+      "pass": true
+    },
+    {
+      "id": "codes_att_budget_worry_5",
+      "pass": true
+    },
+    {
+      "id": "codes_att_price_tradeoffs_5",
+      "pass": true
+    },
+    {
+      "id": "codes_att_time_short_5",
+      "pass": true
+    },
+    {
+      "id": "codes_att_decision_fatigue_5",
+      "pass": true
+    },
+    {
+      "id": "codes_att_waste_concern_5",
+      "pass": true
+    },
+    {
+      "id": "codes_att_waste_difficult_5",
+      "pass": true
+    },
+    {
+      "id": "codes_att_digital_help_5",
+      "pass": true
+    },
+    {
+      "id": "codes_need_budget",
+      "pass": true
+    },
+    {
+      "id": "codes_need_effort",
+      "pass": true
+    },
+    {
+      "id": "codes_need_waste",
+      "pass": true
+    },
+    {
+      "id": "codes_meal_plan_days_7d",
+      "pass": true
+    },
+    {
+      "id": "codes_unplanned_topups_7d",
+      "pass": true
+    },
+    {
+      "id": "codes_waste_days_7d",
+      "pass": true
+    },
+    {
+      "id": "codes_over_budget_4w",
+      "pass": true
+    },
+    {
+      "id": "codes_planning_tool_28d",
+      "pass": true
+    },
+    {
+      "id": "codes_tool_satisfaction_5",
+      "pass": true
+    },
+    {
+      "id": "codes_shared_list_use_28d",
+      "pass": true
+    },
+    {
+      "id": "codes_support_budget",
+      "pass": true
+    },
+    {
+      "id": "codes_support_quick_meals",
+      "pass": true
+    },
+    {
+      "id": "codes_support_use_up",
+      "pass": true
+    },
+    {
+      "id": "codes_support_shared_plan",
+      "pass": true
+    },
+    {
+      "id": "codes_barrier_setup_time",
+      "pass": true
+    },
+    {
+      "id": "codes_barrier_rigid",
+      "pass": true
+    },
+    {
+      "id": "codes_barrier_cost",
+      "pass": true
+    },
+    {
+      "id": "codes_barrier_privacy",
+      "pass": true
+    },
+    {
+      "id": "codes_needs_block_status",
+      "pass": true
+    },
+    {
+      "id": "codes_barriers_block_status",
+      "pass": true
+    },
+    {
+      "id": "derivation_need_budget",
+      "pass": true
+    },
+    {
+      "id": "derivation_need_effort",
+      "pass": true
+    },
+    {
+      "id": "derivation_need_waste",
+      "pass": true
+    },
+    {
+      "id": "route_tool_satisfaction_5",
+      "pass": true
+    },
+    {
+      "id": "route_shared_list_use_28d",
+      "pass": true
+    },
+    {
+      "id": "block_needs",
+      "pass": true
+    },
+    {
+      "id": "block_barriers",
+      "pass": true
+    },
+    {
+      "id": "quota_1_0",
+      "pass": true
+    },
+    {
+      "id": "quota_1_1",
+      "pass": true
+    },
+    {
+      "id": "quota_2_0",
+      "pass": true
+    },
+    {
+      "id": "quota_2_1",
+      "pass": true
+    },
+    {
+      "id": "quota_3_0",
+      "pass": true
+    },
+    {
+      "id": "quota_3_1",
+      "pass": true
+    },
+    {
+      "id": "quota_4_0",
+      "pass": true
+    },
+    {
+      "id": "quota_4_1",
+      "pass": true
+    }
+  ]
+}

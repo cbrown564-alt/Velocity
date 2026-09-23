@@ -1,0 +1,597 @@
+{
+  "study_id": "SBT-005",
+  "status": "PASS",
+  "threshold_roundoff_tolerance": 1e-10,
+  "checks": [
+    {
+      "check": "G01",
+      "metric": "followup_rate_pct",
+      "value": 74.16137529416382,
+      "bounds": [
+        68,
+        88
+      ],
+      "pass": true
+    },
+    {
+      "check": "G02",
+      "metric": "return_assignment_difference_pp",
+      "value": -3.602784216906869,
+      "bounds": [
+        -9,
+        4
+      ],
+      "pass": true
+    },
+    {
+      "check": "G03",
+      "metric": "baseline_awareness_returner_gap_pp",
+      "value": 3.5486343871753654,
+      "bounds": [
+        3,
+        22
+      ],
+      "pass": true
+    },
+    {
+      "check": "G04",
+      "metric": "awareness_pair_pct",
+      "value": 70.57142857142857,
+      "bounds": [
+        65,
+        86
+      ],
+      "pass": true
+    },
+    {
+      "check": "G05",
+      "metric": "consideration_pair_pct",
+      "value": 70.75,
+      "bounds": [
+        65,
+        86
+      ],
+      "pass": true
+    },
+    {
+      "check": "G06",
+      "metric": "usage_pair_pct",
+      "value": 70.57142857142857,
+      "bounds": [
+        65,
+        86
+      ],
+      "pass": true
+    },
+    {
+      "check": "G07",
+      "metric": "control_awareness_change_pp",
+      "value": 14.334257928494786,
+      "bounds": [
+        3,
+        18
+      ],
+      "pass": true
+    },
+    {
+      "check": "G08",
+      "metric": "control_consideration_change_pp",
+      "value": 8.364446058212643,
+      "bounds": [
+        0.5,
+        10
+      ],
+      "pass": true
+    },
+    {
+      "check": "G09",
+      "metric": "control_usage_change_pp",
+      "value": 3.5900973196092285,
+      "bounds": [
+        0,
+        5
+      ],
+      "pass": true
+    },
+    {
+      "check": "G10",
+      "metric": "awareness_itt_pp",
+      "value": 13.59197379666966,
+      "bounds": [
+        7,
+        22
+      ],
+      "pass": true
+    },
+    {
+      "check": "G11",
+      "metric": "consideration_itt_pp",
+      "value": -0.00831331989292039,
+      "bounds": [
+        -4.5,
+        5
+      ],
+      "pass": true
+    },
+    {
+      "check": "G12",
+      "metric": "usage_itt_pp",
+      "value": -0.9791173713665708,
+      "bounds": [
+        -2.5,
+        4
+      ],
+      "pass": true
+    },
+    {
+      "check": "G13",
+      "metric": "awareness_minus_consideration_itt_pp",
+      "value": 13.60028711656258,
+      "bounds": [
+        7,
+        23
+      ],
+      "pass": true
+    },
+    {
+      "check": "G14",
+      "metric": "awareness_minus_usage_itt_pp",
+      "value": 14.57109116803623,
+      "bounds": [
+        7,
+        24
+      ],
+      "pass": true
+    },
+    {
+      "check": "G15",
+      "metric": "awareness_p_holm",
+      "value": 1.8096142252308278e-10,
+      "bounds": [
+        0,
+        0.05
+      ],
+      "pass": true
+    },
+    {
+      "check": "G16",
+      "metric": "receipt_assignment1_pct",
+      "value": 70.15822766902461,
+      "bounds": [
+        54,
+        82
+      ],
+      "pass": true
+    },
+    {
+      "check": "G17",
+      "metric": "receipt_assignment0_pct",
+      "value": 24.544742105043373,
+      "bounds": [
+        6,
+        30
+      ],
+      "pass": true
+    },
+    {
+      "check": "G18",
+      "metric": "receipt_assignment_gap_pp",
+      "value": 45.61348556398124,
+      "bounds": [
+        35,
+        68
+      ],
+      "pass": true
+    },
+    {
+      "check": "G19",
+      "metric": "receipt_post_consideration_gap_pp",
+      "value": 19.118786259927433,
+      "bounds": [
+        10,
+        35
+      ],
+      "pass": true
+    },
+    {
+      "check": "G20",
+      "metric": "recall_post_consideration_gap_pp",
+      "value": 37.237495938035224,
+      "bounds": [
+        20,
+        50
+      ],
+      "pass": true
+    },
+    {
+      "check": "G21",
+      "metric": "recall_gap_minus_consideration_itt_pp",
+      "value": 37.245809257928144,
+      "bounds": [
+        18,
+        48
+      ],
+      "pass": true
+    },
+    {
+      "check": "G22",
+      "metric": "recall_baseline_consideration_gap_pp",
+      "value": 32.34723488469591,
+      "bounds": [
+        8,
+        40
+      ],
+      "pass": true
+    },
+    {
+      "check": "G23",
+      "metric": "recallers_without_receipt_pct",
+      "value": 19.3538642901876,
+      "bounds": [
+        12,
+        42
+      ],
+      "pass": true
+    },
+    {
+      "check": "G24",
+      "metric": "recipients_without_recall_pct",
+      "value": 34.18253702044008,
+      "bounds": [
+        25,
+        62
+      ],
+      "pass": true
+    },
+    {
+      "check": "G25",
+      "metric": "minimum_message_diagnostic_correlation",
+      "value": 0.5042906547878322,
+      "bounds": [
+        0.25,
+        0.8
+      ],
+      "pass": true
+    },
+    {
+      "check": "G26",
+      "metric": "children_baseline_stress_difference",
+      "value": 0.636590865524961,
+      "bounds": [
+        0.3,
+        1.4
+      ],
+      "pass": true
+    },
+    {
+      "check": "G27",
+      "metric": "older_digital_online_awareness_pair_n",
+      "value": 43.0,
+      "bounds": [
+        16,
+        105
+      ],
+      "pass": true
+    },
+    {
+      "check": "G28",
+      "metric": "older_digital_online_min_arm_n",
+      "value": 21.0,
+      "bounds": [
+        6,
+        55
+      ],
+      "pass": true
+    },
+    {
+      "check": "G29",
+      "metric": "older_digital_online_awareness_itt_pp",
+      "value": 24.891774891774894,
+      "bounds": [
+        15,
+        70
+      ],
+      "pass": true
+    },
+    {
+      "check": "G30",
+      "metric": "baseline_kish_fraction",
+      "value": 0.8681587463169371,
+      "bounds": [
+        0.68,
+        0.95
+      ],
+      "pass": true
+    },
+    {
+      "check": "G31",
+      "metric": "weight_max_min_ratio",
+      "value": 3.03104000008135,
+      "bounds": [
+        1.5,
+        6
+      ],
+      "pass": true
+    },
+    {
+      "check": "G32",
+      "metric": "baseline_awareness_numeric_missing_pct",
+      "value": 2.607142857142857,
+      "bounds": [
+        0.5,
+        6
+      ],
+      "pass": true
+    },
+    {
+      "check": "G33",
+      "metric": "post_consideration_numeric_missing_returner_pct",
+      "value": 2.3456199138343705,
+      "bounds": [
+        0.5,
+        7
+      ],
+      "pass": true
+    },
+    {
+      "check": "rows_columns_ids",
+      "pass": true
+    },
+    {
+      "check": "assignment_exact",
+      "pass": true
+    },
+    {
+      "check": "weights_positive_finite",
+      "pass": true
+    },
+    {
+      "check": "baseline_mean_weight_one",
+      "pass": true
+    },
+    {
+      "check": "weights_only_baseline_cell",
+      "pass": true
+    },
+    {
+      "check": "codes_age_band",
+      "pass": true
+    },
+    {
+      "check": "route_age_band",
+      "pass": true
+    },
+    {
+      "check": "codes_children_under18",
+      "pass": true
+    },
+    {
+      "check": "route_children_under18",
+      "pass": true
+    },
+    {
+      "check": "codes_work_pattern",
+      "pass": true
+    },
+    {
+      "check": "route_work_pattern",
+      "pass": true
+    },
+    {
+      "check": "codes_online_grocery_pre",
+      "pass": true
+    },
+    {
+      "check": "route_online_grocery_pre",
+      "pass": true
+    },
+    {
+      "check": "codes_digital_confidence_pre",
+      "pass": true
+    },
+    {
+      "check": "route_digital_confidence_pre",
+      "pass": true
+    },
+    {
+      "check": "codes_budget_pressure_pre",
+      "pass": true
+    },
+    {
+      "check": "route_budget_pressure_pre",
+      "pass": true
+    },
+    {
+      "check": "codes_mealplan_days_pre",
+      "pass": true
+    },
+    {
+      "check": "route_mealplan_days_pre",
+      "pass": true
+    },
+    {
+      "check": "codes_assignment",
+      "pass": true
+    },
+    {
+      "check": "route_assignment",
+      "pass": true
+    },
+    {
+      "check": "codes_followup_status",
+      "pass": true
+    },
+    {
+      "check": "route_followup_status",
+      "pass": true
+    },
+    {
+      "check": "codes_followup_attempts",
+      "pass": true
+    },
+    {
+      "check": "route_followup_attempts",
+      "pass": true
+    },
+    {
+      "check": "codes_receipt_log",
+      "pass": true
+    },
+    {
+      "check": "route_receipt_log",
+      "pass": true
+    },
+    {
+      "check": "codes_receipt_count",
+      "pass": true
+    },
+    {
+      "check": "route_receipt_count",
+      "pass": true
+    },
+    {
+      "check": "codes_recall_post",
+      "pass": true
+    },
+    {
+      "check": "route_recall_post",
+      "pass": true
+    },
+    {
+      "check": "codes_awareness_pre",
+      "pass": true
+    },
+    {
+      "check": "route_awareness_pre",
+      "pass": true
+    },
+    {
+      "check": "codes_awareness_post",
+      "pass": true
+    },
+    {
+      "check": "route_awareness_post",
+      "pass": true
+    },
+    {
+      "check": "codes_consideration_pre",
+      "pass": true
+    },
+    {
+      "check": "route_consideration_pre",
+      "pass": true
+    },
+    {
+      "check": "codes_consideration_post",
+      "pass": true
+    },
+    {
+      "check": "route_consideration_post",
+      "pass": true
+    },
+    {
+      "check": "codes_usage_pre",
+      "pass": true
+    },
+    {
+      "check": "route_usage_pre",
+      "pass": true
+    },
+    {
+      "check": "codes_usage_post",
+      "pass": true
+    },
+    {
+      "check": "route_usage_post",
+      "pass": true
+    },
+    {
+      "check": "codes_meal_stress_pre",
+      "pass": true
+    },
+    {
+      "check": "route_meal_stress_pre",
+      "pass": true
+    },
+    {
+      "check": "codes_meal_stress_post",
+      "pass": true
+    },
+    {
+      "check": "route_meal_stress_post",
+      "pass": true
+    },
+    {
+      "check": "codes_campaign_clear_post",
+      "pass": true
+    },
+    {
+      "check": "route_campaign_clear_post",
+      "pass": true
+    },
+    {
+      "check": "codes_campaign_relevant_post",
+      "pass": true
+    },
+    {
+      "check": "route_campaign_relevant_post",
+      "pass": true
+    },
+    {
+      "check": "codes_campaign_trust_post",
+      "pass": true
+    },
+    {
+      "check": "route_campaign_trust_post",
+      "pass": true
+    },
+    {
+      "check": "codes_campaign_channel_post",
+      "pass": true
+    },
+    {
+      "check": "route_campaign_channel_post",
+      "pass": true
+    },
+    {
+      "check": "codes_info_search_post",
+      "pass": true
+    },
+    {
+      "check": "route_info_search_post",
+      "pass": true
+    },
+    {
+      "check": "codes_usage_days_post",
+      "pass": true
+    },
+    {
+      "check": "route_usage_days_post",
+      "pass": true
+    },
+    {
+      "check": "codes_satisfaction_post",
+      "pass": true
+    },
+    {
+      "check": "route_satisfaction_post",
+      "pass": true
+    },
+    {
+      "check": "codes_planning_confidence_post",
+      "pass": true
+    },
+    {
+      "check": "route_planning_confidence_post",
+      "pass": true
+    },
+    {
+      "check": "receipt_count_agrees",
+      "pass": true
+    },
+    {
+      "check": "pre_execution_design_unchanged",
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,949 @@
+{
+  "status": "PASS",
+  "scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+  "output_sha256": "380c61f1626e99ce2c499c7fea911db617e69620aea978d9729b7586e8b938ea",
+  "checks": [
+    {
+      "id": "/analysis_claims/0/values/awareness/paired_bases/0/0",
+      "reported": 1016,
+      "reference": 1016,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/paired_bases/0/1",
+      "reported": 999.793,
+      "reference": 999.792714557,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/paired_bases/0/2",
+      "reported": 876.618,
+      "reference": 876.6181457370669,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/pre_pct/0",
+      "reported": 31.369,
+      "reference": 31.36860838043443,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/post_pct/0",
+      "reported": 45.703,
+      "reference": 45.70286630892922,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/change_pp/0",
+      "reported": 14.334,
+      "reference": 14.334257928494786,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/paired_bases/1/0",
+      "reported": 960,
+      "reference": 960,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/paired_bases/1/1",
+      "reported": 965.206,
+      "reference": 965.2055471422999,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/paired_bases/1/2",
+      "reported": 834.407,
+      "reference": 834.4067153467572,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/pre_pct/1",
+      "reported": 30.834,
+      "reference": 30.83381120805178,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/post_pct/1",
+      "reported": 58.76,
+      "reference": 58.76004293321622,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/change_pp/1",
+      "reported": 27.926,
+      "reference": 27.926231725164445,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/assignment_contrast_pp",
+      "reported": 13.592,
+      "reference": 13.59197379666966,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/SE_pp",
+      "reported": 2.0773,
+      "reference": 2.0773491585849344,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/p_raw",
+      "reported": 6.03205e-11,
+      "reference": 6.032047417436093e-11,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/p_Holm",
+      "reported": 1.80961e-10,
+      "reference": 1.8096142252308278e-10,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/CI95_pp/0",
+      "reported": 9.5204,
+      "reference": 9.520444262528603,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/awareness/CI95_pp/1",
+      "reported": 17.6635,
+      "reference": 17.663503330810716,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_bases/0/0",
+      "reported": 1015,
+      "reference": 1015,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_bases/0/1",
+      "reported": 1000.171,
+      "reference": 1000.1708218222,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_bases/0/2",
+      "reported": 877.616,
+      "reference": 877.6155602347469,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/pre_pct/0",
+      "reported": 31.495,
+      "reference": 31.49471672601919,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/post_pct/0",
+      "reported": 39.859,
+      "reference": 39.859162784231835,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/change_pp/0",
+      "reported": 8.364,
+      "reference": 8.364446058212643,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/0/0",
+      "reported": 19.388,
+      "reference": 19.38795288514943,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/0/1",
+      "reported": 21.574,
+      "reference": 21.573651448238103,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/0/2",
+      "reported": 27.544,
+      "reference": 27.543678940593274,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/0/3",
+      "reported": 17.983,
+      "reference": 17.983119204818593,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/0/4",
+      "reported": 13.512,
+      "reference": 13.511597521200594,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/0/0",
+      "reported": 18.212,
+      "reference": 18.212017711348608,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/0/1",
+      "reported": 18.776,
+      "reference": 18.7758725056052,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/0/2",
+      "reported": 23.153,
+      "reference": 23.152946998814365,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/0/3",
+      "reported": 20.894,
+      "reference": 20.893679273384056,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/0/4",
+      "reported": 18.965,
+      "reference": 18.96548351084777,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_bases/1/0",
+      "reported": 966,
+      "reference": 966,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_bases/1/1",
+      "reported": 973.613,
+      "reference": 973.6126249385,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_bases/1/2",
+      "reported": 839.325,
+      "reference": 839.3247929578924,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/pre_pct/1",
+      "reported": 28.68,
+      "reference": 28.6800531171356,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/post_pct/1",
+      "reported": 37.036,
+      "reference": 37.03618585545532,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/change_pp/1",
+      "reported": 8.356,
+      "reference": 8.356132738319722,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/1/0",
+      "reported": 22.281,
+      "reference": 22.28063882439924,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/1/1",
+      "reported": 22.631,
+      "reference": 22.631493005189654,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/1/2",
+      "reported": 26.408,
+      "reference": 26.407815053275506,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/1/3",
+      "reported": 17.163,
+      "reference": 17.163217217541256,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_pre_pct/1/4",
+      "reported": 11.517,
+      "reference": 11.516835899594344,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/1/0",
+      "reported": 18.159,
+      "reference": 18.1586559879467,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/1/1",
+      "reported": 20.787,
+      "reference": 20.786678284649792,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/1/2",
+      "reported": 24.018,
+      "reference": 24.018479871948184,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/1/3",
+      "reported": 19.929,
+      "reference": 19.92894471742869,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/paired_post_pct/1/4",
+      "reported": 17.107,
+      "reference": 17.10724113802663,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/assignment_contrast_pp",
+      "reported": -0.0083,
+      "reference": -0.00831331989292039,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/SE_pp",
+      "reported": 1.75,
+      "reference": 1.7500335841112231,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/p_raw",
+      "reported": 0.99621,
+      "reference": 0.9962097615126849,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/p_Holm",
+      "reported": 0.99621,
+      "reference": 0.9962097615126849,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/CI95_pp/0",
+      "reported": -3.4383,
+      "reference": -3.4383161164864653,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/consideration_top2/CI95_pp/1",
+      "reported": 3.4217,
+      "reference": 3.4216894767006245,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/paired_bases/0/0",
+      "reported": 1007,
+      "reference": 1007,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/paired_bases/0/1",
+      "reported": 993.81,
+      "reference": 993.8101093811999,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/paired_bases/0/2",
+      "reported": 868.831,
+      "reference": 868.8313921823847,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/pre_pct/0",
+      "reported": 5.507,
+      "reference": 5.5069095188794925,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/post_pct/0",
+      "reported": 9.097,
+      "reference": 9.09700683848872,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/change_pp/0",
+      "reported": 3.59,
+      "reference": 3.5900973196092285,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/paired_bases/1/0",
+      "reported": 969,
+      "reference": 969,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/paired_bases/1/1",
+      "reported": 973.302,
+      "reference": 973.3022379396,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/paired_bases/1/2",
+      "reported": 842.041,
+      "reference": 842.041140310847,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/pre_pct/1",
+      "reported": 6.189,
+      "reference": 6.188501344095118,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/post_pct/1",
+      "reported": 8.799,
+      "reference": 8.799481292337775,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/change_pp/1",
+      "reported": 2.611,
+      "reference": 2.6109799482426577,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/assignment_contrast_pp",
+      "reported": -0.9791,
+      "reference": -0.9791173713665708,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/SE_pp",
+      "reported": 0.8767,
+      "reference": 0.8766893696226765,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/p_raw",
+      "reported": 0.264065,
+      "reference": 0.2640648812076475,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/p_Holm",
+      "reported": 0.52813,
+      "reference": 0.528129762415295,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/CI95_pp/0",
+      "reported": -2.6974,
+      "reference": -2.69739696145614,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/0/values/reported_usage/CI95_pp/1",
+      "reported": 0.7392,
+      "reference": 0.7391622187229985,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/receipt/eligible_and_valid_bases/0/0",
+      "reported": 1400,
+      "reference": 1400,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/receipt/eligible_and_valid_bases/0/1",
+      "reported": 1387.058,
+      "reference": 1387.0575144395,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/receipt/eligible_and_valid_bases/0/2",
+      "reported": 1210.612,
+      "reference": 1210.6116200875301,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/receipt/yes_pct/0",
+      "reported": 24.545,
+      "reference": 24.544742105043373,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/receipt/eligible_and_valid_bases/1/0",
+      "reported": 1400,
+      "reference": 1400,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/receipt/eligible_and_valid_bases/1/1",
+      "reported": 1412.942,
+      "reference": 1412.9424855410998,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/receipt/eligible_and_valid_bases/1/2",
+      "reported": 1220.3,
+      "reference": 1220.3001032310437,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/receipt/yes_pct/1",
+      "reported": 70.158,
+      "reference": 70.15822766902461,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/recall/valid_bases/0/0",
+      "reported": 1014,
+      "reference": 1014,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/recall/valid_bases/0/1",
+      "reported": 991.747,
+      "reference": 991.7474239753,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/recall/valid_bases/0/2",
+      "reported": 878.138,
+      "reference": 878.1379292614228,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/recall/yes_pct/0",
+      "reported": 32.97,
+      "reference": 32.97006988503593,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/recall/valid_bases/1/0",
+      "reported": 973,
+      "reference": 973,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/recall/valid_bases/1/1",
+      "reported": 974.428,
+      "reference": 974.4280158658,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/recall/valid_bases/1/2",
+      "reported": 845.724,
+      "reference": 845.7242276861664,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/recall/yes_pct/1",
+      "reported": 48.609,
+      "reference": 48.60900990755517,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/eligible_and_valid_bases/0/0",
+      "reported": 944,
+      "reference": 944,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/eligible_and_valid_bases/0/1",
+      "reported": 1003.746,
+      "reference": 1003.7461261092999,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/eligible_and_valid_bases/0/2",
+      "reported": 820.434,
+      "reference": 820.4335758660733,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/pre_top2_pct/0",
+      "reported": 20.695,
+      "reference": 20.69510672427544,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/post_top2_pct/0",
+      "reported": 29.071,
+      "reference": 29.07053133106946,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/eligible_and_valid_bases/1/0",
+      "reported": 1037,
+      "reference": 1037,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/eligible_and_valid_bases/1/1",
+      "reported": 970.037,
+      "reference": 970.0373206513999,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/eligible_and_valid_bases/1/2",
+      "reported": 903.73,
+      "reference": 903.7302548991861,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/pre_top2_pct/1",
+      "reported": 39.845,
+      "reference": 39.8445755466452,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/post_top2_pct/1",
+      "reported": 48.189,
+      "reference": 48.18931759099689,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/receipt_gap_pre_pp",
+      "reported": 19.15,
+      "reference": 19.149468822369762,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_receipt/receipt_gap_post_pp",
+      "reported": 19.118,
+      "reference": 19.118786259927433,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/valid_bases/0/0",
+      "reported": 1040,
+      "reference": 1040,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/valid_bases/0/1",
+      "reported": 1107.128,
+      "reference": 1107.1277489968002,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/valid_bases/0/2",
+      "reported": 906.035,
+      "reference": 906.034875457685,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/pre_top2_pct/0",
+      "reported": 17.21,
+      "reference": 17.210301781736906,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/post_top2_pct/0",
+      "reported": 23.263,
+      "reference": 23.263203371036127,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/valid_bases/1/0",
+      "reported": 844,
+      "reference": 844,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/valid_bases/1/1",
+      "reported": 760.647,
+      "reference": 760.646854569,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/valid_bases/1/2",
+      "reported": 741.869,
+      "reference": 741.868862757701,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/pre_top2_pct/1",
+      "reported": 49.558,
+      "reference": 49.55753666643281,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/post_top2_pct/1",
+      "reported": 60.501,
+      "reference": 60.50069930907135,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/recall_gap_pre_pp",
+      "reported": 32.348,
+      "reference": 32.34723488469591,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/4/values/consideration_pairs_by_recall/recall_gap_post_pp",
+      "reported": 37.238,
+      "reference": 37.237495938035224,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/clarity/valid_base/0",
+      "reported": 862,
+      "reference": 862,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/clarity/valid_base/1",
+      "reported": 773.016,
+      "reference": 773.016286868,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/clarity/valid_base/2",
+      "reported": 755.959,
+      "reference": 755.9593265422434,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/clarity/codes_1_to_5_pct/0",
+      "reported": 0.472,
+      "reference": 0.4721668709838271,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/clarity/codes_1_to_5_pct/1",
+      "reported": 3.624,
+      "reference": 3.623831043844935,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/clarity/codes_1_to_5_pct/2",
+      "reported": 19.165,
+      "reference": 19.16505945106922,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/clarity/codes_1_to_5_pct/3",
+      "reported": 30.875,
+      "reference": 30.875231964000694,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/clarity/codes_1_to_5_pct/4",
+      "reported": 45.864,
+      "reference": 45.863710670101334,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/relevance/valid_base/0",
+      "reported": 854,
+      "reference": 854,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/relevance/valid_base/1",
+      "reported": 770.279,
+      "reference": 770.2788567284999,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/relevance/valid_base/2",
+      "reported": 747.655,
+      "reference": 747.6551709389787,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/relevance/codes_1_to_5_pct/0",
+      "reported": 2.059,
+      "reference": 2.0590955505209263,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/relevance/codes_1_to_5_pct/1",
+      "reported": 8.58,
+      "reference": 8.580316520864283,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/relevance/codes_1_to_5_pct/2",
+      "reported": 18.845,
+      "reference": 18.84464438306181,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/relevance/codes_1_to_5_pct/3",
+      "reported": 27.021,
+      "reference": 27.021037081011574,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/relevance/codes_1_to_5_pct/4",
+      "reported": 43.495,
+      "reference": 43.49490646454141,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/believability/valid_base/0",
+      "reported": 852,
+      "reference": 852,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/believability/valid_base/1",
+      "reported": 765.165,
+      "reference": 765.1650969023,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/believability/valid_base/2",
+      "reported": 749.256,
+      "reference": 749.2563841833784,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/believability/codes_1_to_5_pct/0",
+      "reported": 1.392,
+      "reference": 1.3924146744190018,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/believability/codes_1_to_5_pct/1",
+      "reported": 6.733,
+      "reference": 6.7329148448701455,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/believability/codes_1_to_5_pct/2",
+      "reported": 15.973,
+      "reference": 15.973492954371663,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/believability/codes_1_to_5_pct/3",
+      "reported": 29.268,
+      "reference": 29.26756197745052,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/message_diagnostics/believability/codes_1_to_5_pct/4",
+      "reported": 46.634,
+      "reference": 46.63361554888867,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/satisfaction/valid_base/0",
+      "reported": 202,
+      "reference": 202,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/satisfaction/valid_base/1",
+      "reported": 172.141,
+      "reference": 172.1414971388,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/satisfaction/valid_base/2",
+      "reported": 180.038,
+      "reference": 180.0382146216757,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/satisfaction/codes_1_to_5_pct/0",
+      "reported": 0,
+      "reference": 0.0,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/satisfaction/codes_1_to_5_pct/1",
+      "reported": 2.312,
+      "reference": 2.311603805787453,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/satisfaction/codes_1_to_5_pct/2",
+      "reported": 9.946,
+      "reference": 9.94629576219762,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/satisfaction/codes_1_to_5_pct/3",
+      "reported": 25.192,
+      "reference": 25.192264688527217,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/satisfaction/codes_1_to_5_pct/4",
+      "reported": 62.55,
+      "reference": 62.54983574348771,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/valid_base/0",
+      "reported": 201,
+      "reference": 201,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/valid_base/1",
+      "reported": 172.69,
+      "reference": 172.6902641498,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/valid_base/2",
+      "reported": 178.044,
+      "reference": 178.04419187085324,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/codes_0_to_7_pct/0",
+      "reported": 2.895,
+      "reference": 2.894663171378205,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/codes_0_to_7_pct/1",
+      "reported": 7.686,
+      "reference": 7.686139000219587,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/codes_0_to_7_pct/2",
+      "reported": 16.183,
+      "reference": 16.183264139927118,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/codes_0_to_7_pct/3",
+      "reported": 21.459,
+      "reference": 21.459434401613844,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/codes_0_to_7_pct/4",
+      "reported": 25.147,
+      "reference": 25.14718543155943,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/codes_0_to_7_pct/5",
+      "reported": 17.753,
+      "reference": 17.753301051242563,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/codes_0_to_7_pct/6",
+      "reported": 7.382,
+      "reference": 7.382472698253016,
+      "pass": true
+    },
+    {
+      "id": "/analysis_claims/5/values/usage_days/codes_0_to_7_pct/7",
+      "reported": 1.494,
+      "reference": 1.493540105806241,
+      "pass": true
+    }
+  ]
+}

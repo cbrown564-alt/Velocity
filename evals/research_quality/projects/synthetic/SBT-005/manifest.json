@@ -1,0 +1,14 @@
+{
+  "project_id": "SBT-005",
+  "version": "1.0.0",
+  "title": "BasketBridge campaign-assignment evaluation",
+  "status": "data_reference_frozen",
+  "presentation_in_scope": false,
+  "design": {
+    "type": "randomised_campaign_assignment_paired_followup",
+    "target_n": 2800,
+    "seed": 2026092205,
+    "weight_variable": "weight_base"
+  },
+  "freeze_rule": "Independent numerical audit and every prospective realised check must pass before evaluated model exposure."
+}

@@ -1,0 +1,806 @@
+{
+  "output_sha256": "f2deb5f2a202eb2b672360f47b5ebe6a1ee9b4b683c9813b99dc418e8eec6115",
+  "method": "Inspected structured estimates, all price/intent denominators, distributions, missingness, financial scenarios and all-assigned intervals. Selected inference claims also inspected against exact cited tables.",
+  "entries": [
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_n/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/all_assigned/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_weight_sum/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/all_assigned/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_kish_ess/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/all_assigned/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_n/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/module_eligible_base/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_weight_sum/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/module_eligible_base/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_kish_ess/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/module_eligible_base/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_n/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_weight_sum/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_kish_ess/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/4/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/4/1",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/2",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/4/2",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/3",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/4/3",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/4",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/4/4",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/5",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pct/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_recorded_positive_pct/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/all_assigned/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pointwise_95ci_pct/0/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/ci95_pct/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pointwise_95ci_pct/0/1",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/ci95_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_pointwise_95ci_pct/0/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/all_assigned/ci95_pct/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_pointwise_95ci_pct/0/1",
+      "reference_pointer": "/tables/intent_by_price/values/4/all_assigned/ci95_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/4/0",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/missing_counts/97",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/4/1",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/missing_counts/98",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/4/2",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/missing_counts/99",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/4/3",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/missing_counts/structural_blank",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/gross/0",
+      "reference_pointer": "/tables/gross_proxy/values/valid_case/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/estimates/0",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/pointwise_95ci/0/0",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/4/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/pointwise_95ci/0/1",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/4/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_0_5/0",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/valid_case/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/estimates/0",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/pointwise_95ci/0/0",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/4/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/pointwise_95ci/0/1",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/4/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_2_0/0",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/valid_case/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/estimates/0",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/pointwise_95ci/0/0",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/4/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/pointwise_95ci/0/1",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/4/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_3_0/0",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/valid_case/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/estimates/0",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/pointwise_95ci/0/0",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/4/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/pointwise_95ci/0/1",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/4/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_n/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/all_assigned/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_weight_sum/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/all_assigned/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_kish_ess/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/all_assigned/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_n/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/module_eligible_base/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_weight_sum/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/module_eligible_base/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_kish_ess/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/module_eligible_base/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_n/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_weight_sum/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_kish_ess/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/7/0",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/7/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/2",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/7/2",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/3",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/7/3",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/4",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/7/4",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/5",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pct/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_recorded_positive_pct/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/all_assigned/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pointwise_95ci_pct/1/0",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/ci95_pct/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pointwise_95ci_pct/1/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/ci95_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_pointwise_95ci_pct/1/0",
+      "reference_pointer": "/tables/intent_by_price/values/7/all_assigned/ci95_pct/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_pointwise_95ci_pct/1/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/all_assigned/ci95_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/7/0",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/missing_counts/97",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/7/1",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/missing_counts/98",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/7/2",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/missing_counts/99",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/7/3",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/missing_counts/structural_blank",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/gross/1",
+      "reference_pointer": "/tables/gross_proxy/values/valid_case/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/estimates/1",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/pointwise_95ci/1/0",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/7/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/pointwise_95ci/1/1",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/7/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_0_5/1",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/valid_case/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/estimates/1",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/pointwise_95ci/1/0",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/7/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/pointwise_95ci/1/1",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/7/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_2_0/1",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/valid_case/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/estimates/1",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/pointwise_95ci/1/0",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/7/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/pointwise_95ci/1/1",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/7/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_3_0/1",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/valid_case/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/estimates/1",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/pointwise_95ci/1/0",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/7/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/pointwise_95ci/1/1",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/7/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_n/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/all_assigned/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_weight_sum/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/all_assigned/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_kish_ess/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/all_assigned/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_n/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/module_eligible_base/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_weight_sum/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/module_eligible_base/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_kish_ess/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/module_eligible_base/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_n/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_weight_sum/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_kish_ess/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/10/0",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/10/1",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/2",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/10/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/3",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/10/3",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/4",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/10/4",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/5",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pct/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_recorded_positive_pct/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/all_assigned/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pointwise_95ci_pct/2/0",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/ci95_pct/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pointwise_95ci_pct/2/1",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/ci95_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_pointwise_95ci_pct/2/0",
+      "reference_pointer": "/tables/intent_by_price/values/10/all_assigned/ci95_pct/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_pointwise_95ci_pct/2/1",
+      "reference_pointer": "/tables/intent_by_price/values/10/all_assigned/ci95_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/10/0",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/missing_counts/97",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/10/1",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/missing_counts/98",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/10/2",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/missing_counts/99",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/10/3",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/missing_counts/structural_blank",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/gross/2",
+      "reference_pointer": "/tables/gross_proxy/values/valid_case/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/estimates/2",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/pointwise_95ci/2/0",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/10/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/pointwise_95ci/2/1",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/10/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_0_5/2",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/valid_case/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/estimates/2",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/pointwise_95ci/2/0",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/10/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/pointwise_95ci/2/1",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/10/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_2_0/2",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/valid_case/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/estimates/2",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/pointwise_95ci/2/0",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/10/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/pointwise_95ci/2/1",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/10/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_3_0/2",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/valid_case/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/estimates/2",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/pointwise_95ci/2/0",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/10/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/pointwise_95ci/2/1",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/10/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_n/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/all_assigned/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_weight_sum/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/all_assigned/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/assigned_kish_ess/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/all_assigned/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_n/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/module_eligible_base/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_weight_sum/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/module_eligible_base/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/module_eligible_kish_ess/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/module_eligible_base/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_n/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_weight_sum/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/n_weighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/intent_valid_kish_ess/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/n_eff",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/13/0",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/13/1",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/2",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/13/2",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/3",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/13/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/4",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_intent_distribution_pct/13/4",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/5",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pct/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_recorded_positive_pct/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/all_assigned/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pointwise_95ci_pct/3/0",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/ci95_pct/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/valid_top_two_pointwise_95ci_pct/3/1",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/ci95_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_pointwise_95ci_pct/3/0",
+      "reference_pointer": "/tables/intent_by_price/values/13/all_assigned/ci95_pct/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/all_assigned_pointwise_95ci_pct/3/1",
+      "reference_pointer": "/tables/intent_by_price/values/13/all_assigned/ci95_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/13/0",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/missing_counts/97",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/13/1",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/missing_counts/98",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/13/2",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/missing_counts/99",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/missing_counts/13/3",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/missing_counts/structural_blank",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/gross/3",
+      "reference_pointer": "/tables/gross_proxy/values/valid_case/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/estimates/3",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/pointwise_95ci/3/0",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/13/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/gross/pointwise_95ci/3/1",
+      "reference_pointer": "/tables/gross_proxy/values/all_assigned/13/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_0_5/3",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/valid_case/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/estimates/3",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/pointwise_95ci/3/0",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/13/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_0_5/pointwise_95ci/3/1",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/all_assigned/13/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_2_0/3",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/valid_case/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/estimates/3",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/pointwise_95ci/3/0",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/13/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_2_0/pointwise_95ci/3/1",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/13/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/valid_case/cost_3_0/3",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/valid_case/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/estimates/3",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/pointwise_95ci/3/0",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/13/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/all_assigned/cost_3_0/pointwise_95ci/3/1",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/all_assigned/13/ci95_gbp/1",
+      "output_scale": 1
+    }
+  ]
+}

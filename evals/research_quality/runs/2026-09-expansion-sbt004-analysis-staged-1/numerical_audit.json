@@ -1,0 +1,1267 @@
+{
+  "status": "PASS",
+  "scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+  "output_sha256": "b0150310fc628cc78294935a4dfd95a9a4806bb4e5dcaf7b9ec1d9652782943d",
+  "checks": [
+    {
+      "id": "att_plan_ahead_5.n_unweighted",
+      "reported": 2617,
+      "reference": 2617,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.n_weighted",
+      "reported": 2623.52,
+      "reference": 2623.5181818181845,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.n_eff",
+      "reported": 2065.38,
+      "reference": 2065.3834599970533,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.1",
+      "reported": 15.6,
+      "reference": 15.603382457745258,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.2",
+      "reported": 20.87,
+      "reference": 20.874698675500515,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.3",
+      "reported": 26.27,
+      "reference": 26.26544739252519,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.4",
+      "reported": 22.24,
+      "reference": 22.237545927802252,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.pct.5",
+      "reported": 15.02,
+      "reference": 15.018925546426791,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.DK",
+      "reported": 60,
+      "reference": 60,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.refusal",
+      "reported": 23,
+      "reference": 23,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_unweighted",
+      "reported": 2632,
+      "reference": 2632,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_weighted",
+      "reported": 2628.96,
+      "reference": 2628.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_eff",
+      "reported": 2076.13,
+      "reference": 2076.1333562002583,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.1",
+      "reported": 14.85,
+      "reference": 14.854026714125663,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.2",
+      "reported": 20.33,
+      "reference": 20.329062331422985,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.3",
+      "reported": 28.46,
+      "reference": 28.463292283149446,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.4",
+      "reported": 22.33,
+      "reference": 22.32939429846603,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.pct.5",
+      "reported": 14.02,
+      "reference": 14.024224372835869,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.DK",
+      "reported": 50,
+      "reference": 50,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.refusal",
+      "reported": 18,
+      "reference": 18,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_unweighted",
+      "reported": 2628,
+      "reference": 2628,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_weighted",
+      "reported": 2632.09,
+      "reference": 2632.087878787882,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_eff",
+      "reported": 2075.23,
+      "reference": 2075.2341662967556,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.1",
+      "reported": 12.62,
+      "reference": 12.620583498064104,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.2",
+      "reported": 18.52,
+      "reference": 18.515546478253807,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.3",
+      "reported": 27.25,
+      "reference": 27.246948787055782,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.4",
+      "reported": 21.54,
+      "reference": 21.54079777662393,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.pct.5",
+      "reported": 20.08,
+      "reference": 20.076123460002368,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.DK",
+      "reported": 52,
+      "reference": 52,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.refusal",
+      "reported": 20,
+      "reference": 20,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_unweighted",
+      "reported": 2627,
+      "reference": 2627,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_weighted",
+      "reported": 2630.51,
+      "reference": 2630.512121212124,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_eff",
+      "reported": 2074.76,
+      "reference": 2074.7628351722606,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.1",
+      "reported": 16.48,
+      "reference": 16.482445519883793,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.2",
+      "reported": 21.05,
+      "reference": 21.052128344636202,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.3",
+      "reported": 25.67,
+      "reference": 25.666277680691284,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.4",
+      "reported": 20.33,
+      "reference": 20.333406676197402,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.pct.5",
+      "reported": 16.47,
+      "reference": 16.46574177859133,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.DK",
+      "reported": 45,
+      "reference": 45,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.refusal",
+      "reported": 28,
+      "reference": 28,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_unweighted",
+      "reported": 2612,
+      "reference": 2612,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_weighted",
+      "reported": 2608.35,
+      "reference": 2608.354545454548,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_eff",
+      "reported": 2060.53,
+      "reference": 2060.5329637708605,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.1",
+      "reported": 13.86,
+      "reference": 13.864191635966957,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.2",
+      "reported": 15.74,
+      "reference": 15.739169126710564,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.3",
+      "reported": 23.2,
+      "reference": 23.203528986694277,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.4",
+      "reported": 22.3,
+      "reference": 22.2950263547087,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.pct.5",
+      "reported": 24.9,
+      "reference": 24.89808389591951,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.DK",
+      "reported": 63,
+      "reference": 63,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.refusal",
+      "reported": 25,
+      "reference": 25,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_unweighted",
+      "reported": 2632,
+      "reference": 2632,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_weighted",
+      "reported": 2628.66,
+      "reference": 2628.660606060609,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_eff",
+      "reported": 2075.49,
+      "reference": 2075.4939027841356,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.1",
+      "reported": 14.05,
+      "reference": 14.05324522916384,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.2",
+      "reported": 19.04,
+      "reference": 19.044380246651713,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.3",
+      "reported": 24.85,
+      "reference": 24.846505536867493,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.4",
+      "reported": 21.07,
+      "reference": 21.06684127646525,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.pct.5",
+      "reported": 20.99,
+      "reference": 20.98902771085169,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.DK",
+      "reported": 44,
+      "reference": 44,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.refusal",
+      "reported": 24,
+      "reference": 24,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_unweighted",
+      "reported": 2625,
+      "reference": 2625,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_weighted",
+      "reported": 2629.14,
+      "reference": 2629.1393939393965,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_eff",
+      "reported": 2071.96,
+      "reference": 2071.956753290228,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.1",
+      "reported": 1.8,
+      "reference": 1.7992983070851611,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.2",
+      "reported": 10.61,
+      "reference": 10.609186552576253,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.3",
+      "reported": 23.92,
+      "reference": 23.922334304577134,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.4",
+      "reported": 33.46,
+      "reference": 33.461116438608784,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.pct.5",
+      "reported": 30.21,
+      "reference": 30.208064397152665,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.DK",
+      "reported": 57,
+      "reference": 57,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.refusal",
+      "reported": 18,
+      "reference": 18,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_unweighted",
+      "reported": 2623,
+      "reference": 2623,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_weighted",
+      "reported": 2631.77,
+      "reference": 2631.7696969697,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_eff",
+      "reported": 2071.23,
+      "reference": 2071.2275365736496,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.1",
+      "reported": 11.33,
+      "reference": 11.32571239078671,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.2",
+      "reported": 15.8,
+      "reference": 15.797412502705868,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.3",
+      "reported": 24.27,
+      "reference": 24.272295171816634,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.4",
+      "reported": 23.16,
+      "reference": 23.159321300104548,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.pct.5",
+      "reported": 25.45,
+      "reference": 25.445258634586235,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.DK",
+      "reported": 45,
+      "reference": 45,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.refusal",
+      "reported": 32,
+      "reference": 32,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_unweighted",
+      "reported": 2610,
+      "reference": 2610,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_weighted",
+      "reported": 2609.19,
+      "reference": 2609.193939393942,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_eff",
+      "reported": 2057.46,
+      "reference": 2057.4603562770435,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.1",
+      "reported": 34.49,
+      "reference": 34.49352754943476,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.2",
+      "reported": 12.89,
+      "reference": 12.890199457861131,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.3",
+      "reported": 5.8,
+      "reference": 5.797564323824611,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.4",
+      "reported": 12.18,
+      "reference": 12.184768545725255,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.pct.5",
+      "reported": 34.63,
+      "reference": 34.63394012315425,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.DK",
+      "reported": 67,
+      "reference": 67,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.refusal",
+      "reported": 23,
+      "reference": 23,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.n_unweighted",
+      "reported": 999,
+      "reference": 999,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.n_weighted",
+      "reported": 981.28,
+      "reference": 981.2818181818191,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.n_eff",
+      "reported": 780.9,
+      "reference": 780.9029708168897,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.pct.1",
+      "reported": 0.7,
+      "reference": 0.7043971552360392,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.pct.2",
+      "reported": 4.85,
+      "reference": 4.849871689163521,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.pct.3",
+      "reported": 11.29,
+      "reference": 11.292588852552162,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.pct.4",
+      "reported": 21.57,
+      "reference": 21.568881765655927,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.pct.5",
+      "reported": 61.58,
+      "reference": 61.58426053739236,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.DK",
+      "reported": 35,
+      "reference": 35,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.refusal",
+      "reported": 6,
+      "reference": 6,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.1.n_unweighted",
+      "reported": 878,
+      "reference": 878,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.1.n_weighted",
+      "reported": 782.55,
+      "reference": 782.5484848484853,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.1.n_eff",
+      "reported": 661.07,
+      "reference": 661.071242216504,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group_1_mean",
+      "reported": 2.1909,
+      "reference": 2.190918560569391,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.0.n_unweighted",
+      "reported": 1588,
+      "reference": 1588,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.0.n_weighted",
+      "reported": 1669.18,
+      "reference": 1669.1818181818203,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.0.n_eff",
+      "reported": 1286.98,
+      "reference": 1286.9843436128804,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group_0_mean",
+      "reported": 0.9692,
+      "reference": 0.9692119165622785,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.difference",
+      "reported": 1.2217,
+      "reference": 1.2217066440071123,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.se",
+      "reported": 0.06262,
+      "reference": 0.06262437219408486,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.ci.0",
+      "reported": 1.099,
+      "reference": 1.0989651299522742,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.ci.1",
+      "reported": 1.3444,
+      "reference": 1.3444481580619503,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.p_holm",
+      "reported": 3.7198805132385395e-84,
+      "reference": 3.7198805132385395e-84,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.1.n_unweighted",
+      "reported": 872,
+      "reference": 872,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.1.n_weighted",
+      "reported": 779.09,
+      "reference": 779.0939393939398,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.1.n_eff",
+      "reported": 656.41,
+      "reference": 656.4075428791735,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group_1_mean",
+      "reported": 3.7253,
+      "reference": 3.7253063970968614,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.0.n_unweighted",
+      "reported": 1586,
+      "reference": 1586,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.0.n_weighted",
+      "reported": 1666.86,
+      "reference": 1666.8606060606082,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.0.n_eff",
+      "reported": 1285.52,
+      "reference": 1285.5222243242765,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group_0_mean",
+      "reported": 4.9261,
+      "reference": 4.926144957677653,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.difference",
+      "reported": -1.2008,
+      "reference": -1.2008385605807912,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.se",
+      "reported": 0.08204,
+      "reference": 0.08204298071149879,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.ci.0",
+      "reported": -1.3616,
+      "reference": -1.3616398479596432,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.ci.1",
+      "reported": -1.04,
+      "reference": -1.0400372732019392,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.p_holm",
+      "reported": 3.276542010106753e-48,
+      "reference": 3.276542010106753e-48,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.1.n_unweighted",
+      "reported": 678,
+      "reference": 678,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.1.n_weighted",
+      "reported": 631.58,
+      "reference": 631.5848484848491,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.1.n_eff",
+      "reported": 522.17,
+      "reference": 522.1680431449745,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group_1_pct",
+      "reported": 72.3087,
+      "reference": 72.30871832763178,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.0.n_unweighted",
+      "reported": 1708,
+      "reference": 1708,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.0.n_weighted",
+      "reported": 1769.77,
+      "reference": 1769.769696969699,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.0.n_eff",
+      "reported": 1368.26,
+      "reference": 1368.2594885074227,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group_0_pct",
+      "reported": 35.0287,
+      "reference": 35.02869745078969,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.difference",
+      "reported": 37.28,
+      "reference": 37.28002087684209,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.se",
+      "reported": 2.33846,
+      "reference": 2.3384580603439264,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.ci.0",
+      "reported": 32.6967,
+      "reference": 32.6967272992106,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.ci.1",
+      "reported": 41.8633,
+      "reference": 41.863314454473574,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.p_holm",
+      "reported": 9.693235952820501e-57,
+      "reference": 9.693235952820501e-57,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.1.n_unweighted",
+      "reported": 797,
+      "reference": 797,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.1.n_weighted",
+      "reported": 754.72,
+      "reference": 754.7181818181824,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.1.n_eff",
+      "reported": 615,
+      "reference": 615.0008080851105,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group_1_mean",
+      "reported": 1.8692,
+      "reference": 1.869202632329145,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.0.n_unweighted",
+      "reported": 1664,
+      "reference": 1664,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.0.n_weighted",
+      "reported": 1721.13,
+      "reference": 1721.1303030303047,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.0.n_eff",
+      "reported": 1331.13,
+      "reference": 1331.128909370946,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group_0_mean",
+      "reported": 0.868,
+      "reference": 0.8679708366418823,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.difference",
+      "reported": 1.0012,
+      "reference": 1.0012317956872627,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.se",
+      "reported": 0.069,
+      "reference": 0.06900032929440282,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.ci.0",
+      "reported": 0.866,
+      "reference": 0.8659936353488291,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.ci.1",
+      "reported": 1.1365,
+      "reference": 1.1364699560256963,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.p_holm",
+      "reported": 1.0390472786400157e-47,
+      "reference": 1.0390472786400157e-47,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.1.n_unweighted",
+      "reported": 1258,
+      "reference": 1258,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.1.n_weighted",
+      "reported": 681.17,
+      "reference": 681.1666666666667,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.1.n_eff",
+      "reported": 1216.3,
+      "reference": 1216.3017327504099,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group_1_mean",
+      "reported": 1.9094,
+      "reference": 1.9093711769023731,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.0.n_unweighted",
+      "reported": 1356,
+      "reference": 1356,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.0.n_weighted",
+      "reported": 1926.49,
+      "reference": 1926.4909090909118,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.0.n_eff",
+      "reported": 1273.98,
+      "reference": 1273.9795845731282,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group_0_mean",
+      "reported": 1.1749,
+      "reference": 1.174943609199958,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.difference",
+      "reported": 0.7344,
+      "reference": 0.734427567702415,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.se",
+      "reported": 0.05517,
+      "reference": 0.055167950378160246,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.ci.0",
+      "reported": 0.6263,
+      "reference": 0.626300371860328,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.ci.1",
+      "reported": 0.8426,
+      "reference": 0.842554763544502,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.p_holm",
+      "reported": 3.912344483892691e-40,
+      "reference": 3.912344483892691e-40,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.1.n_unweighted",
+      "reported": 1254,
+      "reference": 1254,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.1.n_weighted",
+      "reported": 679.47,
+      "reference": 679.4666666666667,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.1.n_eff",
+      "reported": 1212.62,
+      "reference": 1212.6222990089068,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group_1_mean",
+      "reported": 4.2338,
+      "reference": 4.233810832025118,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.0.n_unweighted",
+      "reported": 1355,
+      "reference": 1355,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.0.n_weighted",
+      "reported": 1923.93,
+      "reference": 1923.9272727272755,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.0.n_eff",
+      "reported": 1272.6,
+      "reference": 1272.5967495496861,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group_0_mean",
+      "reported": 4.6373,
+      "reference": 4.637280751493158,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.difference",
+      "reported": -0.4035,
+      "reference": -0.4034699194680398,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.se",
+      "reported": 0.06956,
+      "reference": 0.06956484802977508,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.ci.0",
+      "reported": -0.5398,
+      "reference": -0.5398145161964011,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.ci.1",
+      "reported": -0.2671,
+      "reference": -0.2671253227396785,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.p_holm",
+      "reported": 6.63501694950694e-09,
+      "reference": 6.63501694950694e-09,
+      "pass": true
+    },
+    {
+      "id": "needs.n_unweighted",
+      "reported": 2596,
+      "reference": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.n_weighted",
+      "reported": 2595.96,
+      "reference": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.n_eff",
+      "reported": 2045.54,
+      "reference": 2045.5418721676199,
+      "pass": true
+    },
+    {
+      "id": "needs.quick_meals_and_replanning",
+      "reported": 60.82,
+      "reference": 60.816934487886755,
+      "pass": true
+    },
+    {
+      "id": "needs.n_unweighted",
+      "reported": 2596,
+      "reference": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.n_weighted",
+      "reported": 2595.96,
+      "reference": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.n_eff",
+      "reported": 2045.54,
+      "reference": 2045.5418721676199,
+      "pass": true
+    },
+    {
+      "id": "needs.use_up_food",
+      "reported": 59.16,
+      "reference": 59.16226393950501,
+      "pass": true
+    },
+    {
+      "id": "needs.n_unweighted",
+      "reported": 2596,
+      "reference": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.n_weighted",
+      "reported": 2595.96,
+      "reference": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.n_eff",
+      "reported": 2045.54,
+      "reference": 2045.5418721676199,
+      "pass": true
+    },
+    {
+      "id": "needs.budget",
+      "reported": 57.12,
+      "reference": 57.115141723845696,
+      "pass": true
+    },
+    {
+      "id": "needs.n_unweighted",
+      "reported": 2596,
+      "reference": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.n_weighted",
+      "reported": 2595.96,
+      "reference": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.n_eff",
+      "reported": 2045.54,
+      "reference": 2045.5418721676199,
+      "pass": true
+    },
+    {
+      "id": "needs.shared_plan",
+      "reported": 47.23,
+      "reference": 47.23065932347027,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_unweighted",
+      "reported": 2570,
+      "reference": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_weighted",
+      "reported": 2574.37,
+      "reference": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_eff",
+      "reported": 2029.07,
+      "reference": 2029.065430160898,
+      "pass": true
+    },
+    {
+      "id": "barriers.setup_and_upkeep",
+      "reported": 47.9,
+      "reference": 47.89610414069681,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_unweighted",
+      "reported": 2570,
+      "reference": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_weighted",
+      "reported": 2574.37,
+      "reference": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_eff",
+      "reported": 2029.07,
+      "reference": 2029.065430160898,
+      "pass": true
+    },
+    {
+      "id": "barriers.rigidity",
+      "reported": 49.56,
+      "reference": 49.5564085631922,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_unweighted",
+      "reported": 2570,
+      "reference": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_weighted",
+      "reported": 2574.37,
+      "reference": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_eff",
+      "reported": 2029.07,
+      "reference": 2029.065430160898,
+      "pass": true
+    },
+    {
+      "id": "barriers.cost",
+      "reported": 49.56,
+      "reference": 49.5564085631922,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_unweighted",
+      "reported": 2570,
+      "reference": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_weighted",
+      "reported": 2574.37,
+      "reference": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.n_eff",
+      "reported": 2029.07,
+      "reference": 2029.065430160898,
+      "pass": true
+    },
+    {
+      "id": "barriers.sharing_information",
+      "reported": 48.72,
+      "reference": 48.721135951917674,
+      "pass": true
+    }
+  ]
+}

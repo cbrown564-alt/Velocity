@@ -1,0 +1,372 @@
+{
+  "study_id": "SBT-005",
+  "analysis_claims": [
+    {
+      "analysis_id": "PRIMARY_PAIRED_DISTRIBUTIONS",
+      "values": {
+        "source_paths": [
+          "analysis_results.json#/tables/ITT_awareness/values",
+          "analysis_results.json#/tables/ITT_consideration/values",
+          "analysis_results.json#/tables/ITT_usage/values"
+        ],
+        "base_tuple_definition": ["unweighted_N", "weighted_N", "Kish_ESS"],
+        "eligible_bases": {
+          "control": [1400, 1387.058, 1210.612],
+          "assigned": [1400, 1412.942, 1220.300]
+        },
+        "category_order": {
+          "awareness": ["No", "Yes"],
+          "consideration": ["Definitely would not", "Probably would not", "Might or might not", "Probably would", "Definitely would"],
+          "usage": ["No", "Yes"]
+        },
+        "awareness": {
+          "control": {
+            "valid_base": [1016, 999.793, 876.618],
+            "pre_pct": [68.631, 31.369],
+            "post_pct": [54.297, 45.703],
+            "pre_missing_97_98_99": [17, 5, 11],
+            "post_missing_97_98_99": [15, 8, 6],
+            "post_structural_excluded_N": 330,
+            "excluded_pair_N": 384
+          },
+          "assigned": {
+            "valid_base": [960, 965.206, 834.407],
+            "pre_pct": [69.166, 30.834],
+            "post_pct": [41.240, 58.760],
+            "pre_missing_97_98_99": [24, 6, 10],
+            "post_missing_97_98_99": [17, 9, 6],
+            "post_structural_excluded_N": 381,
+            "excluded_pair_N": 440
+          }
+        },
+        "consideration": {
+          "control": {
+            "valid_base": [1015, 1000.171, 877.616],
+            "pre_pct": [19.388, 21.574, 27.544, 17.983, 13.512],
+            "post_pct": [18.212, 18.776, 23.153, 20.894, 18.965],
+            "pre_missing_97_98_99": [26, 9, 11],
+            "post_missing_97_98_99": [16, 3, 3],
+            "post_structural_excluded_N": 330,
+            "excluded_pair_N": 385
+          },
+          "assigned": {
+            "valid_base": [966, 973.613, 839.325],
+            "pre_pct": [22.281, 22.631, 26.408, 17.163, 11.517],
+            "post_pct": [18.159, 20.787, 24.018, 19.929, 17.107],
+            "pre_missing_97_98_99": [19, 7, 9],
+            "post_missing_97_98_99": [17, 6, 4],
+            "post_structural_excluded_N": 381,
+            "excluded_pair_N": 434
+          }
+        },
+        "usage": {
+          "control": {
+            "valid_base": [1007, 993.810, 868.831],
+            "pre_pct": [94.493, 5.507],
+            "post_pct": [90.903, 9.097],
+            "pre_missing_97_98_99": [31, 7, 5],
+            "post_missing_97_98_99": [15, 8, 4],
+            "post_structural_excluded_N": 330,
+            "excluded_pair_N": 393
+          },
+          "assigned": {
+            "valid_base": [969, 973.302, 842.041],
+            "pre_pct": [93.811, 6.189],
+            "post_pct": [91.201, 8.799],
+            "pre_missing_97_98_99": [25, 4, 8],
+            "post_missing_97_98_99": [14, 7, 3],
+            "post_structural_excluded_N": 381,
+            "excluded_pair_N": 431
+          }
+        },
+        "pre_structural_excluded_N_all_arms_endpoints": 0
+      },
+      "universe": "Endpoint-specific valid baseline/follow-up pairs among returners, retaining original assignment. Eligible bases are all enrolled in each arm. Wave-specific missing counts describe that enrolled arm and can overlap; they cannot be summed to obtain unique pair exclusions.",
+      "weighting": "Fixed weight_base; both waves use identical endpoint-specific paired weights. Rounded transcriptions of supplied tables, not raw-data estimates."
+    },
+    {
+      "analysis_id": "PRIMARY_WAVE_VALID_DISTRIBUTIONS",
+      "values": {
+        "source_paths": [
+          "analysis_results.json#/tables/awareness_pre/values",
+          "analysis_results.json#/tables/awareness_post/values",
+          "analysis_results.json#/tables/consideration_pre/values",
+          "analysis_results.json#/tables/consideration_post/values",
+          "analysis_results.json#/tables/usage_pre/values",
+          "analysis_results.json#/tables/usage_post/values"
+        ],
+        "base_tuple_definition": ["unweighted_N", "weighted_N", "Kish_ESS"],
+        "eligible_pre": [2800, 2800, 2430.844],
+        "eligible_post": [2089, 2076.519, 1808.850],
+        "structural_excluded_pre_N": 0,
+        "structural_excluded_post_N": 711,
+        "category_order": {
+          "awareness": ["No", "Yes"],
+          "consideration": ["Definitely would not", "Probably would not", "Might or might not", "Probably would", "Definitely would"],
+          "usage": ["No", "Yes"]
+        },
+        "awareness_pre": {
+          "valid_base": [2727, 2723.915, 2367.336],
+          "distribution_pct": [69.557, 30.443],
+          "missing_97_98_99": [41, 11, 21]
+        },
+        "awareness_post": {
+          "valid_base": [2028, 2019.162, 1755.992],
+          "distribution_pct": [47.953, 52.047],
+          "missing_97_98_99": [32, 17, 12]
+        },
+        "consideration_pre": {
+          "valid_base": [2719, 2722.521, 2361.484],
+          "distribution_pct": [22.367, 23.126, 26.479, 16.657, 11.371],
+          "missing_97_98_99": [45, 16, 20]
+        },
+        "consideration_post": {
+          "valid_base": [2040, 2030.561, 1767.172],
+          "distribution_pct": [18.271, 19.684, 23.456, 20.479, 18.111],
+          "missing_97_98_99": [33, 9, 7]
+        },
+        "usage_pre": {
+          "valid_base": [2720, 2722.734, 2362.780],
+          "distribution_pct": [94.687, 5.313],
+          "missing_97_98_99": [56, 11, 13]
+        },
+        "usage_post": {
+          "valid_base": [2038, 2026.160, 1763.763],
+          "distribution_pct": [91.200, 8.800],
+          "missing_97_98_99": [29, 15, 7]
+        }
+      },
+      "universe": "Separate valid-case distributions at each wave, pooled across assignment. Baseline eligibility is all enrolled; follow-up eligibility is returned questionnaires. These are not paired changes or a conversion funnel.",
+      "weighting": "Fixed weight_base; each distribution uses its own valid-case denominator. Rounded transcriptions of supplied tables."
+    },
+    {
+      "analysis_id": "CHILDREN_ASSIGNMENT_RESULTS",
+      "values": {
+        "source_paths": [
+          "analysis_results.json#/tables/HET_awareness/values",
+          "analysis_results.json#/tables/HET_consideration/values",
+          "analysis_results.json#/tables/HET_usage/values"
+        ],
+        "base_tuple_definition": ["unweighted_N", "weighted_N", "Kish_ESS"],
+        "cell_order": ["no_children_control", "no_children_assigned", "children_control", "children_assigned"],
+        "eligible_bases": [
+          [874, 922.523, 748.574],
+          [836, 897.968, 723.186],
+          [526, 464.535, 477.071],
+          [564, 514.974, 509.014]
+        ],
+        "post_structural_excluded_N": [175, 205, 155, 176],
+        "pre_structural_excluded_N": [0, 0, 0, 0],
+        "awareness": {
+          "valid_bases": [
+            [666, 692.780, 568.946],
+            [591, 630.999, 510.052],
+            [350, 307.012, 317.677],
+            [369, 334.207, 332.539]
+          ],
+          "pre_missing_97_98_99": [[11, 2, 8], [16, 6, 9], [6, 3, 3], [8, 0, 1]],
+          "post_missing_97_98_99": [[10, 5, 2], [11, 6, 3], [5, 3, 4], [6, 3, 3]],
+          "arm_change_pp": [13.388, 28.616, 16.469, 26.623],
+          "no_children_contrast_pp": 15.228,
+          "children_contrast_pp": 10.154,
+          "children_contrast_ci95_pp": [3.517, 16.791],
+          "interaction_pp": -5.074,
+          "interaction_se_pp": 4.280,
+          "interaction_ci95_pp": [-13.463, 3.315],
+          "interaction_p_raw": 0.235844,
+          "interaction_p_holm": 0.471689
+        },
+        "consideration": {
+          "valid_bases": [
+            [663, 690.856, 567.847],
+            [598, 641.294, 516.175],
+            [352, 309.315, 319.633],
+            [368, 332.319, 331.993]
+          ],
+          "pre_missing_97_98_99": [[20, 5, 3], [15, 4, 4], [6, 4, 8], [4, 3, 5]],
+          "post_missing_97_98_99": [[9, 3, 2], [11, 2, 2], [7, 0, 1], [6, 4, 2]],
+          "arm_change_pp": [9.756, 8.435, 5.256, 8.203],
+          "no_children_contrast_pp": -1.321,
+          "children_contrast_pp": 2.947,
+          "children_contrast_ci95_pp": [-2.903, 8.797],
+          "interaction_pp": 4.267,
+          "interaction_se_pp": 3.682,
+          "interaction_ci95_pp": [-2.949, 11.483],
+          "interaction_p_raw": 0.246429,
+          "interaction_p_holm": 0.471689
+        },
+        "usage": {
+          "valid_bases": [
+            [662, 693.428, 566.034],
+            [600, 642.155, 518.451],
+            [345, 300.382, 314.090],
+            [369, 331.147, 332.652]
+          ],
+          "pre_missing_97_98_99": [[19, 5, 4], [12, 3, 7], [12, 2, 1], [13, 1, 1]],
+          "post_missing_97_98_99": [[8, 5, 1], [8, 3, 3], [7, 3, 3], [6, 4, 0]],
+          "arm_change_pp": [3.901, 2.007, 2.871, 3.783],
+          "no_children_contrast_pp": -1.895,
+          "children_contrast_pp": 0.911,
+          "children_contrast_ci95_pp": [-2.301, 4.124],
+          "interaction_pp": 2.806,
+          "interaction_se_pp": 1.930,
+          "interaction_ci95_pp": [-0.976, 6.589],
+          "interaction_p_raw": 0.145943,
+          "interaction_p_holm": 0.437828
+        }
+      },
+      "universe": "Endpoint-specific observed pairs in four disjoint assignment-by-children cells. Interaction is the children assignment contrast minus the no-children assignment contrast.",
+      "weighting": "Fixed weight_base. Supplied fixed-weight paired-change inference; intervals are pointwise. Holm adjustment applies to the three interaction tests, not to subgroup-specific contrasts."
+    }
+  ],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Awareness provides the strongest evidence for a further controlled campaign test: among observed pairs, awareness increased from 30.83% to 58.76% under assignment (+27.93 percentage points), versus 31.37% to 45.70% in control (+14.33 points). The assignment-on-change contrast was +13.59 points.",
+      "evidence_refs": ["analysis_results.json#/tables/ITT_awareness/values"],
+      "importance": "primary",
+      "claim_strength": "Positive observed-pair assignment contrast, significant after the declared primary-family Holm adjustment.",
+      "qualification": "SE 2.077 points; pointwise 95% CI 9.52 to 17.66; raw p=6.032e-11, Holm p=1.810e-10. Control/assigned valid paired bases (N, weighted N, Kish ESS): (1016,999.79,876.62)/(960,965.21,834.41); eligible bases: (1400,1387.06,1210.61)/(1400,1412.94,1220.30). Selection into observed pairs prevents an unqualified full-cohort causal claim. Control growth cannot be attributed to one particular mechanism. Missingness and full paired distributions are retained in PRIMARY_PAIRED_DISTRIBUTIONS.",
+      "topic_cluster": "assignment_outcomes"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Consideration growth did not distinguish assignment from control: top-two consideration rose from 28.68% to 37.04% under assignment (+8.36 points) and from 31.49% to 39.86% in control (+8.36 points). The assignment contrast was -0.008 points.",
+      "evidence_refs": ["analysis_results.json#/tables/ITT_consideration/values"],
+      "importance": "primary",
+      "claim_strength": "No detected assignment difference; not evidence of equivalence.",
+      "qualification": "SE 1.750 points; pointwise 95% CI -3.44 to 3.42; raw and Holm p=0.9962. Control/assigned valid paired bases (N, weighted N, Kish ESS): (1015,1000.17,877.62)/(966,973.61,839.32); eligible bases: (1400,1387.06,1210.61)/(1400,1412.94,1220.30). All five consideration categories and missingness are retained in analysis_claims. Consideration was asked of everyone after the identical neutral description at each wave, not only of aware respondents.",
+      "topic_cluster": "assignment_outcomes"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Reported use provides no demonstrated incremental benefit: assignment rose from 6.19% to 8.80% (+2.61 points), versus 5.51% to 9.10% in control (+3.59 points), giving a -0.98-point contrast. A further test should prespecify a meaningful downstream outcome and improve outcome recovery before making a business-return claim.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/ITT_usage/values",
+        "analysis_results.json#/tables/ITT_awareness/values",
+        "analysis_results.json#/tables/ITT_consideration/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "No detected usage benefit; the follow-up test is a researcher recommendation.",
+      "qualification": "SE 0.877 points; pointwise 95% CI -2.70 to 0.74; raw p=0.2641, Holm p=0.5281. Control/assigned valid paired bases (N, weighted N, Kish ESS): (1007,993.81,868.83)/(969,973.30,842.04); eligible bases: (1400,1387.06,1210.61)/(1400,1412.94,1220.30). The negative estimate establishes neither harm nor zero effect. Usage is self-reported over nonoverlapping four-week windows; it is not transactions or sales. Costs and revenue are absent, so ROI cannot be estimated. Missingness is retained in PRIMARY_PAIRED_DISTRIBUTIONS.",
+      "topic_cluster": "assignment_outcomes"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Selective follow-up limits generalisation. Control returned 1070 questionnaires and assignment 1019, with weighted return rates of 75.98% and 72.38%. Returners had higher baseline consideration and lower budget pressure than nonreturners.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/followup_status_by_assignment/values",
+        "analysis_results.json#/tables/profile_followup_status_baseline/values/consideration_pre",
+        "analysis_results.json#/tables/profile_followup_status_baseline/values/budget_pressure_pre",
+        "analysis_results.json#/tables/ITT_awareness/values/arms",
+        "analysis_results.json#/tables/ITT_consideration/values/arms",
+        "analysis_results.json#/tables/ITT_usage/values/arms"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive evidence of selection; direction and magnitude of outcome bias are unestablished.",
+      "qualification": "Return-rate eligible=valid bases (N, weighted N, Kish ESS), control/assigned: (1400,1387.06,1210.61)/(1400,1412.94,1220.30); no missingness or structural exclusions. Nonreturner/returner eligible baseline bases: (711,723.48,622.07)/(2089,2076.52,1808.85). Their consideration top-two rates were 21.99%/30.13%, valid bases (691,704.14,604.75)/(2028,2018.38,1756.82), missing 97/98/99=(9,3,8)/(36,13,12). High/very-high budget pressure was 49.20%/33.68%, valid bases (692,703.06,605.98)/(2036,2026.36,1762.90), missing=(12,2,5)/(34,11,8). These baseline comparisons have zero structural exclusions. Endpoint-specific pair exclusions and numeric missingness are retained in analysis_claims; fixed baseline weights do not correct attrition.",
+      "topic_cluster": "selection_and_scope"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Receipt and recall associations cannot replace the assignment result. Logged recipients' follow-up consideration advantage was 19.12 points, compared with an existing 19.15-point baseline advantage. Recallers' follow-up advantage was 37.24 points, but they already led by 32.35 points at baseline.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/OBS_receipt_log/values",
+        "analysis_results.json#/tables/OBS_recall_post/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive associations with substantial pre-existing differences; not causal exposure effects.",
+      "qualification": "Receipt=0/1 eligible=valid consideration-pair bases (N, weighted N, Kish ESS): (944,1003.75,820.43)/(1037,970.04,903.73), total 1981, no grouping exclusions. Recall=0/1 eligible=valid subgroup bases: (1040,1107.13,906.03)/(844,760.65,741.87), total 1884; 97 of the 1981 consideration pairs lack valid recall and are excluded. The supplied comparison table does not split those 97 exclusions by missing code. Outcomes have no remaining numeric or structural missingness within these preselected pairs. Each grouping compares the same people at baseline and follow-up. Recall was measured after outcomes; neither grouping was randomised. These associations identify neither mediation nor an effect among compliers.",
+      "topic_cluster": "exposure_interpretation"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "The tested policy produced incomplete logged receipt and control crossover: receipt was 70.16% under assignment and 24.54% in control. The study therefore compares invitation policies with organic placements available, rather than universal receipt against no receipt.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/receipt_log_by_assignment/values",
+        "analysis_results.json#/tables/log_recall_concordance/values/recall_by_receipt"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive implementation evidence.",
+      "qualification": "Receipt-rate eligible=valid bases (N, weighted N, Kish ESS), assigned/control: (1400,1412.94,1220.30)/(1400,1387.06,1210.61), with no numeric missingness or structural exclusions. Among returned valid-recall respondents, 34.18% of logged recipients reported no recall, while 15.73% without logged receipt reported recall. Conditional eligible=valid bases respectively: (1048,981.02,912.94)/(939,985.15,816.54). These conditional bases exclude nonreturners and invalid recall before grouping and have no remaining missingness. Logs do not prove attention, and recall is not verified exposure.",
+      "topic_cluster": "exposure_interpretation"
+    },
+    {
+      "model_finding_id": "F7",
+      "proposition": "Households with children report greater meal-planning stress, but no superior campaign response is established. Very/extremely stressful planning was reported by 56.48% with children versus 36.56% without. Within the priority audience, assignment contrasts were +10.15 points for awareness, +2.95 for consideration and +0.91 for use; none of the three children-versus-no-children interactions passed Holm adjustment.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/children_stress/values",
+        "analysis_results.json#/tables/HET_awareness/values",
+        "analysis_results.json#/tables/HET_consideration/values",
+        "analysis_results.json#/tables/HET_usage/values"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive audience need; no detected prespecified response heterogeneity.",
+      "qualification": "Stress eligible bases (N, weighted N, Kish ESS), children/no children: (1090,979.51,985.73)/(1710,1820.49,1471.74); valid bases (1060,950.38,958.69)/(1686,1791.67,1451.12); missing 97/98/99=(16,6,8)/(17,4,3), structural exclusions=0. Children-specific contrast pointwise 95% CIs: awareness 3.52 to 16.79; consideration -2.90 to 8.80; usage -2.30 to 4.12. Children-minus-no-children interactions: awareness -5.07 (CI -13.46 to 3.32; raw p=.2358, Holm .4717), consideration +4.27 (CI -2.95 to 11.48; raw .2464, Holm .4717), usage +2.81 (CI -0.98 to 6.59; raw .1459, Holm .4378). All four cells' eligible/valid bases, missingness, arm changes and interaction SEs are retained in CHILDREN_ASSIGNMENT_RESULTS. Subgroup intervals are pointwise and do not inherit interaction-family multiplicity control. Need can motivate a children-focused test; these data do not establish preferential targeting on effectiveness grounds.",
+      "topic_cluster": "priority_audience"
+    },
+    {
+      "model_finding_id": "F8",
+      "proposition": "Message ratings among recorded recallers suggest hypotheses for creative testing, not proven explanations for the awareness result. Agreement was 76.74% for clarity, 70.52% for relevance and 75.90% for believability. Relevance's lower numerical rating does not establish it as the weakest attribute or a causal improvement lever.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/campaign_clear_post/values",
+        "analysis_results.json#/tables/campaign_relevant_post/values",
+        "analysis_results.json#/tables/campaign_trust_post/values",
+        "analysis_results.json#/tables/message_correlations/values"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Selected-recaller descriptive diagnostics; no tested ranking or causal-driver inference.",
+      "qualification": "All three items have eligible base (N, weighted N, Kish ESS)=(891,800.64,781.76), with 1909 structural exclusions. Clarity/relevance/believability valid bases: (862,773.02,755.96)/(854,770.28,747.66)/(852,765.17,749.26); numeric missing 97/98/99: (22,3,4)/(25,6,6)/(33,3,3). Full distributions from strongly disagree through strongly agree: clarity [0.47,3.62,19.17,30.88,45.86]%; relevance [2.06,8.58,18.84,27.02,43.49]%; believability [1.39,6.73,15.97,29.27,46.63]%. Weighted Pearson correlations: clarity–relevance .506, clarity–believability .504, relevance–believability .544; pairwise valid bases respectively (828,745.18,724.59), (823,737.54,723.46), (816,735.48,716.01), from the same eligible recaller base. Pairwise numeric exclusions total 63, 68 and 75; their code-specific overlaps are not supplied. Correlated impressions do not identify latent or causal drivers.",
+      "topic_cluster": "followup_test"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": ["F1", "F2", "F3"],
+        "headline_intent": "Awareness improved more under assignment; downstream benefit remains unestablished.",
+        "analytical_relationship": "Compare assigned and control paired changes separately for each endpoint, using the declared primary-family inference."
+      },
+      {
+        "order": 2,
+        "finding_refs": ["F4"],
+        "headline_intent": "Limit the conclusion to households with observed outcome pairs.",
+        "analytical_relationship": "Qualify the assignment evidence with differential return, baseline selection and endpoint-specific completeness."
+      },
+      {
+        "order": 3,
+        "finding_refs": ["F5", "F6"],
+        "headline_intent": "Separate invitation-policy evidence from receipt and recall associations.",
+        "analytical_relationship": "Use implementation and pre-existing group differences to explain why observational exposure comparisons cannot establish campaign effects."
+      },
+      {
+        "order": 4,
+        "finding_refs": ["F7"],
+        "headline_intent": "The priority audience has greater reported need, without demonstrated superior response.",
+        "analytical_relationship": "Present priority-audience assignment contrasts and assess differential response through the prespecified interaction family."
+      },
+      {
+        "order": 5,
+        "finding_refs": ["F1", "F3", "F4", "F7", "F8"],
+        "headline_intent": "Support a controlled follow-up test with better outcome recovery and a meaningful downstream objective.",
+        "analytical_relationship": "Treat awareness as the supported observed-pair result, downstream response as unresolved, and audience need and message diagnostics as hypotheses for testing."
+      }
+    ]
+  },
+  "method_notes": [
+    "Independently checked the prior draft against the four supplied files as reproduced in the prompt. No tools, browsing, connectors, other files or delegated agents were used. analysis_claims contain rounded table transcriptions, not raw-data analyses; evidence_refs identify exact supplied analysis table paths.",
+    "Correction: replaced 'Assignment produced' in the awareness finding with an explicitly observed-pair assignment contrast. Post-assignment nonreturn and item-completeness selection prevent an unqualified causal claim for all randomised households.",
+    "Correction: replaced the categorical assertion that receipt/recall comparisons 'would overstate' the campaign effect with the supported conclusion that they are different, noncausal estimands with substantial baseline differences. The full-cohort causal effect is not known.",
+    "Completion: added the priority audience's own three assignment contrasts and pointwise intervals, alongside interaction tests and four-cell bases/missingness. The prior draft reported interactions but omitted these priority-audience contrasts.",
+    "The prior draft's principal percentages, paired bases, assignment contrasts, confidence intervals and Holm values agree with the supplied tables to rounding. Consideration's contrast is shown as -0.008 points to avoid implying that identical rounded arm changes yield exactly zero. Removed broad ancillary profile assertions from the concise findings rather than leave them without accompanying numerical bases.",
+    "The service, participants and target profile are fictional. The eligible online-recontact panel is not a national probability sample; these results do not describe real UK prevalence.",
+    "Primary estimates retain original assignment and use each endpoint's own valid baseline/follow-up pairs. Consideration codes 4–5 define top-two; valid codes 1–3 contribute zero to that binary endpoint. Codes 97/98/99 and structural blanks are excluded, never imputed as No or zero. Separate wave distributions and paired distributions have different purposes and must not be combined into a funnel.",
+    "weight_base transports the baseline age-by-online-grocery profile and remains fixed. Weighted N is a sum of weights, not population size. Kish ESS measures weight concentration and does not replace paired-change variance or correct attrition.",
+    "Inference follows the supplied independent-household fixed-weight normal approximation: each arm variance is n/(n-1) times sum[w²(D−weighted mean D)²]/(sum w)². Assignment-contrast variance adds arm variances; interaction variance adds four disjoint cell variances. Reported intervals are pointwise 95%, not simultaneous; no primary or interaction estimate has degenerate zero variance.",
+    "Holm adjustment controls each declared three-test family separately at .05. It does not provide joint .05 control across both families, subgroup-specific tests or exploratory analyses. Numerical ordering is not proof of superiority, and nonsignificance is not proof of zero effect or equivalence.",
+    "Numeric missingness and structural exclusions are distinguished throughout. Wave-specific missing counts can overlap and must not be added to infer unique pair losses. Rounded distributions may not sum exactly to 100. Where supplied tables omit code-specific grouping or pairwise missingness overlaps, those details have not been invented.",
+    "The exploratory older digital online-grocery subgroup has only 22 control and 21 assigned awareness pairs: insufficient base, per analysis_results.json#/tables/older_digital_online/values/arms. Its percentages, means, contrasts, intervals and p-values remain suppressed; it supports no targeting recommendation.",
+    "Fixed-weight intervals omit nonresponse-selection and target-profile uncertainty. Neither a causal receipt effect, mediation, full-population effect, actual-sales impact nor ROI is established. The proposed follow-up test is a researcher recommendation, not a demonstrated commercial outcome."
+  ]
+}

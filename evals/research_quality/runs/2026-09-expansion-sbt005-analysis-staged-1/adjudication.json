@@ -1,0 +1,134 @@
+{
+  "adjudicator": "Codex primary agent; provisional and uncalibrated against researchers",
+  "matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": "CAM_M1_INCREMENTAL_AWARENESS",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1"
+      ],
+      "rationale": "Both observed-pair arm changes and incremental assignment contrast are selected with uncertainty and attrition limits."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "CAM_M2_DOWNSTREAM_BOUND",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F2"
+      ],
+      "rationale": "Opening story contrasts awareness with both downstream endpoints; no effect and equivalence are explicitly unestablished."
+    },
+    {
+      "model_finding_id": "F4",
+      "reference_finding_id": "CAM_M4_ATTRITION_LIMIT",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F2",
+        "F4"
+      ],
+      "rationale": "Selected findings retain substantive baseline selection, nonreturn versus item missingness and the observed-pair target; fixed weights do not recover missing outcomes."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "CAM_M3_SELECTION_CONTRAST",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F5"
+      ],
+      "rationale": "Receipt and recall differences are compared against their baseline gaps and explicitly separated from assigned treatment."
+    },
+    {
+      "model_finding_id": "F7",
+      "reference_finding_id": "CAM_S3_FAMILY_CONTEXT",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F7"
+      ],
+      "rationale": "Greater measured baseline stress is kept separate from four-cell interaction evidence; no superior-targeting inference."
+    },
+    {
+      "model_finding_id": "F8",
+      "reference_finding_id": "CAM_S2_SELECTED_DIAGNOSTICS",
+      "match_state": "partial",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F8"
+      ],
+      "rationale": "Selected-recaller ratings are correctly routed and restrained. The full composite reference also requires correlated diagnostics and routed user-experience scope; not all components reach the final selected narrative. Strict partial secondary credit retained pending researcher review."
+    },
+    {
+      "model_finding_id": "F9",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F9"
+      ],
+      "rationale": "Supported recommendation for further controlled research; no asserted sales, ROI or certain audience winner."
+    }
+  ],
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "universe_weight_routing": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "inference_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_completeness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    }
+  },
+  "hard_failures": [],
+  "proposed_corrections": [
+    "Review whether the secondary inventory over-specifies the amount of diagnostic/user-experience detail appropriate for this management decision.",
+    "Retain code-specific missingness in preparation records even when compressing the final narrative."
+  ],
+  "notes": [
+    "Primary Codex semantic adjudication is provisional; researchers have not calibrated the scale scores, so they remain null.",
+    "Selected findings/story recover all four mandatory propositions with explicit joint support where necessary.",
+    "One-reference-per-finding scoring undercounts secondary reach evidence bundled into the receipt/recall selection finding. This limitation is preserved, not repaired by duplicating findings.",
+    "Mapped numeric checks and manually inspected selected claims support compatibility; the audit is not exhaustive for every output number.",
+    "Original outputs, source data and reference tiers remain unchanged. Exact slash-delimited analysis-claim IDs are now resolved as an evidence-notation adapter; semantic scoring is unchanged."
+  ]
+}

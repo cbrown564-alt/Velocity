@@ -1,0 +1,2388 @@
+{
+  "output_sha256": "2b1976ee3406a10d141141b99bb8ade3c7e8eb2bb44e26be33ebf4b5e910e998",
+  "scope": "Explicit inspected structured ordinal, base, support, profile and formal contrast mappings. Derived differences and remaining prose reviewed in adjudication; not exhaustive.",
+  "entries": [
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/base/0",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/base/1",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/base/2",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/dk_n",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_plan_ahead_5/refusal_n",
+      "reference_pointer": "/tables/att_plan_ahead_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/base/0",
+      "reference_pointer": "/tables/att_spontaneous_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/base/1",
+      "reference_pointer": "/tables/att_spontaneous_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/base/2",
+      "reference_pointer": "/tables/att_spontaneous_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_spontaneous_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_spontaneous_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_spontaneous_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_spontaneous_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_spontaneous_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/dk_n",
+      "reference_pointer": "/tables/att_spontaneous_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_spontaneous_5/refusal_n",
+      "reference_pointer": "/tables/att_spontaneous_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/base/0",
+      "reference_pointer": "/tables/att_budget_worry_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/base/1",
+      "reference_pointer": "/tables/att_budget_worry_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/base/2",
+      "reference_pointer": "/tables/att_budget_worry_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_budget_worry_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_budget_worry_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_budget_worry_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_budget_worry_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_budget_worry_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/dk_n",
+      "reference_pointer": "/tables/att_budget_worry_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_budget_worry_5/refusal_n",
+      "reference_pointer": "/tables/att_budget_worry_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/base/0",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/base/1",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/base/2",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/dk_n",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_price_tradeoffs_5/refusal_n",
+      "reference_pointer": "/tables/att_price_tradeoffs_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/base/0",
+      "reference_pointer": "/tables/att_time_short_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/base/1",
+      "reference_pointer": "/tables/att_time_short_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/base/2",
+      "reference_pointer": "/tables/att_time_short_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_time_short_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_time_short_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_time_short_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_time_short_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_time_short_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/dk_n",
+      "reference_pointer": "/tables/att_time_short_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_time_short_5/refusal_n",
+      "reference_pointer": "/tables/att_time_short_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/base/0",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/base/1",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/base/2",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/dk_n",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_decision_fatigue_5/refusal_n",
+      "reference_pointer": "/tables/att_decision_fatigue_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/base/0",
+      "reference_pointer": "/tables/att_waste_concern_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/base/1",
+      "reference_pointer": "/tables/att_waste_concern_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/base/2",
+      "reference_pointer": "/tables/att_waste_concern_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_waste_concern_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_waste_concern_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_waste_concern_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_waste_concern_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_waste_concern_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/dk_n",
+      "reference_pointer": "/tables/att_waste_concern_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_concern_5/refusal_n",
+      "reference_pointer": "/tables/att_waste_concern_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/base/0",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/base/1",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/base/2",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/dk_n",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_waste_difficult_5/refusal_n",
+      "reference_pointer": "/tables/att_waste_difficult_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/base/0",
+      "reference_pointer": "/tables/att_digital_help_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/base/1",
+      "reference_pointer": "/tables/att_digital_help_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/base/2",
+      "reference_pointer": "/tables/att_digital_help_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/distribution_pct/0",
+      "reference_pointer": "/tables/att_digital_help_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/distribution_pct/1",
+      "reference_pointer": "/tables/att_digital_help_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/distribution_pct/2",
+      "reference_pointer": "/tables/att_digital_help_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/distribution_pct/3",
+      "reference_pointer": "/tables/att_digital_help_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/distribution_pct/4",
+      "reference_pointer": "/tables/att_digital_help_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/dk_n",
+      "reference_pointer": "/tables/att_digital_help_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/0/values/items/att_digital_help_5/refusal_n",
+      "reference_pointer": "/tables/att_digital_help_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/budget/pct",
+      "reference_pointer": "/tables/need_budget/values/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/budget/valid_n",
+      "reference_pointer": "/tables/need_budget/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/budget/valid_weighted_n",
+      "reference_pointer": "/tables/need_budget/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/budget/Kish_ESS",
+      "reference_pointer": "/tables/need_budget/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/budget/unknown_n",
+      "reference_pointer": "/tables/need_budget/values/missing_counts/99",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/effort/pct",
+      "reference_pointer": "/tables/need_effort/values/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/effort/valid_n",
+      "reference_pointer": "/tables/need_effort/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/effort/valid_weighted_n",
+      "reference_pointer": "/tables/need_effort/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/effort/Kish_ESS",
+      "reference_pointer": "/tables/need_effort/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/effort/unknown_n",
+      "reference_pointer": "/tables/need_effort/values/missing_counts/99",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/waste/pct",
+      "reference_pointer": "/tables/need_waste/values/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/waste/valid_n",
+      "reference_pointer": "/tables/need_waste/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/waste/valid_weighted_n",
+      "reference_pointer": "/tables/need_waste/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/waste/Kish_ESS",
+      "reference_pointer": "/tables/need_waste/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/states/waste/unknown_n",
+      "reference_pointer": "/tables/need_waste/values/missing_counts/99",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/joint/distribution_pct/000",
+      "reference_pointer": "/tables/need_combinations/values/000/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/joint/distribution_pct/001",
+      "reference_pointer": "/tables/need_combinations/values/001/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/joint/distribution_pct/010",
+      "reference_pointer": "/tables/need_combinations/values/010/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/joint/distribution_pct/011",
+      "reference_pointer": "/tables/need_combinations/values/011/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/joint/distribution_pct/100",
+      "reference_pointer": "/tables/need_combinations/values/100/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/joint/distribution_pct/101",
+      "reference_pointer": "/tables/need_combinations/values/101/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/joint/distribution_pct/110",
+      "reference_pointer": "/tables/need_combinations/values/110/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/1/values/joint/distribution_pct/111",
+      "reference_pointer": "/tables/need_combinations/values/111/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/current_use/valid_n",
+      "reference_pointer": "/tables/current_tool_use/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/current_use/valid_weighted_n",
+      "reference_pointer": "/tables/current_tool_use/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/current_use/Kish_ESS",
+      "reference_pointer": "/tables/current_tool_use/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/valid_n",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/valid_weighted_n",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/Kish_ESS",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/sharing/valid_n",
+      "reference_pointer": "/tables/shared_list_use_28d/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/sharing/valid_weighted_n",
+      "reference_pointer": "/tables/shared_list_use_28d/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/sharing/Kish_ESS",
+      "reference_pointer": "/tables/shared_list_use_28d/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/current_use/pct",
+      "reference_pointer": "/tables/current_tool_use/values/pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/sharing/pct",
+      "reference_pointer": "/tables/shared_list_use_28d/values/mean",
+      "output_scale": 0.01,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/distribution_pct/0",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/distribution_pct/1",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/distribution_pct/2",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/distribution_pct/3",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/distribution_pct/4",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/top_two_pct",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/top2_pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/bottom_two_pct",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/bottom2_pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/dk_n",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/satisfaction/refusal_n",
+      "reference_pointer": "/tables/tool_satisfaction_5/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/sharing/dk_n",
+      "reference_pointer": "/tables/shared_list_use_28d/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/2/values/sharing/refusal_n",
+      "reference_pointer": "/tables/shared_list_use_28d/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/meal_plan_days_7d/base/0",
+      "reference_pointer": "/tables/meal_plan_days_7d/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/meal_plan_days_7d/base/1",
+      "reference_pointer": "/tables/meal_plan_days_7d/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/meal_plan_days_7d/base/2",
+      "reference_pointer": "/tables/meal_plan_days_7d/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/meal_plan_days_7d/mean",
+      "reference_pointer": "/tables/meal_plan_days_7d/values/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/meal_plan_days_7d/dk_n",
+      "reference_pointer": "/tables/meal_plan_days_7d/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/meal_plan_days_7d/refusal_n",
+      "reference_pointer": "/tables/meal_plan_days_7d/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/unplanned_topups_7d/base/0",
+      "reference_pointer": "/tables/unplanned_topups_7d/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/unplanned_topups_7d/base/1",
+      "reference_pointer": "/tables/unplanned_topups_7d/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/unplanned_topups_7d/base/2",
+      "reference_pointer": "/tables/unplanned_topups_7d/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/unplanned_topups_7d/mean",
+      "reference_pointer": "/tables/unplanned_topups_7d/values/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/unplanned_topups_7d/dk_n",
+      "reference_pointer": "/tables/unplanned_topups_7d/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/unplanned_topups_7d/refusal_n",
+      "reference_pointer": "/tables/unplanned_topups_7d/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/waste_days_7d/base/0",
+      "reference_pointer": "/tables/waste_days_7d/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/waste_days_7d/base/1",
+      "reference_pointer": "/tables/waste_days_7d/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/waste_days_7d/base/2",
+      "reference_pointer": "/tables/waste_days_7d/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/waste_days_7d/mean",
+      "reference_pointer": "/tables/waste_days_7d/values/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/waste_days_7d/dk_n",
+      "reference_pointer": "/tables/waste_days_7d/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/waste_days_7d/refusal_n",
+      "reference_pointer": "/tables/waste_days_7d/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/over_budget_4w/base/0",
+      "reference_pointer": "/tables/over_budget_4w/values/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/over_budget_4w/base/1",
+      "reference_pointer": "/tables/over_budget_4w/values/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/over_budget_4w/base/2",
+      "reference_pointer": "/tables/over_budget_4w/values/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/over_budget_4w/pct",
+      "reference_pointer": "/tables/over_budget_4w/values/mean",
+      "output_scale": 0.01,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/over_budget_4w/dk_n",
+      "reference_pointer": "/tables/over_budget_4w/values/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/3/values/over_budget_4w/refusal_n",
+      "reference_pointer": "/tables/over_budget_4w/values/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/base/0",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/base/1",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/base/2",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/distribution_pct/0",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/distribution_pct/1",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/distribution_pct/2",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/distribution_pct/3",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/distribution_pct/4",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/dk_n",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/refusal_n",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/digital/agree_pct",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/top2_pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/eligible/0",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/eligible/1",
+      "reference_pointer": "/tables/profile_age_band/values/2/att_digital_help_5/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/topups/base/0",
+      "reference_pointer": "/tables/profile_age_band/values/2/unplanned_topups_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/topups/base/1",
+      "reference_pointer": "/tables/profile_age_band/values/2/unplanned_topups_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/topups/base/2",
+      "reference_pointer": "/tables/profile_age_band/values/2/unplanned_topups_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/topups/mean_days",
+      "reference_pointer": "/tables/profile_age_band/values/2/unplanned_topups_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/topups/dk_n",
+      "reference_pointer": "/tables/profile_age_band/values/2/unplanned_topups_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/topups/refusal_n",
+      "reference_pointer": "/tables/profile_age_band/values/2/unplanned_topups_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/planning/base/0",
+      "reference_pointer": "/tables/profile_age_band/values/2/meal_plan_days_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/planning/base/1",
+      "reference_pointer": "/tables/profile_age_band/values/2/meal_plan_days_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/planning/base/2",
+      "reference_pointer": "/tables/profile_age_band/values/2/meal_plan_days_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/planning/mean_days",
+      "reference_pointer": "/tables/profile_age_band/values/2/meal_plan_days_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/planning/dk_n",
+      "reference_pointer": "/tables/profile_age_band/values/2/meal_plan_days_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_35_49/planning/refusal_n",
+      "reference_pointer": "/tables/profile_age_band/values/2/meal_plan_days_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/base/0",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/base/1",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/base/2",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/distribution_pct/0",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/distribution_pct/1",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/distribution_pct/2",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/distribution_pct/3",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/distribution_pct/4",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/dk_n",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/refusal_n",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/digital/agree_pct",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/top2_pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/eligible/0",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/eligible/1",
+      "reference_pointer": "/tables/profile_age_band/values/4/att_digital_help_5/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/topups/base/0",
+      "reference_pointer": "/tables/profile_age_band/values/4/unplanned_topups_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/topups/base/1",
+      "reference_pointer": "/tables/profile_age_band/values/4/unplanned_topups_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/topups/base/2",
+      "reference_pointer": "/tables/profile_age_band/values/4/unplanned_topups_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/topups/mean_days",
+      "reference_pointer": "/tables/profile_age_band/values/4/unplanned_topups_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/topups/dk_n",
+      "reference_pointer": "/tables/profile_age_band/values/4/unplanned_topups_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/topups/refusal_n",
+      "reference_pointer": "/tables/profile_age_band/values/4/unplanned_topups_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/planning/base/0",
+      "reference_pointer": "/tables/profile_age_band/values/4/meal_plan_days_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/planning/base/1",
+      "reference_pointer": "/tables/profile_age_band/values/4/meal_plan_days_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/planning/base/2",
+      "reference_pointer": "/tables/profile_age_band/values/4/meal_plan_days_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/planning/mean_days",
+      "reference_pointer": "/tables/profile_age_band/values/4/meal_plan_days_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/planning/dk_n",
+      "reference_pointer": "/tables/profile_age_band/values/4/meal_plan_days_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/age_65_plus/planning/refusal_n",
+      "reference_pointer": "/tables/profile_age_band/values/4/meal_plan_days_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/base/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/base/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/base/2",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/distribution_pct/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/distribution_pct/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/distribution_pct/2",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/distribution_pct/3",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/distribution_pct/4",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/dk_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/refusal_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/digital/agree_pct",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/top2_pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/eligible/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/eligible/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/att_digital_help_5/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/topups/base/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/unplanned_topups_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/topups/base/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/unplanned_topups_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/topups/base/2",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/unplanned_topups_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/topups/mean_days",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/unplanned_topups_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/topups/dk_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/unplanned_topups_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/topups/refusal_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/unplanned_topups_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/planning/base/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/meal_plan_days_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/planning/base/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/meal_plan_days_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/planning/base/2",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/meal_plan_days_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/planning/mean_days",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/meal_plan_days_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/planning/dk_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/meal_plan_days_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_none/planning/refusal_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/0/meal_plan_days_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/base/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/base/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/base/2",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/distribution_pct/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/distribution_pct/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/distribution_pct/2",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/distribution_pct/3",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/distribution_pct/4",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/dk_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/refusal_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/digital/agree_pct",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/top2_pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/eligible/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/eligible/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/att_digital_help_5/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/topups/base/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/unplanned_topups_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/topups/base/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/unplanned_topups_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/topups/base/2",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/unplanned_topups_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/topups/mean_days",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/unplanned_topups_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/topups/dk_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/unplanned_topups_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/topups/refusal_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/unplanned_topups_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/planning/base/0",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/meal_plan_days_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/planning/base/1",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/meal_plan_days_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/planning/base/2",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/meal_plan_days_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/planning/mean_days",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/meal_plan_days_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/planning/dk_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/meal_plan_days_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/work_30_plus/planning/refusal_n",
+      "reference_pointer": "/tables/profile_work_hours_band/values/2/meal_plan_days_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/base/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/base/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/base/2",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/distribution_pct/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/distribution_pct/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/distribution_pct/2",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/distribution_pct/3",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/distribution_pct/4",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/dk_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/refusal_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/digital/agree_pct",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/top2_pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/eligible/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/eligible/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/att_digital_help_5/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/topups/base/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/unplanned_topups_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/topups/base/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/unplanned_topups_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/topups/base/2",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/unplanned_topups_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/topups/mean_days",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/unplanned_topups_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/topups/dk_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/unplanned_topups_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/topups/refusal_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/unplanned_topups_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/planning/base/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/meal_plan_days_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/planning/base/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/meal_plan_days_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/planning/base/2",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/meal_plan_days_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/planning/mean_days",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/meal_plan_days_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/planning/dk_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/meal_plan_days_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_none/planning/refusal_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/0/meal_plan_days_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/base/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/base/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/base/2",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/distribution_pct/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/distribution_pct/1",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/distribution_pct/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/distribution_pct/2",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/distribution_pct/2",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/distribution_pct/3",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/distribution_pct/3",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/distribution_pct/4",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/distribution_pct/4",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/distribution_pct/5",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/dk_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/refusal_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/digital/agree_pct",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/top2_pct",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/eligible/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/eligible/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/att_digital_help_5/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/topups/base/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/unplanned_topups_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/topups/base/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/unplanned_topups_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/topups/base/2",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/unplanned_topups_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/topups/mean_days",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/unplanned_topups_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/topups/dk_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/unplanned_topups_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/topups/refusal_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/unplanned_topups_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/planning/base/0",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/meal_plan_days_7d/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/planning/base/1",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/meal_plan_days_7d/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/planning/base/2",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/meal_plan_days_7d/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/planning/mean_days",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/meal_plan_days_7d/mean",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/planning/dk_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/meal_plan_days_7d/missing_counts/97",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/5/values/groups/tool_free_recipe_list/planning/refusal_n",
+      "reference_pointer": "/tables/profile_planning_tool_28d/values/2/meal_plan_days_7d/missing_counts/98",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/difference_pp",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/difference_pp",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/unknown_state_n",
+      "reference_pointer": "/tables/need_budget/values/missing_counts/99",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/valid_bases/0/0",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/groups/1/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/valid_bases/0/1",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/groups/1/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/valid_bases/0/2",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/groups/1/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/support_pct/0",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/groups/1/mean",
+      "output_scale": 0.01,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/eligible_bases/0/0",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/groups/1/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/eligible_bases/0/1",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/groups/1/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/valid_bases/1/0",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/groups/0/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/valid_bases/1/1",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/groups/0/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/valid_bases/1/2",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/groups/0/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/support_pct/1",
+      "reference_pointer": "/tables/support_budget_by_need_budget/values/groups/0/mean",
+      "output_scale": 0.01,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/eligible_bases/1/0",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/groups/0/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/budget/eligible_bases/1/1",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/groups/0/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/difference_pp",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/difference_pp",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/unknown_state_n",
+      "reference_pointer": "/tables/need_waste/values/missing_counts/99",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/valid_bases/0/0",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/groups/1/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/valid_bases/0/1",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/groups/1/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/valid_bases/0/2",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/groups/1/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/support_pct/0",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/groups/1/mean",
+      "output_scale": 0.01,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/eligible_bases/0/0",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/groups/1/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/eligible_bases/0/1",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/groups/1/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/valid_bases/1/0",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/groups/0/n_unweighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/valid_bases/1/1",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/groups/0/n_weighted",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/valid_bases/1/2",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/groups/0/n_eff",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/support_pct/1",
+      "reference_pointer": "/tables/support_use_up_by_need_waste/values/groups/0/mean",
+      "output_scale": 0.01,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/eligible_bases/1/0",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/groups/0/eligible_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/analysis_claims/4/values/waste/eligible_bases/1/1",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/groups/0/eligible_weighted_n",
+      "output_scale": 1,
+      "printed_precision": true
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        89,
+        93
+      ],
+      "numeric_text": "2.19",
+      "reference_pointer": "/tables/NEED_EFFORT_TOPUPS/values/group_1/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        101,
+        105
+      ],
+      "numeric_text": "0.97",
+      "reference_pointer": "/tables/NEED_EFFORT_TOPUPS/values/group_0/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        131,
+        135
+      ],
+      "numeric_text": "1.22",
+      "reference_pointer": "/tables/NEED_EFFORT_TOPUPS/values/difference",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        159,
+        163
+      ],
+      "numeric_text": "1.10",
+      "reference_pointer": "/tables/NEED_EFFORT_TOPUPS/values/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        167,
+        171
+      ],
+      "numeric_text": "1.34",
+      "reference_pointer": "/tables/NEED_EFFORT_TOPUPS/values/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        180,
+        188
+      ],
+      "numeric_text": "3.72e-84",
+      "reference_pointer": "/tables/NEED_EFFORT_TOPUPS/values/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        195,
+        199
+      ],
+      "numeric_text": "3.73",
+      "reference_pointer": "/tables/NEED_EFFORT_PLANNING/values/group_1/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        207,
+        211
+      ],
+      "numeric_text": "4.93",
+      "reference_pointer": "/tables/NEED_EFFORT_PLANNING/values/group_0/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        228,
+        233
+      ],
+      "numeric_text": "\u22121.20",
+      "reference_pointer": "/tables/NEED_EFFORT_PLANNING/values/difference",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        253,
+        258
+      ],
+      "numeric_text": "\u22121.36",
+      "reference_pointer": "/tables/NEED_EFFORT_PLANNING/values/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        262,
+        267
+      ],
+      "numeric_text": "\u22121.04",
+      "reference_pointer": "/tables/NEED_EFFORT_PLANNING/values/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        276,
+        284
+      ],
+      "numeric_text": "3.28e-48",
+      "reference_pointer": "/tables/NEED_EFFORT_PLANNING/values/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        100,
+        105
+      ],
+      "numeric_text": "72.31",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/group_1/mean",
+      "output_scale": 0.01
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        114,
+        119
+      ],
+      "numeric_text": "35.03",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/group_0/mean",
+      "output_scale": 0.01
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        123,
+        128
+      ],
+      "numeric_text": "37.28",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/difference",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        144,
+        149
+      ],
+      "numeric_text": "32.70",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        153,
+        158
+      ],
+      "numeric_text": "41.86",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        167,
+        175
+      ],
+      "numeric_text": "9.69e-57",
+      "reference_pointer": "/tables/NEED_BUDGET_OVERSPEND/values/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        208,
+        212
+      ],
+      "numeric_text": "1.87",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/group_1/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        220,
+        224
+      ],
+      "numeric_text": "0.87",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/group_0/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        240,
+        244
+      ],
+      "numeric_text": "1.00",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/difference",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        253,
+        257
+      ],
+      "numeric_text": "0.87",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        261,
+        265
+      ],
+      "numeric_text": "1.14",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        274,
+        282
+      ],
+      "numeric_text": "1.04e-47",
+      "reference_pointer": "/tables/NEED_WASTE_DISCARD/values/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        90,
+        94
+      ],
+      "numeric_text": "1.91",
+      "reference_pointer": "/tables/CHILDREN_TOPUPS/values/group_1/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        102,
+        106
+      ],
+      "numeric_text": "1.17",
+      "reference_pointer": "/tables/CHILDREN_TOPUPS/values/group_0/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        121,
+        125
+      ],
+      "numeric_text": "0.73",
+      "reference_pointer": "/tables/CHILDREN_TOPUPS/values/difference",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        138,
+        142
+      ],
+      "numeric_text": "0.63",
+      "reference_pointer": "/tables/CHILDREN_TOPUPS/values/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        146,
+        150
+      ],
+      "numeric_text": "0.84",
+      "reference_pointer": "/tables/CHILDREN_TOPUPS/values/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        159,
+        167
+      ],
+      "numeric_text": "3.91e-40",
+      "reference_pointer": "/tables/CHILDREN_TOPUPS/values/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        243,
+        247
+      ],
+      "numeric_text": "4.23",
+      "reference_pointer": "/tables/CHILDREN_PLANNING/values/group_1/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        255,
+        259
+      ],
+      "numeric_text": "4.64",
+      "reference_pointer": "/tables/CHILDREN_PLANNING/values/group_0/mean",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        266,
+        271
+      ],
+      "numeric_text": "\u22120.40",
+      "reference_pointer": "/tables/CHILDREN_PLANNING/values/difference",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        280,
+        285
+      ],
+      "numeric_text": "\u22120.54",
+      "reference_pointer": "/tables/CHILDREN_PLANNING/values/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        289,
+        294
+      ],
+      "numeric_text": "\u22120.27",
+      "reference_pointer": "/tables/CHILDREN_PLANNING/values/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        303,
+        310
+      ],
+      "numeric_text": "6.64e-9",
+      "reference_pointer": "/tables/CHILDREN_PLANNING/values/p_holm",
+      "output_scale": 1
+    }
+  ]
+}

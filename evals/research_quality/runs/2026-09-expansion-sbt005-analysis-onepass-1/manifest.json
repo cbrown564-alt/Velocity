@@ -1,0 +1,99 @@
+{
+  "run_id": "2026-09-expansion-sbt005-analysis-onepass-1",
+  "study_id": "SBT-005",
+  "study_version": "1.0.0",
+  "arm": "E3_ANALYSIS_SURFACE",
+  "input_surface": "analysis",
+  "workflow": "one_pass",
+  "model": {
+    "provider": "codex_chatgpt",
+    "model_id": "gpt-6-astra"
+  },
+  "replicate": 1,
+  "input_artifacts": [
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-005/model_inputs/study_materials.json",
+      "sha256": "88d1226bb8d2bb7f8499b173adf4d3a6d7c10d5eb9955f41509c96637ffebbd5",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-005/model_inputs/questionnaire.md",
+      "sha256": "e0fc3ccb65b6dc1c2489dfc3a32faf7351b72a99ded933c0f49a5390c596c39a",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-005/model_inputs/codebook.json",
+      "sha256": "172d0943ff56fc79213ddaede97441abf533906f5a7570016e1ea0cdc1ab32dc",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-005/model_inputs/analysis_results.json",
+      "sha256": "8d1eed3da9c640436f730b300636ef1344d760ec62b826657563f912077d9a57",
+      "exposure_class": "analysis_surface"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-analysis-onepass-1/01-researcher/events.jsonl",
+      "sha256": "56b23068ed6011716757626cd67b2a1ef67dc63c5e374942c71e8b2a3648fa44",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-analysis-onepass-1/01-researcher/output.json",
+      "sha256": "0f98a140a8182c8099bf87acf3b10036f974488a51489ba1a8a710cfc79bf3f5",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-analysis-onepass-1/01-researcher/prompt.txt",
+      "sha256": "ced5bf781a25dc21bf43765c32120e99f563cb08b510af63ab941c2b17c8c431",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-analysis-onepass-1/01-researcher/response.txt",
+      "sha256": "df9526bbb8b4b75fb760e96dcf2c7089a447960840e70eab99626aa5a11f1f2c",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-analysis-onepass-1/01-researcher/stderr.txt",
+      "sha256": "048acfbf77861281aa88ff0d06afa7fb1260a35e8e3de2ed2ba041fbb7bf8624",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt005-analysis-onepass-1/output.json",
+      "sha256": "0f98a140a8182c8099bf87acf3b10036f974488a51489ba1a8a710cfc79bf3f5",
+      "artifact_type": "json"
+    }
+  ],
+  "stage_runs": [
+    {
+      "stage": "researcher",
+      "elapsed_seconds": 284.71475220797583,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 50431,
+          "cached_input_tokens": 11520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 9332,
+          "reasoning_output_tokens": 219
+        }
+      ],
+      "prompt_sha256": "ced5bf781a25dc21bf43765c32120e99f563cb08b510af63ab941c2b17c8c431"
+    }
+  ],
+  "status": "complete",
+  "created_at": "2026-09-22T05:39:54.649202+00:00",
+  "freeze_sha256": "ca718f1ea7a5c66327d05703986bfb04a846c26b021cff6fa604f1b085250dcc",
+  "started_at": "2026-09-22T05:39:54.817116+00:00",
+  "runner_sha256": "0dd829c87d986d4b299a53c880dec91c062df3fde5425cf006305389fac755e7",
+  "cli_version": "codex-cli 0.154.0-alpha.6.2",
+  "reasoning_effort": "low",
+  "timeout_per_stage_seconds": 360,
+  "cost": {
+    "billing": "existing ChatGPT Codex access",
+    "incremental_usd": null,
+    "reason": "CLI reports token usage, not monetary cost"
+  },
+  "exposure_audit": "PASS; manual trace review in exposure_audit.json",
+  "completed_at": "2026-09-22T05:44:39.572250+00:00"
+}

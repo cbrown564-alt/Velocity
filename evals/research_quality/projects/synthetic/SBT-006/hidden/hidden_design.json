@@ -1,0 +1,402 @@
+{
+  "study_id": "SBT-006",
+  "version": "SBT-006-author-candidate-1.0.0",
+  "visibility": "PRIVATE AUTHOR AND INDEPENDENT VALIDATOR ONLY",
+  "status": "Prospective candidate design; not independently validated, not a frozen reference key.",
+  "fixed_seed": 2026092206,
+  "n": 3000,
+  "dgp": {
+    "model": "Baseline heterogeneous households, balanced independent monadic assignment, continuous latent utility plus logistic ordinal-response noise, separate probabilistic module/item response.",
+    "price_component": "-0.25*(price-4)*(1+0.15*I[budget=1]-0.08*I[budget=3]) in the private intent index.",
+    "private_preference_component": "0.80*(true_time_pressed-.30)+0.55*(paid_planning-.12)+0.35*(comfortable-.20)-0.25*(tight_budget-.34)+0.40*z_need+0.20*z_tech+0.90*older_comfortable_paid.",
+    "intent": "score=0.62+preference+price_component+Logistic(0,1); cut at [-1.50,-0.55,0,1.10] into codes 1..5. Positive intent is score>=0. Latent preference, score and propensities are NOT exported.",
+    "monotonicity": "The individual latent price component declines with price. Realised arm summaries can deviate through sampling, varying composition and response selection; there is no row-level forced monotonicity across arms.",
+    "module_exit": "logit Pr(reached)=3.70-.07*(price-4)-.35*true_time_pressed-.25*I[digital_true<=2]+.15*z_tech-.10*z_need.",
+    "item_missingness": "Intent DK probability=.025+.006*(price-4)+.030*I[digital_true<=2]; refusal=.007+.012*I[tight_budget]; skipped=.008+.005*true_time_pressed. Codes are drawn, not overwritten to satisfy targets. Other items have modest separate DK/refusal/skipped processes.",
+    "diagnostics": "Shared post-stimulus halo links expected value, fit, affordability, trust and other diagnostic ratings to private intent. No independent diagnostic intervention.",
+    "small_group": "age>=55, comfortable budget, already paying for planning: moderate prevalence but very small within-price cells, plus higher private preference. This is intentionally tempting, not inferentially reliable.",
+    "weights": "Six unequal-probability baseline strata with prespecified hypothetical sample and target shares; weights computed before independent price assignment. No outcome- or response-based calibration.",
+    "routing": "Use observed intent codes for all routes. Missing intent does not receive conditional follow-ups. All module exits retain their baseline row and assignment.",
+    "no_guarantee": "No acceptance loop, no sample replacement, no row edits, no seed selection, no guaranteed optimum. Threshold failures are reportable design failures."
+  },
+  "reference_propositions": [
+    {
+      "id": "M1",
+      "tier": "mandatory",
+      "proposition": "Cheaper assigned prices increase stated subscription interest, with a much lower full-intent profile at the high end; this is not revealed demand.",
+      "evidence": [
+        "Full 1-5 distributions by assigned price",
+        "P1 valid-case differences",
+        "P2 all-assigned sensitivity"
+      ],
+      "claim_boundary": "Do not rename reported likelihood a purchase probability, demand curve or actual price elasticity."
+    },
+    {
+      "id": "M2",
+      "tier": "mandatory",
+      "proposition": "The cheapest price is not the strongest price-times-interest candidate. Gross and assumed-cost contribution proxies favour different closely competing mid-price candidates in the intended first-candidate design.",
+      "evidence": [
+        "All four G_v point estimates",
+        "C_v at the fixed GBP 2 base-cost assumption",
+        "P3 and P4 comparisons"
+      ],
+      "claim_boundary": "Retain any failure to realise the anticipated different point leaders; do not manufacture or silently rewrite it. These indices do not measure revenue or profit."
+    },
+    {
+      "id": "M3",
+      "tier": "mandatory",
+      "proposition": "Close mid-price proxy leads are uncertain and sensitive to the predeclared variable-cost scenarios, so recommend further behavioural validation rather than a certain optimal price.",
+      "evidence": [
+        "Mid-price differences and pointwise confidence intervals",
+        "Holm families P3/P4",
+        "All three assumed costs"
+      ],
+      "claim_boundary": "Not equivalence from a wide CI, no data-chosen cost scenario, no universally optimal point leader."
+    },
+    {
+      "id": "M4",
+      "tier": "mandatory",
+      "proposition": "Price-related incomplete observation makes valid-case interest conditional; show conservative all-assigned sensitivity, missing-data ranges and fixed-weight denominators before generalising.",
+      "evidence": [
+        "Module exits and 97/98/99 by arm",
+        "q_v and q_0",
+        "Logical completion bounds",
+        "Assigned/valid N, weighted N, Kish ESS"
+      ],
+      "claim_boundary": "q_0 is a lower coding sensitivity for recorded positive intent, not observed rejection or a bound on sales. Baseline weights do not fix missingness."
+    },
+    {
+      "id": "S1",
+      "tier": "secondary",
+      "proposition": "The prespecified time-pressed-family audience has higher stated interest at the same mid-price assignments, without establishing that children/time pressure causes that interest.",
+      "evidence": [
+        "Two fixed same-price group contrasts P5",
+        "Baseline-derived groups and component bases"
+      ],
+      "claim_boundary": "Do not turn an observational audience contrast into attribute causality or a proven subgroup price optimum."
+    },
+    {
+      "id": "S2",
+      "tier": "secondary",
+      "proposition": "Value, affordability and intent show correlated diagnostic patterns; these support interpretation but not independently identified causal mechanisms.",
+      "evidence": [
+        "Weighted valid-pair correlations",
+        "Ordinal diagnostic distributions by price"
+      ],
+      "claim_boundary": "Price randomisation does not randomise perceived value, trust or affordability separately."
+    },
+    {
+      "id": "S3",
+      "tier": "secondary",
+      "proposition": "Hypothetical use and certainty are selectively routed follow-ups, not independent evidence of actual uptake or all-household usage.",
+      "evidence": [
+        "P08/P10 route-eligible and valid bases",
+        "P10 distribution with stated-intent route visible"
+      ],
+      "claim_boundary": "Never generalise P10's frequency to all assigned households or treat hypothetical days as measured behaviour."
+    },
+    {
+      "id": "R1",
+      "tier": "do_not_elevate",
+      "proposition": "An apparent largest proxy point estimate is not a certain economically optimal price.",
+      "temptation": "Report a winner from unadjusted point ranking while omitting uncertainty or cost sensitivity.",
+      "required_restraint": "Preserve candidate uncertainty and all fixed cost scenarios."
+    },
+    {
+      "id": "R2",
+      "tier": "do_not_elevate",
+      "proposition": "Older comfortable households already paying for planning can look unusually interested but their price-specific cells are too small for rates or targeting claims.",
+      "temptation": "Use a tiny premium subgroup to justify a high-price rollout.",
+      "required_restraint": "Suppress each n<40 component rate/proxy/contrast. Do not rescue it with a pooled n across unlike prices."
+    },
+    {
+      "id": "R3",
+      "tier": "do_not_elevate",
+      "proposition": "Stated intent and assumed-cost arithmetic establish neither actual demand nor sales, elasticity, uptake, profit, ROI or an effect on all UK households.",
+      "temptation": "Treat top-two intent as conversion, supplied scenario costs as known business costs, or complete cases as complete population evidence.",
+      "required_restraint": "Label the estimands and scenario assumptions; preserve randomisation and missingness limits."
+    }
+  ],
+  "prospective_checks": [
+    {
+      "id": "C01",
+      "metric": "valid_intent_4",
+      "lower_inclusive": 0.48,
+      "upper_inclusive": 0.8,
+      "reference": "M1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C02",
+      "metric": "valid_intent_7",
+      "lower_inclusive": 0.3,
+      "upper_inclusive": 0.65,
+      "reference": "M1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C03",
+      "metric": "valid_intent_10",
+      "lower_inclusive": 0.16,
+      "upper_inclusive": 0.49,
+      "reference": "M1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C04",
+      "metric": "valid_intent_13",
+      "lower_inclusive": 0.05,
+      "upper_inclusive": 0.36,
+      "reference": "M1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C05",
+      "metric": "interest_gap_4_minus_13",
+      "lower_inclusive": 0.22,
+      "upper_inclusive": 0.62,
+      "reference": "M1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C06",
+      "metric": "interest_4_13_holm_p",
+      "lower_inclusive": 0,
+      "upper_inclusive": 0.05,
+      "reference": "M1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C07",
+      "metric": "interest_nonincreasing",
+      "lower_inclusive": 1,
+      "upper_inclusive": 1,
+      "reference": "M1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C08",
+      "metric": "gross_mid_best_minus_extremes_best",
+      "lower_inclusive": 0.05,
+      "upper_inclusive": 1.5,
+      "reference": "M2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C09",
+      "metric": "gross_7_minus_10",
+      "lower_inclusive": 0.0,
+      "upper_inclusive": 0.65,
+      "reference": "M2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C10",
+      "metric": "contribution_base_10_minus_7",
+      "lower_inclusive": 0.0,
+      "upper_inclusive": 0.65,
+      "reference": "M2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C11",
+      "metric": "gross_point_leader_is_7",
+      "lower_inclusive": 1,
+      "upper_inclusive": 1,
+      "reference": "M2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C12",
+      "metric": "base_contribution_point_leader_is_10",
+      "lower_inclusive": 1,
+      "upper_inclusive": 1,
+      "reference": "M2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C13",
+      "metric": "gross_mid_ci_includes_zero",
+      "lower_inclusive": 1,
+      "upper_inclusive": 1,
+      "reference": "M3",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C14",
+      "metric": "base_contribution_mid_ci_includes_zero",
+      "lower_inclusive": 1,
+      "upper_inclusive": 1,
+      "reference": "M3",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C15",
+      "metric": "contribution_cost_0_5_7_minus_10",
+      "lower_inclusive": 0.0,
+      "upper_inclusive": 0.65,
+      "reference": "M3",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C16",
+      "metric": "contribution_cost_3_0_10_minus_7",
+      "lower_inclusive": 0.0,
+      "upper_inclusive": 0.75,
+      "reference": "M3",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C17",
+      "metric": "mid_price_cost_crossing",
+      "lower_inclusive": 0.5,
+      "upper_inclusive": 3.0,
+      "reference": "M3",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C18",
+      "metric": "intent_valid_fraction_all",
+      "lower_inclusive": 0.77,
+      "upper_inclusive": 0.96,
+      "reference": "M4",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C19",
+      "metric": "nonvalid_share_13_minus_4",
+      "lower_inclusive": 0.01,
+      "upper_inclusive": 0.13,
+      "reference": "M4",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C20",
+      "metric": "largest_valid_minus_all_assigned_intent",
+      "lower_inclusive": 0.025,
+      "upper_inclusive": 0.13,
+      "reference": "M4",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C21",
+      "metric": "module_exit_fraction",
+      "lower_inclusive": 0.012,
+      "upper_inclusive": 0.12,
+      "reference": "M4",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C22",
+      "metric": "baseline_audience_share",
+      "lower_inclusive": 0.18,
+      "upper_inclusive": 0.42,
+      "reference": "S1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C23",
+      "metric": "audience_intent_gap_at_7",
+      "lower_inclusive": 0.07,
+      "upper_inclusive": 0.35,
+      "reference": "S1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C24",
+      "metric": "audience_intent_gap_at_10",
+      "lower_inclusive": 0.07,
+      "upper_inclusive": 0.35,
+      "reference": "S1",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C25",
+      "metric": "corr_intent_value_weighted",
+      "lower_inclusive": 0.3,
+      "upper_inclusive": 0.86,
+      "reference": "S2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C26",
+      "metric": "corr_value_affordability_weighted",
+      "lower_inclusive": 0.3,
+      "upper_inclusive": 0.88,
+      "reference": "S2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C27",
+      "metric": "anticipated_use_eligible_fraction",
+      "lower_inclusive": 0.25,
+      "upper_inclusive": 0.72,
+      "reference": "S3",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C28",
+      "metric": "anticipated_use_ge3_conditional",
+      "lower_inclusive": 0.35,
+      "upper_inclusive": 0.92,
+      "reference": "S3",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C29",
+      "metric": "premium_niche_assigned_n",
+      "lower_inclusive": 20,
+      "upper_inclusive": 110,
+      "reference": "R2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C30",
+      "metric": "premium_niche_min_valid_cell_n",
+      "lower_inclusive": 1,
+      "upper_inclusive": 39,
+      "reference": "R2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C31",
+      "metric": "premium_niche_max_valid_cell_n",
+      "lower_inclusive": 1,
+      "upper_inclusive": 39,
+      "reference": "R2",
+      "policy": "Check first realised dataset once; retain failure."
+    },
+    {
+      "id": "C32",
+      "metric": "premium_niche_pooled_interest_gap_private",
+      "lower_inclusive": 0.06,
+      "upper_inclusive": 0.48,
+      "reference": "R2",
+      "policy": "Check first realised dataset once; retain failure."
+    }
+  ],
+  "check_interpretation": "Effect checks test whether the author candidate supplies the intended benchmark challenge; passing is not model performance, independent validation or human endorsement. Qualitative boundaries R1/R3 and causal wording require independent review, not a fabricated automatic PASS.",
+  "freeze_rules": [
+    "Save original source, public definitions, hidden design and hashes before first execution.",
+    "Keep every failed prospective check. Do not tune rows/seed/thresholds after seeing outputs.",
+    "If a future revised candidate is necessary, preserve this candidate and version the revision explicitly before a new execution.",
+    "Codex must independently derive numbers and audit formulas/routes/traps before freezing reference values and exposing evaluated models.",
+    "Human validation remains a separate gate; a software/author-check PASS does not substitute for it."
+  ],
+  "public_exposure_allowlist": [
+    "respondents.csv",
+    "codebook.json",
+    "questionnaire.md",
+    "study_materials.json"
+  ],
+  "never_expose_to_evaluated_model": [
+    "generate_sbt006.py",
+    "hidden_design.json",
+    "pre_execution",
+    "author_checks",
+    "STORY_AND_VALIDATION.md",
+    "source ZIP"
+  ],
+  "executed_seed": 2026092206,
+  "seed_note": "Canonical prospective checks apply to the declared default seed; other seeds are new, unfrozen draws, not a seed search."
+}

@@ -1,0 +1,98 @@
+{
+  "experiment_id": "RQ-COVERAGE-01",
+  "version": "1.0",
+  "status": "predeclared_before_review_runs",
+  "decision_question": "Does a study-neutral structured completeness review recover more supported decision-relevant findings than a general second-pass review of the identical draft?",
+  "mode": "exposed development pilot, not an unseen holdout or E5 stability study",
+  "maximum_calls": 6,
+  "timeout_seconds": 360,
+  "retries": 0,
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "instructions": {
+    "general_review": "Review the supplied prior draft against the same study brief and approved evidence. Return the full revised JSON using the original output structure, with at most 10 findings. Preserve correct claims and useful qualifications; repair errors and material omissions only when the supplied evidence supports the change. Do not add a finding merely to fill space. Do not assume an absent result is zero, or promote weak, selected or small-base evidence. Keep the narrative concise and decision-relevant. Use your normal research review process to check accuracy, completeness, importance and the overall argument. Record a short change log and remaining limits in method_notes.",
+    "coverage_review": "Review the supplied prior draft against the same study brief and approved evidence. Return the full revised JSON using the original output structure, with at most 10 findings. Preserve correct claims and useful qualifications; repair errors and material omissions only when the supplied evidence supports the change. Do not add a finding merely to fill space. Do not assume an absent result is zero, or promote weak, selected or small-base evidence. Keep the narrative concise and decision-relevant. First derive a short checklist of decision questions from the public brief. For each question, inspect the relevant evidence families and compare them with the selected findings. Check whether related outcomes, contrasts, distributions, universes and limitations materially change the answer. For each checklist item, either point to the finding and exact evidence that answer it, or state why it is omitted, unavailable or not decision-relevant. Use this check to revise the draft, without producing one finding per table. Record the compact checklist, disposition and changes in method_notes."
+  },
+  "outcomes": [
+    "full mandatory recall and lost baseline mandatory findings",
+    "secondary finding coverage with explicit partial matches",
+    "unsupported selected claims, wrong bases, inappropriate promotion",
+    "resolved evidence references and mapped numerical accuracy",
+    "finding count, output length, elapsed seconds and token usage",
+    "human preference and correction burden remain null pending independent review"
+  ],
+  "decision_rule": "Promising only if coverage improves mandatory recovery versus both the common draft and the matched general review without new unsupported claims, wrong bases or lost mandatory findings. Report every study and disagreement; a neutral or negative result is retained. Do not promote from this single replicate.",
+  "limitations": [
+    "The coordinator has seen all reference findings and prior failures; instructions are development-informed, not blind. No study IDs, benchmark finding IDs or particular missed proposition appear in either review instruction.",
+    "One repeat per condition per study is not reliability or a model ranking.",
+    "Coverage includes a required checklist in method_notes, so output burden and prompt length differ; the general review is an active second-pass control, not equal token cost.",
+    "Frozen SBT-004 current-tool metadata limitation remains unchanged.",
+    "Both arms begin from the same approved-analysis one-pass output; this does not test raw-data preparation."
+  ],
+  "slots": [
+    {
+      "run_id": "2026-09-completeness-sbt004-general_review-1",
+      "study_id": "SBT-004",
+      "condition": "general_review",
+      "baseline_run": "2026-09-expansion-sbt004-analysis-onepass-1",
+      "baseline_output_sha256": "e43bf9fac43ef45d9213bc23752c4839dafc5538c1c56616a8872dc95fffc6cd",
+      "baseline_manifest_sha256": "8ff68db262d4aae571318e9592df7b4a7685a3874df1a327c2746d533e660422",
+      "freeze_sha256": "6a2bd911ae13469aa137f959e23ef2856df7dd9e89721d6c3a7cf6d229eec045"
+    },
+    {
+      "run_id": "2026-09-completeness-sbt004-coverage_review-1",
+      "study_id": "SBT-004",
+      "condition": "coverage_review",
+      "baseline_run": "2026-09-expansion-sbt004-analysis-onepass-1",
+      "baseline_output_sha256": "e43bf9fac43ef45d9213bc23752c4839dafc5538c1c56616a8872dc95fffc6cd",
+      "baseline_manifest_sha256": "8ff68db262d4aae571318e9592df7b4a7685a3874df1a327c2746d533e660422",
+      "freeze_sha256": "6a2bd911ae13469aa137f959e23ef2856df7dd9e89721d6c3a7cf6d229eec045"
+    },
+    {
+      "run_id": "2026-09-completeness-sbt005-coverage_review-1",
+      "study_id": "SBT-005",
+      "condition": "coverage_review",
+      "baseline_run": "2026-09-expansion-sbt005-analysis-onepass-1",
+      "baseline_output_sha256": "0f98a140a8182c8099bf87acf3b10036f974488a51489ba1a8a710cfc79bf3f5",
+      "baseline_manifest_sha256": "e07954bc887be44f993fdd41b516bba54fc2362b9477b6cd89d7dad44aced952",
+      "freeze_sha256": "ca718f1ea7a5c66327d05703986bfb04a846c26b021cff6fa604f1b085250dcc"
+    },
+    {
+      "run_id": "2026-09-completeness-sbt005-general_review-1",
+      "study_id": "SBT-005",
+      "condition": "general_review",
+      "baseline_run": "2026-09-expansion-sbt005-analysis-onepass-1",
+      "baseline_output_sha256": "0f98a140a8182c8099bf87acf3b10036f974488a51489ba1a8a710cfc79bf3f5",
+      "baseline_manifest_sha256": "e07954bc887be44f993fdd41b516bba54fc2362b9477b6cd89d7dad44aced952",
+      "freeze_sha256": "ca718f1ea7a5c66327d05703986bfb04a846c26b021cff6fa604f1b085250dcc"
+    },
+    {
+      "run_id": "2026-09-completeness-sbt006-general_review-1",
+      "study_id": "SBT-006",
+      "condition": "general_review",
+      "baseline_run": "2026-09-expansion-sbt006-analysis-onepass-1",
+      "baseline_output_sha256": "a3f19796b481150a2ac9d054997b6c2de0bca9c21c0e6c07f7f1b325378acab6",
+      "baseline_manifest_sha256": "b4db5e223bc0426bc5785ee8b65976c595c3ec5ed66b9afa710941fd67049ac7",
+      "freeze_sha256": "e449d0767eea18d40f97c47f3cccfab0233bf18a72c680b4e84b0dff28ff40ef"
+    },
+    {
+      "run_id": "2026-09-completeness-sbt006-coverage_review-1",
+      "study_id": "SBT-006",
+      "condition": "coverage_review",
+      "baseline_run": "2026-09-expansion-sbt006-analysis-onepass-1",
+      "baseline_output_sha256": "a3f19796b481150a2ac9d054997b6c2de0bca9c21c0e6c07f7f1b325378acab6",
+      "baseline_manifest_sha256": "b4db5e223bc0426bc5785ee8b65976c595c3ec5ed66b9afa710941fd67049ac7",
+      "freeze_sha256": "e449d0767eea18d40f97c47f3cccfab0233bf18a72c680b4e84b0dff28ff40ef"
+    }
+  ],
+  "dependencies": {
+    "scripts/python/research_quality/completeness_pilot.py": "600a62775e95b632eb2449f6e0c47430a52d3eaac923a8e90643db3180339144",
+    "scripts/python/research_quality/pilot_runner.py": "0dd829c87d986d4b299a53c880dec91c062df3fde5425cf006305389fac755e7",
+    "scripts/python/research_quality/score_run.py": "03b7817e7030644034b4c5b2f96d43ae4600b06f5b9f4da6d3e0945255cf6200",
+    "scripts/python/research_quality/score_selection.py": "c1f68ac6c2baaf31ef7272cc49d5d63cb773317094c00ccfd5e165e9fb75aa40",
+    "scripts/python/research_quality/validate_exposure.py": "a3b997666055ff2212e0413e90b482d1dcaba9b1e50bffe376004e3538f8dfef",
+    "scripts/python/research_quality/audit_expansion_pilot.py": "41f63e668463f0816e430226fff52edd15bb5d5cf2bd6185f11b09ecda4f7e53",
+    "evals/research_quality/schemas/model_research_output.schema.json": "61de1eea762a4aba450bc538cba213a806169f0105ffc9d0de3f228821105cfc",
+    "evals/research_quality/schemas/evaluation_score.schema.json": "84c5ce33ae33d39c6bfddf5997d0a8fcc902defe4cbc401868a9346179e5d5f1"
+  }
+}

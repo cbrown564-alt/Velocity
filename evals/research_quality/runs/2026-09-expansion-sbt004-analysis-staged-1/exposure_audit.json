@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "scope": "Completed traces manually inspected. Analysis stages use no tools; raw analyst/verifier commands import scientific libraries and read only supplied respondents.csv, study_materials.json and codebook.json. No hidden/reference or external reads observed. This is trace evidence, not an OS-isolation proof. Startup skill-catalog warnings do not show private file reads.",
+  "command_count": 0,
+  "command_sha256": [],
+  "item_types": [
+    "agent_message"
+  ],
+  "warnings": [],
+  "model_completed": true
+}

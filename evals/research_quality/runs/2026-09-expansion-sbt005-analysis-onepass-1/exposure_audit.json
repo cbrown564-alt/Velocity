@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "scope": "Completed analysis-arm event trace contains no tool calls; all allowed evidence inline. Trace evidence does not prove OS isolation.",
+  "command_count": 0,
+  "item_types": [
+    "agent_message"
+  ],
+  "model_completed": true
+}

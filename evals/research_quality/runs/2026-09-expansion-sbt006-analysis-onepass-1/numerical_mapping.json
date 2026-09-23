@@ -1,0 +1,996 @@
+{
+  "output_sha256": "a3f19796b481150a2ac9d054997b6c2de0bca9c21c0e6c07f7f1b325378acab6",
+  "method": "Explicit inspected pointers and exact prose spans. Unit conversions are declared; prose tolerance is half the last printed decimal place. Not exhaustive prose verification.",
+  "entries": [
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        161,
+        165
+      ],
+      "numeric_text": "3.63",
+      "reference_pointer": "/tables/gross_proxy/values/valid_case/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        171,
+        175
+      ],
+      "numeric_text": "3.36",
+      "reference_pointer": "/tables/gross_proxy/values/valid_case/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        218,
+        222
+      ],
+      "numeric_text": "2.67",
+      "reference_pointer": "/tables/gross_proxy/values/valid_case/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        234,
+        238
+      ],
+      "numeric_text": "2.58",
+      "reference_pointer": "/tables/gross_proxy/values/valid_case/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        279,
+        284
+      ],
+      "numeric_text": "0.270",
+      "reference_pointer": "/tables/P3_GROSS_PROXY/values/7_minus_10/estimate",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        295,
+        300
+      ],
+      "numeric_text": "0.189",
+      "reference_pointer": "/tables/P3_GROSS_PROXY/values/7_minus_10/ci95/0",
+      "output_scale": -1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        305,
+        310
+      ],
+      "numeric_text": "0.728",
+      "reference_pointer": "/tables/P3_GROSS_PROXY/values/7_minus_10/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        319,
+        324
+      ],
+      "numeric_text": "0.498",
+      "reference_pointer": "/tables/P3_GROSS_PROXY/values/7_minus_10/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        415,
+        422
+      ],
+      "numeric_text": "7.47e\u22129",
+      "reference_pointer": "/tables/P3_GROSS_PROXY/values/4_minus_7/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        440,
+        448
+      ],
+      "numeric_text": "0.000097",
+      "reference_pointer": "/tables/P3_GROSS_PROXY/values/7_minus_13/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        466,
+        473
+      ],
+      "numeric_text": "0.00264",
+      "reference_pointer": "/tables/P3_GROSS_PROXY/values/4_minus_10/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/proposition",
+      "numeric_span": [
+        496,
+        502
+      ],
+      "numeric_text": "0.0139",
+      "reference_pointer": "/tables/P3_GROSS_PROXY/values/10_minus_13/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        124,
+        129
+      ],
+      "numeric_text": "66.84",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        132,
+        137
+      ],
+      "numeric_text": "51.90",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        140,
+        145
+      ],
+      "numeric_text": "33.63",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        151,
+        156
+      ],
+      "numeric_text": "19.82",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        205,
+        210
+      ],
+      "numeric_text": "18.27",
+      "reference_pointer": "/tables/P1_VALID_INTENT/values/7_minus_10/estimate",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        237,
+        242
+      ],
+      "numeric_text": "12.90",
+      "reference_pointer": "/tables/P1_VALID_INTENT/values/7_minus_10/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        243,
+        248
+      ],
+      "numeric_text": "23.63",
+      "reference_pointer": "/tables/P1_VALID_INTENT/values/7_minus_10/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        257,
+        265
+      ],
+      "numeric_text": "7.34e\u221211",
+      "reference_pointer": "/tables/P1_VALID_INTENT/values/7_minus_10/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        493,
+        498
+      ],
+      "numeric_text": "10.98",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        499,
+        504
+      ],
+      "numeric_text": "10.44",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/2",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        505,
+        510
+      ],
+      "numeric_text": "11.74",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/3",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        511,
+        516
+      ],
+      "numeric_text": "23.96",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/4",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        517,
+        522
+      ],
+      "numeric_text": "42.88",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/distribution_pct/5",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        529,
+        534
+      ],
+      "numeric_text": "18.97",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        535,
+        540
+      ],
+      "numeric_text": "17.10",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/2",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        541,
+        546
+      ],
+      "numeric_text": "12.04",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/3",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        547,
+        552
+      ],
+      "numeric_text": "26.88",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/4",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        553,
+        558
+      ],
+      "numeric_text": "25.02",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/distribution_pct/5",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        566,
+        571
+      ],
+      "numeric_text": "33.44",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        572,
+        577
+      ],
+      "numeric_text": "19.48",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/2",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        578,
+        583
+      ],
+      "numeric_text": "13.46",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/3",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        584,
+        589
+      ],
+      "numeric_text": "17.25",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/4",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        590,
+        595
+      ],
+      "numeric_text": "16.38",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/distribution_pct/5",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        606,
+        611
+      ],
+      "numeric_text": "55.81",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        612,
+        617
+      ],
+      "numeric_text": "18.22",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/2",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        618,
+        622
+      ],
+      "numeric_text": "6.15",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/3",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        623,
+        628
+      ],
+      "numeric_text": "12.73",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/4",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/proposition",
+      "numeric_span": [
+        629,
+        633
+      ],
+      "numeric_text": "7.08",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/distribution_pct/5",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        238,
+        243
+      ],
+      "numeric_text": "2.339",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/valid_case/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        245,
+        250
+      ],
+      "numeric_text": "3.373",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/valid_case/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        252,
+        257
+      ],
+      "numeric_text": "3.195",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/valid_case/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        259,
+        264
+      ],
+      "numeric_text": "2.477",
+      "reference_pointer": "/tables/contribution_cost_0_5/values/valid_case/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        269,
+        274
+      ],
+      "numeric_text": "1.337",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/valid_case/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        276,
+        281
+      ],
+      "numeric_text": "2.595",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/valid_case/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        283,
+        288
+      ],
+      "numeric_text": "2.690",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/valid_case/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        290,
+        295
+      ],
+      "numeric_text": "2.180",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/valid_case/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        303,
+        308
+      ],
+      "numeric_text": "0.668",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/valid_case/4/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        310,
+        315
+      ],
+      "numeric_text": "2.076",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/valid_case/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        317,
+        322
+      ],
+      "numeric_text": "2.354",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/valid_case/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        324,
+        329
+      ],
+      "numeric_text": "1.982",
+      "reference_pointer": "/tables/contribution_cost_3_0/values/valid_case/13/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        430,
+        435
+      ],
+      "numeric_text": "0.178",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_0_5/estimate",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        446,
+        451
+      ],
+      "numeric_text": "0.254",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_0_5/ci95/0",
+      "output_scale": -1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        456,
+        461
+      ],
+      "numeric_text": "0.611",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_0_5/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        480,
+        485
+      ],
+      "numeric_text": "0.096",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_2_0/estimate",
+      "output_scale": -1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        489,
+        494
+      ],
+      "numeric_text": "0.449",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_2_0/ci95/0",
+      "output_scale": -1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        499,
+        504
+      ],
+      "numeric_text": "0.258",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_2_0/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        521,
+        526
+      ],
+      "numeric_text": "0.278",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_3_0/estimate",
+      "output_scale": -1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        530,
+        535
+      ],
+      "numeric_text": "0.580",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_3_0/ci95/0",
+      "output_scale": -1
+    },
+    {
+      "output_pointer": "/findings/2/proposition",
+      "numeric_span": [
+        540,
+        545
+      ],
+      "numeric_text": "0.023",
+      "reference_pointer": "/tables/P4_CONTRIBUTION_SCENARIOS/values/7_minus_10_cost_3_0/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        292,
+        297
+      ],
+      "numeric_text": "63.11",
+      "reference_pointer": "/tables/intent_by_price/values/4/all_assigned/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        300,
+        305
+      ],
+      "numeric_text": "47.23",
+      "reference_pointer": "/tables/intent_by_price/values/7/all_assigned/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        308,
+        313
+      ],
+      "numeric_text": "29.48",
+      "reference_pointer": "/tables/intent_by_price/values/10/all_assigned/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        316,
+        321
+      ],
+      "numeric_text": "16.75",
+      "reference_pointer": "/tables/intent_by_price/values/13/all_assigned/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        423,
+        428
+      ],
+      "numeric_text": "17.76",
+      "reference_pointer": "/tables/P2_ALL_ASSIGNED_INTENT/values/7_minus_10/estimate",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        444,
+        449
+      ],
+      "numeric_text": "12.79",
+      "reference_pointer": "/tables/P2_ALL_ASSIGNED_INTENT/values/7_minus_10/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        450,
+        455
+      ],
+      "numeric_text": "22.72",
+      "reference_pointer": "/tables/P2_ALL_ASSIGNED_INTENT/values/7_minus_10/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        459,
+        467
+      ],
+      "numeric_text": "7.33e\u221212",
+      "reference_pointer": "/tables/P2_ALL_ASSIGNED_INTENT/values/7_minus_10/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        557,
+        562
+      ],
+      "numeric_text": "2.362",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/7/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        572,
+        577
+      ],
+      "numeric_text": "2.177",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/7/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        579,
+        584
+      ],
+      "numeric_text": "2.546",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/7/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        594,
+        599
+      ],
+      "numeric_text": "2.358",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/10/estimate_gbp",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        602,
+        607
+      ],
+      "numeric_text": "2.092",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/10/ci95_gbp/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/3/proposition",
+      "numeric_span": [
+        609,
+        614
+      ],
+      "numeric_text": "2.624",
+      "reference_pointer": "/tables/contribution_cost_2_0/values/all_assigned/10/ci95_gbp/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        108,
+        113
+      ],
+      "numeric_text": "62.74",
+      "reference_pointer": "/tables/audience_intent/values/groups/7/1/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        193,
+        198
+      ],
+      "numeric_text": "47.10",
+      "reference_pointer": "/tables/audience_intent/values/groups/7/0/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        236,
+        241
+      ],
+      "numeric_text": "15.64",
+      "reference_pointer": "/tables/audience_intent/values/contrasts/7/estimate",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        257,
+        261
+      ],
+      "numeric_text": "8.01",
+      "reference_pointer": "/tables/audience_intent/values/contrasts/7/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        262,
+        267
+      ],
+      "numeric_text": "23.27",
+      "reference_pointer": "/tables/audience_intent/values/contrasts/7/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        276,
+        285
+      ],
+      "numeric_text": "0.0000584",
+      "reference_pointer": "/tables/audience_intent/values/contrasts/7/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        335,
+        340
+      ],
+      "numeric_text": "46.23",
+      "reference_pointer": "/tables/audience_intent/values/groups/10/1/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        349,
+        354
+      ],
+      "numeric_text": "28.26",
+      "reference_pointer": "/tables/audience_intent/values/groups/10/0/pct",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        358,
+        363
+      ],
+      "numeric_text": "17.97",
+      "reference_pointer": "/tables/audience_intent/values/contrasts/10/estimate",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        372,
+        377
+      ],
+      "numeric_text": "10.36",
+      "reference_pointer": "/tables/audience_intent/values/contrasts/10/ci95/0",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        378,
+        383
+      ],
+      "numeric_text": "25.58",
+      "reference_pointer": "/tables/audience_intent/values/contrasts/10/ci95/1",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/4/proposition",
+      "numeric_span": [
+        387,
+        397
+      ],
+      "numeric_text": "0.00000735",
+      "reference_pointer": "/tables/audience_intent/values/contrasts/10/p_holm",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/qualification",
+      "numeric_span": [
+        40,
+        43
+      ],
+      "numeric_text": "704",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/qualification",
+      "numeric_span": [
+        44,
+        47
+      ],
+      "numeric_text": "682",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/qualification",
+      "numeric_span": [
+        48,
+        51
+      ],
+      "numeric_text": "655",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/0/qualification",
+      "numeric_span": [
+        52,
+        55
+      ],
+      "numeric_text": "633",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/qualification",
+      "numeric_span": [
+        10,
+        13
+      ],
+      "numeric_text": "704",
+      "reference_pointer": "/tables/intent_by_price/values/4/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/qualification",
+      "numeric_span": [
+        14,
+        17
+      ],
+      "numeric_text": "682",
+      "reference_pointer": "/tables/intent_by_price/values/7/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/qualification",
+      "numeric_span": [
+        18,
+        21
+      ],
+      "numeric_text": "655",
+      "reference_pointer": "/tables/intent_by_price/values/10/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/1/qualification",
+      "numeric_span": [
+        22,
+        25
+      ],
+      "numeric_text": "633",
+      "reference_pointer": "/tables/intent_by_price/values/13/valid_case/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/6/proposition",
+      "numeric_span": [
+        465,
+        467
+      ],
+      "numeric_text": "20",
+      "reference_pointer": "/tables/premium_niche/values/4/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/6/proposition",
+      "numeric_span": [
+        469,
+        471
+      ],
+      "numeric_text": "15",
+      "reference_pointer": "/tables/premium_niche/values/7/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/6/proposition",
+      "numeric_span": [
+        473,
+        475
+      ],
+      "numeric_text": "20",
+      "reference_pointer": "/tables/premium_niche/values/10/n_unweighted",
+      "output_scale": 1
+    },
+    {
+      "output_pointer": "/findings/6/proposition",
+      "numeric_span": [
+        480,
+        482
+      ],
+      "numeric_text": "16",
+      "reference_pointer": "/tables/premium_niche/values/13/n_unweighted",
+      "output_scale": 1
+    }
+  ]
+}

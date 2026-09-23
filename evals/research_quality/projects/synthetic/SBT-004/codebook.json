@@ -1,0 +1,919 @@
+{
+  "study_id": "SBT-004",
+  "schema_version": "0.1.0-author-candidate",
+  "column_count": 34,
+  "unit_of_record": "One eligible adult reporting for one household; no repeated households",
+  "encoding": "UTF-8 CSV; integer response/profile codes; float weight; string ID",
+  "missing_definitions": {
+    "97": "Explicit Don't know / cannot judge: nonvalid, not a response midpoint or zero",
+    "98": "Explicit refusal: nonvalid",
+    "99": "Derived state cannot be computed: nonvalid; never an observed answer",
+    "empty_csv_field": "Not administered tool follow-up. Derive reason from U1: code 0 = nonuser; 97/98 = screener nonresponse. Not zero, No, or dissatisfaction."
+  },
+  "derived_constructs": {
+    "planning_orientation": {
+      "stored_in_csv": false,
+      "formula": "(att_plan_ahead_5 + (6 - att_spontaneous_5))/2",
+      "validity": "Both original items must be 1..5 before reversal; otherwise missing. Never compute 6-97/98.",
+      "range": [
+        1,
+        5
+      ],
+      "primary_use": "Descriptive weighted association with external meal_plan_days_7d; do not use a state-versus-defining-item contrast as validation."
+    },
+    "need_states": "Three independent binary flags, not an exclusive segmentation. Do not assign each household to a single need type. For overlap use the joint valid denominator for exactly the flags involved."
+  },
+  "multiple_response": {
+    "needs": {
+      "items": [
+        "support_budget",
+        "support_quick_meals",
+        "support_use_up",
+        "support_shared_plan"
+      ],
+      "status": "needs_block_status"
+    },
+    "barriers": {
+      "items": [
+        "barrier_setup_time",
+        "barrier_rigid",
+        "barrier_cost",
+        "barrier_privacy"
+      ],
+      "status": "barriers_block_status"
+    },
+    "rule": "All eligible households are asked both blocks. Status 1 means every item is 0/1; all zero means None. For status 97/98, every block item has that same nonvalid code. No item-level nonresponse is generated within an answered block.",
+    "denominator": "Sum of weights of eligible RESPONDENTS with status 1, not the number or weighted sum of mentions. A valid all-zero row stays in the denominator. Sum of item percentages may exceed 100%."
+  },
+  "variables": [
+    {
+      "name": "respondent_id",
+      "question_id": "ADMIN_ID",
+      "label": "One pseudonymous synthetic household/respondent ID",
+      "role": "identifier",
+      "storage": "string",
+      "universe": "All eligible sampled households",
+      "valid_codes": [],
+      "codes": {},
+      "missing_codes": {},
+      "structural_blank_allowed": false,
+      "pattern": "SBT004_000001"
+    },
+    {
+      "name": "age_band",
+      "question_id": "P1",
+      "label": "Age of responding grocery/meal planner",
+      "role": "sample_profile",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "codes": {
+        "1": "18-34",
+        "2": "35-49",
+        "3": "50-64",
+        "4": "65+"
+      },
+      "missing_codes": {},
+      "structural_blank_allowed": false
+    },
+    {
+      "name": "children_u16",
+      "question_id": "P2",
+      "label": "At least one child under 16 usually lives in the household",
+      "role": "sample_profile",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {},
+      "structural_blank_allowed": false
+    },
+    {
+      "name": "work_hours_band",
+      "question_id": "P3",
+      "label": "Respondent's usual weekly paid work hours",
+      "role": "profile",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1,
+        2
+      ],
+      "codes": {
+        "0": "Not currently in paid work",
+        "1": "Under 30 paid hours/week",
+        "2": "30 or more paid hours/week"
+      },
+      "missing_codes": {},
+      "structural_blank_allowed": false
+    },
+    {
+      "name": "wt_final",
+      "question_id": "ADMIN_WEIGHT",
+      "label": "Positive relative household analysis weight",
+      "role": "weight",
+      "storage": "float",
+      "universe": "All eligible sampled households",
+      "valid_codes": [],
+      "codes": {},
+      "missing_codes": {},
+      "structural_blank_allowed": false,
+      "minimum_exclusive": 0,
+      "normalization": "Full-sample mean 1; weighted N is an equivalent sample count, not population households"
+    },
+    {
+      "name": "att_plan_ahead_5",
+      "question_id": "A1",
+      "label": "I prefer to decide most of our evening meals several days ahead.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": false,
+      "reverse_for_construct": null
+    },
+    {
+      "name": "att_spontaneous_5",
+      "question_id": "A2",
+      "label": "I prefer to decide what we eat on the day rather than plan ahead.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": true,
+      "reverse_for_construct": "planning_orientation"
+    },
+    {
+      "name": "att_budget_worry_5",
+      "question_id": "A3",
+      "label": "Keeping our grocery spending within what we intend is a worry for me.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": false,
+      "reverse_for_construct": null
+    },
+    {
+      "name": "att_price_tradeoffs_5",
+      "question_id": "A4",
+      "label": "I often have to trade off the food I would like against what the household can afford.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": false,
+      "reverse_for_construct": null
+    },
+    {
+      "name": "att_time_short_5",
+      "question_id": "A5",
+      "label": "I struggle to find enough time to organise our household's meals.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": false,
+      "reverse_for_construct": null
+    },
+    {
+      "name": "att_decision_fatigue_5",
+      "question_id": "A6",
+      "label": "Deciding what to cook feels like one decision too many.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": false,
+      "reverse_for_construct": null
+    },
+    {
+      "name": "att_waste_concern_5",
+      "question_id": "A7",
+      "label": "Avoiding wasted food is an important priority in our household.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": false,
+      "reverse_for_construct": null
+    },
+    {
+      "name": "att_waste_difficult_5",
+      "question_id": "A8",
+      "label": "I find it difficult to use up perishable food before it spoils.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": false,
+      "reverse_for_construct": null
+    },
+    {
+      "name": "att_digital_help_5",
+      "question_id": "A9",
+      "label": "I would welcome a digital tool that suggested what our household could cook and buy each week.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Strongly disagree",
+        "2": "Tend to disagree",
+        "3": "Neither agree nor disagree",
+        "4": "Tend to agree",
+        "5": "Strongly agree"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "reverse_keyed": false,
+      "reverse_for_construct": null
+    },
+    {
+      "name": "need_budget",
+      "question_id": "DERIVED",
+      "label": "need budget",
+      "role": "derived_overlapping_need_state",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Criteria not met",
+        "1": "Criteria met"
+      },
+      "missing_codes": {
+        "99": "Derived value not computable from required valid items"
+      },
+      "structural_blank_allowed": false,
+      "derivation": {
+        "inputs": [
+          "att_budget_worry_5",
+          "att_price_tradeoffs_5"
+        ],
+        "rule": "1 iff BOTH valid item codes are >=4; 0 otherwise when BOTH are valid; 99 if either input is not in 1..5",
+        "exclusive": false,
+        "priority_assignment": false
+      }
+    },
+    {
+      "name": "need_effort",
+      "question_id": "DERIVED",
+      "label": "need effort",
+      "role": "derived_overlapping_need_state",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Criteria not met",
+        "1": "Criteria met"
+      },
+      "missing_codes": {
+        "99": "Derived value not computable from required valid items"
+      },
+      "structural_blank_allowed": false,
+      "derivation": {
+        "inputs": [
+          "att_time_short_5",
+          "att_decision_fatigue_5"
+        ],
+        "rule": "1 iff BOTH valid item codes are >=4; 0 otherwise when BOTH are valid; 99 if either input is not in 1..5",
+        "exclusive": false,
+        "priority_assignment": false
+      }
+    },
+    {
+      "name": "need_waste",
+      "question_id": "DERIVED",
+      "label": "need waste",
+      "role": "derived_overlapping_need_state",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Criteria not met",
+        "1": "Criteria met"
+      },
+      "missing_codes": {
+        "99": "Derived value not computable from required valid items"
+      },
+      "structural_blank_allowed": false,
+      "derivation": {
+        "inputs": [
+          "att_waste_concern_5",
+          "att_waste_difficult_5"
+        ],
+        "rule": "1 iff BOTH valid item codes are >=4; 0 otherwise when BOTH are valid; 99 if either input is not in 1..5",
+        "exclusive": false,
+        "priority_assignment": false
+      }
+    },
+    {
+      "name": "meal_plan_days_7d",
+      "question_id": "B1",
+      "label": "On how many of the past seven days was your household's main evening meal decided by the previous evening?",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "codes": {
+        "0": "0 days",
+        "1": "1 days",
+        "2": "2 days",
+        "3": "3 days",
+        "4": "4 days",
+        "5": "5 days",
+        "6": "6 days",
+        "7": "7 days"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "unit": "days_in_past_7",
+      "construct": "Days with a meal decided by the previous evening"
+    },
+    {
+      "name": "unplanned_topups_7d",
+      "question_id": "B2",
+      "label": "On how many of the past seven days did your household make an unplanned extra grocery shop or order because something was missing?",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "codes": {
+        "0": "0 days",
+        "1": "1 days",
+        "2": "2 days",
+        "3": "3 days",
+        "4": "4 days",
+        "5": "5 days",
+        "6": "6 days",
+        "7": "7 days"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "unit": "days_in_past_7",
+      "construct": "Days with at least one unplanned extra grocery shop/order"
+    },
+    {
+      "name": "waste_days_7d",
+      "question_id": "B3",
+      "label": "On how many of the past seven days did your household throw away unused perishable food or an uneaten prepared meal? Exclude unavoidable peelings and bones.",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "codes": {
+        "0": "0 days",
+        "1": "1 days",
+        "2": "2 days",
+        "3": "3 days",
+        "4": "4 days",
+        "5": "5 days",
+        "6": "6 days",
+        "7": "7 days"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "unit": "days_in_past_7",
+      "construct": "Days with at least one qualifying food-discard event"
+    },
+    {
+      "name": "over_budget_4w",
+      "question_id": "B4",
+      "label": "Spent more on groceries than intended in at least one of the past four weeks",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "clarification": "No monetary amount or income is collected. No intended spending limit / unable to judge is coded 97, not No."
+    },
+    {
+      "name": "planning_tool_28d",
+      "question_id": "U1",
+      "label": "Digital grocery/meal planning tool used most often in past 28 days",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "codes": {
+        "0": "No digital planning tool in past 28 days",
+        "1": "Grocery retailer app/site",
+        "2": "Free recipe or list app/site",
+        "3": "Paid meal-planning app/site"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "clarification": "Used a planning/list/recipe function, not simply browsed or purchased groceries. If more than one, code the most-used type."
+    },
+    {
+      "name": "tool_satisfaction_5",
+      "question_id": "U2",
+      "label": "Overall satisfaction with the most-used planning tool",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "planning_tool_28d in {1,2,3}; missing screener and code 0 are not administered follow-ups",
+      "valid_codes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "codes": {
+        "1": "Very dissatisfied",
+        "2": "Fairly dissatisfied",
+        "3": "Neither satisfied nor dissatisfied",
+        "4": "Fairly satisfied",
+        "5": "Very satisfied"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": true
+    },
+    {
+      "name": "shared_list_use_28d",
+      "question_id": "U3",
+      "label": "Used a shared shopping-list/meal-plan function with another household member in past 28 days",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "planning_tool_28d in {1,2,3}; missing screener and code 0 are not administered follow-ups",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "No",
+        "1": "Yes"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": true,
+      "clarification": "Current tool users without a sharing feature or another member to share with answer No, not a structural blank."
+    },
+    {
+      "name": "support_budget",
+      "question_id": "N1",
+      "label": "Keep grocery spending within what we intend",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Not selected",
+        "1": "Selected"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "needs",
+      "eligibility_status": "needs_block_status=1",
+      "respondent_percentages": true
+    },
+    {
+      "name": "support_quick_meals",
+      "question_id": "N1",
+      "label": "Find quick meals and re-plan when plans change",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Not selected",
+        "1": "Selected"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "needs",
+      "eligibility_status": "needs_block_status=1",
+      "respondent_percentages": true
+    },
+    {
+      "name": "support_use_up",
+      "question_id": "N1",
+      "label": "Use up food and leftovers before they are wasted",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Not selected",
+        "1": "Selected"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "needs",
+      "eligibility_status": "needs_block_status=1",
+      "respondent_percentages": true
+    },
+    {
+      "name": "support_shared_plan",
+      "question_id": "N1",
+      "label": "Share a meal plan or shopping list with other household members",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Not selected",
+        "1": "Selected"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "needs",
+      "eligibility_status": "needs_block_status=1",
+      "respondent_percentages": true
+    },
+    {
+      "name": "barrier_setup_time",
+      "question_id": "N2",
+      "label": "Time or effort to set it up and keep it updated",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Not selected",
+        "1": "Selected"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "barriers",
+      "eligibility_status": "barriers_block_status=1",
+      "respondent_percentages": true
+    },
+    {
+      "name": "barrier_rigid",
+      "question_id": "N2",
+      "label": "Suggestions or plans being too rigid for our household",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Not selected",
+        "1": "Selected"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "barriers",
+      "eligibility_status": "barriers_block_status=1",
+      "respondent_percentages": true
+    },
+    {
+      "name": "barrier_cost",
+      "question_id": "N2",
+      "label": "Another subscription or extra cost",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Not selected",
+        "1": "Selected"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "barriers",
+      "eligibility_status": "barriers_block_status=1",
+      "respondent_percentages": true
+    },
+    {
+      "name": "barrier_privacy",
+      "question_id": "N2",
+      "label": "Sharing household or shopping information",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        0,
+        1
+      ],
+      "codes": {
+        "0": "Not selected",
+        "1": "Selected"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "barriers",
+      "eligibility_status": "barriers_block_status=1",
+      "respondent_percentages": true
+    },
+    {
+      "name": "needs_block_status",
+      "question_id": "N1_STATUS",
+      "label": "Response status for complete support-needs block",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1
+      ],
+      "codes": {
+        "1": "Answered, including none"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "needs"
+    },
+    {
+      "name": "barriers_block_status",
+      "question_id": "N2_STATUS",
+      "label": "Response status for complete digital-barriers block",
+      "role": "observed",
+      "storage": "integer_code",
+      "universe": "All eligible sampled households",
+      "valid_codes": [
+        1
+      ],
+      "codes": {
+        "1": "Answered, including none"
+      },
+      "missing_codes": {
+        "97": "Don't know",
+        "98": "Prefer not to answer"
+      },
+      "structural_blank_allowed": false,
+      "block": "barriers"
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "run_id": "2026-09-expansion-sbt004-analysis-staged-1",
+  "study_id": "SBT-004",
+  "study_version": "1.0.0",
+  "arm": "E2_STAGED",
+  "input_surface": "analysis",
+  "workflow": "staged",
+  "model": {
+    "provider": "codex_chatgpt",
+    "model_id": "gpt-6-astra"
+  },
+  "replicate": 1,
+  "input_artifacts": [
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/study_materials.json",
+      "sha256": "3887fa6ab6f4535dca6d4d84de979779bf7f0295fdbc6b59eb4a850f59b60af4",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/questionnaire.md",
+      "sha256": "06dfa43d9e907728a7b307acd600973ff0131280a3df86b9b6e08474e11adc7a",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/codebook.json",
+      "sha256": "c1e0edc250b036ddfb20c530872afcce104f8bcbbf5370a74e1ca0366cd04a52",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-expansion/evals/research_quality/projects/synthetic/SBT-004/model_inputs/analysis_results.json",
+      "sha256": "c0702ada090a19da18701c5dde3874ad51f5972a8ee4b0cb23dbc7296a3a6037",
+      "exposure_class": "analysis_surface"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/01-analyst/events.jsonl",
+      "sha256": "35206ce853b2478c914d00c3c5344ebfdab372afdb07a4ea28e5d411e44ea94d",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/01-analyst/output.json",
+      "sha256": "bf5672a895418b91b6c0f98d203ec061fcf07bc706a56b5a858c2915c0553dd5",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/01-analyst/prompt.txt",
+      "sha256": "0d146499a08778047c376107e716303f2e37a1dc162ffc870ca7e5f0c4b8ad86",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/01-analyst/response.txt",
+      "sha256": "a3d1d7d7816f183fe8ec3d6dff4c474b6e7528ea3a26fff7971152e206e6cd5c",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/01-analyst/stderr.txt",
+      "sha256": "3c4878f70f2c728affb1dd94a3e85a437eab91681e7433e60c6a093f8c8f550c",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/02-verifier/events.jsonl",
+      "sha256": "8eaff7cf0ac4aff3c52271fd035aabd922981a8f83cd51708b1e9123f4c37542",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/02-verifier/output.json",
+      "sha256": "c02c044975729f4f18e767d4976fc432966fffecc01f363c0644bc67daab5b8e",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/02-verifier/prompt.txt",
+      "sha256": "254799bf3aaef0bf5f1f51ea7ee23139df19f5f884e93d3869465b1d694e2f05",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/02-verifier/response.txt",
+      "sha256": "059c696b67044c51a52971d8062790afd611a534115e54e98c5a96402660c1f2",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/02-verifier/stderr.txt",
+      "sha256": "8a5da1b3974ecfdf8d25f91273774195f464f01e8ba93338551c8b3c49ee9daa",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/03-prioritiser/events.jsonl",
+      "sha256": "514e5ea43880f8f8a167b2d17dc197f5857670449d0cef6435a1438dd346cc26",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/03-prioritiser/output.json",
+      "sha256": "5355134a23311d83b15c5e5bf0e870902bc91010d48f4493caee7da628037c02",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/03-prioritiser/prompt.txt",
+      "sha256": "4f16c0a269059cba40b1f80888aba79b5f99a2279aec50f11381f053ec6cd004",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/03-prioritiser/response.txt",
+      "sha256": "454fab43d0a211f77108e41ced6ae1140d412107c86580f36738fc057c079163",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/03-prioritiser/stderr.txt",
+      "sha256": "5128671eba265a00ea3bd5f883d9ce16fbed876191443110be33a48511e3bf4b",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/04-story_editor/events.jsonl",
+      "sha256": "f1ee758103ee129fbd05251c9f1b40938ddb1e09ad3e222d3c6d78b8f5a5756d",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/04-story_editor/output.json",
+      "sha256": "b0150310fc628cc78294935a4dfd95a9a4806bb4e5dcaf7b9ec1d9652782943d",
+      "artifact_type": "json"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/04-story_editor/prompt.txt",
+      "sha256": "935b439ebc7844b58a573fac50ed99a0b57dc7fda957867b051baeac4b326c22",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/04-story_editor/response.txt",
+      "sha256": "bf0133d816ede830ca4f457cad0313c3cb2499068c3fd4ad783c64db2c080387",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/04-story_editor/stderr.txt",
+      "sha256": "f981a0a0ac89a48a4cf78b11d84b96800f6d36f732e20b465e4e95602c7e8820",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-expansion-sbt004-analysis-staged-1/output.json",
+      "sha256": "b0150310fc628cc78294935a4dfd95a9a4806bb4e5dcaf7b9ec1d9652782943d",
+      "artifact_type": "json"
+    }
+  ],
+  "stage_runs": [
+    {
+      "stage": "analyst",
+      "elapsed_seconds": 214.65414437500294,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 44209,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 6932,
+          "reasoning_output_tokens": 145
+        }
+      ],
+      "prompt_sha256": "0d146499a08778047c376107e716303f2e37a1dc162ffc870ca7e5f0c4b8ad86"
+    },
+    {
+      "stage": "verifier",
+      "elapsed_seconds": 208.4248015000485,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 49815,
+          "cached_input_tokens": 11520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 6747,
+          "reasoning_output_tokens": 83
+        }
+      ],
+      "prompt_sha256": "254799bf3aaef0bf5f1f51ea7ee23139df19f5f884e93d3869465b1d694e2f05"
+    },
+    {
+      "stage": "prioritiser",
+      "elapsed_seconds": 212.78321379201952,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 50159,
+          "cached_input_tokens": 11520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 6926,
+          "reasoning_output_tokens": 84
+        }
+      ],
+      "prompt_sha256": "4f16c0a269059cba40b1f80888aba79b5f99a2279aec50f11381f053ec6cd004"
+    },
+    {
+      "stage": "story_editor",
+      "elapsed_seconds": 211.0919173330767,
+      "returncode": 0,
+      "usage": [
+        {
+          "input_tokens": 49855,
+          "cached_input_tokens": 11520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 6864,
+          "reasoning_output_tokens": 27
+        }
+      ],
+      "prompt_sha256": "935b439ebc7844b58a573fac50ed99a0b57dc7fda957867b051baeac4b326c22"
+    }
+  ],
+  "status": "complete",
+  "created_at": "2026-09-22T05:12:28.339979+00:00",
+  "freeze_sha256": "6a2bd911ae13469aa137f959e23ef2856df7dd9e89721d6c3a7cf6d229eec045",
+  "started_at": "2026-09-22T05:12:28.597142+00:00",
+  "runner_sha256": "0dd829c87d986d4b299a53c880dec91c062df3fde5425cf006305389fac755e7",
+  "cli_version": "codex-cli 0.154.0-alpha.6.2",
+  "reasoning_effort": "low",
+  "timeout_per_stage_seconds": 360,
+  "cost": {
+    "billing": "existing ChatGPT Codex access",
+    "incremental_usd": null,
+    "reason": "CLI reports token usage, not monetary cost"
+  },
+  "exposure_audit": "PASS; manual trace review recorded in exposure_audit.json",
+  "completed_at": "2026-09-22T05:26:35.722689+00:00"
+}

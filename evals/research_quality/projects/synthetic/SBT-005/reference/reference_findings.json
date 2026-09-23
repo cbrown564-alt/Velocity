@@ -1,0 +1,153 @@
+{
+  "project_id": "SBT-005",
+  "version": "1.0.0",
+  "findings": [
+    {
+      "finding_id": "CAM_M1_INCREMENTAL_AWARENESS",
+      "proposition": "Campaign assignment raises awareness change beyond a positive control-arm change; treated pre/post growth alone overstates incremental lift.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-ITT_awareness"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "incremental_awareness",
+      "qualification": "Give both arm changes or their equivalent paired levels AND the assignment difference in change. Preserve the observed-pair attrition qualification."
+    },
+    {
+      "finding_id": "CAM_M2_DOWNSTREAM_BOUND",
+      "proposition": "The awareness response is not matched by comparable assignment effects on consideration or reported use; uncertainty does not justify either a broad conversion-success claim or proof of no effect.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-ITT_awareness",
+        "E-ITT_consideration",
+        "E-ITT_usage",
+        "E-consideration_pre",
+        "E-consideration_post"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "downstream_limits",
+      "qualification": "Explicitly contrast awareness with BOTH downstream estimates in the chosen narrative. Computing them in an unused table is insufficient."
+    },
+    {
+      "finding_id": "CAM_M3_SELECTION_CONTRAST",
+      "proposition": "Receipt/recall groups show much stronger observational consideration contrasts, with pre-existing differences, but neither comparison estimates the randomised assignment effect.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-OBS_receipt_log",
+        "E-OBS_recall_post",
+        "E-ITT_consideration"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "exposure_selection",
+      "qualification": "Identify the change in grouping/estimand and its self-selection/post-outcome nature; do not merely call one estimate 'larger'."
+    },
+    {
+      "finding_id": "CAM_M4_ATTRITION_LIMIT",
+      "proposition": "Follow-up and item completeness select the analysed pairs; their composition differs from nonreturners. Baseline weights and randomisation do not recover missing outcomes or establish a whole-target effect.",
+      "tier": "mandatory",
+      "evidence_ids": [
+        "E-followup_status_by_assignment",
+        "E-profile_followup_status_baseline",
+        "E-profile_assignment_baseline",
+        "E-profile_assignment_returners",
+        "E-ITT_awareness",
+        "E-ITT_consideration",
+        "E-ITT_usage"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "attrition_estimand",
+      "qualification": "State the observed-pair population and substantive selection evidence, distinguish item missingness from nonreturn, and retain assigned noncompliers."
+    },
+    {
+      "finding_id": "CAM_S1_REACH_NOT_RECALL",
+      "proposition": "Encouragement increases logged receipt without perfect compliance; control receipt and log-recall discordance prevent assignment, receipt and recall being interchangeable.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-receipt_log_by_assignment",
+        "E-recall_post_by_assignment",
+        "E-log_recall_concordance"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "reach_measurement",
+      "qualification": "Qualifying logs are not human attention; self-report is not verified reach."
+    },
+    {
+      "finding_id": "CAM_S2_SELECTED_DIAGNOSTICS",
+      "proposition": "Clarity, relevance and believability are correlated evaluations within selected recallers; user satisfaction and usage frequency are further routed and cannot explain a universal causal conversion mechanism.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-campaign_clear_post",
+        "E-campaign_relevant_post",
+        "E-campaign_trust_post",
+        "E-message_correlations",
+        "E-satisfaction_post",
+        "E-usage_days_post"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "diagnostic_scope",
+      "qualification": "No unique-driver or mediated campaign-effect claim from these correlations."
+    },
+    {
+      "finding_id": "CAM_S3_FAMILY_CONTEXT",
+      "proposition": "Households with children have greater baseline meal-planning stress. Their campaign heterogeneity is a separate prespecified question, estimated with four-cell paired bases and uncertainty rather than assumed from need intensity.",
+      "tier": "secondary",
+      "evidence_ids": [
+        "E-children_stress",
+        "E-HET_awareness",
+        "E-HET_consideration",
+        "E-HET_usage"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "audience_context",
+      "qualification": "The direction/significance of a family interaction is not preordained or required; never equate more need with larger causal benefit."
+    },
+    {
+      "finding_id": "CAM_D1_RECALL_AS_TREATMENT",
+      "proposition": "A high receipt/recall consideration contrast is not the incremental campaign effect and must not replace assignment-based change.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-OBS_receipt_log",
+        "E-OBS_recall_post",
+        "E-ITT_consideration"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "exposure_selection",
+      "qualification": "Claim causality from recall/receipt, exclude noncompliers or reinterpret recall as random assignment."
+    },
+    {
+      "finding_id": "CAM_D2_BUSINESS_OR_POPULATION_LEAP",
+      "proposition": "Awareness lift in incomplete follow-up does not establish actual sales, campaign ROI, broad downstream conversion or a whole-population effect.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-ITT_awareness",
+        "E-ITT_consideration",
+        "E-ITT_usage",
+        "E-followup_status_by_assignment"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "effect_scope",
+      "qualification": "Invent cost/revenue, turn stated usage into sales, treat DK/nonreturn as zero, or assert a full-cohort effect/zero effect from the complete-pair result."
+    },
+    {
+      "finding_id": "CAM_D3_TINY_HIGH_LIFT_TARGET",
+      "proposition": "The older, confident online-grocery subgroup offers a tempting high awareness-change contrast but insufficient per-arm base for a targeting conclusion.",
+      "tier": "do_not_elevate",
+      "evidence_ids": [
+        "E-older_digital_online"
+      ],
+      "claim_strength": "observed_pair_assignment_contrast_or_descriptive_restraint",
+      "analytical_relationship": "comparison",
+      "topic_cluster": "small_base_targeting",
+      "qualification": "Print suppressed cell lifts/rates or prioritise a low-base target over the main assignment and attrition evidence."
+    }
+  ]
+}

@@ -118,6 +118,7 @@
       max-width: 1050px;
       padding: 32px 36px 100px;
       min-width: 0;
+      overflow-wrap: anywhere;
     }
     section,
     .card {
@@ -193,7 +194,10 @@
       font:
         12px ui-monospace,
         monospace;
-      min-height: 34px;
+      min-height: 44px;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      text-align: left;
       margin: 4px 4px 0 0;
     }
     #notice {
@@ -373,15 +377,31 @@
     }
     function resolve(path, output) {
       const original = path;
+      if (path.startsWith('#/')) path = path.slice(1);
       path = path.replace(/^analysis_results\.json\./, '').replace(/^SBT-00[23]:/, '');
       let value = review().revisedEvidence || current().evidence,
         parts = path.replace(/\[(\d+)\]/g, '.$1').split('.');
-      if (path.startsWith('/analysis_claims/')) {
+      if (path.startsWith('analysis_results.json#/')) {
+        parts = path
+          .split('#/')[1]
+          .split('/')
+          .map((x) => x.replace(/~1/g, '/').replace(/~0/g, '~'));
+      } else if (path.startsWith('$.analysis_claims[')) {
+        value = review().revision === 0 ? output : null;
+        parts = path
+          .slice(2)
+          .replace(/\[(\d+)\]/g, '.$1')
+          .split('.');
+      } else if (path.startsWith('/analysis_claims/')) {
         value = review().revision === 0 ? output : null;
         parts = path
           .slice(1)
           .split('/')
           .map((x) => x.replace(/~1/g, '/').replace(/~0/g, '~'));
+      } else if (path.startsWith('analysis_claims/')) {
+        parts = path.split('/').map((x) => x.replace(/~1/g, '/').replace(/~0/g, '~'));
+        value = review().revision === 0 ? output?.analysis_claims?.find((a) => a.analysis_id === parts[1]) : null;
+        parts = parts.slice(2);
       } else if (path.startsWith('analysis_claims.')) {
         value = review().revision === 0 ? output?.analysis_claims?.find((a) => a.analysis_id === parts[1]) : null;
         parts = parts.slice(2);

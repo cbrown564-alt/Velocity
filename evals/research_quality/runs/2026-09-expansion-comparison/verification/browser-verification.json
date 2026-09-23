@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "studies": [
+    {
+      "study_id": "SBT-004",
+      "candidate_id": "SBT-004-03",
+      "status": "PASS",
+      "kind": "software_QA_not_human_validation"
+    },
+    {
+      "study_id": "SBT-005",
+      "candidate_id": "SBT-005-04",
+      "status": "PASS",
+      "kind": "software_QA_not_human_validation"
+    },
+    {
+      "study_id": "SBT-006",
+      "candidate_id": "SBT-006-04",
+      "status": "PASS",
+      "kind": "software_QA_not_human_validation"
+    }
+  ],
+  "checks": [
+    "baseline required",
+    "unreviewed findings blocked",
+    "every candidate evidence reference resolves, including file JSON pointers and local JSON paths",
+    "revision reason required",
+    "original wording and evidence exported",
+    "data update clears approvals and keeps edits",
+    "mobile overflow",
+    "no page errors"
+  ]
+}

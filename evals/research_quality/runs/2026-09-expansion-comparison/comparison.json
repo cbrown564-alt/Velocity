@@ -1,0 +1,570 @@
+{
+  "status": "provisional_agent_adjudication_not_human_validation",
+  "date": "2026-09-22",
+  "protocol": "2026-09-expansion-1",
+  "generator_author": "GPT-6 Pro via ChatGPT 6 Pro selector",
+  "evaluated_model": "gpt-6-astra, low, existing Codex access",
+  "completed_outputs": 12,
+  "planned_calls": 30,
+  "technical_replacement_calls": 1,
+  "failed_attempts": [
+    {
+      "run_id": "2026-09-expansion-sbt005-raw-onepass-1",
+      "study_id": "SBT-005",
+      "status": "failed",
+      "reason": "Command '['/Applications/ChatGPT.app/Contents/Resources/codex', 'exec', '--ignore-user-config', '--ignore-rules', '--ephemeral', '--skip-git-repo-check', '--color', 'never', '--json', '--sandbox', 'read-only', '--model', 'gpt-6-astra', '-c', 'model_reasoning_effort=\"low\"', '-c', 'project_doc_max_bytes=0', '-c', 'shell_environment_policy.inherit=\"none\"', '-C', '/var/folders/sx/dpbc0wjj0f16b60xvwr6dtcw0000gn/T/velocity-study-wy6m60zh', '-o', '/Users/cobro/code/Velocity-expansion/evals/research_quality/runs/2026-09-expansion-sbt005-raw-onepass-1/01-researcher/response.txt', '-']' timed out after 360 seconds",
+      "elapsed_seconds": 360.034144,
+      "usage": null,
+      "incremental_usd": null,
+      "exposure_audit": {
+        "status": "PASS",
+        "scope": "Completed recorded actions inspected: analysis stages no tools; raw commands calculate with scientific libraries and supplied respondents.csv/codebook.json only. No hidden/reference or external reads observed. This is trace evidence, not an OS-isolation claim.",
+        "command_count": 3,
+        "command_sha256": [
+          "fbc6582f5669e9212f0caae43bc10f7a34f12d80cd1fb9dce77d393fbc90b8bc",
+          "9a1a8fda115c4484ac7eadf83cf5e8805adaf9da490ab32d19e5fb18e23ff112",
+          "5de37cd69f2793655e838c5a48eae2588ebcfce6cd4189cdc4f0b734b01684d9"
+        ],
+        "item_types": [
+          "agent_message",
+          "command_execution"
+        ],
+        "model_completed": false
+      }
+    }
+  ],
+  "studies": [
+    {
+      "study_id": "SBT-004",
+      "version": "1.0.0",
+      "generator_author": "GPT-6 Pro",
+      "generator_sha256": "06ecf38fd2478bf8d88651394afe361448c67001d24371fabc6cb82e3de5c290",
+      "respondents_sha256": "6394f992f4eeddf376413b0ca394466f4a2ca9151304a015930adf658b3aa20a",
+      "freeze_sha256": "6a2bd911ae13469aa137f959e23ef2856df7dd9e89721d6c3a7cf6d229eec045",
+      "frozen_artifacts": 31,
+      "realised_checks": 76,
+      "independent_numeric_checks": 1254,
+      "analysis_tables": 36,
+      "training_allowed": false,
+      "unseen_holdout": false
+    },
+    {
+      "study_id": "SBT-005",
+      "version": "1.0.0",
+      "generator_author": "GPT-6 Pro",
+      "generator_sha256": "73d8df4d5f61c1b9ab1214c324f1511d82c818bdd4ad154d87f2ba1e12dfbc8d",
+      "respondents_sha256": "5cc0283b7175366381162dea853bb107f72daee2ccbf7f24523c73b65b2af83c",
+      "freeze_sha256": "ca718f1ea7a5c66327d05703986bfb04a846c26b021cff6fa604f1b085250dcc",
+      "frozen_artifacts": 34,
+      "realised_checks": 98,
+      "independent_numeric_checks": 2111,
+      "analysis_tables": 47,
+      "training_allowed": false,
+      "unseen_holdout": false
+    },
+    {
+      "study_id": "SBT-006",
+      "version": "1.0.0",
+      "generator_author": "GPT-6 Pro",
+      "generator_sha256": "709a3b1a881c6d0ca455a19b5099c074ab8c90c687fe6025af4ddfe93c3bf42f",
+      "respondents_sha256": "591dbccf2eff795fcb65c11c130f8dc13ba510e2a4856e9310a8d22b9469ca9e",
+      "freeze_sha256": "e449d0767eea18d40f97c47f3cccfab0233bf18a72c680b4e84b0dff28ff40ef",
+      "frozen_artifacts": 34,
+      "realised_checks": 91,
+      "independent_numeric_checks": 3538,
+      "analysis_tables": 28,
+      "training_allowed": false,
+      "unseen_holdout": false
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "2026-09-expansion-sbt004-analysis-onepass-1",
+      "study_id": "SBT-004",
+      "input_surface": "analysis",
+      "workflow": "one_pass",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 0.75,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.7142857142857143
+      },
+      "missed_mandatory_findings": [
+        "M3"
+      ],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 104,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 162.51929674996063,
+        "input_tokens": 44145,
+        "cached_input_tokens": 11520,
+        "output_tokens": 5155,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "e43bf9fac43ef45d9213bc23752c4839dafc5538c1c56616a8872dc95fffc6cd",
+      "scorecard_sha256": "594210ed54110189cdeb637f5f561970f7caba558745e65f95d1c6676f6bedc7",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt004-analysis-staged-1",
+      "study_id": "SBT-004",
+      "input_surface": "analysis",
+      "workflow": "staged",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 0.75,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.7142857142857143
+      },
+      "missed_mandatory_findings": [
+        "M3"
+      ],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 210,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 846.9540770001477,
+        "input_tokens": 194038,
+        "cached_input_tokens": 34560,
+        "output_tokens": 27469,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "b0150310fc628cc78294935a4dfd95a9a4806bb4e5dcaf7b9ec1d9652782943d",
+      "scorecard_sha256": "bf08992fe3548bb7c226ecdbb6472a2e6256951a43e7b44f558e29c004d85ba8",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt004-raw-onepass-1",
+      "study_id": "SBT-004",
+      "input_surface": "raw",
+      "workflow": "one_pass",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 0.75,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.8571428571428571
+      },
+      "missed_mandatory_findings": [
+        "M3"
+      ],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 221,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 274.3151802079519,
+        "input_tokens": 102089,
+        "cached_input_tokens": 82944,
+        "output_tokens": 8480,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "99b3a54df143c450b2c347c2931e084902dc981432d99c40ded62ddc454086b3",
+      "scorecard_sha256": "8dabdfd19fde1b78d16b3fbcdb6d72d63a1705bcfd9620b92600e9523e54b109",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt004-raw-staged-1",
+      "study_id": "SBT-004",
+      "input_surface": "raw",
+      "workflow": "staged",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 0.75,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.7142857142857143
+      },
+      "missed_mandatory_findings": [
+        "M3"
+      ],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 200,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 1045.008609626093,
+        "input_tokens": 294499,
+        "cached_input_tokens": 184704,
+        "output_tokens": 33353,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "1ed498d703162011008fda2064b7bc1610ded7b1c797ec4282b4b0f580df8cfd",
+      "scorecard_sha256": "a7488d40e42060a70d2de1dddb816882095776c00ab330551b9f3de9af044b30",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt005-analysis-onepass-1",
+      "study_id": "SBT-005",
+      "input_surface": "analysis",
+      "workflow": "one_pass",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 1.0,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 1.0
+      },
+      "missed_mandatory_findings": [],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 272,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 284.71475220797583,
+        "input_tokens": 50431,
+        "cached_input_tokens": 11520,
+        "output_tokens": 9332,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "0f98a140a8182c8099bf87acf3b10036f974488a51489ba1a8a710cfc79bf3f5",
+      "scorecard_sha256": "dd6d31bf908a53afcaabe19212f9b5e7b67d0b5aeb750948543309dc1baeacde",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt005-analysis-staged-1",
+      "study_id": "SBT-005",
+      "input_surface": "analysis",
+      "workflow": "staged",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 1.0,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.8571428571428571
+      },
+      "missed_mandatory_findings": [],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 168,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 825.5848544590408,
+        "input_tokens": 218401,
+        "cached_input_tokens": 23040,
+        "output_tokens": 26771,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "c7541a46b7e86afaa4f1842f23c03b6fa3a04a74953bb726ba3eff2273e07790",
+      "scorecard_sha256": "df77dee81c0cad076cd699bf6feafafc6f11ec0514315082025b972c8ea9ccf0",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt005-raw-onepass-retry-1",
+      "study_id": "SBT-005",
+      "input_surface": "raw",
+      "workflow": "one_pass",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 1.0,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.8571428571428571
+      },
+      "missed_mandatory_findings": [],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 157,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 333.7202114580432,
+        "input_tokens": 185847,
+        "cached_input_tokens": 157952,
+        "output_tokens": 10535,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "380c61f1626e99ce2c499c7fea911db617e69620aea978d9729b7586e8b938ea",
+      "scorecard_sha256": "3c447b5badc7a23caa0d257878fbffc55b92b37d671b18553420cdd23521e75c",
+      "technical_replacement_for": "2026-09-expansion-sbt005-raw-onepass-1"
+    },
+    {
+      "run_id": "2026-09-expansion-sbt005-raw-staged-1",
+      "study_id": "SBT-005",
+      "input_surface": "raw",
+      "workflow": "staged",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 1.0,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.8571428571428571
+      },
+      "missed_mandatory_findings": [],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 227,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 1284.9642656659707,
+        "input_tokens": 374214,
+        "cached_input_tokens": 264448,
+        "output_tokens": 40859,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "19c37693e1270b5daaa51b860e6e943649f72f11d2ea4be76bbe9be8e53b2793",
+      "scorecard_sha256": "d9dd264e6b1febe23f20b179a0e0c216b16d9cf1452227fe23603028dd002967",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt006-analysis-onepass-1",
+      "study_id": "SBT-006",
+      "input_surface": "analysis",
+      "workflow": "one_pass",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 1.0,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 1.0
+      },
+      "missed_mandatory_findings": [],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 99,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 158.57315945799928,
+        "input_tokens": 62736,
+        "cached_input_tokens": 11520,
+        "output_tokens": 5041,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "a3f19796b481150a2ac9d054997b6c2de0bca9c21c0e6c07f7f1b325378acab6",
+      "scorecard_sha256": "11eb6c1e6d196255ef77c90bb97bcfa9aba2f740828c2f31c2a99a4d4b6e027b",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt006-analysis-staged-1",
+      "study_id": "SBT-006",
+      "input_surface": "analysis",
+      "workflow": "staged",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 1.0,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.7142857142857143
+      },
+      "missed_mandatory_findings": [],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 160,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 757.982930624974,
+        "input_tokens": 267203,
+        "cached_input_tokens": 34560,
+        "output_tokens": 24438,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "f2deb5f2a202eb2b672360f47b5ebe6a1ee9b4b683c9813b99dc418e8eec6115",
+      "scorecard_sha256": "fcbef28f32a0b6f83b90ac5563d712c0bfdbf92f131b62c449c21aa29823b98e",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt006-raw-onepass-1",
+      "study_id": "SBT-006",
+      "input_surface": "raw",
+      "workflow": "one_pass",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 1.0,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.7142857142857143
+      },
+      "missed_mandatory_findings": [],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 404,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 340.3362681249855,
+        "input_tokens": 138258,
+        "cached_input_tokens": 80000,
+        "output_tokens": 10618,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "c947d41693e4525287f8a3c436c530ff1c0951efda4d6fbc9423463ebae1f7ac",
+      "scorecard_sha256": "8e59f3e53ef0b7be04a57912499ab3bcd493eeccd0f2639706ff67aade1f8332",
+      "technical_replacement_for": null
+    },
+    {
+      "run_id": "2026-09-expansion-sbt006-raw-staged-1",
+      "study_id": "SBT-006",
+      "input_surface": "raw",
+      "workflow": "staged",
+      "status": "complete",
+      "model": {
+        "provider": "codex_chatgpt",
+        "model_id": "gpt-6-astra"
+      },
+      "reasoning_effort": "low",
+      "selection_metrics": {
+        "mandatory_recall": 1.0,
+        "selected_precision": 1.0,
+        "unsupported_rate": 0.0,
+        "do_not_elevate_rate": 0.0,
+        "redundancy_adjusted_coverage": 0.7142857142857143
+      },
+      "missed_mandatory_findings": [],
+      "provenance_coverage": 1.0,
+      "numerical_checks": 428,
+      "numerical_scope": "Mapped structured estimates, bases, distributions and declared contrasts where present; selected prose checked separately in adjudication. This is not exhaustive verification of every output number.",
+      "observed_wrong_base_selected_claims": 0,
+      "unsupported_selected_claims": 0,
+      "hard_failures": [],
+      "costs": {
+        "elapsed_seconds": 1206.8041143330047,
+        "input_tokens": 333599,
+        "cached_input_tokens": 218880,
+        "output_tokens": 38817,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      },
+      "human_active_minutes": null,
+      "human_corrections": null,
+      "output_sha256": "fe58a1db9da8e4156df70a1ce347970f52a9488a995947985089bf031d5627d1",
+      "scorecard_sha256": "b564590ae31f8b6d8f1573359b5dbd9e18e2e4d4d8cfdef9df20dc494a409355",
+      "technical_replacement_for": null
+    }
+  ],
+  "total_completed_run_seconds": 7521.477719916147,
+  "reported_completed_usage": {
+    "input_tokens": 2265460,
+    "cached_input_tokens": 1115648,
+    "output_tokens": 240868
+  },
+  "failed_usage": null,
+  "incremental_usd": null,
+  "independent_researcher_review": "pending",
+  "reliability_claim": false,
+  "product_promotion": false,
+  "fine_tuning": "deferred"
+}

@@ -1,0 +1,7531 @@
+{
+  "study_id": "SBT-004",
+  "status": "PASS",
+  "method": "Independent stdlib CSV, math.fsum, explicit domains and stratum influence arrays; no generator/reference-builder imports",
+  "checks": [
+    {
+      "id": "att_plan_ahead_5.n_unweighted",
+      "actual": 2617,
+      "expected": 2617,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.n_weighted",
+      "actual": 2623.5181818181845,
+      "expected": 2623.5181818181845,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.n_eff",
+      "actual": 2065.3834599970533,
+      "expected": 2065.3834599970533,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.missing_n",
+      "actual": 83,
+      "expected": 83,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.missing_counts.97",
+      "actual": 60,
+      "expected": 60,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.missing_counts.98",
+      "actual": 23,
+      "expected": 23,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.mean",
+      "actual": 3.0019393342966483,
+      "expected": 3.0019393342966487,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.se",
+      "actual": 0.028322815539726837,
+      "expected": 0.028322815539726837,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.distribution_pct.1",
+      "actual": 15.603382457745258,
+      "expected": 15.603382457745258,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.distribution_pct.2",
+      "actual": 20.874698675500515,
+      "expected": 20.874698675500515,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.distribution_pct.3",
+      "actual": 26.26544739252519,
+      "expected": 26.26544739252519,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.distribution_pct.4",
+      "actual": 22.237545927802252,
+      "expected": 22.237545927802252,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.distribution_pct.5",
+      "actual": 15.018925546426791,
+      "expected": 15.018925546426791,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.top2_pct",
+      "actual": 37.256471474229045,
+      "expected": 37.256471474229045,
+      "pass": true
+    },
+    {
+      "id": "att_plan_ahead_5.bottom2_pct",
+      "actual": 36.47808113324577,
+      "expected": 36.47808113324577,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_unweighted",
+      "actual": 2632,
+      "expected": 2632,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_weighted",
+      "actual": 2628.9575757575785,
+      "expected": 2628.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.n_eff",
+      "actual": 2076.1333562002583,
+      "expected": 2076.1333562002583,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.missing_n",
+      "actual": 68,
+      "expected": 68,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.missing_counts.97",
+      "actual": 50,
+      "expected": 50,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.missing_counts.98",
+      "actual": 18,
+      "expected": 18,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.mean",
+      "actual": 3.0034072728446346,
+      "expected": 3.0034072728446346,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.se",
+      "actual": 0.02760828716022403,
+      "expected": 0.02760828716022403,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.distribution_pct.1",
+      "actual": 14.854026714125663,
+      "expected": 14.854026714125663,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.distribution_pct.2",
+      "actual": 20.329062331422985,
+      "expected": 20.329062331422985,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.distribution_pct.3",
+      "actual": 28.463292283149446,
+      "expected": 28.463292283149446,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.distribution_pct.4",
+      "actual": 22.32939429846603,
+      "expected": 22.32939429846603,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.distribution_pct.5",
+      "actual": 14.024224372835869,
+      "expected": 14.024224372835869,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.top2_pct",
+      "actual": 36.3536186713019,
+      "expected": 36.3536186713019,
+      "pass": true
+    },
+    {
+      "id": "att_spontaneous_5.bottom2_pct",
+      "actual": 35.18308904554865,
+      "expected": 35.18308904554865,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_unweighted",
+      "actual": 2628,
+      "expected": 2628,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_weighted",
+      "actual": 2632.0878787878814,
+      "expected": 2632.087878787882,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.n_eff",
+      "actual": 2075.2341662967547,
+      "expected": 2075.2341662967556,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.missing_n",
+      "actual": 72,
+      "expected": 72,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.missing_counts.97",
+      "actual": 52,
+      "expected": 52,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.missing_counts.98",
+      "actual": 20,
+      "expected": 20,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.mean",
+      "actual": 3.1793633122224665,
+      "expected": 3.179363312222467,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.se",
+      "actual": 0.028427709372604647,
+      "expected": 0.02842770937260464,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.distribution_pct.1",
+      "actual": 12.620583498064105,
+      "expected": 12.620583498064104,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.distribution_pct.2",
+      "actual": 18.515546478253814,
+      "expected": 18.515546478253807,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.distribution_pct.3",
+      "actual": 27.246948787055786,
+      "expected": 27.246948787055782,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.distribution_pct.4",
+      "actual": 21.54079777662393,
+      "expected": 21.54079777662393,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.distribution_pct.5",
+      "actual": 20.07612346000237,
+      "expected": 20.076123460002368,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.top2_pct",
+      "actual": 41.6169212366263,
+      "expected": 41.6169212366263,
+      "pass": true
+    },
+    {
+      "id": "att_budget_worry_5.bottom2_pct",
+      "actual": 31.136129976317918,
+      "expected": 31.13612997631791,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_unweighted",
+      "actual": 2627,
+      "expected": 2627,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_weighted",
+      "actual": 2630.512121212124,
+      "expected": 2630.512121212124,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.n_eff",
+      "actual": 2074.7628351722606,
+      "expected": 2074.7628351722606,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.missing_n",
+      "actual": 73,
+      "expected": 73,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.missing_counts.97",
+      "actual": 45,
+      "expected": 45,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.missing_counts.98",
+      "actual": 28,
+      "expected": 28,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.mean",
+      "actual": 2.9924787084897626,
+      "expected": 2.992478708489763,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.se",
+      "actual": 0.028897487155323927,
+      "expected": 0.028897487155323927,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.distribution_pct.1",
+      "actual": 16.482445519883793,
+      "expected": 16.482445519883793,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.distribution_pct.2",
+      "actual": 21.052128344636202,
+      "expected": 21.052128344636202,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.distribution_pct.3",
+      "actual": 25.666277680691284,
+      "expected": 25.666277680691284,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.distribution_pct.4",
+      "actual": 20.333406676197395,
+      "expected": 20.333406676197402,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.distribution_pct.5",
+      "actual": 16.46574177859133,
+      "expected": 16.46574177859133,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.top2_pct",
+      "actual": 36.79914845478872,
+      "expected": 36.799148454788735,
+      "pass": true
+    },
+    {
+      "id": "att_price_tradeoffs_5.bottom2_pct",
+      "actual": 37.53457386452,
+      "expected": 37.53457386452,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_unweighted",
+      "actual": 2612,
+      "expected": 2612,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_weighted",
+      "actual": 2608.3545454545483,
+      "expected": 2608.354545454548,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.n_eff",
+      "actual": 2060.5329637708614,
+      "expected": 2060.5329637708605,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.missing_n",
+      "actual": 88,
+      "expected": 88,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.missing_counts.97",
+      "actual": 63,
+      "expected": 63,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.missing_counts.98",
+      "actual": 25,
+      "expected": 25,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.mean",
+      "actual": 3.286236417479032,
+      "expected": 3.286236417479033,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.se",
+      "actual": 0.029962119783758796,
+      "expected": 0.029962119783758807,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.distribution_pct.1",
+      "actual": 13.864191635966955,
+      "expected": 13.864191635966957,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.distribution_pct.2",
+      "actual": 15.739169126710564,
+      "expected": 15.739169126710564,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.distribution_pct.3",
+      "actual": 23.203528986694273,
+      "expected": 23.203528986694277,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.distribution_pct.4",
+      "actual": 22.295026354708696,
+      "expected": 22.2950263547087,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.distribution_pct.5",
+      "actual": 24.89808389591951,
+      "expected": 24.89808389591951,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.top2_pct",
+      "actual": 47.19311025062821,
+      "expected": 47.19311025062821,
+      "pass": true
+    },
+    {
+      "id": "att_time_short_5.bottom2_pct",
+      "actual": 29.603360762677518,
+      "expected": 29.60336076267752,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_unweighted",
+      "actual": 2632,
+      "expected": 2632,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_weighted",
+      "actual": 2628.6606060606086,
+      "expected": 2628.660606060609,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.n_eff",
+      "actual": 2075.4939027841356,
+      "expected": 2075.4939027841356,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.missing_n",
+      "actual": 68,
+      "expected": 68,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.missing_counts.97",
+      "actual": 44,
+      "expected": 44,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.missing_counts.98",
+      "actual": 24,
+      "expected": 24,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.mean",
+      "actual": 3.1589402599318928,
+      "expected": 3.1589402599318923,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.se",
+      "actual": 0.0292720910601414,
+      "expected": 0.029272091060141395,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.distribution_pct.1",
+      "actual": 14.053245229163844,
+      "expected": 14.05324522916384,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.distribution_pct.2",
+      "actual": 19.044380246651716,
+      "expected": 19.044380246651713,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.distribution_pct.3",
+      "actual": 24.846505536867493,
+      "expected": 24.846505536867493,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.distribution_pct.4",
+      "actual": 21.066841276465254,
+      "expected": 21.06684127646525,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.distribution_pct.5",
+      "actual": 20.9890277108517,
+      "expected": 20.98902771085169,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.top2_pct",
+      "actual": 42.055868987316956,
+      "expected": 42.05586898731694,
+      "pass": true
+    },
+    {
+      "id": "att_decision_fatigue_5.bottom2_pct",
+      "actual": 33.09762547581556,
+      "expected": 33.097625475815555,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_unweighted",
+      "actual": 2625,
+      "expected": 2625,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_weighted",
+      "actual": 2629.1393939393965,
+      "expected": 2629.1393939393965,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.n_eff",
+      "actual": 2071.956753290228,
+      "expected": 2071.956753290228,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.missing_n",
+      "actual": 75,
+      "expected": 75,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.missing_counts.97",
+      "actual": 57,
+      "expected": 57,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.missing_counts.98",
+      "actual": 18,
+      "expected": 18,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.mean",
+      "actual": 3.796694620661676,
+      "expected": 3.796694620661676,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.se",
+      "actual": 0.022902580655470583,
+      "expected": 0.022902580655470583,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.distribution_pct.1",
+      "actual": 1.7992983070851616,
+      "expected": 1.7992983070851611,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.distribution_pct.2",
+      "actual": 10.609186552576253,
+      "expected": 10.609186552576253,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.distribution_pct.3",
+      "actual": 23.92233430457714,
+      "expected": 23.922334304577134,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.distribution_pct.4",
+      "actual": 33.461116438608784,
+      "expected": 33.461116438608784,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.distribution_pct.5",
+      "actual": 30.208064397152665,
+      "expected": 30.208064397152665,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.top2_pct",
+      "actual": 63.66918083576145,
+      "expected": 63.66918083576145,
+      "pass": true
+    },
+    {
+      "id": "att_waste_concern_5.bottom2_pct",
+      "actual": 12.408484859661414,
+      "expected": 12.408484859661414,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_unweighted",
+      "actual": 2623,
+      "expected": 2623,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_weighted",
+      "actual": 2631.7696969697,
+      "expected": 2631.7696969697,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.n_eff",
+      "actual": 2071.2275365736496,
+      "expected": 2071.2275365736496,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.missing_n",
+      "actual": 77,
+      "expected": 77,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.missing_counts.97",
+      "actual": 45,
+      "expected": 45,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.missing_counts.98",
+      "actual": 32,
+      "expected": 32,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.mean",
+      "actual": 3.3560100128499766,
+      "expected": 3.3560100128499775,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.se",
+      "actual": 0.02893831941839673,
+      "expected": 0.028938319418396734,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.distribution_pct.1",
+      "actual": 11.32571239078671,
+      "expected": 11.32571239078671,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.distribution_pct.2",
+      "actual": 15.797412502705868,
+      "expected": 15.797412502705868,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.distribution_pct.3",
+      "actual": 24.272295171816634,
+      "expected": 24.272295171816634,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.distribution_pct.4",
+      "actual": 23.159321300104548,
+      "expected": 23.159321300104548,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.distribution_pct.5",
+      "actual": 25.44525863458624,
+      "expected": 25.445258634586235,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.top2_pct",
+      "actual": 48.60457993469079,
+      "expected": 48.60457993469078,
+      "pass": true
+    },
+    {
+      "id": "att_waste_difficult_5.bottom2_pct",
+      "actual": 27.12312489349258,
+      "expected": 27.12312489349258,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_unweighted",
+      "actual": 2610,
+      "expected": 2610,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_weighted",
+      "actual": 2609.193939393942,
+      "expected": 2609.193939393942,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.n_eff",
+      "actual": 2057.460356277044,
+      "expected": 2057.4603562770435,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.missing_n",
+      "actual": 90,
+      "expected": 90,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.missing_counts.97",
+      "actual": 67,
+      "expected": 67,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.missing_counts.98",
+      "actual": 23,
+      "expected": 23,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.mean",
+      "actual": 2.995753942353031,
+      "expected": 2.9957539423530313,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.se",
+      "actual": 0.03829510665611251,
+      "expected": 0.038295106656112514,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.distribution_pct.1",
+      "actual": 34.49352754943476,
+      "expected": 34.49352754943476,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.distribution_pct.2",
+      "actual": 12.89019945786113,
+      "expected": 12.890199457861131,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.distribution_pct.3",
+      "actual": 5.797564323824612,
+      "expected": 5.797564323824611,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.distribution_pct.4",
+      "actual": 12.184768545725255,
+      "expected": 12.184768545725255,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.distribution_pct.5",
+      "actual": 34.63394012315425,
+      "expected": 34.63394012315425,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.top2_pct",
+      "actual": 46.8187086688795,
+      "expected": 46.8187086688795,
+      "pass": true
+    },
+    {
+      "id": "att_digital_help_5.bottom2_pct",
+      "actual": 47.38372700729589,
+      "expected": 47.38372700729589,
+      "pass": true
+    },
+    {
+      "id": "need_budget.n_unweighted",
+      "actual": 2557,
+      "expected": 2557,
+      "pass": true
+    },
+    {
+      "id": "need_budget.n_weighted",
+      "actual": 2564.245454545457,
+      "expected": 2564.245454545457,
+      "pass": true
+    },
+    {
+      "id": "need_budget.n_eff",
+      "actual": 2020.8761888159931,
+      "expected": 2020.8761888159931,
+      "pass": true
+    },
+    {
+      "id": "need_budget.missing_n",
+      "actual": 143,
+      "expected": 143,
+      "pass": true
+    },
+    {
+      "id": "need_budget.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "need_budget.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "need_budget.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_budget.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_budget.missing_counts.99",
+      "actual": 143,
+      "expected": 143,
+      "pass": true
+    },
+    {
+      "id": "need_budget.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_budget.mean",
+      "actual": 0.2602301344479621,
+      "expected": 0.2602301344479621,
+      "pass": true
+    },
+    {
+      "id": "need_budget.se",
+      "actual": 0.009762582938445535,
+      "expected": 0.009762582938445535,
+      "pass": true
+    },
+    {
+      "id": "need_effort.n_unweighted",
+      "actual": 2546,
+      "expected": 2546,
+      "pass": true
+    },
+    {
+      "id": "need_effort.n_weighted",
+      "actual": 2539.0151515151542,
+      "expected": 2539.0151515151542,
+      "pass": true
+    },
+    {
+      "id": "need_effort.n_eff",
+      "actual": 2006.6769826277975,
+      "expected": 2006.6769826277973,
+      "pass": true
+    },
+    {
+      "id": "need_effort.missing_n",
+      "actual": 154,
+      "expected": 154,
+      "pass": true
+    },
+    {
+      "id": "need_effort.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "need_effort.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "need_effort.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_effort.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_effort.missing_counts.99",
+      "actual": 154,
+      "expected": 154,
+      "pass": true
+    },
+    {
+      "id": "need_effort.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_effort.mean",
+      "actual": 0.3189151126361329,
+      "expected": 0.3189151126361329,
+      "pass": true
+    },
+    {
+      "id": "need_effort.se",
+      "actual": 0.010406571599226392,
+      "expected": 0.010406571599226392,
+      "pass": true
+    },
+    {
+      "id": "need_waste.n_unweighted",
+      "actual": 2549,
+      "expected": 2549,
+      "pass": true
+    },
+    {
+      "id": "need_waste.n_weighted",
+      "actual": 2561.3090909090934,
+      "expected": 2561.3090909090934,
+      "pass": true
+    },
+    {
+      "id": "need_waste.n_eff",
+      "actual": 2012.9170438513383,
+      "expected": 2012.917043851338,
+      "pass": true
+    },
+    {
+      "id": "need_waste.missing_n",
+      "actual": 151,
+      "expected": 151,
+      "pass": true
+    },
+    {
+      "id": "need_waste.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "need_waste.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "need_waste.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_waste.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_waste.missing_counts.99",
+      "actual": 151,
+      "expected": 151,
+      "pass": true
+    },
+    {
+      "id": "need_waste.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "need_waste.mean",
+      "actual": 0.30277840876824347,
+      "expected": 0.30277840876824347,
+      "pass": true
+    },
+    {
+      "id": "need_waste.se",
+      "actual": 0.010243369291559324,
+      "expected": 0.010243369291559326,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.n_unweighted",
+      "actual": 2410,
+      "expected": 2410,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.n_weighted",
+      "actual": 2409.6272727272753,
+      "expected": 2409.6272727272753,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.n_eff",
+      "actual": 1901.8380640297253,
+      "expected": 1901.8380640297253,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.eligible_n",
+      "actual": 2410,
+      "expected": 2410,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.eligible_weighted_n",
+      "actual": 2409.6272727272753,
+      "expected": 2409.6272727272753,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.mean",
+      "actual": 0.10630589164425022,
+      "expected": 0.10630589164425022,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.se",
+      "actual": 0.007069692993307166,
+      "expected": 0.007069692993307166,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.pct",
+      "actual": 10.630589164425022,
+      "expected": 10.630589164425022,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_effort.fraction_of_smaller_state",
+      "actual": 0.4042485019774375,
+      "expected": 0.4042485019774374,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.n_unweighted",
+      "actual": 2417,
+      "expected": 2417,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.n_weighted",
+      "actual": 2437.512121212124,
+      "expected": 2437.5121212121235,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.n_eff",
+      "actual": 1911.8522772828535,
+      "expected": 1911.8522772828526,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.eligible_n",
+      "actual": 2417,
+      "expected": 2417,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.eligible_weighted_n",
+      "actual": 2437.512121212124,
+      "expected": 2437.5121212121235,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.mean",
+      "actual": 0.1027848812562237,
+      "expected": 0.10278488125622375,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.se",
+      "actual": 0.006947032869245525,
+      "expected": 0.006947032869245528,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.pct",
+      "actual": 10.27848812562237,
+      "expected": 10.278488125622374,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_budget.need_waste.fraction_of_smaller_state",
+      "actual": 0.3894449756708761,
+      "expected": 0.3894449756708761,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.n_unweighted",
+      "actual": 2405,
+      "expected": 2405,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.n_weighted",
+      "actual": 2407.5696969696996,
+      "expected": 2407.5696969696996,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.n_eff",
+      "actual": 1895.594507790116,
+      "expected": 1895.594507790116,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.eligible_n",
+      "actual": 2405,
+      "expected": 2405,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.eligible_weighted_n",
+      "actual": 2407.5696969696996,
+      "expected": 2407.5696969696996,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.mean",
+      "actual": 0.15223575138011666,
+      "expected": 0.15223575138011666,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.se",
+      "actual": 0.008253492091009238,
+      "expected": 0.008253492091009238,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.pct",
+      "actual": 15.223575138011666,
+      "expected": 15.223575138011666,
+      "pass": true
+    },
+    {
+      "id": "overlap.need_effort.need_waste.fraction_of_smaller_state",
+      "actual": 0.5012931141670602,
+      "expected": 0.5012931141670602,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.n_unweighted",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.n_weighted",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.n_eff",
+      "actual": 1799.6223529252445,
+      "expected": 1799.6223529252443,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.eligible_n",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.eligible_weighted_n",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.mean",
+      "actual": 0.41105080278294576,
+      "expected": 0.41105080278294576,
+      "pass": true
+    },
+    {
+      "id": "combinations.000.se",
+      "actual": 0.011601567581109983,
+      "expected": 0.011601567581109983,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.n_unweighted",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.n_weighted",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.n_eff",
+      "actual": 1799.6223529252445,
+      "expected": 1799.6223529252443,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.eligible_n",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.eligible_weighted_n",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.mean",
+      "actual": 0.1077795979072334,
+      "expected": 0.1077795979072334,
+      "pass": true
+    },
+    {
+      "id": "combinations.001.se",
+      "actual": 0.007311969332657627,
+      "expected": 0.007311969332657628,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.n_unweighted",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.n_weighted",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.n_eff",
+      "actual": 1799.6223529252445,
+      "expected": 1799.6223529252443,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.eligible_n",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.eligible_weighted_n",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.mean",
+      "actual": 0.122235512989814,
+      "expected": 0.122235512989814,
+      "pass": true
+    },
+    {
+      "id": "combinations.010.se",
+      "actual": 0.007723563287004715,
+      "expected": 0.007723563287004715,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.n_unweighted",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.n_weighted",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.n_eff",
+      "actual": 1799.6223529252445,
+      "expected": 1799.6223529252443,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.eligible_n",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.eligible_weighted_n",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.mean",
+      "actual": 0.0917477565213709,
+      "expected": 0.0917477565213709,
+      "pass": true
+    },
+    {
+      "id": "combinations.011.se",
+      "actual": 0.006806611656308042,
+      "expected": 0.006806611656308042,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.n_unweighted",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.n_weighted",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.n_eff",
+      "actual": 1799.6223529252445,
+      "expected": 1799.6223529252443,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.eligible_n",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.eligible_weighted_n",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.mean",
+      "actual": 0.11451995776358727,
+      "expected": 0.11451995776358727,
+      "pass": true
+    },
+    {
+      "id": "combinations.100.se",
+      "actual": 0.0075086175627696065,
+      "expected": 0.007508617562769607,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.n_unweighted",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.n_weighted",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.n_eff",
+      "actual": 1799.6223529252445,
+      "expected": 1799.6223529252443,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.eligible_n",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.eligible_weighted_n",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.mean",
+      "actual": 0.04454009680501121,
+      "expected": 0.04454009680501121,
+      "pass": true
+    },
+    {
+      "id": "combinations.101.se",
+      "actual": 0.00486420442159317,
+      "expected": 0.00486420442159317,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.n_unweighted",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.n_weighted",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.n_eff",
+      "actual": 1799.6223529252445,
+      "expected": 1799.6223529252443,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.eligible_n",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.eligible_weighted_n",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.mean",
+      "actual": 0.04880872674152425,
+      "expected": 0.04880872674152425,
+      "pass": true
+    },
+    {
+      "id": "combinations.110.se",
+      "actual": 0.005080572751179792,
+      "expected": 0.005080572751179792,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.n_unweighted",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.n_weighted",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.n_eff",
+      "actual": 1799.6223529252445,
+      "expected": 1799.6223529252443,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.eligible_n",
+      "actual": 2280,
+      "expected": 2280,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.eligible_weighted_n",
+      "actual": 2290.139393939396,
+      "expected": 2290.139393939396,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.mean",
+      "actual": 0.059317548488513304,
+      "expected": 0.059317548488513304,
+      "pass": true
+    },
+    {
+      "id": "combinations.111.se",
+      "actual": 0.00556984519617398,
+      "expected": 0.00556984519617398,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.n_unweighted",
+      "actual": 2596,
+      "expected": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.n_weighted",
+      "actual": 2595.9575757575785,
+      "expected": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.n_eff",
+      "actual": 2045.5418721676199,
+      "expected": 2045.5418721676199,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.eligible_n",
+      "actual": 2596,
+      "expected": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.eligible_weighted_n",
+      "actual": 2595.9575757575785,
+      "expected": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.mean",
+      "actual": 0.571151417238457,
+      "expected": 0.571151417238457,
+      "pass": true
+    },
+    {
+      "id": "needs.support_budget.se",
+      "actual": 0.010945349010440445,
+      "expected": 0.010945349010440445,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.n_unweighted",
+      "actual": 2596,
+      "expected": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.n_weighted",
+      "actual": 2595.9575757575785,
+      "expected": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.n_eff",
+      "actual": 2045.5418721676199,
+      "expected": 2045.5418721676199,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.eligible_n",
+      "actual": 2596,
+      "expected": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.eligible_weighted_n",
+      "actual": 2595.9575757575785,
+      "expected": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.mean",
+      "actual": 0.6081693448788674,
+      "expected": 0.6081693448788675,
+      "pass": true
+    },
+    {
+      "id": "needs.support_quick_meals.se",
+      "actual": 0.010796014600805799,
+      "expected": 0.010796014600805799,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.n_unweighted",
+      "actual": 2596,
+      "expected": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.n_weighted",
+      "actual": 2595.9575757575785,
+      "expected": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.n_eff",
+      "actual": 2045.5418721676199,
+      "expected": 2045.5418721676199,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.eligible_n",
+      "actual": 2596,
+      "expected": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.eligible_weighted_n",
+      "actual": 2595.9575757575785,
+      "expected": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.mean",
+      "actual": 0.5916226393950501,
+      "expected": 0.5916226393950501,
+      "pass": true
+    },
+    {
+      "id": "needs.support_use_up.se",
+      "actual": 0.010870642579011089,
+      "expected": 0.010870642579011089,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.n_unweighted",
+      "actual": 2596,
+      "expected": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.n_weighted",
+      "actual": 2595.9575757575785,
+      "expected": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.n_eff",
+      "actual": 2045.5418721676199,
+      "expected": 2045.5418721676199,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.eligible_n",
+      "actual": 2596,
+      "expected": 2596,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.eligible_weighted_n",
+      "actual": 2595.9575757575785,
+      "expected": 2595.9575757575785,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.mean",
+      "actual": 0.4723065932347028,
+      "expected": 0.4723065932347027,
+      "pass": true
+    },
+    {
+      "id": "needs.support_shared_plan.se",
+      "actual": 0.01104090907659691,
+      "expected": 0.01104090907659691,
+      "pass": true
+    },
+    {
+      "id": "needs.none",
+      "actual": 116,
+      "expected": 116,
+      "pass": true
+    },
+    {
+      "id": "needs.sum",
+      "actual": 224.32499947470774,
+      "expected": 224.32499947470774,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.n_unweighted",
+      "actual": 2570,
+      "expected": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.n_weighted",
+      "actual": 2574.37272727273,
+      "expected": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.n_eff",
+      "actual": 2029.065430160898,
+      "expected": 2029.065430160898,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.eligible_n",
+      "actual": 2570,
+      "expected": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.eligible_weighted_n",
+      "actual": 2574.37272727273,
+      "expected": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.mean",
+      "actual": 0.4789610414069681,
+      "expected": 0.4789610414069681,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_setup_time.se",
+      "actual": 0.011092877375077324,
+      "expected": 0.011092877375077324,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.n_unweighted",
+      "actual": 2570,
+      "expected": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.n_weighted",
+      "actual": 2574.37272727273,
+      "expected": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.n_eff",
+      "actual": 2029.065430160898,
+      "expected": 2029.065430160898,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.eligible_n",
+      "actual": 2570,
+      "expected": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.eligible_weighted_n",
+      "actual": 2574.37272727273,
+      "expected": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.mean",
+      "actual": 0.495564085631922,
+      "expected": 0.495564085631922,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_rigid.se",
+      "actual": 0.011102273735852049,
+      "expected": 0.011102273735852049,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.n_unweighted",
+      "actual": 2570,
+      "expected": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.n_weighted",
+      "actual": 2574.37272727273,
+      "expected": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.n_eff",
+      "actual": 2029.065430160898,
+      "expected": 2029.065430160898,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.eligible_n",
+      "actual": 2570,
+      "expected": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.eligible_weighted_n",
+      "actual": 2574.37272727273,
+      "expected": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.mean",
+      "actual": 0.495564085631922,
+      "expected": 0.495564085631922,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_cost.se",
+      "actual": 0.011102273735852049,
+      "expected": 0.01110227373585205,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.n_unweighted",
+      "actual": 2570,
+      "expected": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.n_weighted",
+      "actual": 2574.37272727273,
+      "expected": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.n_eff",
+      "actual": 2029.065430160898,
+      "expected": 2029.065430160898,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.eligible_n",
+      "actual": 2570,
+      "expected": 2570,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.eligible_weighted_n",
+      "actual": 2574.37272727273,
+      "expected": 2574.37272727273,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.mean",
+      "actual": 0.48721135951917677,
+      "expected": 0.48721135951917677,
+      "pass": true
+    },
+    {
+      "id": "barriers.barrier_privacy.se",
+      "actual": 0.01109907841215539,
+      "expected": 0.01109907841215539,
+      "pass": true
+    },
+    {
+      "id": "barriers.none",
+      "actual": 204,
+      "expected": 204,
+      "pass": true
+    },
+    {
+      "id": "barriers.sum",
+      "actual": 195.7300572189989,
+      "expected": 195.7300572189989,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.n_unweighted",
+      "actual": 2609,
+      "expected": 2609,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.n_weighted",
+      "actual": 2603.393939393942,
+      "expected": 2603.3939393939418,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.n_eff",
+      "actual": 2060.491666253734,
+      "expected": 2060.4916662537335,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.missing_n",
+      "actual": 91,
+      "expected": 91,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.missing_counts.97",
+      "actual": 65,
+      "expected": 65,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.missing_counts.98",
+      "actual": 26,
+      "expected": 26,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.mean",
+      "actual": 4.531978070583854,
+      "expected": 4.531978070583854,
+      "pass": true
+    },
+    {
+      "id": "meal_plan_days_7d.se",
+      "actual": 0.03858783080560082,
+      "expected": 0.038587830805600826,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.n_unweighted",
+      "actual": 2614,
+      "expected": 2614,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.n_weighted",
+      "actual": 2607.6575757575783,
+      "expected": 2607.6575757575783,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.n_eff",
+      "actual": 2063.894965497355,
+      "expected": 2063.8949654973553,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.missing_n",
+      "actual": 86,
+      "expected": 86,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.missing_counts.97",
+      "actual": 65,
+      "expected": 65,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.missing_counts.98",
+      "actual": 21,
+      "expected": 21,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.mean",
+      "actual": 1.3667891884856602,
+      "expected": 1.3667891884856602,
+      "pass": true
+    },
+    {
+      "id": "unplanned_topups_7d.se",
+      "actual": 0.02936784767036689,
+      "expected": 0.029367847670366886,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.n_unweighted",
+      "actual": 2608,
+      "expected": 2608,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.n_weighted",
+      "actual": 2611.2393939393965,
+      "expected": 2611.239393939397,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.n_eff",
+      "actual": 2059.7626339728004,
+      "expected": 2059.7626339728017,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.missing_n",
+      "actual": 92,
+      "expected": 92,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.missing_counts.97",
+      "actual": 57,
+      "expected": 57,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.missing_counts.98",
+      "actual": 35,
+      "expected": 35,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.mean",
+      "actual": 1.1673964180483198,
+      "expected": 1.1673964180483198,
+      "pass": true
+    },
+    {
+      "id": "waste_days_7d.se",
+      "actual": 0.030369970619741987,
+      "expected": 0.030369970619741973,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.n_unweighted",
+      "actual": 2521,
+      "expected": 2521,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.n_weighted",
+      "actual": 2529.8969696969725,
+      "expected": 2529.8969696969725,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.n_eff",
+      "actual": 1992.822289887585,
+      "expected": 1992.822289887585,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.missing_n",
+      "actual": 179,
+      "expected": 179,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.eligible_n",
+      "actual": 2700,
+      "expected": 2700,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.eligible_weighted_n",
+      "actual": 2700.0000000000027,
+      "expected": 2700.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.missing_counts.97",
+      "actual": 147,
+      "expected": 147,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.missing_counts.98",
+      "actual": 32,
+      "expected": 32,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.mean",
+      "actual": 0.44836776201210726,
+      "expected": 0.44836776201210726,
+      "pass": true
+    },
+    {
+      "id": "over_budget_4w.se",
+      "actual": 0.01114337420680392,
+      "expected": 0.01114337420680392,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.n_unweighted",
+      "actual": 878,
+      "expected": 878,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.n_weighted",
+      "actual": 782.5484848484853,
+      "expected": 782.5484848484853,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.n_eff",
+      "actual": 661.0712422165041,
+      "expected": 661.071242216504,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.missing_n",
+      "actual": 26,
+      "expected": 26,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.eligible_n",
+      "actual": 904,
+      "expected": 904,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.eligible_weighted_n",
+      "actual": 809.7303030303035,
+      "expected": 809.7303030303034,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.missing_counts.97",
+      "actual": 18,
+      "expected": 18,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.missing_counts.98",
+      "actual": 8,
+      "expected": 8,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.mean",
+      "actual": 2.190918560569391,
+      "expected": 2.190918560569391,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group1.se",
+      "actual": 0.057224641139755096,
+      "expected": 0.057224641139755096,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.n_unweighted",
+      "actual": 1588,
+      "expected": 1588,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.n_weighted",
+      "actual": 1669.1818181818203,
+      "expected": 1669.1818181818203,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.n_eff",
+      "actual": 1286.9843436128804,
+      "expected": 1286.9843436128804,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.missing_n",
+      "actual": 54,
+      "expected": 54,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.eligible_n",
+      "actual": 1642,
+      "expected": 1642,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.eligible_weighted_n",
+      "actual": 1729.2848484848507,
+      "expected": 1729.2848484848505,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.missing_counts.97",
+      "actual": 42,
+      "expected": 42,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.missing_counts.98",
+      "actual": 12,
+      "expected": 12,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.mean",
+      "actual": 0.9692119165622785,
+      "expected": 0.9692119165622785,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.group0.se",
+      "actual": 0.02976928543636936,
+      "expected": 0.029769285436369364,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.difference",
+      "actual": 1.2217066440071123,
+      "expected": 1.2217066440071123,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.se",
+      "actual": 0.06262437219408486,
+      "expected": 0.06262437219408486,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.p_raw",
+      "actual": 9.299701283096349e-85,
+      "expected": 9.299701283096349e-85,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.ci95.0",
+      "actual": 1.0989651299522742,
+      "expected": 1.0989651299522742,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.ci95.1",
+      "actual": 1.3444481580619503,
+      "expected": 1.3444481580619503,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.n_unweighted",
+      "actual": 872,
+      "expected": 872,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.n_weighted",
+      "actual": 779.0939393939399,
+      "expected": 779.0939393939398,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.n_eff",
+      "actual": 656.4075428791737,
+      "expected": 656.4075428791735,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.missing_n",
+      "actual": 32,
+      "expected": 32,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.eligible_n",
+      "actual": 904,
+      "expected": 904,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.eligible_weighted_n",
+      "actual": 809.7303030303035,
+      "expected": 809.7303030303034,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.missing_counts.97",
+      "actual": 22,
+      "expected": 22,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.missing_counts.98",
+      "actual": 10,
+      "expected": 10,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.mean",
+      "actual": 3.725306397096861,
+      "expected": 3.7253063970968614,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group1.se",
+      "actual": 0.0678567487669925,
+      "expected": 0.06785674876699252,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.n_unweighted",
+      "actual": 1586,
+      "expected": 1586,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.n_weighted",
+      "actual": 1666.8606060606082,
+      "expected": 1666.8606060606082,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.n_eff",
+      "actual": 1285.5222243242765,
+      "expected": 1285.5222243242765,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.missing_n",
+      "actual": 56,
+      "expected": 56,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.eligible_n",
+      "actual": 1642,
+      "expected": 1642,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.eligible_weighted_n",
+      "actual": 1729.2848484848507,
+      "expected": 1729.2848484848505,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.missing_counts.97",
+      "actual": 40,
+      "expected": 40,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.missing_counts.98",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.mean",
+      "actual": 4.926144957677653,
+      "expected": 4.926144957677653,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.group0.se",
+      "actual": 0.04469311807703247,
+      "expected": 0.04469311807703247,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.difference",
+      "actual": -1.2008385605807916,
+      "expected": -1.2008385605807912,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.se",
+      "actual": 0.08204298071149879,
+      "expected": 0.08204298071149879,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.p_raw",
+      "actual": 1.6382710050532558e-48,
+      "expected": 1.6382710050533764e-48,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.ci95.0",
+      "actual": -1.3616398479596437,
+      "expected": -1.3616398479596432,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.ci95.1",
+      "actual": -1.0400372732019396,
+      "expected": -1.0400372732019392,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.n_unweighted",
+      "actual": 678,
+      "expected": 678,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.n_weighted",
+      "actual": 631.5848484848491,
+      "expected": 631.5848484848491,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.n_eff",
+      "actual": 522.1680431449745,
+      "expected": 522.1680431449745,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.missing_n",
+      "actual": 39,
+      "expected": 39,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.eligible_n",
+      "actual": 717,
+      "expected": 717,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.eligible_weighted_n",
+      "actual": 667.29393939394,
+      "expected": 667.29393939394,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.missing_counts.97",
+      "actual": 33,
+      "expected": 33,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.missing_counts.98",
+      "actual": 6,
+      "expected": 6,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.mean",
+      "actual": 0.7230871832763178,
+      "expected": 0.7230871832763178,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group1.se",
+      "actual": 0.01960098839473146,
+      "expected": 0.01960098839473146,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.n_unweighted",
+      "actual": 1708,
+      "expected": 1708,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.n_weighted",
+      "actual": 1769.769696969699,
+      "expected": 1769.769696969699,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.n_eff",
+      "actual": 1368.2594885074227,
+      "expected": 1368.2594885074227,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.missing_n",
+      "actual": 132,
+      "expected": 132,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.eligible_n",
+      "actual": 1840,
+      "expected": 1840,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.eligible_weighted_n",
+      "actual": 1896.9515151515172,
+      "expected": 1896.9515151515172,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.missing_counts.97",
+      "actual": 107,
+      "expected": 107,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.missing_counts.98",
+      "actual": 25,
+      "expected": 25,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.mean",
+      "actual": 0.3502869745078969,
+      "expected": 0.3502869745078969,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.group0.se",
+      "actual": 0.012901710957012185,
+      "expected": 0.012901710957012185,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.difference",
+      "actual": 37.28002087684209,
+      "expected": 37.28002087684209,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.se",
+      "actual": 2.3384580603439264,
+      "expected": 2.3384580603439264,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.p_raw",
+      "actual": 3.231078650940167e-57,
+      "expected": 3.231078650940167e-57,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.ci95.0",
+      "actual": 32.6967272992106,
+      "expected": 32.6967272992106,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.ci95.1",
+      "actual": 41.863314454473574,
+      "expected": 41.863314454473574,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.n_unweighted",
+      "actual": 797,
+      "expected": 797,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.n_weighted",
+      "actual": 754.7181818181825,
+      "expected": 754.7181818181824,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.n_eff",
+      "actual": 615.0008080851107,
+      "expected": 615.0008080851105,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.missing_n",
+      "actual": 24,
+      "expected": 24,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.eligible_n",
+      "actual": 821,
+      "expected": 821,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.eligible_weighted_n",
+      "actual": 775.5090909090916,
+      "expected": 775.5090909090916,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.missing_counts.97",
+      "actual": 14,
+      "expected": 14,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.missing_counts.98",
+      "actual": 10,
+      "expected": 10,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.mean",
+      "actual": 1.869202632329145,
+      "expected": 1.869202632329145,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group1.se",
+      "actual": 0.06295789064383887,
+      "expected": 0.0629578906438389,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.n_unweighted",
+      "actual": 1664,
+      "expected": 1664,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.n_weighted",
+      "actual": 1721.130303030305,
+      "expected": 1721.1303030303047,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.n_eff",
+      "actual": 1331.128909370946,
+      "expected": 1331.128909370946,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.missing_n",
+      "actual": 64,
+      "expected": 64,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.eligible_n",
+      "actual": 1728,
+      "expected": 1728,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.eligible_weighted_n",
+      "actual": 1785.800000000002,
+      "expected": 1785.800000000002,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.missing_counts.97",
+      "actual": 41,
+      "expected": 41,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.missing_counts.98",
+      "actual": 23,
+      "expected": 23,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.mean",
+      "actual": 0.8679708366418822,
+      "expected": 0.8679708366418823,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.group0.se",
+      "actual": 0.03197226342597298,
+      "expected": 0.03197226342597299,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.difference",
+      "actual": 1.001231795687263,
+      "expected": 1.0012317956872627,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.se",
+      "actual": 0.06900032929440282,
+      "expected": 0.06900032929440282,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.p_raw",
+      "actual": 1.0390472786399777e-47,
+      "expected": 1.0390472786400157e-47,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.ci95.0",
+      "actual": 0.8659936353488293,
+      "expected": 0.8659936353488291,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.ci95.1",
+      "actual": 1.1364699560256966,
+      "expected": 1.1364699560256963,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.n_unweighted",
+      "actual": 1258,
+      "expected": 1258,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.n_weighted",
+      "actual": 681.1666666666667,
+      "expected": 681.1666666666667,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.n_eff",
+      "actual": 1216.30173275041,
+      "expected": 1216.3017327504099,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.missing_n",
+      "actual": 38,
+      "expected": 38,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.eligible_n",
+      "actual": 1296,
+      "expected": 1296,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.eligible_weighted_n",
+      "actual": 702.0,
+      "expected": 702.0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.missing_counts.97",
+      "actual": 29,
+      "expected": 29,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.missing_counts.98",
+      "actual": 9,
+      "expected": 9,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.mean",
+      "actual": 1.9093711769023733,
+      "expected": 1.9093711769023731,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group1.se",
+      "actual": 0.04317326959762025,
+      "expected": 0.04317326959762026,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.n_unweighted",
+      "actual": 1356,
+      "expected": 1356,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.n_weighted",
+      "actual": 1926.4909090909118,
+      "expected": 1926.4909090909118,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.n_eff",
+      "actual": 1273.9795845731282,
+      "expected": 1273.9795845731282,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.missing_n",
+      "actual": 48,
+      "expected": 48,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.eligible_n",
+      "actual": 1404,
+      "expected": 1404,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.eligible_weighted_n",
+      "actual": 1998.0000000000027,
+      "expected": 1998.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.missing_counts.97",
+      "actual": 36,
+      "expected": 36,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.missing_counts.98",
+      "actual": 12,
+      "expected": 12,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.mean",
+      "actual": 1.174943609199958,
+      "expected": 1.174943609199958,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.group0.se",
+      "actual": 0.03394064854830954,
+      "expected": 0.03394064854830954,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.difference",
+      "actual": 0.7344275677024152,
+      "expected": 0.734427567702415,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.se",
+      "actual": 0.05516795037816024,
+      "expected": 0.055167950378160246,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.p_raw",
+      "actual": 1.956172241946148e-40,
+      "expected": 1.9561722419463455e-40,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.ci95.0",
+      "actual": 0.6263003718603283,
+      "expected": 0.626300371860328,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.ci95.1",
+      "actual": 0.8425547635445022,
+      "expected": 0.842554763544502,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.n_unweighted",
+      "actual": 1254,
+      "expected": 1254,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.n_weighted",
+      "actual": 679.4666666666667,
+      "expected": 679.4666666666667,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.n_eff",
+      "actual": 1212.622299008907,
+      "expected": 1212.6222990089068,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.missing_n",
+      "actual": 42,
+      "expected": 42,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.eligible_n",
+      "actual": 1296,
+      "expected": 1296,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.eligible_weighted_n",
+      "actual": 702.0,
+      "expected": 702.0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.missing_counts.97",
+      "actual": 30,
+      "expected": 30,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.missing_counts.98",
+      "actual": 12,
+      "expected": 12,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.mean",
+      "actual": 4.233810832025118,
+      "expected": 4.233810832025118,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group1.se",
+      "actual": 0.04949513129156002,
+      "expected": 0.04949513129156002,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.n_unweighted",
+      "actual": 1355,
+      "expected": 1355,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.n_weighted",
+      "actual": 1923.9272727272755,
+      "expected": 1923.9272727272755,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.n_eff",
+      "actual": 1272.5967495496864,
+      "expected": 1272.5967495496861,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.missing_n",
+      "actual": 49,
+      "expected": 49,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.eligible_n",
+      "actual": 1404,
+      "expected": 1404,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.eligible_weighted_n",
+      "actual": 1998.0000000000027,
+      "expected": 1998.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.missing_counts.97",
+      "actual": 35,
+      "expected": 35,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.missing_counts.98",
+      "actual": 14,
+      "expected": 14,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.mean",
+      "actual": 4.637280751493159,
+      "expected": 4.637280751493158,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.group0.se",
+      "actual": 0.04904650761882133,
+      "expected": 0.04904650761882134,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.difference",
+      "actual": -0.40346991946804067,
+      "expected": -0.4034699194680398,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.se",
+      "actual": 0.0695648480297751,
+      "expected": 0.06956484802977508,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.p_raw",
+      "actual": 6.635016949506493e-09,
+      "expected": 6.63501694950694e-09,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.ci95.0",
+      "actual": -0.539814516196402,
+      "expected": -0.5398145161964011,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.ci95.1",
+      "actual": -0.26712532273967937,
+      "expected": -0.2671253227396785,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_TOPUPS.holm",
+      "actual": 3.7198805132385395e-84,
+      "expected": 3.7198805132385395e-84,
+      "pass": true
+    },
+    {
+      "id": "NEED_BUDGET_OVERSPEND.holm",
+      "actual": 9.693235952820501e-57,
+      "expected": 9.693235952820501e-57,
+      "pass": true
+    },
+    {
+      "id": "NEED_EFFORT_PLANNING.holm",
+      "actual": 3.2765420101065116e-48,
+      "expected": 3.276542010106753e-48,
+      "pass": true
+    },
+    {
+      "id": "NEED_WASTE_DISCARD.holm",
+      "actual": 1.0390472786399777e-47,
+      "expected": 1.0390472786400157e-47,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_TOPUPS.holm",
+      "actual": 3.912344483892296e-40,
+      "expected": 3.912344483892691e-40,
+      "pass": true
+    },
+    {
+      "id": "CHILDREN_PLANNING.holm",
+      "actual": 6.635016949506493e-09,
+      "expected": 6.63501694950694e-09,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.n_unweighted",
+      "actual": 680,
+      "expected": 680,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.n_weighted",
+      "actual": 632.2727272727278,
+      "expected": 632.2727272727278,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.n_eff",
+      "actual": 523.7659639788552,
+      "expected": 523.7659639788552,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.eligible_n",
+      "actual": 680,
+      "expected": 680,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.eligible_weighted_n",
+      "actual": 632.2727272727278,
+      "expected": 632.2727272727278,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.mean",
+      "actual": 0.7813419602204649,
+      "expected": 0.7813419602204649,
+      "pass": true
+    },
+    {
+      "id": "support_budget1.se",
+      "actual": 0.018077969406833035,
+      "expected": 0.018077969406833035,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.n_unweighted",
+      "actual": 1784,
+      "expected": 1784,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.n_weighted",
+      "actual": 1839.2757575757596,
+      "expected": 1839.2757575757596,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.n_eff",
+      "actual": 1422.805351323764,
+      "expected": 1422.8053513237644,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.eligible_n",
+      "actual": 1784,
+      "expected": 1784,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.eligible_weighted_n",
+      "actual": 1839.2757575757596,
+      "expected": 1839.2757575757596,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.mean",
+      "actual": 0.5003072685065432,
+      "expected": 0.5003072685065433,
+      "pass": true
+    },
+    {
+      "id": "support_budget0.se",
+      "actual": 0.013260193149337726,
+      "expected": 0.013260193149337726,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.n_unweighted",
+      "actual": 786,
+      "expected": 786,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.n_weighted",
+      "actual": 743.1454545454552,
+      "expected": 743.1454545454551,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.n_eff",
+      "actual": 604.2978045670982,
+      "expected": 604.2978045670981,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.eligible_n",
+      "actual": 786,
+      "expected": 786,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.eligible_weighted_n",
+      "actual": 743.1454545454552,
+      "expected": 743.1454545454551,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.mean",
+      "actual": 0.7361257227672708,
+      "expected": 0.736125722767271,
+      "pass": true
+    },
+    {
+      "id": "support_use_up1.se",
+      "actual": 0.01794356171772879,
+      "expected": 0.017943561717728793,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.n_unweighted",
+      "actual": 1666,
+      "expected": 1666,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.n_weighted",
+      "actual": 1722.1575757575777,
+      "expected": 1722.1575757575777,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.n_eff",
+      "actual": 1330.7736117656125,
+      "expected": 1330.7736117656125,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.eligible_n",
+      "actual": 1666,
+      "expected": 1666,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.eligible_weighted_n",
+      "actual": 1722.1575757575777,
+      "expected": 1722.1575757575777,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.mean",
+      "actual": 0.5322815636481368,
+      "expected": 0.532281563648137,
+      "pass": true
+    },
+    {
+      "id": "support_use_up0.se",
+      "actual": 0.0136827723485604,
+      "expected": 0.0136827723485604,
+      "pass": true
+    },
+    {
+      "id": "planning_index.correlation",
+      "actual": 0.5934205232161684,
+      "expected": 0.5934205232161686,
+      "pass": true
+    },
+    {
+      "id": "planning_index.n_unweighted",
+      "actual": 2466,
+      "expected": 2466,
+      "pass": true
+    },
+    {
+      "id": "planning_index.n_weighted",
+      "actual": 2463.5151515151542,
+      "expected": 2463.515151515154,
+      "pass": true
+    },
+    {
+      "id": "planning_index.n_eff",
+      "actual": 1946.4323745915024,
+      "expected": 1946.4323745915015,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.n_unweighted",
+      "actual": 2635,
+      "expected": 2635,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.n_weighted",
+      "actual": 2636.3363636363665,
+      "expected": 2636.3363636363665,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.n_eff",
+      "actual": 2080.0424995936914,
+      "expected": 2080.0424995936914,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.missing_n",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.eligible_n",
+      "actual": 2635,
+      "expected": 2635,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.eligible_weighted_n",
+      "actual": 2636.3363636363665,
+      "expected": 2636.3363636363665,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.mean",
+      "actual": 0.3890304612346564,
+      "expected": 0.38903046123465634,
+      "pass": true
+    },
+    {
+      "id": "current_tool_use.se",
+      "actual": 0.010692269568758461,
+      "expected": 0.010692269568758463,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.n_unweighted",
+      "actual": 999,
+      "expected": 999,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.n_weighted",
+      "actual": 981.2818181818192,
+      "expected": 981.2818181818191,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.n_eff",
+      "actual": 780.90297081689,
+      "expected": 780.9029708168897,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.missing_n",
+      "actual": 41,
+      "expected": 41,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.eligible_n",
+      "actual": 1040,
+      "expected": 1040,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.eligible_weighted_n",
+      "actual": 1025.6151515151525,
+      "expected": 1025.6151515151525,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.missing_counts.97",
+      "actual": 35,
+      "expected": 35,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.missing_counts.98",
+      "actual": 6,
+      "expected": 6,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.mean",
+      "actual": 4.38478736840805,
+      "expected": 4.384787368408051,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.se",
+      "actual": 0.03278136696864087,
+      "expected": 0.032781366968640875,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.distribution_pct.1",
+      "actual": 0.7043971552360392,
+      "expected": 0.7043971552360392,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.distribution_pct.2",
+      "actual": 4.84987168916352,
+      "expected": 4.849871689163521,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.distribution_pct.3",
+      "actual": 11.29258885255216,
+      "expected": 11.292588852552162,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.distribution_pct.4",
+      "actual": 21.568881765655924,
+      "expected": 21.568881765655927,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.distribution_pct.5",
+      "actual": 61.58426053739235,
+      "expected": 61.58426053739236,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.top2_pct",
+      "actual": 83.15314230304827,
+      "expected": 83.15314230304828,
+      "pass": true
+    },
+    {
+      "id": "tool_satisfaction_5.bottom2_pct",
+      "actual": 5.55426884439956,
+      "expected": 5.5542688443995605,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.n_unweighted",
+      "actual": 996,
+      "expected": 996,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.n_weighted",
+      "actual": 980.2272727272737,
+      "expected": 980.2272727272737,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.n_eff",
+      "actual": 779.9066656190007,
+      "expected": 779.9066656190005,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.missing_n",
+      "actual": 44,
+      "expected": 44,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.eligible_n",
+      "actual": 1040,
+      "expected": 1040,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.eligible_weighted_n",
+      "actual": 1025.6151515151525,
+      "expected": 1025.6151515151525,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.missing_counts.97",
+      "actual": 36,
+      "expected": 36,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.missing_counts.98",
+      "actual": 8,
+      "expected": 8,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.mean",
+      "actual": 0.5426787232398176,
+      "expected": 0.5426787232398176,
+      "pass": true
+    },
+    {
+      "id": "shared_list_use_28d.se",
+      "actual": 0.017850048099980864,
+      "expected": 0.017850048099980868,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.n_unweighted",
+      "actual": 18,
+      "expected": 18,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.n_weighted",
+      "actual": 18.27272727272735,
+      "expected": 18.27272727272735,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.n_eff",
+      "actual": 17.73140223831468,
+      "expected": 17.73140223831468,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.missing_n",
+      "actual": 2,
+      "expected": 2,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.eligible_n",
+      "actual": 20,
+      "expected": 20,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.eligible_weighted_n",
+      "actual": 20.363636363636452,
+      "expected": 20.363636363636452,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.missing_counts.97",
+      "actual": 2,
+      "expected": 2,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "older_paid_users.status",
+      "actual": "suppressed",
+      "expected": "suppressed",
+      "pass": true
+    },
+    {
+      "id": "tiny_cell_rate_absent",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.n_unweighted",
+      "actual": 659,
+      "expected": 659,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.n_weighted",
+      "actual": 580.4,
+      "expected": 580.4000000000001,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.n_eff",
+      "actual": 455.813163022299,
+      "expected": 455.8131630222992,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.missing_n",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.eligible_n",
+      "actual": 675,
+      "expected": 675,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.eligible_weighted_n",
+      "actual": 594.0,
+      "expected": 594.0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.missing_counts.97",
+      "actual": 13,
+      "expected": 13,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.mean",
+      "actual": 3.044107512060648,
+      "expected": 3.0441075120606476,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.se",
+      "actual": 0.08166466866109182,
+      "expected": 0.0816646686610918,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.distribution_pct.1",
+      "actual": 34.321157822191594,
+      "expected": 34.32115782219159,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.distribution_pct.2",
+      "actual": 11.440385940730533,
+      "expected": 11.44038594073053,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.distribution_pct.3",
+      "actual": 4.893177119228119,
+      "expected": 4.893177119228118,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.distribution_pct.4",
+      "actual": 14.197105444521021,
+      "expected": 14.197105444521018,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.distribution_pct.5",
+      "actual": 35.14817367332874,
+      "expected": 35.14817367332875,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.top2_pct",
+      "actual": 49.34527911784976,
+      "expected": 49.34527911784977,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.att_digital_help_5.bottom2_pct",
+      "actual": 45.76154376292213,
+      "expected": 45.761543762922116,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.n_unweighted",
+      "actual": 658,
+      "expected": 658,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.n_weighted",
+      "actual": 580.0,
+      "expected": 580.0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.n_eff",
+      "actual": 455.2836725855348,
+      "expected": 455.2836725855348,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.missing_n",
+      "actual": 17,
+      "expected": 17,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.eligible_n",
+      "actual": 675,
+      "expected": 675,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 594.0,
+      "expected": 594.0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.missing_counts.97",
+      "actual": 14,
+      "expected": 14,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.mean",
+      "actual": 1.4462068965517243,
+      "expected": 1.4462068965517243,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.unplanned_topups_7d.se",
+      "actual": 0.06475721782596197,
+      "expected": 0.06475721782596199,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.n_unweighted",
+      "actual": 652,
+      "expected": 652,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.n_weighted",
+      "actual": 575.2,
+      "expected": 575.2,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.n_eff",
+      "actual": 451.2972501091226,
+      "expected": 451.2972501091226,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.missing_n",
+      "actual": 23,
+      "expected": 23,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.eligible_n",
+      "actual": 675,
+      "expected": 675,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 594.0,
+      "expected": 594.0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.missing_counts.97",
+      "actual": 15,
+      "expected": 15,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.missing_counts.98",
+      "actual": 8,
+      "expected": 8,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.mean",
+      "actual": 4.4082058414464536,
+      "expected": 4.4082058414464536,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band1.meal_plan_days_7d.se",
+      "actual": 0.08519053354536507,
+      "expected": 0.08519053354536507,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.n_unweighted",
+      "actual": 914,
+      "expected": 914,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.n_weighted",
+      "actual": 782.4,
+      "expected": 782.3999999999999,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.n_eff",
+      "actual": 746.1237384817903,
+      "expected": 746.1237384817902,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.missing_n",
+      "actual": 31,
+      "expected": 31,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.eligible_n",
+      "actual": 945,
+      "expected": 945,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.eligible_weighted_n",
+      "actual": 810.0,
+      "expected": 809.9999999999999,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.missing_counts.97",
+      "actual": 21,
+      "expected": 21,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.missing_counts.98",
+      "actual": 10,
+      "expected": 10,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.mean",
+      "actual": 3.1050613496932518,
+      "expected": 3.105061349693252,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.se",
+      "actual": 0.06344086103480927,
+      "expected": 0.06344086103480928,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.distribution_pct.1",
+      "actual": 31.05828220858896,
+      "expected": 31.058282208588963,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.distribution_pct.2",
+      "actual": 14.110429447852761,
+      "expected": 14.110429447852756,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.distribution_pct.3",
+      "actual": 6.058282208588957,
+      "expected": 6.05828220858896,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.distribution_pct.4",
+      "actual": 10.812883435582823,
+      "expected": 10.812883435582823,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.distribution_pct.5",
+      "actual": 37.9601226993865,
+      "expected": 37.9601226993865,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.top2_pct",
+      "actual": 48.77300613496932,
+      "expected": 48.77300613496932,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.att_digital_help_5.bottom2_pct",
+      "actual": 45.16871165644172,
+      "expected": 45.168711656441715,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.n_unweighted",
+      "actual": 923,
+      "expected": 923,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.n_weighted",
+      "actual": 791.4,
+      "expected": 791.3999999999999,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.n_eff",
+      "actual": 753.4694673018622,
+      "expected": 753.4694673018621,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.missing_n",
+      "actual": 22,
+      "expected": 22,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.eligible_n",
+      "actual": 945,
+      "expected": 945,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 810.0,
+      "expected": 809.9999999999999,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.missing_counts.97",
+      "actual": 15,
+      "expected": 15,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.missing_counts.98",
+      "actual": 7,
+      "expected": 7,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.mean",
+      "actual": 1.6205458680818803,
+      "expected": 1.6205458680818805,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.unplanned_topups_7d.se",
+      "actual": 0.051784905121985365,
+      "expected": 0.051784905121985365,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.n_unweighted",
+      "actual": 919,
+      "expected": 919,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.n_weighted",
+      "actual": 786.3,
+      "expected": 786.2999999999997,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.n_eff",
+      "actual": 750.2065086818826,
+      "expected": 750.2065086818824,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.missing_n",
+      "actual": 26,
+      "expected": 26,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.eligible_n",
+      "actual": 945,
+      "expected": 945,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 810.0,
+      "expected": 809.9999999999999,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.missing_counts.97",
+      "actual": 18,
+      "expected": 18,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.missing_counts.98",
+      "actual": 8,
+      "expected": 8,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.mean",
+      "actual": 4.320869896985884,
+      "expected": 4.320869896985885,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band2.meal_plan_days_7d.se",
+      "actual": 0.0644122593157785,
+      "expected": 0.06441225931577853,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.n_unweighted",
+      "actual": 419,
+      "expected": 419,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.n_weighted",
+      "actual": 628.6666666666667,
+      "expected": 628.6666666666667,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.n_eff",
+      "actual": 353.57813121272375,
+      "expected": 353.57813121272363,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.missing_n",
+      "actual": 13,
+      "expected": 13,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.eligible_n",
+      "actual": 432,
+      "expected": 432,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.eligible_weighted_n",
+      "actual": 648.0,
+      "expected": 648.0000000000002,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.missing_counts.97",
+      "actual": 10,
+      "expected": 10,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.mean",
+      "actual": 3.1474019088016965,
+      "expected": 3.1474019088016965,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.se",
+      "actual": 0.09135024235815535,
+      "expected": 0.09135024235815536,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.distribution_pct.1",
+      "actual": 30.328738069989395,
+      "expected": 30.328738069989388,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.distribution_pct.2",
+      "actual": 12.83138918345705,
+      "expected": 12.83138918345705,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.distribution_pct.3",
+      "actual": 5.620360551431601,
+      "expected": 5.620360551431601,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.distribution_pct.4",
+      "actual": 14.209968186638388,
+      "expected": 14.209968186638388,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.distribution_pct.5",
+      "actual": 37.00954400848356,
+      "expected": 37.009544008483566,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.top2_pct",
+      "actual": 51.21951219512195,
+      "expected": 51.21951219512195,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.att_digital_help_5.bottom2_pct",
+      "actual": 43.16012725344645,
+      "expected": 43.16012725344644,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.n_unweighted",
+      "actual": 408,
+      "expected": 408,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.n_weighted",
+      "actual": 610.6666666666667,
+      "expected": 610.6666666666667,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.n_eff",
+      "actual": 343.8754098360656,
+      "expected": 343.8754098360656,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.missing_n",
+      "actual": 24,
+      "expected": 24,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.eligible_n",
+      "actual": 432,
+      "expected": 432,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 648.0,
+      "expected": 648.0000000000002,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.missing_counts.97",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.missing_counts.98",
+      "actual": 8,
+      "expected": 8,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.mean",
+      "actual": 1.3722707423580787,
+      "expected": 1.3722707423580787,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.unplanned_topups_7d.se",
+      "actual": 0.07119724997434579,
+      "expected": 0.0711972499743458,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.n_unweighted",
+      "actual": 409,
+      "expected": 409,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.n_weighted",
+      "actual": 612.6666666666667,
+      "expected": 612.6666666666669,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.n_eff",
+      "actual": 344.8595345038792,
+      "expected": 344.8595345038793,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.missing_n",
+      "actual": 23,
+      "expected": 23,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.eligible_n",
+      "actual": 432,
+      "expected": 432,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 648.0,
+      "expected": 648.0000000000002,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.missing_counts.97",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.missing_counts.98",
+      "actual": 7,
+      "expected": 7,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.mean",
+      "actual": 4.379760609357998,
+      "expected": 4.379760609357997,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band3.meal_plan_days_7d.se",
+      "actual": 0.09544036153886272,
+      "expected": 0.0954403615388627,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.n_unweighted",
+      "actual": 618,
+      "expected": 618,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.n_weighted",
+      "actual": 617.7272727272754,
+      "expected": 617.7272727272752,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.n_eff",
+      "actual": 604.1363270593315,
+      "expected": 604.136327059331,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.missing_n",
+      "actual": 30,
+      "expected": 30,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.eligible_n",
+      "actual": 648,
+      "expected": 648,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.eligible_weighted_n",
+      "actual": 648.0000000000027,
+      "expected": 648.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.missing_counts.97",
+      "actual": 23,
+      "expected": 23,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.missing_counts.98",
+      "actual": 7,
+      "expected": 7,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.mean",
+      "actual": 2.6575423105224427,
+      "expected": 2.657542310522443,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.se",
+      "actual": 0.06982615054532244,
+      "expected": 0.06982615054532249,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.distribution_pct.1",
+      "actual": 43.24503311258278,
+      "expected": 43.24503311258279,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.distribution_pct.2",
+      "actual": 12.766740250183958,
+      "expected": 12.76674025018396,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.distribution_pct.3",
+      "actual": 6.497424576894775,
+      "expected": 6.497424576894774,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.distribution_pct.4",
+      "actual": 9.970566593083149,
+      "expected": 9.97056659308315,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.distribution_pct.5",
+      "actual": 27.520235467255336,
+      "expected": 27.52023546725534,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.top2_pct",
+      "actual": 37.49080206033848,
+      "expected": 37.49080206033849,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.att_digital_help_5.bottom2_pct",
+      "actual": 56.01177336276674,
+      "expected": 56.011773362766746,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.n_unweighted",
+      "actual": 625,
+      "expected": 625,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.n_weighted",
+      "actual": 625.5909090909117,
+      "expected": 625.5909090909117,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.n_eff",
+      "actual": 611.3937227460079,
+      "expected": 611.3937227460078,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.missing_n",
+      "actual": 23,
+      "expected": 23,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.eligible_n",
+      "actual": 648,
+      "expected": 648,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 648.0000000000027,
+      "expected": 648.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.missing_counts.97",
+      "actual": 20,
+      "expected": 20,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.mean",
+      "actual": 0.9667950301533096,
+      "expected": 0.9667950301533094,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.unplanned_topups_7d.se",
+      "actual": 0.04346895644754624,
+      "expected": 0.04346895644754624,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.n_unweighted",
+      "actual": 629,
+      "expected": 629,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.n_weighted",
+      "actual": 629.2272727272754,
+      "expected": 629.2272727272755,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.n_eff",
+      "actual": 615.1308851617044,
+      "expected": 615.1308851617043,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.missing_n",
+      "actual": 19,
+      "expected": 19,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.eligible_n",
+      "actual": 648,
+      "expected": 648,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 648.0000000000027,
+      "expected": 648.0000000000027,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.missing_counts.97",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.mean",
+      "actual": 5.057140793180669,
+      "expected": 5.057140793180668,
+      "pass": true
+    },
+    {
+      "id": "profile.age_band4.meal_plan_days_7d.se",
+      "actual": 0.06249355726397408,
+      "expected": 0.06249355726397407,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.n_unweighted",
+      "actual": 917,
+      "expected": 917,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.n_weighted",
+      "actual": 926.47878787879,
+      "expected": 926.47878787879,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.n_eff",
+      "actual": 777.1879793751419,
+      "expected": 777.1879793751418,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.missing_n",
+      "actual": 30,
+      "expected": 30,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.eligible_n",
+      "actual": 947,
+      "expected": 947,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.eligible_weighted_n",
+      "actual": 955.218181818184,
+      "expected": 955.2181818181841,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.missing_counts.97",
+      "actual": 26,
+      "expected": 26,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.missing_counts.98",
+      "actual": 4,
+      "expected": 4,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.mean",
+      "actual": 2.7244307217290618,
+      "expected": 2.7244307217290618,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.se",
+      "actual": 0.06247234813725702,
+      "expected": 0.06247234813725703,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.distribution_pct.1",
+      "actual": 42.837985464678916,
+      "expected": 42.83798546467892,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.distribution_pct.2",
+      "actual": 11.48434280331526,
+      "expected": 11.48434280331526,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.distribution_pct.3",
+      "actual": 5.116472273646064,
+      "expected": 5.116472273646064,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.distribution_pct.4",
+      "actual": 11.519013011140252,
+      "expected": 11.519013011140252,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.distribution_pct.5",
+      "actual": 29.04218644721951,
+      "expected": 29.042186447219517,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.top2_pct",
+      "actual": 40.561199458359766,
+      "expected": 40.561199458359766,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.att_digital_help_5.bottom2_pct",
+      "actual": 54.32232826799417,
+      "expected": 54.32232826799418,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.n_unweighted",
+      "actual": 916,
+      "expected": 916,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.n_weighted",
+      "actual": 922.3818181818203,
+      "expected": 922.3818181818203,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.n_eff",
+      "actual": 778.0363342792797,
+      "expected": 778.0363342792797,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.missing_n",
+      "actual": 31,
+      "expected": 31,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.eligible_n",
+      "actual": 947,
+      "expected": 947,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 955.218181818184,
+      "expected": 955.2181818181841,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.missing_counts.97",
+      "actual": 27,
+      "expected": 27,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.missing_counts.98",
+      "actual": 4,
+      "expected": 4,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.mean",
+      "actual": 1.1204194673868042,
+      "expected": 1.1204194673868042,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.unplanned_topups_7d.se",
+      "actual": 0.042758649121216484,
+      "expected": 0.042758649121216484,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.n_unweighted",
+      "actual": 917,
+      "expected": 917,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.n_weighted",
+      "actual": 919.939393939396,
+      "expected": 919.9393939393962,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.n_eff",
+      "actual": 777.6403808601788,
+      "expected": 777.6403808601789,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.missing_n",
+      "actual": 30,
+      "expected": 30,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.eligible_n",
+      "actual": 947,
+      "expected": 947,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 955.218181818184,
+      "expected": 955.2181818181841,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.missing_counts.97",
+      "actual": 19,
+      "expected": 19,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.missing_counts.98",
+      "actual": 11,
+      "expected": 11,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.mean",
+      "actual": 4.842272218196193,
+      "expected": 4.842272218196192,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band0.meal_plan_days_7d.se",
+      "actual": 0.061050149214313204,
+      "expected": 0.06105014921431319,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.n_unweighted",
+      "actual": 471,
+      "expected": 471,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.n_weighted",
+      "actual": 451.51515151515184,
+      "expected": 451.51515151515184,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.n_eff",
+      "actual": 361.0309551886122,
+      "expected": 361.0309551886122,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.missing_n",
+      "actual": 15,
+      "expected": 15,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.eligible_n",
+      "actual": 486,
+      "expected": 486,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.eligible_weighted_n",
+      "actual": 466.3909090909095,
+      "expected": 466.3909090909095,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.missing_counts.97",
+      "actual": 10,
+      "expected": 10,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.missing_counts.98",
+      "actual": 5,
+      "expected": 5,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.mean",
+      "actual": 3.110818791946308,
+      "expected": 3.1108187919463086,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.se",
+      "actual": 0.09048448569221254,
+      "expected": 0.09048448569221253,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.distribution_pct.1",
+      "actual": 30.571812080536915,
+      "expected": 30.57181208053691,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.distribution_pct.2",
+      "actual": 13.490604026845642,
+      "expected": 13.49060402684564,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.distribution_pct.3",
+      "actual": 7.475167785234902,
+      "expected": 7.475167785234902,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.distribution_pct.4",
+      "actual": 11.208724832214767,
+      "expected": 11.208724832214767,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.distribution_pct.5",
+      "actual": 37.253691275167775,
+      "expected": 37.25369127516777,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.top2_pct",
+      "actual": 48.46241610738254,
+      "expected": 48.46241610738254,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.att_digital_help_5.bottom2_pct",
+      "actual": 44.06241610738256,
+      "expected": 44.062416107382546,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.n_unweighted",
+      "actual": 470,
+      "expected": 470,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.n_weighted",
+      "actual": 452.3878787878792,
+      "expected": 452.3878787878791,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.n_eff",
+      "actual": 362.04465297760606,
+      "expected": 362.04465297760595,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.missing_n",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.eligible_n",
+      "actual": 486,
+      "expected": 486,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 466.3909090909095,
+      "expected": 466.3909090909095,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.missing_counts.97",
+      "actual": 12,
+      "expected": 12,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.missing_counts.98",
+      "actual": 4,
+      "expected": 4,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.mean",
+      "actual": 1.3017054284336316,
+      "expected": 1.3017054284336314,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.unplanned_topups_7d.se",
+      "actual": 0.06613887202066404,
+      "expected": 0.06613887202066406,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.n_unweighted",
+      "actual": 470,
+      "expected": 470,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.n_weighted",
+      "actual": 453.5424242424246,
+      "expected": 453.54242424242454,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.n_eff",
+      "actual": 362.5691733270025,
+      "expected": 362.5691733270025,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.missing_n",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.eligible_n",
+      "actual": 486,
+      "expected": 486,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 466.3909090909095,
+      "expected": 466.3909090909095,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.missing_counts.97",
+      "actual": 13,
+      "expected": 13,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.mean",
+      "actual": 4.614596208967789,
+      "expected": 4.61459620896779,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band1.meal_plan_days_7d.se",
+      "actual": 0.08644407325581381,
+      "expected": 0.08644407325581381,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.n_unweighted",
+      "actual": 1222,
+      "expected": 1222,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.n_weighted",
+      "actual": 1231.2000000000003,
+      "expected": 1231.2000000000003,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.n_eff",
+      "actual": 924.4375280898878,
+      "expected": 924.4375280898877,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.missing_n",
+      "actual": 45,
+      "expected": 45,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.eligible_n",
+      "actual": 1267,
+      "expected": 1267,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.eligible_weighted_n",
+      "actual": 1278.3909090909094,
+      "expected": 1278.3909090909092,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.missing_counts.97",
+      "actual": 31,
+      "expected": 31,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.missing_counts.98",
+      "actual": 14,
+      "expected": 14,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.mean",
+      "actual": 3.1577273711776632,
+      "expected": 3.1577273711776632,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.se",
+      "actual": 0.056464872786478645,
+      "expected": 0.056464872786478645,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.distribution_pct.1",
+      "actual": 29.652519345501805,
+      "expected": 29.652519345501798,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.distribution_pct.2",
+      "actual": 13.727922499852326,
+      "expected": 13.727922499852326,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.distribution_pct.3",
+      "actual": 5.694862858605549,
+      "expected": 5.694862858605548,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.distribution_pct.4",
+      "actual": 13.043692283458364,
+      "expected": 13.043692283458364,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.distribution_pct.5",
+      "actual": 37.88100301258196,
+      "expected": 37.88100301258195,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.top2_pct",
+      "actual": 50.92469529604032,
+      "expected": 50.92469529604031,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.att_digital_help_5.bottom2_pct",
+      "actual": 43.38044184535413,
+      "expected": 43.38044184535413,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.n_unweighted",
+      "actual": 1228,
+      "expected": 1228,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.n_weighted",
+      "actual": 1232.8878787878791,
+      "expected": 1232.887878787879,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.n_eff",
+      "actual": 929.1597142943862,
+      "expected": 929.1597142943858,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.missing_n",
+      "actual": 39,
+      "expected": 39,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.eligible_n",
+      "actual": 1267,
+      "expected": 1267,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 1278.3909090909094,
+      "expected": 1278.3909090909092,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.missing_counts.97",
+      "actual": 26,
+      "expected": 26,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.missing_counts.98",
+      "actual": 13,
+      "expected": 13,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.mean",
+      "actual": 1.5749914588315679,
+      "expected": 1.574991458831568,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.unplanned_topups_7d.se",
+      "actual": 0.04677172200283737,
+      "expected": 0.04677172200283739,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.n_unweighted",
+      "actual": 1222,
+      "expected": 1222,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.n_weighted",
+      "actual": 1229.9121212121215,
+      "expected": 1229.9121212121213,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.n_eff",
+      "actual": 925.9128167419622,
+      "expected": 925.912816741962,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.missing_n",
+      "actual": 45,
+      "expected": 45,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.eligible_n",
+      "actual": 1267,
+      "expected": 1267,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 1278.3909090909094,
+      "expected": 1278.3909090909092,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.missing_counts.97",
+      "actual": 33,
+      "expected": 33,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.missing_counts.98",
+      "actual": 12,
+      "expected": 12,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.mean",
+      "actual": 4.2694205794451925,
+      "expected": 4.269420579445194,
+      "pass": true
+    },
+    {
+      "id": "profile.work_hours_band2.meal_plan_days_7d.se",
+      "actual": 0.058694033546788094,
+      "expected": 0.0586940335467881,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.n_unweighted",
+      "actual": 1547,
+      "expected": 1547,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.n_weighted",
+      "actual": 1561.7484848484864,
+      "expected": 1561.7484848484864,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.n_eff",
+      "actual": 1225.8704554960375,
+      "expected": 1225.8704554960375,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.missing_n",
+      "actual": 48,
+      "expected": 48,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.eligible_n",
+      "actual": 1595,
+      "expected": 1595,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.eligible_weighted_n",
+      "actual": 1610.7212121212137,
+      "expected": 1610.7212121212137,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.missing_counts.97",
+      "actual": 35,
+      "expected": 35,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.missing_counts.98",
+      "actual": 13,
+      "expected": 13,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.mean",
+      "actual": 2.7412942370342486,
+      "expected": 2.7412942370342486,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.se",
+      "actual": 0.049063809098412264,
+      "expected": 0.049063809098412264,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.distribution_pct.1",
+      "actual": 39.82657355683317,
+      "expected": 39.82657355683317,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.distribution_pct.2",
+      "actual": 14.978161617611963,
+      "expected": 14.978161617611963,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.distribution_pct.3",
+      "actual": 5.687292991344202,
+      "expected": 5.687292991344201,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.distribution_pct.4",
+      "actual": 10.255211233718228,
+      "expected": 10.255211233718228,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.distribution_pct.5",
+      "actual": 29.252760600492447,
+      "expected": 29.252760600492447,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.top2_pct",
+      "actual": 39.50797183421068,
+      "expected": 39.50797183421068,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.att_digital_help_5.bottom2_pct",
+      "actual": 54.80473517444513,
+      "expected": 54.80473517444513,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.n_unweighted",
+      "actual": 1545,
+      "expected": 1545,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.n_weighted",
+      "actual": 1559.0424242424258,
+      "expected": 1559.042424242426,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.n_eff",
+      "actual": 1227.0803466383556,
+      "expected": 1227.0803466383556,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.missing_n",
+      "actual": 50,
+      "expected": 50,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.eligible_n",
+      "actual": 1595,
+      "expected": 1595,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 1610.7212121212137,
+      "expected": 1610.7212121212137,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.missing_counts.97",
+      "actual": 37,
+      "expected": 37,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.missing_counts.98",
+      "actual": 13,
+      "expected": 13,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.mean",
+      "actual": 1.364913194579423,
+      "expected": 1.3649131945794228,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.unplanned_topups_7d.se",
+      "actual": 0.03745050127351134,
+      "expected": 0.03745050127351134,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.n_unweighted",
+      "actual": 1545,
+      "expected": 1545,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.n_weighted",
+      "actual": 1555.7151515151531,
+      "expected": 1555.7151515151531,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.n_eff",
+      "actual": 1228.373494611431,
+      "expected": 1228.373494611431,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.missing_n",
+      "actual": 50,
+      "expected": 50,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.eligible_n",
+      "actual": 1595,
+      "expected": 1595,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 1610.7212121212137,
+      "expected": 1610.7212121212137,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.missing_counts.97",
+      "actual": 34,
+      "expected": 34,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.missing_counts.98",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.mean",
+      "actual": 4.506517513138263,
+      "expected": 4.506517513138263,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d0.meal_plan_days_7d.se",
+      "actual": 0.04992306246908982,
+      "expected": 0.04992306246908982,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.n_unweighted",
+      "actual": 451,
+      "expected": 451,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.n_weighted",
+      "actual": 433.1424242424246,
+      "expected": 433.1424242424246,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.n_eff",
+      "actual": 349.29226713301466,
+      "expected": 349.29226713301466,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.missing_n",
+      "actual": 17,
+      "expected": 17,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.eligible_n",
+      "actual": 468,
+      "expected": 468,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.eligible_weighted_n",
+      "actual": 448.82727272727317,
+      "expected": 448.82727272727317,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.missing_counts.97",
+      "actual": 14,
+      "expected": 14,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.mean",
+      "actual": 3.3404646802437434,
+      "expected": 3.3404646802437434,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.se",
+      "actual": 0.09147886063314938,
+      "expected": 0.09147886063314938,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.distribution_pct.1",
+      "actual": 28.07740473075551,
+      "expected": 28.07740473075551,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.distribution_pct.2",
+      "actual": 8.86264578100842,
+      "expected": 8.86264578100842,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.distribution_pct.3",
+      "actual": 5.405878114134199,
+      "expected": 5.405878114134199,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.distribution_pct.4",
+      "actual": 16.24421948130995,
+      "expected": 16.244219481309944,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.distribution_pct.5",
+      "actual": 41.40985189279193,
+      "expected": 41.40985189279192,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.top2_pct",
+      "actual": 57.654071374101875,
+      "expected": 57.65407137410186,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.att_digital_help_5.bottom2_pct",
+      "actual": 36.94005051176393,
+      "expected": 36.94005051176393,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.n_unweighted",
+      "actual": 450,
+      "expected": 450,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.n_weighted",
+      "actual": 430.0818181818186,
+      "expected": 430.0818181818186,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.n_eff",
+      "actual": 351.2737809846502,
+      "expected": 351.2737809846502,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.missing_n",
+      "actual": 18,
+      "expected": 18,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.eligible_n",
+      "actual": 468,
+      "expected": 468,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 448.82727272727317,
+      "expected": 448.82727272727317,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.missing_counts.97",
+      "actual": 11,
+      "expected": 11,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.missing_counts.98",
+      "actual": 7,
+      "expected": 7,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.mean",
+      "actual": 1.4652744016290058,
+      "expected": 1.4652744016290058,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.unplanned_topups_7d.se",
+      "actual": 0.07949520214030921,
+      "expected": 0.0794952021403092,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.n_unweighted",
+      "actual": 448,
+      "expected": 448,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.n_weighted",
+      "actual": 427.3787878787883,
+      "expected": 427.3787878787883,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.n_eff",
+      "actual": 348.7265529578037,
+      "expected": 348.7265529578037,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.missing_n",
+      "actual": 20,
+      "expected": 20,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.eligible_n",
+      "actual": 468,
+      "expected": 468,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 448.82727272727317,
+      "expected": 448.82727272727317,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.missing_counts.97",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.missing_counts.98",
+      "actual": 4,
+      "expected": 4,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.mean",
+      "actual": 4.526245258269225,
+      "expected": 4.526245258269224,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d1.meal_plan_days_7d.se",
+      "actual": 0.0981683855247421,
+      "expected": 0.0981683855247421,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.n_unweighted",
+      "actual": 420,
+      "expected": 420,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.n_weighted",
+      "actual": 420.32121212121257,
+      "expected": 420.32121212121257,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.n_eff",
+      "actual": 332.7183907095822,
+      "expected": 332.7183907095822,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.missing_n",
+      "actual": 16,
+      "expected": 16,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.eligible_n",
+      "actual": 436,
+      "expected": 436,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.eligible_weighted_n",
+      "actual": 436.1242424242429,
+      "expected": 436.1242424242429,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.missing_counts.97",
+      "actual": 11,
+      "expected": 11,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.missing_counts.98",
+      "actual": 5,
+      "expected": 5,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.mean",
+      "actual": 3.5230199126209385,
+      "expected": 3.5230199126209394,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.se",
+      "actual": 0.09207427720488941,
+      "expected": 0.09207427720488941,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.distribution_pct.1",
+      "actual": 23.614695831470897,
+      "expected": 23.614695831470897,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.distribution_pct.2",
+      "actual": 9.471111559701816,
+      "expected": 9.471111559701816,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.distribution_pct.3",
+      "actual": 5.732989200178798,
+      "expected": 5.732989200178799,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.distribution_pct.4",
+      "actual": 13.35991233255951,
+      "expected": 13.35991233255951,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.distribution_pct.5",
+      "actual": 47.82129107608898,
+      "expected": 47.82129107608898,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.top2_pct",
+      "actual": 61.18120340864849,
+      "expected": 61.18120340864849,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.att_digital_help_5.bottom2_pct",
+      "actual": 33.085807391172715,
+      "expected": 33.085807391172715,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.n_unweighted",
+      "actual": 421,
+      "expected": 421,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.n_weighted",
+      "actual": 416.89696969697013,
+      "expected": 416.89696969697013,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.n_eff",
+      "actual": 331.9463696095858,
+      "expected": 331.94636960958593,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.missing_n",
+      "actual": 15,
+      "expected": 15,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.eligible_n",
+      "actual": 436,
+      "expected": 436,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 436.1242424242429,
+      "expected": 436.1242424242429,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.missing_counts.97",
+      "actual": 14,
+      "expected": 14,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.missing_counts.98",
+      "actual": 1,
+      "expected": 1,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.mean",
+      "actual": 1.319198115950456,
+      "expected": 1.319198115950456,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.unplanned_topups_7d.se",
+      "actual": 0.07130322147296453,
+      "expected": 0.07130322147296451,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.n_unweighted",
+      "actual": 418,
+      "expected": 418,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.n_weighted",
+      "actual": 419.67272727272774,
+      "expected": 419.6727272727277,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.n_eff",
+      "actual": 329.7033040647396,
+      "expected": 329.7033040647395,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.missing_n",
+      "actual": 18,
+      "expected": 18,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.eligible_n",
+      "actual": 436,
+      "expected": 436,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 436.1242424242429,
+      "expected": 436.1242424242429,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.missing_counts.97",
+      "actual": 15,
+      "expected": 15,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.mean",
+      "actual": 4.592604626982064,
+      "expected": 4.592604626982065,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d2.meal_plan_days_7d.se",
+      "actual": 0.09265839227532108,
+      "expected": 0.09265839227532109,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.n_unweighted",
+      "actual": 129,
+      "expected": 129,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.n_weighted",
+      "actual": 133.36363636363646,
+      "expected": 133.36363636363643,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.n_eff",
+      "actual": 100.83266280927924,
+      "expected": 100.8326628092792,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.missing_n",
+      "actual": 7,
+      "expected": 7,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.eligible_n",
+      "actual": 136,
+      "expected": 136,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.eligible_weighted_n",
+      "actual": 140.66363636363644,
+      "expected": 140.66363636363644,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.missing_counts.97",
+      "actual": 5,
+      "expected": 5,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.missing_counts.98",
+      "actual": 2,
+      "expected": 2,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.mean",
+      "actual": 3.2055441945012495,
+      "expected": 3.2055441945012504,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.se",
+      "actual": 0.16546690345678794,
+      "expected": 0.165466903456788,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.distribution_pct.1",
+      "actual": 28.06634855714611,
+      "expected": 28.066348557146117,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.distribution_pct.2",
+      "actual": 10.12269938650306,
+      "expected": 10.122699386503061,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.distribution_pct.3",
+      "actual": 9.182004089979547,
+      "expected": 9.182004089979548,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.distribution_pct.4",
+      "actual": 18.448079981822307,
+      "expected": 18.448079981822314,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.distribution_pct.5",
+      "actual": 34.18086798454897,
+      "expected": 34.180867984548975,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.top2_pct",
+      "actual": 52.62894796637127,
+      "expected": 52.628947966371285,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.att_digital_help_5.bottom2_pct",
+      "actual": 38.18904794364917,
+      "expected": 38.18904794364918,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.n_unweighted",
+      "actual": 135,
+      "expected": 135,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.n_weighted",
+      "actual": 140.06363636363645,
+      "expected": 140.06363636363642,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.n_eff",
+      "actual": 105.42689570623355,
+      "expected": 105.42689570623351,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.missing_n",
+      "actual": 1,
+      "expected": 1,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.eligible_n",
+      "actual": 136,
+      "expected": 136,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.eligible_weighted_n",
+      "actual": 140.66363636363644,
+      "expected": 140.66363636363644,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.missing_counts.97",
+      "actual": 1,
+      "expected": 1,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.missing_counts.98",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.mean",
+      "actual": 1.1400662036736546,
+      "expected": 1.1400662036736549,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.unplanned_topups_7d.se",
+      "actual": 0.11062724217024986,
+      "expected": 0.11062724217024988,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.n_unweighted",
+      "actual": 133,
+      "expected": 133,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.n_weighted",
+      "actual": 136.96363636363645,
+      "expected": 136.96363636363643,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.n_eff",
+      "actual": 103.48679836889922,
+      "expected": 103.48679836889914,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.missing_n",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.eligible_n",
+      "actual": 136,
+      "expected": 136,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.eligible_weighted_n",
+      "actual": 140.66363636363644,
+      "expected": 140.66363636363644,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.missing_counts.97",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.missing_counts.98",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.missing_counts.99",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.missing_counts.blank",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.mean",
+      "actual": 4.66825965750697,
+      "expected": 4.668259657506971,
+      "pass": true
+    },
+    {
+      "id": "profile.planning_tool_28d3.meal_plan_days_7d.se",
+      "actual": 0.17329226583551957,
+      "expected": 0.17329226583551963,
+      "pass": true
+    },
+    {
+      "id": "source_hash",
+      "actual": "6394f992f4eeddf376413b0ca394466f4a2ca9151304a015930adf658b3aa20a",
+      "expected": "6394f992f4eeddf376413b0ca394466f4a2ca9151304a015930adf658b3aa20a",
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "study_id": "SBT-004",
+  "version": "0.1.0-author-candidate",
+  "title": "Household grocery and meal-planning needs",
+  "synthetic": true,
+  "brief": "PantryWorks is a fictional grocery retailer exploring optional meal-planning and shopping-list support. This cross-sectional usage-and-attitudes study describes household tasks, constraints, existing tools and unmet support needs; it does not expose or randomise product concepts.",
+  "decision_question": "Which household tasks and audiences should inform a small, optional grocery/meal-planning support pilot, and what further evidence is needed before selecting a delivery format or claiming commercial impact?",
+  "decision_limits": "No price test, randomised treatment, observed purchase, revenue, longitudinal change or causal effect is identified.",
+  "population": "A fictional UK household population with at least one adult aged 18+ who has main or shared responsibility for grocery shopping and evening-meal decisions. One planner per household. Assume profile eligibility known from recruitment; CSV contains eligible completes only.",
+  "sampling": {
+    "n": 2700,
+    "design": "Disproportionate fixed quotas across responding-planner age x household children-under-16 status; independent synthetic households within each stratum",
+    "strata_variables": [
+      "age_band",
+      "children_u16"
+    ],
+    "quota_cells": [
+      {
+        "age_band": 1,
+        "children_u16": 0,
+        "sample_share": 0.1,
+        "target_share": 0.16,
+        "allocated_n": 270,
+        "relative_weight": 1.6
+      },
+      {
+        "age_band": 1,
+        "children_u16": 1,
+        "sample_share": 0.15,
+        "target_share": 0.06,
+        "allocated_n": 405,
+        "relative_weight": 0.4
+      },
+      {
+        "age_band": 2,
+        "children_u16": 0,
+        "sample_share": 0.1,
+        "target_share": 0.15,
+        "allocated_n": 270,
+        "relative_weight": 1.5
+      },
+      {
+        "age_band": 2,
+        "children_u16": 1,
+        "sample_share": 0.25,
+        "target_share": 0.15,
+        "allocated_n": 675,
+        "relative_weight": 0.6
+      },
+      {
+        "age_band": 3,
+        "children_u16": 0,
+        "sample_share": 0.1,
+        "target_share": 0.2,
+        "allocated_n": 270,
+        "relative_weight": 2.0
+      },
+      {
+        "age_band": 3,
+        "children_u16": 1,
+        "sample_share": 0.06,
+        "target_share": 0.04,
+        "allocated_n": 162,
+        "relative_weight": 0.6666666666666666
+      },
+      {
+        "age_band": 4,
+        "children_u16": 0,
+        "sample_share": 0.22,
+        "target_share": 0.23,
+        "allocated_n": 594,
+        "relative_weight": 1.0454545454545454
+      },
+      {
+        "age_band": 4,
+        "children_u16": 1,
+        "sample_share": 0.02,
+        "target_share": 0.01,
+        "allocated_n": 54,
+        "relative_weight": 0.5
+      }
+    ],
+    "targets_are": "Fictional benchmark assumptions, not official UK population estimates. Neither quotas nor these results support claims about real UK prevalence.",
+    "respondent_vs_household": "Age/work hours describe the responding planner; outcomes and children status refer to the household."
+  },
+  "weights": {
+    "variable": "wt_final",
+    "formula": "w_h = n * target_share_h / allocated_n_h",
+    "normalization": "sum(w)=n, mean(w)=1 over the full sample",
+    "positive": true,
+    "interpretation": "Relative standardisation to the declared synthetic household profile. Keep these full-sample weights in subgroups; do not recalibrate each cut. Weighted N is an equivalent sample count, not an estimated UK population size.",
+    "no_claim": "Weights do not correct nonresponse within variables or unmeasured selection into current tool use."
+  },
+  "routing": {
+    "tool_satisfaction_5": "Ask only when planning_tool_28d in {1,2,3}",
+    "shared_list_use_28d": "Same current-tool-user route",
+    "all_other_observed_items": "All recruited households",
+    "needs_and_barriers": "Both asked of users AND nonusers; each allows any number of selections, including none."
+  },
+  "need_state_policy": {
+    "derivation": {
+      "need_budget": [
+        "att_budget_worry_5",
+        "att_price_tradeoffs_5"
+      ],
+      "need_effort": [
+        "att_time_short_5",
+        "att_decision_fatigue_5"
+      ],
+      "need_waste": [
+        "att_waste_concern_5",
+        "att_waste_difficult_5"
+      ]
+    },
+    "cut": "Both items >=4 on valid 1..5 responses",
+    "invalid": "99 if either defining item is nonvalid",
+    "overlap": "No exclusivity, priority allocation, clustering, or latent-class assignment",
+    "avoid_tautology": "Assess external reported behaviour/outcomes, not differences on the items that define a need state."
+  },
+  "prespecified_subgroup": {
+    "variable": "children_u16",
+    "contrast": "1 versus 0",
+    "role": "Household planning context; this is not a need-state membership rule",
+    "outcomes": [
+      "unplanned_topups_7d",
+      "meal_plan_days_7d"
+    ]
+  },
+  "additional_subgroups": {
+    "descriptive": [
+      "age_band",
+      "work_hours_band",
+      "planning_tool_28d"
+    ],
+    "reporting_example": "age_band=4 AND planning_tool_28d=3 may be examined only subject to base rules",
+    "rule": "Demographic differences are not assumed to be noise. Report sound descriptive differences with bases; additional significance searches are exploratory, not part of the confirmatory families."
+  },
+  "analysis_policy": {
+    "ordinal": "For every 1..5 item report the full weighted valid-case distribution, with disagree/bottom-two, neutral and agree/top-two summaries where helpful. Means alone are not a sufficient battery summary. Do not report 97/98 as response categories within the valid distribution.",
+    "reverse_keying": "Only A2/att_spontaneous_5 is reverse-keyed for planning_orientation. Preserve original response labels in item distributions; reverse valid 1..5 values only when computing that index.",
+    "counts": "B1-B3 are 0..7 DAYS, not number of meals, portions, shops or pounds. Zero is valid; numeric 97/98 are nonvalid.",
+    "bases": "Every statistic carries eligible unweighted N and weighted N; valid-case unweighted N and weighted N; and Kish ESS on the valid subset. Report DK, refusal, unknown derived state and structural/unasked counts separately. N_eff=(sum valid weights)^2/sum(valid weights^2); it is a weight-dispersion summary, NOT by itself a general variance estimator.",
+    "multiple_response": "Weighted respondent incidence: selected weight / answered-eligible respondent weight, separately for each block. Include all-zero/None rows. Do not normalise percentages to sum to 100; report block nonresponse separately.",
+    "routed": "Current-tool prevalence uses valid U1 among all eligible households. U2/U3 estimates use valid follow-up answers among recorded current users. Never treat structural blanks as dissatisfaction or no use. A conditional tool-user percentage cannot be relabelled as all-household prevalence.",
+    "overlap": "Use joint valid flags for two-state overlap and all three valid flags for eight membership combinations. Pairwise flags are overlapping, not independent samples. Do not use independent-group formulas to compare overlapping states against each other.",
+    "warning_n": 75,
+    "suppress_n": 40,
+    "warning_kish_ess": 50,
+    "base_rule": "Valid n<40: suppress percentages, means, correlations and inferential rankings; report only base/suppression reason. Valid n=40..74: flag small base; no unqualified headline. Valid Kish ESS<50: warn regardless of n. Apply rules per statistic, not just at full-cell level.",
+    "materiality": "Study-specific descriptive attention thresholds: 0.5 days for weekly day-count differences and 8 percentage points for incidence differences. These are pilot-prioritisation heuristics, not validated economic thresholds. Significance alone does not establish commercial value.",
+    "association": "Weighted diagnostic/index-outcome associations are descriptive and use pairwise valid responses. Correlated items are not independent corroboration. No causal drivers, exclusive personas, observed conversion, sales or actual retained usage can be inferred."
+  },
+  "required_inference": {
+    "estimands": [
+      {
+        "id": "NEED_EFFORT_TOPUPS",
+        "family": "needs_external",
+        "group_variable": "need_effort",
+        "outcome": "unplanned_topups_7d",
+        "unit": "days",
+        "group_one": 1,
+        "group_zero": 0
+      },
+      {
+        "id": "NEED_EFFORT_PLANNING",
+        "family": "needs_external",
+        "group_variable": "need_effort",
+        "outcome": "meal_plan_days_7d",
+        "unit": "days",
+        "group_one": 1,
+        "group_zero": 0
+      },
+      {
+        "id": "NEED_BUDGET_OVERSPEND",
+        "family": "needs_external",
+        "group_variable": "need_budget",
+        "outcome": "over_budget_4w",
+        "unit": "percentage_points",
+        "group_one": 1,
+        "group_zero": 0
+      },
+      {
+        "id": "NEED_WASTE_DISCARD",
+        "family": "needs_external",
+        "group_variable": "need_waste",
+        "outcome": "waste_days_7d",
+        "unit": "days",
+        "group_one": 1,
+        "group_zero": 0
+      },
+      {
+        "id": "CHILDREN_TOPUPS",
+        "family": "household_context",
+        "group_variable": "children_u16",
+        "outcome": "unplanned_topups_7d",
+        "unit": "days",
+        "group_one": 1,
+        "group_zero": 0
+      },
+      {
+        "id": "CHILDREN_PLANNING",
+        "family": "household_context",
+        "group_variable": "children_u16",
+        "outcome": "meal_plan_days_7d",
+        "unit": "days",
+        "group_one": 1,
+        "group_zero": 0
+      }
+    ],
+    "definition": "For each listed contrast, target-profile-weighted valid-case outcome mean in group=1 minus group=0. A binary mean difference is multiplied by 100 and labelled percentage points. Include only valid group codes {0,1} and valid outcome codes; no comparison with defining attitude items is inferentially required.",
+    "null": "Two-sided difference=0",
+    "alpha": 0.05,
+    "families": {
+      "needs_external": {
+        "m": 4,
+        "adjustment": "Holm across exactly the four prespecified need-state/external-outcome contrasts"
+      },
+      "household_context": {
+        "m": 2,
+        "adjustment": "Holm across exactly the two children-context external-outcome contrasts"
+      }
+    },
+    "variance": "Stratified linearisation for a fixed-weight ratio contrast. Retain all sampled rows for variance strata, assigning zero influence to non-domain/nonvalid rows. For group g: mu_g=sum(w I_g Y)/W_g; a_i,g=w_i I_g (Y_i-mu_g)/W_g. For difference a_i=a_i,1-a_i,0. Var(diff)=sum_h [n_h/(n_h-1) * sum_{i in h}(a_i-mean_h(a))^2]. No FPC; independent households within the eight fixed quota strata. Valid groups and outcomes must be selected before forming indicators. Do not substitute weighted N or Kish ESS for n_h.",
+    "intervals": "Normal-approximation unadjusted 95% intervals: difference +/-1.959963984540054*SE. Holm adjusts the six p-values within their TWO fixed families; it does not make these intervals simultaneous. Compute p=erfc(abs(diff/SE)/sqrt(2)). Mark an undefined/suppressed test not estimable; retain its family slot conservatively as p=1 for adjustment, without pretending it was observed.",
+    "interpretation": "Sampling-model summaries within this synthetic design, conditional on observed valid cases and fixed target profile. Neither nonresponse bias nor causal uncertainty is removed. Secondary associations and other demographic cuts are descriptive; no other confirmatory tests required."
+  },
+  "delivery": {
+    "requested_output": "Presentation-neutral prioritised narrative with evidence, estimates, valid bases, explicit qualifiers and research questions; no slides required",
+    "public_input_allowlist": [
+      "respondents.csv",
+      "codebook.json",
+      "questionnaire.md",
+      "study_materials.json"
+    ],
+    "do_not_expose": "Generator source, hidden_design.json, author checks, local test outputs and any future reference/adjudication artifacts are not model-facing study materials."
+  }
+}

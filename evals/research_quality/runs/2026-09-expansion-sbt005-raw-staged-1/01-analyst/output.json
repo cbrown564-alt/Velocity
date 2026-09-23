@@ -1,0 +1,1480 @@
+{
+  "study_id": "SBT-005",
+  "analysis_claims": [
+    {
+      "analysis_id": "primary_assignment",
+      "values": {
+        "arm_order": [
+          "control",
+          "campaign"
+        ],
+        "eligible_enrolled_n": [
+          1400,
+          1400
+        ],
+        "eligible_returned_n": [
+          1070,
+          1019
+        ],
+        "awareness": {
+          "paired_n": [
+            1016,
+            960
+          ],
+          "weighted_N": [
+            999.793,
+            965.206
+          ],
+          "kish_ESS": [
+            876.618,
+            834.407
+          ],
+          "pre_yes_pct": [
+            31.369,
+            30.834
+          ],
+          "post_yes_pct": [
+            45.703,
+            58.76
+          ],
+          "change_pp": [
+            14.334,
+            27.926
+          ],
+          "campaign_minus_control_change_pp": 13.592,
+          "SE_pp": 2.0773,
+          "pointwise_95_CI_pp": [
+            9.5204,
+            17.6635
+          ],
+          "raw_p": 6.032047417436043e-11,
+          "holm_p": 1.8096142252308128e-10
+        },
+        "consideration": {
+          "paired_n": [
+            1015,
+            966
+          ],
+          "weighted_N": [
+            1000.171,
+            973.613
+          ],
+          "kish_ESS": [
+            877.616,
+            839.325
+          ],
+          "pre_top2_pct": [
+            31.495,
+            28.68
+          ],
+          "post_top2_pct": [
+            39.859,
+            37.036
+          ],
+          "change_pp": [
+            8.364,
+            8.356
+          ],
+          "campaign_minus_control_change_pp": -0.0083,
+          "SE_pp": 1.75,
+          "pointwise_95_CI_pp": [
+            -3.4383,
+            3.4217
+          ],
+          "raw_p": 0.9962097615,
+          "holm_p": 0.9962097615,
+          "paired_pre_category_1_to_5_pct": [
+            [
+              19.388,
+              21.574,
+              27.544,
+              17.983,
+              13.512
+            ],
+            [
+              22.281,
+              22.631,
+              26.408,
+              17.163,
+              11.517
+            ]
+          ],
+          "paired_post_category_1_to_5_pct": [
+            [
+              18.212,
+              18.776,
+              23.153,
+              20.894,
+              18.965
+            ],
+            [
+              18.159,
+              20.787,
+              24.018,
+              19.929,
+              17.107
+            ]
+          ]
+        },
+        "usage": {
+          "paired_n": [
+            1007,
+            969
+          ],
+          "weighted_N": [
+            993.81,
+            973.302
+          ],
+          "kish_ESS": [
+            868.831,
+            842.041
+          ],
+          "pre_yes_pct": [
+            5.507,
+            6.189
+          ],
+          "post_yes_pct": [
+            9.097,
+            8.799
+          ],
+          "change_pp": [
+            3.59,
+            2.611
+          ],
+          "campaign_minus_control_change_pp": -0.9791,
+          "SE_pp": 0.8767,
+          "pointwise_95_CI_pp": [
+            -2.6974,
+            0.7392
+          ],
+          "raw_p": 0.2640648812,
+          "holm_p": 0.5281297624
+        }
+      },
+      "universe": "Separate endpoint-specific sets with returned follow-up and valid pre/post answers; original assignment retained. Binary paired distributions are Yes as reported and No=100\u2212Yes.",
+      "weighting": "Supplied fixed weight_base; paired-change variance and PRIMARY_ASSIGNMENT Holm family exactly as declared."
+    },
+    {
+      "analysis_id": "endpoint_valid_distributions",
+      "values": {
+        "row_schema": [
+          "eligible_n",
+          "valid_n",
+          "weighted_N",
+          "kish_ESS",
+          "numeric_missing_n",
+          "category_percentages"
+        ],
+        "binary_category_order": [
+          0,
+          1
+        ],
+        "consideration_category_order": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "control": {
+          "awareness_pre": [
+            1400,
+            1367,
+            1352.909,
+            1181.47,
+            33,
+            [
+              69.275,
+              30.725
+            ]
+          ],
+          "awareness_post": [
+            1070,
+            1041,
+            1026.268,
+            898.299,
+            29,
+            [
+              54.168,
+              45.832
+            ]
+          ],
+          "consideration_pre": [
+            1400,
+            1354,
+            1343.185,
+            1171.606,
+            46,
+            [
+              21.008,
+              21.893,
+              27.307,
+              17.642,
+              12.15
+            ]
+          ],
+          "consideration_post": [
+            1070,
+            1048,
+            1031.788,
+            905.537,
+            22,
+            [
+              18.282,
+              18.57,
+              23.02,
+              20.888,
+              19.241
+            ]
+          ],
+          "usage_pre": [
+            1400,
+            1357,
+            1344.343,
+            1174.503,
+            43,
+            [
+              95.087,
+              4.913
+            ]
+          ],
+          "usage_post": [
+            1070,
+            1043,
+            1028.516,
+            899.567,
+            27,
+            [
+              91.146,
+              8.854
+            ]
+          ]
+        },
+        "campaign": {
+          "awareness_pre": [
+            1400,
+            1360,
+            1371.006,
+            1185.92,
+            40,
+            [
+              69.835,
+              30.165
+            ]
+          ],
+          "awareness_post": [
+            1019,
+            987,
+            992.894,
+            857.768,
+            32,
+            [
+              41.53,
+              58.47
+            ]
+          ],
+          "consideration_pre": [
+            1400,
+            1365,
+            1379.336,
+            1189.95,
+            35,
+            [
+              23.691,
+              24.328,
+              25.673,
+              15.697,
+              10.612
+            ]
+          ],
+          "consideration_post": [
+            1019,
+            992,
+            998.773,
+            861.763,
+            27,
+            [
+              18.26,
+              20.835,
+              23.906,
+              20.056,
+              16.944
+            ]
+          ],
+          "usage_pre": [
+            1400,
+            1363,
+            1378.391,
+            1188.381,
+            37,
+            [
+              94.297,
+              5.703
+            ]
+          ],
+          "usage_post": [
+            1019,
+            995,
+            997.644,
+            864.237,
+            24,
+            [
+              91.255,
+              8.745
+            ]
+          ]
+        },
+        "structural_exclusions": {
+          "baseline": 0,
+          "post_nonreturn_control": 330,
+          "post_nonreturn_campaign": 381,
+          "blank_within_eligible_endpoint_rows": 0
+        },
+        "returned_but_not_paired_n": {
+          "arm_order": [
+            "control",
+            "campaign"
+          ],
+          "awareness": [
+            54,
+            59
+          ],
+          "consideration": [
+            55,
+            53
+          ],
+          "usage": [
+            63,
+            50
+          ]
+        }
+      },
+      "universe": "Baseline: all enrolled within arm. Follow-up: all returners within arm. Each item uses its own valid cases, independently of paired eligibility.",
+      "weighting": "Fixed weight_base; percentages use the stated item-valid weighted denominator. These independent-wave distributions are not the change estimand."
+    },
+    {
+      "analysis_id": "attrition_audit",
+      "values": {
+        "arm_order": [
+          "control",
+          "campaign"
+        ],
+        "enrolled_n": [
+          1400,
+          1400
+        ],
+        "enrolled_weighted_N": [
+          1387.058,
+          1412.942
+        ],
+        "enrolled_kish_ESS": [
+          1210.612,
+          1220.3
+        ],
+        "returned_n": [
+          1070,
+          1019
+        ],
+        "return_unweighted_pct": [
+          76.429,
+          72.786
+        ],
+        "return_weighted_pct": [
+          75.979,
+          72.377
+        ],
+        "nonreturned_n": [
+          330,
+          381
+        ],
+        "profile_row_schema": [
+          "eligible_n",
+          "valid_n",
+          "weighted_N",
+          "kish_ESS",
+          "numeric_missing_n",
+          "category_percentages"
+        ],
+        "profile_category_order": "Binary variables: 0,1; ordinal variables: 1,2,3,4,5.",
+        "nonreturners": {
+          "awareness_pre": [
+            711,
+            692,
+            703.264,
+            605.415,
+            19,
+            [
+              72.189,
+              27.811
+            ]
+          ],
+          "consideration_pre": [
+            711,
+            691,
+            704.14,
+            604.75,
+            20,
+            [
+              27.43,
+              25.639,
+              24.941,
+              14.09,
+              7.901
+            ]
+          ],
+          "usage_pre": [
+            711,
+            694,
+            706.429,
+            607.927,
+            17,
+            [
+              96.075,
+              3.925
+            ]
+          ],
+          "children_under18": [
+            711,
+            711,
+            723.481,
+            622.073,
+            0,
+            [
+              57.691,
+              42.309
+            ]
+          ],
+          "digital_confidence_pre": [
+            711,
+            694,
+            706.328,
+            606.787,
+            17,
+            [
+              16.26,
+              22.535,
+              24.643,
+              21.796,
+              14.766
+            ]
+          ],
+          "budget_pressure_pre": [
+            711,
+            692,
+            703.056,
+            605.98,
+            19,
+            [
+              6.38,
+              12.761,
+              31.663,
+              24.721,
+              24.475
+            ]
+          ]
+        },
+        "returners": {
+          "awareness_pre": [
+            2089,
+            2035,
+            2020.651,
+            1761.996,
+            54,
+            [
+              68.641,
+              31.359
+            ]
+          ],
+          "consideration_pre": [
+            2089,
+            2028,
+            2018.381,
+            1756.816,
+            61,
+            [
+              20.601,
+              22.25,
+              27.016,
+              17.552,
+              12.581
+            ]
+          ],
+          "usage_pre": [
+            2089,
+            2026,
+            2016.305,
+            1754.911,
+            63,
+            [
+              94.201,
+              5.799
+            ]
+          ],
+          "children_under18": [
+            2089,
+            2089,
+            2076.519,
+            1808.85,
+            0,
+            [
+              67.57,
+              32.43
+            ]
+          ],
+          "digital_confidence_pre": [
+            2089,
+            2018,
+            2008.687,
+            1745.98,
+            71,
+            [
+              10.77,
+              18.619,
+              24.267,
+              25.038,
+              21.306
+            ]
+          ],
+          "budget_pressure_pre": [
+            2089,
+            2036,
+            2026.362,
+            1762.904,
+            53,
+            [
+              15.785,
+              21.324,
+              29.207,
+              21.552,
+              12.131
+            ]
+          ]
+        }
+      },
+      "universe": "All enrolled for return rates; baseline valid cases within subsequent return status for profile comparisons. Profile structural blanks=0.",
+      "weighting": "Fixed weight_base, without attrition adjustment; comparisons are descriptive."
+    },
+    {
+      "analysis_id": "arm_balance",
+      "values": {
+        "row_schema": [
+          "eligible_n",
+          "valid_n",
+          "weighted_N",
+          "kish_ESS",
+          "category_percentages"
+        ],
+        "category_order": "Children: 0,1; other variables: 1,2,3,4,5.",
+        "control_all_enrolled": {
+          "children": [
+            1400,
+            1400,
+            1387.058,
+            1210.612,
+            [
+              66.509,
+              33.491
+            ]
+          ],
+          "digital_confidence": [
+            1400,
+            1356,
+            1344.964,
+            1172.011,
+            [
+              10.742,
+              19.853,
+              25.279,
+              24.817,
+              19.31
+            ]
+          ],
+          "budget_pressure": [
+            1400,
+            1356,
+            1345.601,
+            1172.591,
+            [
+              13.759,
+              20.11,
+              30.444,
+              21.861,
+              13.827
+            ]
+          ]
+        },
+        "campaign_all_enrolled": {
+          "children": [
+            1400,
+            1400,
+            1412.942,
+            1220.3,
+            [
+              63.553,
+              36.447
+            ]
+          ],
+          "digital_confidence": [
+            1400,
+            1356,
+            1370.051,
+            1180.765,
+            [
+              13.628,
+              19.427,
+              23.468,
+              23.583,
+              19.894
+            ]
+          ],
+          "budget_pressure": [
+            1400,
+            1372,
+            1383.817,
+            1196.292,
+            [
+              12.978,
+              18.154,
+              29.252,
+              22.862,
+              16.754
+            ]
+          ]
+        },
+        "control_returners": {
+          "children": [
+            1070,
+            1070,
+            1053.878,
+            923.657,
+            [
+              69.235,
+              30.765
+            ]
+          ],
+          "digital_confidence": [
+            1070,
+            1036,
+            1021.84,
+            893.734,
+            [
+              9.961,
+              18.787,
+              24.196,
+              25.259,
+              21.796
+            ]
+          ],
+          "budget_pressure": [
+            1070,
+            1034,
+            1019.123,
+            892.75,
+            [
+              16.282,
+              21.829,
+              29.79,
+              20.431,
+              11.668
+            ]
+          ],
+          "awareness_pre": [
+            1070,
+            1045,
+            1027.403,
+            901.98,
+            [
+              68.541,
+              31.459
+            ]
+          ],
+          "consideration_pre": [
+            1070,
+            1036,
+            1021.581,
+            894.9,
+            [
+              19.101,
+              21.83,
+              27.592,
+              17.831,
+              13.646
+            ]
+          ],
+          "usage_pre": [
+            1070,
+            1034,
+            1019.173,
+            892.92,
+            [
+              94.501,
+              5.499
+            ]
+          ]
+        },
+        "campaign_returners": {
+          "children": [
+            1019,
+            1019,
+            1022.64,
+            885.262,
+            [
+              65.854,
+              34.146
+            ]
+          ],
+          "digital_confidence": [
+            1019,
+            982,
+            986.848,
+            852.315,
+            [
+              11.607,
+              18.445,
+              24.34,
+              24.808,
+              20.799
+            ]
+          ],
+          "budget_pressure": [
+            1019,
+            1002,
+            1007.238,
+            870.238,
+            [
+              15.283,
+              20.814,
+              28.617,
+              22.686,
+              12.6
+            ]
+          ],
+          "awareness_pre": [
+            1019,
+            990,
+            993.249,
+            860.099,
+            [
+              68.743,
+              31.257
+            ]
+          ],
+          "consideration_pre": [
+            1019,
+            992,
+            996.8,
+            861.989,
+            [
+              22.138,
+              22.68,
+              26.425,
+              17.266,
+              11.49
+            ]
+          ],
+          "usage_pre": [
+            1019,
+            992,
+            997.133,
+            862.068,
+            [
+              93.894,
+              6.106
+            ]
+          ]
+        },
+        "missingness": "All rows have zero structural blanks; numeric missing N=eligible_n\u2212valid_n. Full-enrolment outcome distributions are in endpoint_valid_distributions."
+      },
+      "universe": "Baseline profiles and outcomes by original assignment, first among all enrolled and separately among follow-up returners.",
+      "weighting": "Fixed weight_base; descriptive balance audit, not significance testing or evidence that selection is ignorable."
+    },
+    {
+      "analysis_id": "children_heterogeneity",
+      "values": {
+        "cell_order": [
+          "no_children_control",
+          "no_children_campaign",
+          "children_control",
+          "children_campaign"
+        ],
+        "cell_schema": [
+          "paired_n",
+          "weighted_N",
+          "kish_ESS",
+          "pre_pct",
+          "post_pct",
+          "change_pp"
+        ],
+        "awareness": {
+          "cells": [
+            [
+              666,
+              692.78,
+              568.946,
+              32.271,
+              45.659,
+              13.388
+            ],
+            [
+              591,
+              630.999,
+              510.052,
+              26.838,
+              55.455,
+              28.616
+            ],
+            [
+              350,
+              307.012,
+              317.677,
+              29.333,
+              45.802,
+              16.469
+            ],
+            [
+              369,
+              334.207,
+              332.539,
+              38.378,
+              65.001,
+              26.623
+            ]
+          ],
+          "children_contrast_pp": 10.1541,
+          "children_pointwise_95_CI_pp": [
+            3.5172,
+            16.7911
+          ],
+          "no_children_contrast_pp": 15.2282,
+          "no_children_pointwise_95_CI_pp": [
+            10.0969,
+            20.3595
+          ],
+          "interaction_pp": -5.074,
+          "interaction_SE_pp": 4.2803,
+          "interaction_pointwise_95_CI_pp": [
+            -13.4633,
+            3.3152
+          ],
+          "interaction_raw_p": 0.235844436,
+          "interaction_holm_p": 0.471688872
+        },
+        "consideration": {
+          "cells": [
+            [
+              663,
+              690.856,
+              567.847,
+              31.452,
+              41.208,
+              9.756
+            ],
+            [
+              598,
+              641.294,
+              516.175,
+              25.859,
+              34.294,
+              8.435
+            ],
+            [
+              352,
+              309.315,
+              319.633,
+              31.59,
+              36.846,
+              5.256
+            ],
+            [
+              368,
+              332.319,
+              331.993,
+              34.124,
+              42.327,
+              8.203
+            ]
+          ],
+          "children_contrast_pp": 2.9468,
+          "children_pointwise_95_CI_pp": [
+            -2.9033,
+            8.7969
+          ],
+          "no_children_contrast_pp": -1.3206,
+          "no_children_pointwise_95_CI_pp": [
+            -5.5454,
+            2.9041
+          ],
+          "interaction_pp": 4.2674,
+          "interaction_SE_pp": 3.6817,
+          "interaction_pointwise_95_CI_pp": [
+            -2.9487,
+            11.4835
+          ],
+          "interaction_raw_p": 0.246428939,
+          "interaction_holm_p": 0.471688872
+        },
+        "usage": {
+          "cells": [
+            [
+              662,
+              693.428,
+              566.034,
+              5.458,
+              9.359,
+              3.901
+            ],
+            [
+              600,
+              642.155,
+              518.451,
+              6.751,
+              8.758,
+              2.007
+            ],
+            [
+              345,
+              300.382,
+              314.09,
+              5.621,
+              8.492,
+              2.871
+            ],
+            [
+              369,
+              331.147,
+              332.652,
+              5.098,
+              8.881,
+              3.783
+            ]
+          ],
+          "children_contrast_pp": 0.9115,
+          "children_pointwise_95_CI_pp": [
+            -2.3012,
+            4.1241
+          ],
+          "no_children_contrast_pp": -1.8948,
+          "no_children_pointwise_95_CI_pp": [
+            -3.8917,
+            0.1022
+          ],
+          "interaction_pp": 2.8062,
+          "interaction_SE_pp": 1.93,
+          "interaction_pointwise_95_CI_pp": [
+            -0.9765,
+            6.589
+          ],
+          "interaction_raw_p": 0.145942575,
+          "interaction_holm_p": 0.437827726
+        }
+      },
+      "universe": "Endpoint-specific observed pairs split by baseline children_under18 and original assignment. Eligible arm totals and endpoint exclusions are reported in primary_assignment and endpoint_valid_distributions.",
+      "weighting": "Fixed weight_base; interaction=children assignment contrast\u2212no-children assignment contrast; four cell variances added; separate three-test SECONDARY_CHILDREN_HETEROGENEITY Holm family."
+    },
+    {
+      "analysis_id": "reach_and_selection",
+      "values": {
+        "arm_order": [
+          "control",
+          "campaign"
+        ],
+        "receipt": {
+          "eligible_and_valid_n": [
+            1400,
+            1400
+          ],
+          "weighted_N": [
+            1387.058,
+            1412.942
+          ],
+          "kish_ESS": [
+            1210.612,
+            1220.3
+          ],
+          "yes_pct": [
+            24.545,
+            70.158
+          ],
+          "missing_n": [
+            0,
+            0
+          ]
+        },
+        "recall": {
+          "eligible_returned_n": [
+            1070,
+            1019
+          ],
+          "valid_n": [
+            1014,
+            973
+          ],
+          "weighted_N": [
+            991.747,
+            974.428
+          ],
+          "kish_ESS": [
+            878.138,
+            845.724
+          ],
+          "yes_pct": [
+            32.97,
+            48.609
+          ],
+          "numeric_missing_n": [
+            56,
+            46
+          ],
+          "nonreturn_structural_exclusions": [
+            330,
+            381
+          ]
+        },
+        "recall_by_receipt": {
+          "group_order": [
+            "no_logged_receipt",
+            "logged_receipt"
+          ],
+          "eligible_returned_n": [
+            990,
+            1099
+          ],
+          "valid_recall_n": [
+            939,
+            1048
+          ],
+          "weighted_N": [
+            985.152,
+            981.024
+          ],
+          "kish_ESS": [
+            816.537,
+            912.937
+          ],
+          "recall_yes_pct": [
+            15.729,
+            65.817
+          ],
+          "numeric_missing_n": [
+            51,
+            51
+          ]
+        },
+        "consideration_by_receipt": {
+          "group_order": [
+            "no_logged_receipt",
+            "logged_receipt"
+          ],
+          "eligible_pairs_n": 1981,
+          "valid_n": [
+            944,
+            1037
+          ],
+          "weighted_N": [
+            1003.746,
+            970.037
+          ],
+          "kish_ESS": [
+            820.434,
+            903.73
+          ],
+          "pre_top2_pct": [
+            20.695,
+            39.845
+          ],
+          "post_top2_pct": [
+            29.071,
+            48.189
+          ],
+          "receipt_minus_no_receipt_pre_gap_pp": 19.15,
+          "receipt_minus_no_receipt_post_gap_pp": 19.118
+        },
+        "consideration_by_recall": {
+          "group_order": [
+            "no_recall",
+            "recall"
+          ],
+          "eligible_pairs_n": 1981,
+          "valid_n": [
+            1040,
+            844
+          ],
+          "weighted_N": [
+            1107.128,
+            760.647
+          ],
+          "kish_ESS": [
+            906.035,
+            741.869
+          ],
+          "invalid_recall_excluded_n": 97,
+          "pre_top2_pct": [
+            17.21,
+            49.558
+          ],
+          "post_top2_pct": [
+            23.263,
+            60.501
+          ],
+          "recall_minus_no_recall_pre_gap_pp": 32.348,
+          "recall_minus_no_recall_post_gap_pp": 37.238
+        }
+      },
+      "universe": "Receipt rates: all enrolled. Recall rates and concordance: returned valid-recall cases. Consideration comparisons: consideration pairs, additionally requiring valid recall for the recall comparison. Binary No percentages are complements.",
+      "weighting": "Fixed weight_base; all receipt/recall comparisons descriptive, with no causal receipt or recall interpretation."
+    },
+    {
+      "analysis_id": "needs_and_diagnostics",
+      "values": {
+        "distribution_schema": [
+          "eligible_n",
+          "valid_n",
+          "weighted_N",
+          "kish_ESS",
+          "numeric_missing_n",
+          "category_percentages"
+        ],
+        "baseline_stress_category_1_to_5": {
+          "no_children": [
+            1710,
+            1686,
+            1791.667,
+            1451.122,
+            24,
+            [
+              14.396,
+              21.509,
+              27.531,
+              23.765,
+              12.799
+            ]
+          ],
+          "children": [
+            1090,
+            1060,
+            950.383,
+            958.69,
+            30,
+            [
+              6.47,
+              12.024,
+              25.024,
+              25.283,
+              31.2
+            ]
+          ]
+        },
+        "message_agreement_category_1_to_5": {
+          "clarity": [
+            891,
+            862,
+            773.016,
+            755.959,
+            29,
+            [
+              0.472,
+              3.624,
+              19.165,
+              30.875,
+              45.864
+            ]
+          ],
+          "relevance": [
+            891,
+            854,
+            770.279,
+            747.655,
+            37,
+            [
+              2.059,
+              8.58,
+              18.845,
+              27.021,
+              43.495
+            ]
+          ],
+          "believability": [
+            891,
+            852,
+            765.165,
+            749.256,
+            39,
+            [
+              1.392,
+              6.733,
+              15.973,
+              29.268,
+              46.634
+            ]
+          ]
+        },
+        "message_pairwise_correlations": {
+          "schema": [
+            "eligible_recallers_n",
+            "pairwise_valid_n",
+            "weighted_N",
+            "kish_ESS",
+            "Pearson_r"
+          ],
+          "clarity_relevance": [
+            891,
+            828,
+            745.182,
+            724.592,
+            0.5062
+          ],
+          "clarity_believability": [
+            891,
+            823,
+            737.542,
+            723.461,
+            0.5043
+          ],
+          "relevance_believability": [
+            891,
+            816,
+            735.485,
+            716.011,
+            0.5436
+          ]
+        },
+        "user_experience": {
+          "usage_days_category_0_to_7": [
+            208,
+            201,
+            172.69,
+            178.044,
+            7,
+            [
+              2.895,
+              7.686,
+              16.183,
+              21.459,
+              25.147,
+              17.753,
+              7.382,
+              1.494
+            ]
+          ],
+          "satisfaction_category_1_to_5": [
+            208,
+            202,
+            172.141,
+            180.038,
+            6,
+            [
+              0,
+              2.312,
+              9.946,
+              25.192,
+              62.55
+            ]
+          ]
+        },
+        "structural_exclusions": {
+          "baseline_stress": 0,
+          "message_items_outside_recorded_recaller_route": 1909,
+          "user_items_outside_recorded_user_route": 2592,
+          "blanks_within_eligible_routes": 0
+        }
+      },
+      "universe": "Needs: baseline valid stress answers by children status. Message diagnostics: recorded follow-up recallers only. User experience: recorded follow-up four-week users only.",
+      "weighting": "Fixed weight_base; distributions and pairwise-complete weighted Pearson correlations are descriptive."
+    },
+    {
+      "analysis_id": "small_base_audit",
+      "values": {
+        "subgroup": "age_band=4 AND online_grocery_pre=1 AND digital_confidence_pre in {4,5}",
+        "arm_order": [
+          "control",
+          "campaign"
+        ],
+        "paired_n": {
+          "awareness": [
+            22,
+            21
+          ],
+          "consideration": [
+            20,
+            19
+          ],
+          "usage": [
+            21,
+            21
+          ]
+        },
+        "status": "Insufficient base: all contrasts suppressed."
+      },
+      "universe": "Endpoint-specific valid pairs within the exploratory older, digitally confident online-grocery subgroup.",
+      "weighting": "Unweighted cell counts determine suppression; no weighted estimates or inference reported."
+    }
+  ],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Campaign assignment produced a larger observed-pair awareness increase: +27.93 pp versus +14.33 pp in control, an incremental +13.59 pp (95% CI 9.52 to 17.66; Holm p<0.000001).",
+      "evidence_refs": [
+        "analysis_claims/primary_assignment/values/awareness"
+      ],
+      "importance": "primary",
+      "claim_strength": "Supported within the declared primary family and observed-pair estimand.",
+      "qualification": "Control/campaign paired N=1,016/960. Follow-up selection prevents automatic extension to all randomised households or the target population.",
+      "topic_cluster": "assignment_outcomes"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "Downstream gains did not clearly exceed control: consideration rose about 8.36 pp in both arms, giving \u22120.01 pp incremental change (95% CI \u22123.44 to 3.42; Holm p=.996). Reported use rose 2.61 pp under campaign assignment versus 3.59 pp in control, giving \u22120.98 pp (\u22122.70 to 0.74; Holm p=.528).",
+      "evidence_refs": [
+        "analysis_claims/primary_assignment/values/consideration",
+        "analysis_claims/primary_assignment/values/usage"
+      ],
+      "importance": "primary",
+      "claim_strength": "No clear incremental downstream benefit detected; neither equivalence nor harm established.",
+      "qualification": "Consideration paired N=1,015/966 and usage N=1,007/969, control/campaign. Numerical differences are not proof of superiority. Usage is self-reported service use, not sales.",
+      "topic_cluster": "assignment_outcomes"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Incomplete and selective follow-up is the central generalisation limit. Returns were 1,070/1,400 control and 1,019/1,400 campaign (weighted 75.98% versus 72.38%). Returners had greater baseline consideration (30.13% versus 21.99%) and less high/very-high budget pressure (33.68% versus 49.20%) than nonreturners.",
+      "evidence_refs": [
+        "analysis_claims/attrition_audit/values",
+        "analysis_claims/arm_balance/values",
+        "analysis_claims/endpoint_valid_distributions/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive evidence of selective observation.",
+      "qualification": "Item missingness further reduces endpoint pair sets. Profile weights do not correct attrition; the audit cannot establish the direction or size of outcome-selection bias.",
+      "topic_cluster": "evidence_limits"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Children households remain a plausible needs-based audience, but stronger campaign response is unestablished. Their awareness, consideration and use contrasts were +10.15, +2.95 and +0.91 pp; corresponding children-minus-other-households interactions were \u22125.07, +4.27 and +2.81 pp, with all Holm p\u2265.438. Baseline high/very-high meal stress was 56.48% with children versus 36.56% without.",
+      "evidence_refs": [
+        "analysis_claims/children_heterogeneity/values",
+        "analysis_claims/needs_and_diagnostics/values/baseline_stress_category_1_to_5"
+      ],
+      "importance": "primary",
+      "claim_strength": "Descriptive audience need; no supported effect heterogeneity in the declared secondary family.",
+      "qualification": "Every interaction interval includes zero. Need does not prove targeting value; subgroup significance labels are not an interaction test.",
+      "topic_cluster": "priority_audience"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Invitations increased logged reach, but assignment, receipt and recall are distinct. Logged receipt was 70.16% in the campaign arm versus 24.55% in control. Among valid recall respondents, recall was 48.61% versus 32.97%; 34.18% of logged recipients did not recall, while 15.73% without logged receipt did.",
+      "evidence_refs": [
+        "analysis_claims/reach_and_selection/values/receipt",
+        "analysis_claims/reach_and_selection/values/recall",
+        "analysis_claims/reach_and_selection/values/recall_by_receipt"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive implementation and measurement evidence.",
+      "qualification": "Receipt uses all enrolled; recall uses valid returning respondents. Logs do not prove attention, and recall is not verified exposure.",
+      "topic_cluster": "reach_and_measurement"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Large recipient and recaller consideration leads cannot substitute for campaign effects. Recipients' follow-up advantage was 19.12 pp, almost identical to their 19.15 pp baseline advantage. Recallers led by 37.24 pp at follow-up but already by 32.35 pp at baseline.",
+      "evidence_refs": [
+        "analysis_claims/reach_and_selection/values/consideration_by_receipt",
+        "analysis_claims/reach_and_selection/values/consideration_by_recall",
+        "analysis_claims/primary_assignment/values/consideration"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive evidence of pre-existing differences, not causal receipt or recall effects.",
+      "qualification": "Both waves use the same consideration pairs within each comparison. Recall additionally excludes 97 invalid recall answers and is measured after outcomes.",
+      "topic_cluster": "selection"
+    },
+    {
+      "model_finding_id": "F7",
+      "proposition": "Selected recallers generally rated the message positively: agreement was 76.74% for clarity, 70.52% for relevance and 75.90% for believability. Selected reported users were also positive: 87.74% were satisfied.",
+      "evidence_refs": [
+        "analysis_claims/needs_and_diagnostics/values/message_agreement_category_1_to_5",
+        "analysis_claims/needs_and_diagnostics/values/message_pairwise_correlations",
+        "analysis_claims/needs_and_diagnostics/values/user_experience"
+      ],
+      "importance": "context",
+      "claim_strength": "Descriptive experience evidence only.",
+      "qualification": "Valid message N=852\u2013862 among 891 recallers; satisfaction N=202 among 208 users. Message-score correlations of .50\u2013.54 are shared impressions, not causal drivers. Numerical rating differences do not establish superiority.",
+      "topic_cluster": "experience"
+    },
+    {
+      "model_finding_id": "F8",
+      "proposition": "The evidence supports a further controlled test focused on converting awareness into consideration and use, with stronger follow-up retention. It does not yet support a claim of downstream commercial return or superior response from the priority audience.",
+      "evidence_refs": [
+        "analysis_claims/primary_assignment/values",
+        "analysis_claims/attrition_audit/values",
+        "analysis_claims/children_heterogeneity/values",
+        "analysis_claims/small_base_audit/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Research recommendation inferred from the outcome pattern and its limits.",
+      "qualification": "Predefine downstream outcomes and audience interactions in the next test. The exploratory older subgroup has only 19\u201322 pairs per arm and cannot support targeting claims. Costs, revenue and transactions were not measured.",
+      "topic_cluster": "decision"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": [
+          "F1",
+          "F2"
+        ],
+        "headline_intent": "Lead with awareness improvement and the unresolved downstream business outcome.",
+        "analytical_relationship": "Compare assignment-based paired changes against control, distinguishing supported awareness evidence from uncertain downstream estimates."
+      },
+      {
+        "order": 2,
+        "finding_refs": [
+          "F3"
+        ],
+        "headline_intent": "Define whose outcomes the estimates describe.",
+        "analytical_relationship": "Qualify the primary result through differential follow-up, item completeness and baseline selection."
+      },
+      {
+        "order": 3,
+        "finding_refs": [
+          "F5",
+          "F6"
+        ],
+        "headline_intent": "Explain why reach and favourable recipient comparisons do not prove conversion.",
+        "analytical_relationship": "Separate randomised assignment from logged receipt and recall; compare observational leads before and after the campaign."
+      },
+      {
+        "order": 4,
+        "finding_refs": [
+          "F4",
+          "F7"
+        ],
+        "headline_intent": "Use audience needs and experience feedback to frame hypotheses.",
+        "analytical_relationship": "Distinguish descriptive needs and selected-user impressions from tested audience heterogeneity and causal drivers."
+      },
+      {
+        "order": 5,
+        "finding_refs": [
+          "F8",
+          "F1",
+          "F2",
+          "F3",
+          "F4"
+        ],
+        "headline_intent": "Recommend a controlled conversion-focused follow-up test.",
+        "analytical_relationship": "Translate awareness evidence, downstream uncertainty and observation limits into a bounded next research decision."
+      }
+    ]
+  },
+  "method_notes": [
+    "Only supplied study material and respondents.csv were used; no browsing, connectors, discovery or delegated agents. All participants, the service and target profile are fictional.",
+    "Evidence references are exact paths into the inline analysis tables, identified by stable analysis_id. Percentages are weighted unless explicitly labelled unweighted; pp means percentage points. Display rounding may affect sums.",
+    "Validity follows explicit codebook sets. Codes 97/98/99 and structural blanks were excluded, never treated as No or zero. Numeric missingness and structural exclusions are reported separately. Zero usage days remains valid within the recorded-user route.",
+    "Primary endpoints use separate valid observed-pair sets. Both arm levels and changes use the same endpoint pair base. Original assignment is preserved regardless of receipt or recall; no conditioning on contact attempts or other post-assignment variables.",
+    "For each arm, D=post\u2212pre, mu=sum(wD)/sum(w), and V=[n/(n\u22121)]sum[w\u00b2(D\u2212mu)\u00b2]/sum(w)\u00b2. Contrast SE=100sqrt(V1+V0). Interaction variance sums the four mutually exclusive arm-by-children cell variances.",
+    "Two-sided normal p-values and pointwise 95% normal intervals use the declared fixed-weight method. Holm adjustment applies separately to three primary tests and three children-interaction tests; it does not provide joint .05 control across both families. No degenerate variance occurred.",
+    "weight_base is fixed baseline profile transport, not an attrition or receipt-propensity weight. Weighted N is a normalised sample total, not population size; Kish ESS is a weight-concentration diagnostic, not the variance estimator.",
+    "All reported contrast cells exceed the suppression and warning thresholds. The specified exploratory older subgroup is suppressed because every endpoint arm has fewer than 40 valid pairs; no suppressed lift, interval or p-value is reported.",
+    "Full primary-outcome valid-case distributions are separate from paired distributions. All five consideration categories are retained. Diagnostic and user-experience distributions use their own routed bases and do not form a common-denominator funnel.",
+    "Data checks found 2,800 rows, no duplicate respondent IDs, no nonblank post-survey fields among nonreturners, and no inconsistency between receipt_log and whether receipt_count was positive.",
+    "Randomisation concerns assignment, while observed-pair selection occurs afterwards. Inference omits uncertainty in target profiles and nonresponse selection. Control growth cannot be attributed to one specific mechanism; non-significance does not prove zero effect or equivalence.",
+    "The study does not establish real UK prevalence, full-cohort or whole-population effects, causal receipt effects, actual sales or ROI. The proposed follow-up test is a recommendation, not a validated commercial strategy."
+  ]
+}

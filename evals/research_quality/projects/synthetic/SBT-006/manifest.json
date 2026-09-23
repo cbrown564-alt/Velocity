@@ -1,0 +1,14 @@
+{
+  "project_id": "SBT-006",
+  "version": "1.0.0",
+  "title": "PantryPace monadic stated-intent pricing",
+  "status": "data_reference_frozen",
+  "presentation_in_scope": false,
+  "design": {
+    "type": "randomised_monadic_stated_intent_pricing",
+    "target_n": 3000,
+    "seed": 2026092206,
+    "weight_variable": "wt_design"
+  },
+  "freeze_rule": "Independent numerical audit and every prospective realised check must pass before evaluated model exposure."
+}

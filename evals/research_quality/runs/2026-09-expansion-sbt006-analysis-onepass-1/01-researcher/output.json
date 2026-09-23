@@ -1,0 +1,160 @@
+{
+  "study_id": "SBT-006",
+  "analysis_claims": [],
+  "findings": [
+    {
+      "model_finding_id": "F1",
+      "proposition": "Prioritise \u00a37 and \u00a310 for real-behaviour testing, retaining both rather than selecting a winner. Their valid-case gross price-times-stated-interest proxies are \u00a33.63 and \u00a33.36 per hypothetical household-month, versus \u00a32.67 at \u00a34 and \u00a32.58 at \u00a313. The \u00a37-minus-\u00a310 difference is \u00a30.270 (95% CI \u2212\u00a30.189 to \u00a30.728; Holm p=0.498). Both middle prices exceed both endpoints on this proxy after adjustment: \u00a37 versus \u00a34 p=7.47e\u22129, \u00a37 versus \u00a313 p=0.000097, \u00a310 versus \u00a34 p=0.00264, and \u00a310 versus \u00a313 p=0.0139.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/gross_proxy/values/valid_case",
+        "analysis_results.json#/tables/P3_GROSS_PROXY/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Evidence-informed testing recommendation; adjusted evidence against endpoint gross proxies, unresolved middle-price comparison.",
+      "qualification": "Valid intent bases at \u00a34/\u00a37/\u00a310/\u00a313 are 704/682/655/633. These mechanical proxies assume every positive stated response becomes one subscriber-month; they are neither revenue forecasts nor evidence of an actual optimum. Nonsignificance does not establish equivalence.",
+      "topic_cluster": "price_testing_priority"
+    },
+    {
+      "model_finding_id": "F2",
+      "proposition": "The middle-price decision trades substantially more stated interest at \u00a37 against a higher price at \u00a310. Positive intent is 66.84%, 51.90%, 33.63% and 19.82% at \u00a34/\u00a37/\u00a310/\u00a313. The \u00a37-minus-\u00a310 contrast is 18.27 percentage points (95% CI 12.90\u201323.63; Holm p=7.34e\u221211); all six valid-case price contrasts survive Holm adjustment. The full distributions reinforce the pattern: percentages in categories [definitely not, probably not, might or might not, probably would, definitely would] are \u00a34 [10.98,10.44,11.74,23.96,42.88], \u00a37 [18.97,17.10,12.04,26.88,25.02], \u00a310 [33.44,19.48,13.46,17.25,16.38] and \u00a313 [55.81,18.22,6.15,12.73,7.08]. Bottom-two shares are respectively 21.42%, 36.07%, 52.91% and 74.03%.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/intent_by_price/values",
+        "analysis_results.json#/tables/intent_5/values/by_price",
+        "analysis_results.json#/tables/P1_VALID_INTENT/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Adjusted statistical evidence for differences in valid-case stated interest.",
+      "qualification": "Bases are 704/682/655/633 valid responses from 750 assignments per price. \u00a34 merits consideration if maximising stated interest is the test objective, but it has a lower gross proxy. Conditioning on post-assignment valid response prevents automatically interpreting these differences as full-sample causal effects or actual purchase effects.",
+      "topic_cluster": "interest_price_tradeoff"
+    },
+    {
+      "model_finding_id": "F3",
+      "proposition": "Assumed costs change the contribution point leader, without establishing superiority between \u00a37 and \u00a310. At costs of \u00a30.50, \u00a32 and \u00a33 per proxy-positive subscriber-month, valid-case contribution proxies in price order \u00a34/\u00a37/\u00a310/\u00a313 are [\u00a32.339,\u00a33.373,\u00a33.195,\u00a32.477], [\u00a31.337,\u00a32.595,\u00a32.690,\u00a32.180] and [\u00a30.668,\u00a32.076,\u00a32.354,\u00a31.982]. Thus \u00a37 leads at \u00a30.50 cost and \u00a310 at \u00a32 and \u00a33. The corresponding \u00a37-minus-\u00a310 differences are \u00a30.178 (95% CI \u2212\u00a30.254 to \u00a30.611; Holm p=1.000), \u2212\u00a30.096 (\u2212\u00a30.449 to \u00a30.258; p=1.000) and \u2212\u00a30.278 (\u2212\u00a30.580 to \u00a30.023; p=0.418). Both middle prices exceed \u00a34 in all three scenarios after adjustment. Neither exceeds \u00a313 after adjustment at the \u00a32 or \u00a33 costs; at \u00a30.50, \u00a37 exceeds \u00a313 (p=0.00140), while \u00a310 does not (p=0.0623).",
+      "evidence_refs": [
+        "analysis_results.json#/tables/contribution_cost_0_5/values/valid_case",
+        "analysis_results.json#/tables/contribution_cost_2_0/values/valid_case",
+        "analysis_results.json#/tables/contribution_cost_3_0/values/valid_case",
+        "analysis_results.json#/tables/P4_CONTRIBUTION_SCENARIOS/values"
+      ],
+      "importance": "primary",
+      "claim_strength": "Scenario-dependent point rankings with joint-family adjusted inference.",
+      "qualification": "The same valid intent bases and responses underpin all scenarios; these are not independent replications. Holm adjustment covers all 18 comparisons jointly. Costs are hypothetical and constant across prices. Contribution proxies are not profits. \u00a313 is lower priority for testing, but its contribution inferiority to the middle prices is not established across scenarios.",
+      "topic_cluster": "cost_sensitivity"
+    },
+    {
+      "model_finding_id": "F4",
+      "proposition": "Missing responses materially qualify the financial ranking, although the recorded-interest gradient persists. Weighted nonvalid intent shares increase across \u00a34/\u00a37/\u00a310/\u00a313: 5.58%, 8.99%, 12.35%, 15.46%. Conservatively scoring every nonvalid response as zero gives recorded-positive yields of 63.11%, 47.23%, 29.48%, 16.75%; all six P2 contrasts remain significant after Holm adjustment. For \u00a37 versus \u00a310 the difference is 17.76 points (95% CI 12.79\u201322.72; p=7.33e\u221212). At the \u00a32 cost, all-assigned contribution proxies are almost identical at \u00a37 and \u00a310: \u00a32.362 (95% CI \u00a32.177\u2013\u00a32.546) versus \u00a32.358 (\u00a32.092\u2013\u00a32.624), reversing the small valid-case numerical lead. Logical completion ranges for positive intent are [63.11%,68.69%], [47.23%,56.22%], [29.48%,41.83%], [16.75%,32.22%].",
+      "evidence_refs": [
+        "analysis_results.json#/tables/intent_by_price/values",
+        "analysis_results.json#/tables/P2_ALL_ASSIGNED_INTENT/values",
+        "analysis_results.json#/tables/contribution_cost_2_0/values/all_assigned",
+        "analysis_results.json#/tables/postprice_responded/values/by_price"
+      ],
+      "importance": "primary",
+      "claim_strength": "Prespecified sensitivity supports the recorded-interest ordering and demonstrates financial ranking fragility.",
+      "qualification": "All-assigned bases are 750 per arm. Zero scoring is a sensitivity convention, not a recoding of missing preferences as rejection. Completion ranges are missing-data ranges, not confidence intervals or actual-demand bounds. Fixed baseline weights do not correct nonresponse; no additional confirmatory financial tests were performed.",
+      "topic_cluster": "response_uncertainty"
+    },
+    {
+      "model_finding_id": "F5",
+      "proposition": "Include time-pressed families as a prespecified audience in the behavioural test. At \u00a37, positive intent is 62.74% among households with children and high baseline weekday meal pressure versus 47.10% among other classified households: +15.64 points (95% CI 8.01\u201323.27; Holm p=0.0000584; valid n=267 versus 409). At \u00a310 the figures are 46.23% versus 28.26%: +17.97 points (10.36\u201325.58; p=0.00000735; n=257 versus 390). This audience constitutes 31.02% of the weighted classified baseline sample, with 2,970 classified and 30 unknown.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/audience_intent/values/groups",
+        "analysis_results.json#/tables/audience_intent/values/contrasts",
+        "analysis_results.json#/tables/time_pressed_family/values/overall"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Prespecified, Holm-adjusted observational audience association.",
+      "qualification": "Audience attributes were not randomised. These are within-price level differences, not evidence that family status causes interest or that this audience has a different optimal price. Unknown audience status is excluded rather than classified as other.",
+      "topic_cluster": "audience_priority"
+    },
+    {
+      "model_finding_id": "F6",
+      "proposition": "Test whether the service earns its price through useful planning support; the diagnostics suggest questions to investigate, not proven conversion mechanisms. Good/very good value falls from 63.21% at \u00a37 to 42.97% at \u00a310 (valid/eligible n=695/720 and 684/709), while easy/very easy affordability falls from 67.15% to 38.21% (699/720 and 690/709). Among routed nonpositive-intent respondents, monthly price is the main reason for 26.84% at \u00a37 and 38.71% at \u00a310 (305/314 and 408/421). At \u00a37, free alternatives account for 23.05% and setup/ongoing effort for 19.13%, so a lower price alone does not address all reported barriers.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/value_5/values/by_price/7",
+        "analysis_results.json#/tables/value_5/values/by_price/10",
+        "analysis_results.json#/tables/affordability_5/values/by_price/7",
+        "analysis_results.json#/tables/affordability_5/values/by_price/10",
+        "analysis_results.json#/tables/reason_not_commit/values/by_price/7",
+        "analysis_results.json#/tables/reason_not_commit/values/by_price/10"
+      ],
+      "importance": "secondary",
+      "claim_strength": "Descriptive diagnostic evidence; recommendation for behavioural investigation.",
+      "qualification": "No confirmatory tests apply to these diagnostic comparisons. P11 includes only valid intent categories 1\u20133, so its composition changes with price and its percentages do not describe all assigned households. The ratings do not identify independent causal drivers.",
+      "topic_cluster": "behavioural_test_questions"
+    },
+    {
+      "model_finding_id": "F7",
+      "proposition": "The next study must measure payment and subsequent use directly; hypothetical use cannot validate the price proxies. Respondents eligible for the imagined-use question report means of 4.22 days per week at \u00a37 and 4.02 at \u00a310, but valid/eligible bases are only 415/449 and 302/326 because routing admits intent categories 3\u20135. Nor can the exploratory older, comfortable, paid-planning niche justify a premium-price recommendation: its price-specific valid bases are 20, 15, 20 and 16, all suppressed.",
+      "evidence_refs": [
+        "analysis_results.json#/tables/anticipated_use_days_7/values/by_price/7",
+        "analysis_results.json#/tables/anticipated_use_days_7/values/by_price/10",
+        "analysis_results.json#/tables/premium_niche/values"
+      ],
+      "importance": "context",
+      "claim_strength": "Measurement limitation and mandatory small-cell suppression.",
+      "qualification": "Imagined use is conditional on a selected intent group and is neither observed engagement nor corroboration of paid conversion. Pooling the niche across prices cannot rescue price-specific inference. Actual conversion, repeat use, retention and costs remain unmeasured.",
+      "topic_cluster": "validation_requirements"
+    }
+  ],
+  "story": {
+    "beats": [
+      {
+        "order": 1,
+        "finding_refs": [
+          "F1"
+        ],
+        "headline_intent": "Advance \u00a37 and \u00a310 as competing behavioural-test candidates",
+        "analytical_relationship": "Recommendation based on adjusted gross-proxy comparisons, with no established winner between the middle prices."
+      },
+      {
+        "order": 2,
+        "finding_refs": [
+          "F2"
+        ],
+        "headline_intent": "Explain the interest sacrificed as price rises",
+        "analytical_relationship": "Full ordinal distributions establish the substantive price trade-off behind the proxy ranking."
+      },
+      {
+        "order": 3,
+        "finding_refs": [
+          "F3",
+          "F4"
+        ],
+        "headline_intent": "Show why assumed costs and missing responses prevent a single-price conclusion",
+        "analytical_relationship": "Scenario and denominator sensitivity qualify the initial recommendation and preserve uncertainty about other candidates."
+      },
+      {
+        "order": 4,
+        "finding_refs": [
+          "F5",
+          "F6"
+        ],
+        "headline_intent": "Focus test recruitment and investigation on audience interest and perceived value",
+        "analytical_relationship": "Prespecified audience evidence informs recruitment; descriptive barriers generate questions without claiming causal mechanisms."
+      },
+      {
+        "order": 5,
+        "finding_refs": [
+          "F7"
+        ],
+        "headline_intent": "Require observed payment and repeat use before making a market decision",
+        "analytical_relationship": "Measurement and small-cell limits define what the proposed behavioural test must resolve."
+      }
+    ]
+  },
+  "method_notes": [
+    "Only the supplied study contents were used; no tools, outside sources or respondent-level data were accessed. Findings reference exact JSON table paths. analysis_claims is empty because no raw-data analysis was undertaken.",
+    "This is a fictional randomised monadic study of 3,000 synthetic baseline-complete household meal planners, with one assigned price per household and 750 assignments per arm. It does not represent actual UK customers or nationally representative demand.",
+    "All estimates use stored wt_design baseline profile weights, with no price-specific reweighting or nonresponse correction. Throughout, price-order arrays mean \u00a34/\u00a37/\u00a310/\u00a313. Assigned bases [unweighted N, weight sum, Kish ESS] are [750,747.56,698.17], [750,755.52,699.09], [750,748.42,698.45], [750,748.49,698.33]. Intent-valid bases are [704,705.85,655.41], [682,687.60,635.87], [655,655.97,610.94], [633,632.75,590.06]. Module-eligible bases are [733,733.26,682.45], [720,725.91,671.45], [709,711.92,660.57], [719,718.68,669.50]. These bases also govern the intent-derived financial proxies.",
+    "Baseline balance was inspected before conditioning on response. Weighted category distributions by arm, in codebook category order, are: age [30.71,40.15,17.36,11.78]/[27.87,41.83,17.03,13.28]/[31.12,37.74,17.77,13.37]/[30.71,41.82,15.51,11.96]; children [59.25,40.75]/[61.43,38.57]/[60.08,39.92]/[61.01,38.99]; budget [34.34,48.35,17.31]/[33.43,48.12,18.45]/[33.98,48.50,17.53]/[34.97,45.07,19.96]; planning method [34.65,30.28,16.90,9.98,8.19]/[34.18,27.11,18.44,11.00,9.27]/[35.77,25.16,18.13,10.32,10.62]/[31.67,26.19,20.30,12.76,9.07]. Equal assigned counts do not imply identical composition. Source: analysis_results.json#/tables/assignment_balance/values.",
+    "Additional weighted baseline distributions, valid within item, are: weekday pressure [6.88,14.48,18.81,22.73,37.11]/[8.09,13.33,18.65,23.61,36.32]/[6.09,14.21,18.31,21.84,39.55]/[6.07,15.30,19.24,22.64,36.75]; digital confidence [3.27,10.54,25.58,34.33,26.28]/[3.48,12.24,22.56,35.47,26.25]/[4.08,13.01,25.09,30.38,27.44]/[2.51,11.11,23.43,36.00,26.95]; subscription spending [11.94,34.78,35.06,18.21]/[15.96,32.47,33.81,17.76]/[13.28,36.40,32.21,18.11]/[13.33,34.70,35.16,16.81]. Corresponding valid n are 724/734/734/736, 742/735/737/728 and 731/720/714/725. Exact weight sums, ESS and separate missing counts are retained at analysis_results.json#/tables/assignment_balance/values.",
+    "Intent missing counts [DK, refusal, skipped, structural module exit] are \u00a34 [19,7,3,17], \u00a37 [25,9,4,30], \u00a310 [45,4,5,41], \u00a313 [67,8,11,31]. Weighted module-exit shares of all assigned are 1.91%,3.92%,4.88%,3.98%. Supplied tables provide combined weighted nonvalid intent shares but not separate weighted DK/refusal/skipped shares; these cannot be recovered exactly from unweighted counts and are not fabricated. Structural blanks and codes 97/98/99 remain separate from the five valid intent categories.",
+    "All-assigned financial sensitivities, shown as estimate [pointwise 95% CI] in price order: gross \u00a32.524 [2.380,2.669], \u00a33.306 [3.048,3.565], \u00a32.948 [2.616,3.279], \u00a32.178 [1.834,2.522]; contribution at \u00a30.50 cost \u00a32.209 [2.082,2.335], \u00a33.070 [2.830,3.310], \u00a32.800 [2.485,3.115], \u00a32.094 [1.763,2.425]; at \u00a32 cost \u00a31.262 [1.190,1.334], \u00a32.362 [2.177,2.546], \u00a32.358 [2.092,2.624], \u00a31.843 [1.552,2.134]; at \u00a33 cost \u00a30.631 [0.595,0.667], \u00a31.889 [1.741,2.037], \u00a32.063 [1.831,2.296], \u00a31.675 [1.411,1.940]. Sources: analysis_results.json#/tables/gross_proxy/values/all_assigned and the corresponding contribution_cost_0_5, contribution_cost_2_0 and contribution_cost_3_0 table paths.",
+    "Audience bases [N, weight sum, ESS], eligible then intent-valid: \u00a37 audience [299,229.87,298.07] then [267,205.29,266.17]; \u00a37 other [444,520.16,426.15] then [409,477.54,392.23]; \u00a310 audience [302,231.37,301.06] then [257,197.29,256.21]; \u00a310 other [440,510.69,421.27] then [390,452.31,373.79]. Source: analysis_results.json#/tables/audience_intent/values/groups.",
+    "Diagnostic valid bases [N, weight sum, ESS] at \u00a37 and \u00a310 respectively: value [695,700.84,648.03] and [684,685.99,637.73]; affordability [699,706.59,651.90] and [690,694.78,642.94]. Their eligible bases are the module bases above. P11 eligible/valid bases are [314,330.76,291.67]/[305,320.06,283.46] and [421,435.37,392.33]/[408,422.29,380.31]; eligible missing counts [97,98,99] are [7,0,2] and [11,0,2], with structural exclusions 436 and 329. P10 eligible/valid bases are [449,439.59,420.11]/[415,409.27,388.71] and [326,308.88,306.13]/[302,287.21,283.33]; eligible missing counts are [20,6,8] and [14,4,6], with structural exclusions 301 and 424. All routed estimates use eligible, item-valid respondents.",
+    "Inference follows the declared independent-row fixed-weight ratio variance, two-sided alpha=0.05 and normal intervals. Every reported 95% CI is pointwise and unadjusted, not simultaneous. Reported p-values are Holm-adjusted within P1/P2/P3 families of six, the joint P4 family of 18, or P5 of two. This is working variance inference, not exact randomisation or general complex-survey inference. No unregistered significance scan was used.",
+    "Gross proxies equal p times positive stated intent; contribution proxies equal (p\u2212c) times positive stated intent, in GBP per hypothetical household-month on the stated denominator. Costs are assumed per proxy-positive subscriber-month. No conversion calibration, fixed development/content costs, acquisition, taxes/VAT, refunds, discounts, payment failures, retention or churn are incorporated. No profit, ROI, demand elasticity, interpolated optimum or market forecast is claimed."
+  ]
+}
