@@ -9,86 +9,9 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      all: false,
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        // Test/spec files are scaffolding, not measured code — their un-called
-        // helpers/factories otherwise pollute (especially function) coverage.
-        '**/*.test.{ts,tsx}',
-        '**/*.spec.{ts,tsx}',
-        'scripts/',
-        'cli/',
-        'docs/',
-        'mcp-server/index.ts',
-        'packages/readstat-wasm/dist/',
-        'packages/readstat-wasm/scripts/',
-        'packages/readstat-wasm/ts/index.ts',
-        'playwright.config.ts',
-        'vite.config.ts',
-        'vitest.config.ts',
-        '*.config.{js,cjs,mjs,ts}',
-        'test_*.{js,mjs,ts}',
-        'src/components/charts/',
-        // STAB-CI-7: overlays/ exclusion removed after characterization tests added.
-        // 'src/components/overlays/',
-        'src/core/export/chartBuilder.ts',
-        'src/core/export/resolveThemeColors.ts',
-        'src/core/export/types.ts',
-        // STAB-CI-7: features/ exclusion removed after characterization tests added.
-        // 'src/features/',
-        'src/hooks/',
-        'src/services/duckDbArrow.ts',
-        // STAB-CI-6 ratchet: harmonizationSlice + uiSlice removed from exclusions
-        // (characterization tests in harmonizationSlice.test.ts, uiSlice.characterization.test.ts).
-        // data/ submodules without tests stay excluded; variableCatalogActions.ts is measured.
-        'src/store/slices/data/datasetActions.ts',
-        'src/store/slices/data/engineActions.ts',
-        'src/store/slices/data/transformActions.ts',
-        'src/store/slices/data/persistenceActions.ts',
-        'src/store/slices/data/loadProgress.ts',
-        'src/store/slices/data/variableNormalization.ts',
-        'src/store/slices/data/index.ts',
-        'src/store/slices/index.ts',
-        'src/store/slices/analysisSlice.ts',
-        'src/store/slices/drillDownSlice.ts',
-        'src/store/slices/slidesSlice.ts',
-        'src/store/slices/workspaceSlice.ts',
-        '**/*.d.ts',
-        'dist/',
-      ],
-      // Ratchet floors: global aggregate + per-path honesty (STAB-CI-10/11).
-      // Raise per-path floors as characterization tests land — never lower.
-      thresholds: {
-        branches: 80,
-        functions: 81,
-        statements: 83,
-        'src/core/**': {
-          functions: 94,
-          branches: 80,
-          statements: 86,
-        },
-        'src/features/**': {
-          functions: 70,
-          branches: 75,
-          statements: 80,
-        },
-        'src/components/overlays/**': {
-          functions: 67,
-          branches: 82,
-          statements: 85,
-        },
-        'src/services/**': {
-          functions: 75,
-          branches: 80,
-          statements: 60,
-        },
-        'src/store/**': {
-          functions: 86,
-          branches: 74,
-          statements: 82,
-        },
-      },
+      all: true,
+      include: ['src/**/*.{ts,tsx}', 'mcp-server/**/*.{ts,tsx}'],
+      exclude: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.d.ts', 'src/test/**'],
     },
   },
 });

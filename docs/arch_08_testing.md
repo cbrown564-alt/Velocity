@@ -18,7 +18,7 @@ Use a more specific check when the change calls for it:
 | Core mutation investigation | `npm run test:mutation` |
 | Research-quality studies | Commands in `evals/research_quality/README.md` |
 
-These specialist checks remain available without running on every change. A passing automated check verifies only the behavior it exercises. Product viability is decided through direct use by the product owner.
+These specialist checks remain available without running on every change. Coverage is an informational report over source files, not a percentage target. A passing automated check verifies only the behavior it exercises. Product viability is decided through direct use by the product owner.
 
 ## Test placement
 
