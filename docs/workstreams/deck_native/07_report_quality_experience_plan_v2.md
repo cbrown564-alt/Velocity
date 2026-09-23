@@ -1,6 +1,6 @@
 # Report Quality Experience Plan (v2)
 
-**Status:** Revised draft for human review
+**Status:** Historical deck-quality draft. Current PPTX/XLSX evidence gathering and sequencing live in the [researcher journey and output quality plan](../../plan_07_researcher_journey_and_output_quality.md).
 **Date:** 2026-06-28
 **Workstream:** Deck-native SAV-to-deck experience
 **Supersedes:** `07_report_quality_experience_plan.md` (v1)

@@ -43,6 +43,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | `design_02_ux_modes.md` | Workspace, Canvas, Variable Manager |
 | `design_06_semantic_layer.md` | Annotations, concepts, discovery |
 | `plan_05_design_reset_implementation.md` | Design-reset foundation status and remaining validation |
+| `plan_07_researcher_journey_and_output_quality.md` | Current two-track plan: continuous researcher journey and evidence-led PPTX/XLSX quality |
 
 Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Historical UX/deck/workspace design briefs: `archive/2026-05/design/`.
 
@@ -52,6 +53,7 @@ Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Hist
 - `plan_02_ui_presentation_workstream.md` — historical presentation plan; check the tracker for current work
 - `plan_03_ui_technical_foundation.md` — historical technical UI plan; check the tracker for current work
 - `plan_05_design_reset_implementation.md` — implemented reset foundation and remaining validation context; the tracker owns current sequencing
+- `plan_07_researcher_journey_and_output_quality.md` — current steps and evidence for the researcher journey and separate output-quality track
 - **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — historical pre-reset presentation baseline (Linear bar, PPR fixes, screenshots in `assets/ui-pilot-readiness-audit/`)
 - `reviews/ui_ux_review_2026-05/` — findings register and session notes for that program
 - `playbooks/` — refactors, stats, engine API, UI modes, worker migration, agent analysis, triage

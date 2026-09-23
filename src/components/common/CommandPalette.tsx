@@ -116,6 +116,7 @@ const PaletteVariableRow: React.FC<PaletteVariableRowProps> = ({
 }) => (
   <button
     type="button"
+    title={label || set.name}
     onClick={(e) => onInsert(set, e)}
     onMouseEnter={() => onSelect(index)}
     data-selected={selected || undefined}
@@ -143,6 +144,7 @@ const DraggablePaletteRow: React.FC<PaletteVariableRowProps> = ({
   return (
     <button
       ref={setNodeRef}
+      title={label || set.name}
       {...attributes}
       {...listeners}
       type="button"
@@ -404,6 +406,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
   }, [dataset?.variables]);
 
   const resultCount = commandMode ? filteredCommands.length : variableResults.length;
+  const selectedSet = !commandMode ? variableResults[selectedIndex] : undefined;
+  const selectedVariable = selectedSet ? variableById.get(selectedSet.variableIds[0]) : undefined;
+  const selectedTarget = selectedSet ? resolveInsertTarget({}, commandPaletteInsertTarget) : null;
+  const selectedDestination =
+    selectedSet &&
+    selectedTarget === 'columns' &&
+    buildShelfPlacement(selectedSet, 'drop-zone-cols', tableConfig).redirectedFromColumn
+      ? 'rows'
+      : selectedTarget;
 
   useEffect(() => {
     setSelectedIndex(0);
@@ -571,6 +582,25 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
             })
           )}
         </div>
+
+        {selectedSet && (
+          <div
+            data-testid="palette-selection-detail"
+            className="max-h-[25vh] overflow-y-auto border-t border-[var(--border-color-muted)] bg-[var(--bg-panel-tint)] px-4 py-3"
+            aria-live="polite"
+          >
+            <div className="flex items-center justify-between gap-3 text-[11px] text-[var(--text-secondary)]">
+              <span>Selected question</span>
+              <span>Add to {selectedDestination}</span>
+            </div>
+            <p className="mt-1 break-words text-[13px] leading-5 text-[var(--text-primary)]">
+              {selectedVariable?.label || selectedSet.name}
+            </p>
+            <p className="mt-1 break-all font-mono text-[11px] text-[var(--text-secondary)]">
+              {selectedVariable?.name || selectedSet.name}
+            </p>
+          </div>
+        )}
 
         <div className="px-4 py-2 border-t border-[var(--border-color-muted)] flex items-center gap-4 text-[11px] text-[var(--text-secondary)]">
           {commandMode ? (

@@ -40,10 +40,12 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 
 | Surface | Role | Entry |
 | :--- | :--- | :--- |
-| **Insert palette** | Variable search, dense rows, **canonical grammar: ↵ → columns, ⌥↵ → rows, ⇧↵ → filter** (`DESIGN-CONV-K1`), commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
+| **Insert palette** | Variable search, dense rows, full label/source name and actual default destination for the selected result, **canonical grammar: ↵ → columns, ⌥↵ → rows, ⇧↵ → filter** (`DESIGN-CONV-K1`), commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
 | **Recipe inspector** (right) | Rows / Columns / Filter / Weight chips, display settings (Cell n, Bases), significance method | `Recipe` ghost button; collapsed by default |
 | **Variable Manager** | High-density find/inspect/recode (see §3) | Overflow `···` → Variable Manager, or keyboard `V` |
 | **Export review** | Preview export-bound slides, recipe/significance state, then download PPTX or export a session | Primary Export button |
+
+With one slide, Export shows the current slide as a summary rather than offering equivalent scope choices. With multiple slides, the current, all, and selected scope choices remain. PowerPoint template import is disclosed only when requested or when a saved template is available.
 
 ### What left the canvas
 
@@ -107,7 +109,7 @@ graph TD
 
 - Keep heavy compute off the main thread in every mode.
 - Keep source-of-truth state in the store/engine path, not duplicated in ad hoc UI state.
-- Use semantic design tokens from `design_01_system.md` (single evolved Soft Machine identity).
+- Use semantic design tokens from `design_01_system.md` (single neutral identity).
 - Preserve the distinction between selection/navigation UI and analysis computation.
 - Full variable discovery is **summoned** (palette, VM). The Canvas may retain up to eight recent/pinned variables for reuse.
 - Deck recipe state binds to existing store/session structures — no parallel configuration model.
@@ -131,6 +133,8 @@ Insert-palette grammar is settled as **Grammar A** (`DESIGN-CONV-K1`). `DESIGN-C
 
 
 The first general palette open shows inline row/column guidance once per dataset. Explicit recipe-slot opens skip it. Dismissal survives reopen when local storage is available; storage failures do not block insertion. Fresh, empty, full-data uploads activate slide 1 and may open the palette once per browser profile; existing analyses, pending example auto-analysis, metadata-only data, and workspace reopen do not trigger it. Auto-open is skipped above one million estimated cells.
+
+Palette result rows may abbreviate long source wording to keep the list scannable. The selected result must show the complete question label and source name before insertion. When the first column choice redirects to rows because the slide has no row variable, the destination preview says “rows.” The palette never rewrites source metadata.
 
 Session imports show a dismissible rail summary of slide count, unresolved variables, affected slides, and adjustments. The rail stays expanded until the summary is dismissed. This summary lasts for the current app session and clears when another dataset is loaded; it is not saved into the session file.
 

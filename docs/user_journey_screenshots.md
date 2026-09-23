@@ -1,17 +1,42 @@
 # Current User Journey and Screenshot Evidence
 
-**Status:** September 23, 2026 — reset foundation and export review implemented; this page's July screenshots are historical, and current capture remains open
+**Status:** September 23, 2026 — current researcher journey captured and exercised; the July screenshots below remain historical
 **Product thesis:** Analysis-ready SAV -> defensible, editable client deck ([`pilot_00_brief.md`](pilot_00_brief.md))
 **UX contract:** [`design_02_ux_modes.md`](design_02_ux_modes.md)
-**Current baseline pack:** [`assets/design-reset-evidence/screenshots/`](assets/design-reset-evidence/screenshots/)
+**Current journey pack:** [`assets/researcher-journey/screenshots/`](assets/researcher-journey/screenshots/) (capture command: `CAPTURE_JOURNEY=1 npx playwright test tests/e2e/researcher-journey.spec.ts --project=product --no-deps`)
 
-The screenshots below document the reset-era product. They were captured July 3–4 and are useful implementation evidence, but they are not current journey photography. The retained convergence work was merged in `913af5e`; its current state has not yet been recaptured.
+The July screenshots in the numbered sections below document the reset-era product. The current capture in the next section supersedes them for the researcher journey. The retained convergence work was merged in `913af5e`.
+
+## September 23 Track A journey capture
+
+The browser path in [`researcher-journey.spec.ts`](../tests/e2e/researcher-journey.spec.ts) reproduces the current screenshots. It uses `brandtracker_w4.sav` at 1440×900 and 1280×800, then `sleep.sav` at 1024×768 as a narrower-window exception. The app recommends at least 1280px for all controls. The screenshots are browser renders, not export-quality examples.
+
+| User action | Observed result and evidence |
+| :--- | :--- |
+| Open a fresh browser profile | [First-use Workspace, 1440](assets/researcher-journey/screenshots/01-first-use-1440.png) shows example and upload routes. |
+| Load the brand tracker example and inspect its weighted table | [Table, 1440](assets/researcher-journey/screenshots/02-brand-table-1440.png) and [table, 1280](assets/researcher-journey/screenshots/05a-brand-table-1280.png). The recipe inspector [shows the applied weight](assets/researcher-journey/screenshots/06-brand-recipe-1440.png). |
+| Search for a missing variable, then correct the query | [No-results state](assets/researcher-journey/screenshots/03-search-empty-1440.png) is recoverable by editing the search. [Selected-question preview](assets/researcher-journey/screenshots/04-brand-selection-1440.png) reveals the full label, source name, and default destination before insertion. |
+| Switch table to chart and back | [Brand chart](assets/researcher-journey/screenshots/05-brand-chart-1440.png) retains the active recipe. |
+| Return to Workspace and reopen the saved dataset | [Workspace library](assets/researcher-journey/screenshots/07-workspace-reopen-1440.png) leads to the [same table](assets/researcher-journey/screenshots/08-brand-reopened-1440.png). The browser check compares all rendered table text before and after reopen. |
+| Initiate export | [Scope/format review](assets/researcher-journey/screenshots/09-export-review-1440.png) leads to the [PowerPoint preview](assets/researcher-journey/screenshots/10-export-preview-1440.png). The existing pilot workflow also checks PPTX download. |
+| Repeat on a structurally different dataset | `sleep.sav` gives a [two-row table](assets/researcher-journey/screenshots/12-sleep-table-1024.png), [chart](assets/researcher-journey/screenshots/13-sleep-chart-1024.png), [empty new slide](assets/researcher-journey/screenshots/14-empty-slide-1024.png), and [two-slide export warning](assets/researcher-journey/screenshots/15-two-slide-export-1024.png). At 1024px the desktop-width notice remains visible but no longer covers the toolbar or intercepts pointer input. |
+
+### Problems found and changes made
+
+| User action and consequence before the change | Change and remaining limit |
+| :--- | :--- |
+| Searching for a long or similar brand question showed clipped source names and labels; the researcher could not distinguish results without guessing. [Before](assets/researcher-journey/screenshots/00-before-brand-selection-1440.png) | The active result now shows its complete source label and name, plus where Enter will put it. [After](assets/researcher-journey/screenshots/04-brand-selection-1440.png). Source wording is preserved. Synthetic long and duplicate-looking names are covered by the palette component test. |
+| Reading a compact brand table at 1440 stretched four value columns across nearly the entire canvas and left the result visually shallow. [Before](assets/researcher-journey/screenshots/00-before-brand-table-1440.png) | The slide and statistics line now share a 1120px maximum reading width; [after](assets/researcher-journey/screenshots/02-brand-table-1440.png) the values sit closer to their row labels. At 1280px the available width still governs. |
+| Switching to chart at 1024px was blocked by the desktop-width notice over the toolbar. | The notice moved below the working area and ignores pointer events. The browser test now switches table/chart and opens the two-slide export review at 1024px. |
+| Reopening saved work could have changed the weighted result without an obvious signal. | The browser path compares the rendered table before/after reopen and checks the applied weight. This verifies the representative saved recipe; it is not a statistical audit of every dataset. |
+
+The brand tracker question `Q5. and Which One of These Brands Do You Most Prefer?` and the generated slide title remain source-derived and editorially awkward. The interface exposes the full wording; a clearer title requires metadata preparation or a researcher edit, not an inferred rewrite. No raw codes, labels, weights, or significance settings were changed for this track.
 
 ## September 23 direct check
 
 The brand tracker example opened into a weighted preference-by-segment crosstab. Returning to Workspace and reopening the saved dataset restored the same slide and values. The PowerPoint export review showed the chosen slide, recipe, weighting and significance method, then downloaded successfully. Excel export also downloaded. All 25 Playwright browser journeys passed. These checks verify the implemented loop; they do not replace the product owner's research judgment.
 
-The downloaded PowerPoint opened in Microsoft PowerPoint with two editable slides: a mostly empty cover using the long survey-question title and the table slide. The default cover title still needs editorial improvement. The export format now states that the standard PowerPoint includes a cover. The Excel workbook contained the expected segment values; its numeric total column is now labelled `Total (count)` beside the percentage-formatted segment columns. Fresh current screenshots still need capture before replacing the July pack.
+The downloaded PowerPoint opened in Microsoft PowerPoint with two editable slides: a mostly empty cover using the long survey-question title and the table slide. The default cover title still needs editorial improvement. The export format now states that the standard PowerPoint includes a cover. The Excel workbook contained the expected segment values; its numeric total column is labelled `Total (count)` beside the percentage-formatted segment columns. The current neutral-theme implementation displays weighted numeric totals to one decimal place. Fresh current screenshots still need capture before replacing the July pack.
 
 ## Journey map
 
@@ -74,17 +99,11 @@ Variable Manager is a two-pane overlay for dense inspection and recoding. It no 
 
 Session resume in the July screenshot pack predates the saved-analysis correction. `DESIGN-CONV-K2` subsequently restored per-slide weight and analysis settings on `main`; the September direct check reopened the weighted example. Capture new screenshots before using this pack to describe the current experience.
 
-## Current verification work
+## Verification limits
 
 The following checks help inspect the integrated journey. They are not a product approval stage:
 
-1. Retained convergence changes are integrated on `main`; inspect their current behavior directly.
-2. The screenshot workflow runs with a documented browser setup and normal user interactions; no force-clicks conceal hit-testing defects.
-3. Automation asserts the intended row, column, filter, weight, and view state for every slide and completes review-before-download.
-4. A fresh pack captures the final chrome at the agreed viewport sizes.
-5. The product owner uses the journey directly and records problems with discovery, errors, recovery, or confidence.
-
-The existing images show an implemented July baseline, not the current final experience.
+The current browser path uses normal pointer and keyboard interactions, with no force-clicks. It checks the representative weighted table across reopen, view switching, search recovery, and export review. The 1024px exception remains below the app's recommended desktop width. The product owner's direct use and research judgment can still reveal problems these checks do not measure; the pack proves the implemented interactions and their rendered state, not product validation.
 
 ## Related owners
 

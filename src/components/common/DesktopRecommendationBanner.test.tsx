@@ -17,6 +17,7 @@ describe('DesktopRecommendationBanner', () => {
     render(<DesktopRecommendationBanner />);
 
     expect(screen.getByTestId('desktop-recommendation-banner')).toBeInTheDocument();
+    expect(screen.getByTestId('desktop-recommendation-banner')).toHaveClass('pointer-events-none');
 
     act(() => {
       setViewportWidth(MIN_DESKTOP_RECOMMENDED_WIDTH + 120);

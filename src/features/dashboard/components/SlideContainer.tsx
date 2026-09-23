@@ -178,7 +178,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         </div>
       )}
       <div
-        className={`surface-panel w-full max-w-[min(100%,1400px)] mx-auto flex flex-col min-h-0 max-h-full rounded-xl shadow-md border border-[var(--border-color)] ${
+        className={`surface-panel w-full max-w-[min(100%,1120px)] mx-auto flex flex-col min-h-0 max-h-full rounded-xl shadow-md border border-[var(--border-color)] ${
           shrinkWrapSlide ? 'flex-none self-start' : 'flex-1 self-stretch'
         }`}
       >
@@ -204,7 +204,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
       </div>
 
       {activeSlide.visualizationType === 'table' && resolvedRowVars.length > 0 && !queryError && (
-        <div className="w-full max-w-[min(100%,1400px)] mx-auto shrink-0">
+        <div className="w-full max-w-[min(100%,1120px)] mx-auto shrink-0">
           <StatisticsStatusBar
             analysisSettings={analysisSettings}
             tableStats={tableStats}

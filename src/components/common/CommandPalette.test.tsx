@@ -89,6 +89,40 @@ describe('CommandPalette (insert palette)', () => {
     expect(screen.queryByText('Age')).not.toBeInTheDocument();
   });
 
+  it('reveals the full selected question and its actual insertion destination', () => {
+    const longLabel =
+      'Which of these ready-to-drink chilled coffee brands would you consider buying in the next month?';
+    useVelocityStore.setState({
+      tableConfig: { rowVars: ['age'], colVar: null },
+      variableSets: [
+        { id: 'consider_a', name: 'consider_a', structure: 'single', variableIds: ['a'] },
+        { id: 'consider_b', name: 'consider_b', structure: 'single', variableIds: ['b'] },
+      ],
+      dataset: {
+        id: 'ds1',
+        name: 'Demo',
+        rowCount: 100,
+        variables: [
+          { id: 'a', name: 'consider_a', label: longLabel, type: 'categorical' },
+          { id: 'b', name: 'consider_b', label: `${longLabel} (follow-up)`, type: 'categorical' },
+        ],
+      },
+    } as any);
+    render(<CommandPalette />);
+    const input = screen.getByRole('textbox', { name: 'Find a variable' });
+    fireEvent.change(input, { target: { value: 'consider' } });
+    expect(screen.getByTestId('palette-selection-detail')).toHaveTextContent(longLabel);
+    expect(screen.getByTestId('palette-selection-detail')).toHaveTextContent('Add to columns');
+    fireEvent.keyDown(document, { key: 'ArrowDown' });
+    expect(screen.getByTestId('palette-selection-detail')).toHaveTextContent(`${longLabel} (follow-up)`);
+    expect(screen.getByTestId('palette-variable-consider_b')).toHaveAttribute('title', `${longLabel} (follow-up)`);
+  });
+
+  it('describes redirected insertion as a row when the slide has no rows', () => {
+    render(<CommandPalette />);
+    expect(screen.getByTestId('palette-selection-detail')).toHaveTextContent('Add to rows');
+  });
+
   it('Enter adds the selected variable to columns when rows exist', () => {
     const setTableConfig = vi.fn();
     useVelocityStore.setState({

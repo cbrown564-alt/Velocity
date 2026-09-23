@@ -2,7 +2,7 @@
 
 ## 1. Design Philosophy
 
-Velocity ships **one visual identity** — evolved Soft Machine. The interface recedes into a warm ground; the slide card is the artifact; chrome stays quiet. Accent color appears only on the primary action, statistical significance, and a live drop target while dragging.
+Velocity ships **one neutral visual identity**. White carries content and dialogs; a cool gray ground separates the canvas from the slide. Clear typography and consistent controls take priority over decorative warmth. Blue is reserved for the primary action, statistical significance, focus, and a live drop target while dragging. Data series keep their distinct chart palette.
 
 **Core principle:** Components consume **semantic tokens** (`--bg-panel`, `--text-primary`, …) defined in `src/index.css`. Values are static — there is no theme switcher, no runtime theme injection, and no alternate visual directions.
 
@@ -10,46 +10,38 @@ Dark mode is deferred until a pilot asks; when it ships it must be the same iden
 
 ---
 
-## 2. Token set (evolved Soft Machine)
+## 2. Token set (neutral baseline)
 
-Source of truth for values: [`docs/assets/design-reset-north-star/north_star.html`](assets/design-reset-north-star/north_star.html). Production faces replace the mock's system stand-ins.
+Source of truth for values: `src/index.css` for browser CSS and `src/theme/themes.ts` for exporters. The earlier [north-star mock](assets/design-reset-north-star/north_star.html) is historical evidence.
 
 | Token (semantic layer) | Value | Role |
 | :--- | :--- | :--- |
-| `--bg-app` | `#F1EFEA` | Ground — everything non-artifact recedes into this |
-| `--bg-panel` | `#FDFCFA` | The slide card (and true overlays: palette, modals, inspector chips) |
-| `--bg-panel-tint` | `#F7F5F0` | Total-column tint, selected-row tint |
-| `--bg-rail` | `#ECE9E3` | Hover/active washes on ground surfaces |
-| `--text-primary` | `#24302A` | Green-ink |
-| `--text-secondary` | `#67736C` | Passes 4.5:1 on panel |
-| `--text-tertiary` | `#9AA39C` | Disabled or decorative metadata only; not meaningful copy until its contrast is corrected |
-| `--border-color` | `#E3DFD7` | Hairlines |
-| `--border-color-muted` | `#ECE8E1` | Row separators |
-| `--color-accent` | `#B54E33` | Sienna — primary action + significance + live drop target **only** |
+| `--bg-app` | `#F6F8FA` | Cool gray ground |
+| `--bg-panel` | `#FFFFFF` | Content, slide, dialogs, and palette |
+| `--bg-panel-tint` | `#F7F9FB` | Quiet selected and total areas |
+| `--bg-rail` | `#EEF2F5` | Hover and active washes |
+| `--text-primary` | `#17212B` | Main text |
+| `--text-secondary` | `#52606D` | Supporting copy; 6.06:1 on the ground |
+| `--text-tertiary` | `#647381` | Small metadata; 4.87:1 on white |
+| `--border-color` | `#D9E1E7` | Hairlines |
+| `--border-color-muted` | `#E5EBEF` | Row separators |
+| `--color-accent` | `#245FA7` | Primary action, significance, focus, live drop target |
 | `--viz-fill-primary` | `#6F8177` | Sage — data marks (distributions, charts) |
 
-Focus rings use ink (`--border-color-active` → `--ring` / `#24302A`), not accent.
+Focus rings use blue (`--border-color-active` → `--ring` / `#245FA7`).
 
-### Current conformance gaps
+### Current verification status
 
-This section is implementation status, not a change to the target system. As of July 14, 2026:
-
-- `--text-tertiary` measures about 2.53:1 on `--bg-panel` and 2.26:1 on `--bg-app`; it must not carry meaningful text. Existing uses need an audit and correction under `DESIGN-CONV-K3`.
-- `--text-secondary` is acceptable on the panel but is about 4.30:1 on the app ground, so small meaningful copy on the ground needs a stronger token.
-- the slide-title contract says Fraunces, while the current `SlideHeader` implementation uses the body face.
-- fixed rail/canvas widths have not been verified across the supported viewport range.
-
-Do not mark the design system enforced until these gaps pass direct contrast, typography, and responsive-layout checks.
+The neutral tokens and font change were implemented on September 23, 2026. The token contrast values above pass WCAG AA for normal text. The researcher journey was inspected at 1440×900 and 1280×800; 1024×768 is below the recommended desktop width and shows a notice without covering controls. Other viewport and dense-table cases still need inspection before claiming comprehensive responsive validation.
 
 ### Accent budget
 
-Accent appears in exactly three contexts:
+Accent appears in four contexts:
 
-1. **Primary action** — Export button on the canvas toolbar
+1. **Primary action** — Export button on the canvas toolbar and a dialog's final action
 2. **Statistical significance** — arrows/letters in crosstab cells and legend
 3. **Live drop target** — accent border only while a drag is in progress; neutral dashed otherwise
-
-Screens with no export or significance show zero accent-colored chrome.
+4. **Keyboard focus** — blue rings communicate the active control
 
 ---
 
@@ -57,7 +49,7 @@ Screens with no export or significance show zero accent-colored chrome.
 
 ### Token layers
 
-1. **Base palette** (`:root` in `src/index.css`) — static evolved Soft Machine values
+1. **Base palette** (`:root` in `src/index.css`) — static neutral values mirrored in `src/theme/themes.ts` for exports
 2. **Semantic tokens** — stable API for components (`--bg-panel`, `--text-primary`, `--viz-fill-primary`, …)
 3. **Component consumption** — CSS Modules, Tailwind utilities with `var(--token)`, or inline geometry only
 
@@ -67,13 +59,14 @@ There is no `ThemeContext`, no `data-theme` selectors, and no material/blur them
 
 | Role | Face | Where |
 | :--- | :--- | :--- |
-| Slide titles | **Fraunces** | Inside the slide artifact only |
+| Slide titles | **Plus Jakarta Sans** | Inside the slide artifact |
 | Chrome | **Plus Jakarta Sans** | Workspace, toolbars, modals, VM, palette |
-| Data | **JetBrains Mono** | Cells, variable names, tabular figures |
+| Crosstab values | **Plus Jakarta Sans 600** | Percentages, counts, means, and small numeric annotations; tabular numerals |
+| Data identifiers | **JetBrains Mono** | Variable names, codes, and technical labels |
 
-The serif **never** appears on chrome.
+The interface uses one sans-serif family for headings and controls. Long source question labels are displayed as source data; researchers can edit slide titles without changing metadata.
 
-Fonts load via Google Fonts in `index.css` (Fraunces, Plus Jakarta Sans, JetBrains Mono only).
+Fonts load via Google Fonts in `index.html` (Plus Jakarta Sans and JetBrains Mono). PowerPoint uses Arial so exported slides render predictably on machines without the app font.
 
 ### Type scale
 
@@ -109,7 +102,7 @@ Components consume semantic tokens, not raw hex:
 ```css
 --text-primary: var(--foreground);
 --text-secondary: var(--muted-foreground);
---text-tertiary: #9aa39c;
+--text-tertiary: #647381;
 --text-accent: var(--accent);
 --text-inverse: var(--primary-foreground);
 ```
@@ -118,7 +111,7 @@ Components consume semantic tokens, not raw hex:
 ```css
 --border-color: var(--border);
 --border-color-muted: var(--input);
---border-color-active: var(--ring);   /* ink focus, not accent */
+--border-color-active: var(--ring);   /* visible blue focus */
 --border-grid: var(--viz-grid);
 ```
 
@@ -149,6 +142,8 @@ Categorical palettes (`--viz-palette-1` … `--viz-palette-6`) and diverging sca
 
 Layout regions: story rail (deck outline), canvas (slide artifact), collapsible recipe inspector, summoned insert palette, two-pane Variable Manager overlay.
 
+The slide artifact and its statistics line share a maximum reading width of 1120px. Narrower windows use the available width; large virtualized tables scroll inside the artifact. Keep recipe and export controls in the toolbar, close to the result's top edge.
+
 ---
 
 ## 6. Component patterns
@@ -161,8 +156,8 @@ Layout regions: story rail (deck outline), canvas (slide artifact), collapsible 
 
 Hairline discipline: one border weight; row separators use `--border-color-muted`.
 
-### Ghost buttons (toolbar)
-Transparent default, `--bg-rail` hover, no borders. Export is the only filled accent control on the canvas screen.
+### Buttons and controls
+Primary actions are filled blue. Secondary actions use a white surface with a hairline border. Tertiary toolbar actions are transparent with a `--bg-rail` hover wash. Use one radius and consistent focus treatment within each control group. Export is the only filled action in the canvas toolbar.
 
 ### Shadows
 Subtle only: `--shadow-theme: 0 1px 2px 0 rgb(0 0 0 / 0.05)`.
@@ -175,7 +170,7 @@ Single standard transition: `150ms` ease. Respect `prefers-reduced-motion`. No e
 ## 7. Accessibility
 
 - **Contrast:** WCAG AA (4.5:1 minimum) on panel surfaces
-- **Focus:** `outline: 2px solid var(--border-color-active)` (ink ring)
+- **Focus:** `outline: 2px solid var(--border-color-active)` (blue ring)
 - **Keyboard:** All interactive elements reachable; `?` overlay is the reference surface
 - **Screen readers:** Semantic HTML and ARIA on tables, buttons, and modals
 
@@ -194,7 +189,7 @@ High-contrast and colorblind significance themes (UXF-016) remain frozen until a
 
 ❌ Bad:
 ```tsx
-<div className="bg-[#FDFCFA] text-[#24302A]">
+<div className="bg-[#FFFFFF] text-[#17212B]">
 <div className="rounded-md bg-indigo-600">
 ```
 
@@ -207,7 +202,7 @@ Approved for layout, spacing, and typography. Color-bearing classes must referen
 Use for complex states, grids, and selectors that would be unreadable as long utility strings.
 
 ### Exports
-PPTX/XLSX exporters read theme tokens for branding. They use the same single token set as the canvas.
+PPTX/XLSX exporters read theme tokens for branding. Their unbranded fallback uses the same neutral text, blue header, and chart palette. Excel retains numeric weighted totals and displays them to one decimal place.
 
 ---
 
@@ -217,10 +212,10 @@ Crosstabs and slide chrome use a fixed **case map** (UXP-010–012):
 
 | Surface | Case | Font | Accent |
 | :--- | :--- | :--- | :--- |
-| Slide title | Title Case | Fraunces inside artifact | Interactive hover only |
+| Slide title | Title Case | Plus Jakarta Sans inside artifact | Interactive hover only |
 | Row/column axis headers | UI caps | Body bold / mono | `text-secondary` |
 | Category row labels | As ingested | Body | — |
-| Cell values | Numeric formatting | Mono, tabular, right-aligned | Accent only for significance |
+| Cell values | Numeric formatting | Plus Jakarta Sans 600, tabular, right-aligned | Accent only for significance |
 
 **Column alignment (Strategy A):** Axis headers left; numeric block right-aligned on a shared edge.
 
