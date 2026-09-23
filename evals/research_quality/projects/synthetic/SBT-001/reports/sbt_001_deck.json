@@ -1,0 +1,596 @@
+{
+ "meta": {
+  "title": "UK mobile network brand tracker",
+  "footer": "UK mobile network brand tracker · W5"
+ },
+ "slides": [
+  {
+   "type": "cover",
+   "title": "UK mobile network brand tracker",
+   "subtitle": "Category board readout · W5",
+   "meta": "5 waves · 2,000 respondents per wave · weighted",
+   "footnote": "Synthetic five-wave tracker (SBT-001); brands and figures are fictitious."
+  },
+  {
+   "type": "findings",
+   "title": "6 developments change the picture, led by Pulse, Northstar and Harbour",
+   "measure": "Developments that pass significance and materiality tests · level and change",
+   "rows": [
+    {
+     "value": "45%",
+     "label": "Pulse · Unaided awareness",
+     "change": "+14.1 pts in W3 · significant",
+     "sig": true,
+     "direction": "up",
+     "color": "C2410C",
+     "text": "Pulse unaided awareness rose 14 pts to 45% in W3, with preference share (+7 pts) and customer share (+5 pts) moving the same way; W5 is still 13 pts above W2"
+    },
+    {
+     "value": "6.2",
+     "label": "Northstar · Satisfaction (mean, 0–10)",
+     "change": "−1.5 in W4 · significant",
+     "sig": true,
+     "direction": "down",
+     "color": "1F4E79",
+     "text": "Northstar average satisfaction fell 1.5 points to 6.2 out of 10 in W4, with NPS (−48 pts) and share reporting a network problem (+20 pts) moving the same way; W5 is still 0.5 points below W3"
+    },
+    {
+     "value": "13%",
+     "label": "Harbour · Most preferred",
+     "change": "−4.4 pts W1→W5 · significant",
+     "sig": true,
+     "direction": "down",
+     "color": "B45309",
+     "text": "Harbour preference share has fallen gradually, −4.4 pts from W1 to W5, with no single wave-on-wave step significant"
+    },
+    {
+     "value": "7%",
+     "label": "Lumen · Most preferred",
+     "change": "−3.5 pts in W3 · significant",
+     "sig": true,
+     "direction": "down",
+     "color": "7C3AED",
+     "text": "Lumen preference share fell 4 pts to 7% in W3; W5 is still 3 pts below W2"
+    },
+    {
+     "value": "42%",
+     "label": "Northstar · Most preferred",
+     "change": "−5.3 pts W1→W5 · significant",
+     "sig": true,
+     "direction": "down",
+     "color": "1F4E79",
+     "text": "Northstar preference share has fallen gradually, −5.3 pts from W1 to W5, with no single wave-on-wave step significant"
+    }
+   ],
+   "source": "Base: all respondents, n≈2,000 per wave (W1, W2, W3, W4, W5). Weighted (wt_final). Significance: Wald test on Kish effective bases, 95%, wave on wave unless stated. Materiality: ±3 pts for percentages, ±10 for NPS."
+  },
+  {
+   "type": "bar",
+   "title": "Northstar leads every stage of the funnel in W5",
+   "measure": "Brand funnel, W5 · % of all respondents",
+   "categories": [
+    "Unaided awareness",
+    "Aided awareness",
+    "Would seriously consider",
+    "Current provider",
+    "Most preferred"
+   ],
+   "series": [
+    {
+     "name": "Northstar",
+     "color": "1F4E79",
+     "values": [
+      51.1,
+      93.5,
+      45.1,
+      31.9,
+      41.9
+     ]
+    },
+    {
+     "name": "Pulse",
+     "color": "C2410C",
+     "values": [
+      43.7,
+      73.8,
+      29.6,
+      19.8,
+      25.1
+     ]
+    },
+    {
+     "name": "Mosaic",
+     "color": "0F766E",
+     "values": [
+      33.6,
+      76.4,
+      25.7,
+      11.8,
+      12.4
+     ]
+    },
+    {
+     "name": "Lumen",
+     "color": "7C3AED",
+     "values": [
+      29.7,
+      59.1,
+      19.0,
+      11.3,
+      8.0
+     ]
+    },
+    {
+     "name": "Harbour",
+     "color": "B45309",
+     "values": [
+      36.5,
+      79.5,
+      24.1,
+      16.3,
+      12.6
+     ]
+    }
+   ],
+   "dir": "col",
+   "legend": true,
+   "max": 100,
+   "fmt": "0",
+   "source": "Base: all respondents in W5, n=2,000. Weighted. Consideration counts non-aware respondents as not considering."
+  },
+  {
+   "type": "line",
+   "title": "Pulse unaided awareness rose 14 pts to 45% in W3; W5 is still 13 pts above W2",
+   "measure": "Unaided awareness · % · all respondents",
+   "categories": [
+    "W1",
+    "W2",
+    "W3",
+    "W4",
+    "W5"
+   ],
+   "series": [
+    {
+     "name": "Pulse",
+     "color": "C2410C",
+     "values": [
+      30.1,
+      30.6,
+      44.7,
+      44.4,
+      43.7
+     ]
+    },
+    {
+     "name": "Average of other tracked brands",
+     "color": "94A3B8",
+     "values": [
+      36.9,
+      36.5,
+      37.4,
+      37.3,
+      37.7
+     ]
+    }
+   ],
+   "fmt": "0\"%\"",
+   "panel": [
+    {
+     "name": "Unaided awareness",
+     "value": "45%",
+     "change": "+14.1 pts in W3",
+     "sig": true,
+     "direction": "up",
+     "color": "C2410C"
+    },
+    {
+     "name": "Prompted ad awareness",
+     "value": "56%",
+     "change": "+27.4 pts in W3",
+     "sig": true,
+     "direction": "up",
+     "color": "C2410C"
+    },
+    {
+     "name": "Aided awareness",
+     "value": "70%",
+     "change": "+12.2 pts in W3",
+     "sig": true,
+     "direction": "up",
+     "color": "C2410C"
+    },
+    {
+     "name": "Most preferred",
+     "value": "23%",
+     "change": "+7.2 pts in W3",
+     "sig": true,
+     "direction": "up",
+     "color": "C2410C"
+    },
+    {
+     "name": "Unaided awareness now (W5)",
+     "value": "44%",
+     "change": "+13.0 pts vs W2",
+     "sig": true,
+     "direction": "up",
+     "color": "94A3B8"
+    }
+   ],
+   "panel_title": "W3 level · change",
+   "source": "Base: All respondents. Unweighted base, Pulse: W1 2000, W2 2000, W3 2000, W4 2000, W5 2000. Weighted. Significance: Wald test on Kish effective bases, 95%, wave on wave unless stated.",
+   "labels": true
+  },
+  {
+   "type": "line",
+   "title": "Northstar average satisfaction fell 1.5 points to 6.2 out of 10 in W4; W5 is still 0.5 points below W3",
+   "measure": "Satisfaction (mean, 0–10) · mean score · current customers of the brand",
+   "categories": [
+    "W1",
+    "W2",
+    "W3",
+    "W4",
+    "W5"
+   ],
+   "series": [
+    {
+     "name": "Northstar",
+     "color": "1F4E79",
+     "values": [
+      7.7,
+      7.8,
+      7.7,
+      6.2,
+      7.1
+     ]
+    },
+    {
+     "name": "Average of other tracked brands",
+     "color": "94A3B8",
+     "values": [
+      7.4,
+      7.4,
+      7.3,
+      7.3,
+      7.3
+     ]
+    }
+   ],
+   "fmt": "0.0",
+   "panel": [
+    {
+     "name": "Satisfaction (mean, 0–10)",
+     "value": "6.2",
+     "change": "−1.5 in W4",
+     "sig": true,
+     "direction": "down",
+     "color": "1F4E79"
+    },
+    {
+     "name": "Net Promoter Score",
+     "value": "−61",
+     "change": "−48.2 pts in W4",
+     "sig": true,
+     "direction": "down",
+     "color": "1F4E79"
+    },
+    {
+     "name": "Had a network/service problem",
+     "value": "34%",
+     "change": "+20.3 pts in W4",
+     "sig": true,
+     "direction": "down",
+     "color": "1F4E79"
+    },
+    {
+     "name": "Seen as 'reliable network'",
+     "value": "68%",
+     "change": "−11.2 pts in W4",
+     "sig": true,
+     "direction": "down",
+     "color": "1F4E79"
+    },
+    {
+     "name": "Satisfaction (mean, 0–10) now (W5)",
+     "value": "7.1",
+     "change": "−0.5 vs W3",
+     "sig": true,
+     "direction": "down",
+     "color": "94A3B8"
+    }
+   ],
+   "panel_title": "W4 level · change",
+   "source": "Base: Current customers of the brand. Unweighted base, Northstar: W1 658, W2 660, W3 622, W4 612, W5 640. Weighted. Significance: Wald test on Kish effective bases, 95%, wave on wave unless stated.",
+   "labels": true
+  },
+  {
+   "type": "line",
+   "title": "Harbour preference share has fallen gradually, −4.4 pts from W1 to W5, with no single wave-on-wave step significant",
+   "measure": "Most preferred · % · all respondents",
+   "categories": [
+    "W1",
+    "W2",
+    "W3",
+    "W4",
+    "W5"
+   ],
+   "series": [
+    {
+     "name": "Harbour",
+     "color": "B45309",
+     "values": [
+      17.0,
+      14.8,
+      13.8,
+      13.4,
+      12.6
+     ]
+    },
+    {
+     "name": "Average of other tracked brands",
+     "color": "94A3B8",
+     "values": [
+      20.8,
+      21.3,
+      21.6,
+      21.7,
+      21.9
+     ]
+    }
+   ],
+   "fmt": "0\"%\"",
+   "panel": [
+    {
+     "name": "Most preferred",
+     "value": "13%",
+     "change": "−4.4 pts since W1",
+     "sig": true,
+     "direction": "down",
+     "color": "B45309"
+    }
+   ],
+   "panel_title": "W5 level · change",
+   "source": "Base: All respondents. Unweighted base, Harbour: W1 2000, W2 2000, W3 2000, W4 2000, W5 2000. Weighted. Significance: Wald test on Kish effective bases, 95%, wave on wave unless stated.",
+   "labels": true
+  },
+  {
+   "type": "line",
+   "title": "Lumen preference share fell 4 pts to 7% in W3; W5 is still 3 pts below W2",
+   "measure": "Most preferred · % · all respondents",
+   "categories": [
+    "W1",
+    "W2",
+    "W3",
+    "W4",
+    "W5"
+   ],
+   "series": [
+    {
+     "name": "Lumen",
+     "color": "7C3AED",
+     "values": [
+      8.8,
+      10.9,
+      7.4,
+      8.2,
+      8.0
+     ]
+    },
+    {
+     "name": "Average of other tracked brands",
+     "color": "94A3B8",
+     "values": [
+      22.8,
+      22.3,
+      23.2,
+      22.9,
+      23.0
+     ]
+    }
+   ],
+   "fmt": "0\"%\"",
+   "panel": [
+    {
+     "name": "Most preferred",
+     "value": "7%",
+     "change": "−3.5 pts in W3",
+     "sig": true,
+     "direction": "down",
+     "color": "7C3AED"
+    },
+    {
+     "name": "Most preferred now (W5)",
+     "value": "8%",
+     "change": "−2.9 pts vs W2",
+     "sig": true,
+     "direction": "down",
+     "color": "94A3B8"
+    }
+   ],
+   "panel_title": "W3 level · change",
+   "source": "Base: All respondents. Unweighted base, Lumen: W1 2000, W2 2000, W3 2000, W4 2000, W5 2000. Weighted. Significance: Wald test on Kish effective bases, 95%, wave on wave unless stated.",
+   "labels": true
+  },
+  {
+   "type": "table",
+   "title": "The W3 fall in Lumen preference share came from 18–34s (−6.3 pts) and 35–54s (−4.5 pts); those aged 55+ showed no significant change",
+   "measure": "Lumen preference share by age · W2 and W3",
+   "header": [
+    "Age group",
+    "Base W3 (n)",
+    "W2",
+    "W3",
+    "Change"
+   ],
+   "rows": [
+    [
+     "18–34",
+     "843",
+     "15%",
+     "9%",
+     {
+      "text": "−6.3 pts ▼",
+      "sig": true,
+      "direction": "down"
+     }
+    ],
+    [
+     "35–54",
+     "527",
+     "11%",
+     "6%",
+     {
+      "text": "−4.5 pts ▼",
+      "sig": true,
+      "direction": "down"
+     }
+    ],
+    [
+     "55+",
+     "630",
+     "8%",
+     "7%",
+     {
+      "text": "−0.6 pts",
+      "sig": false,
+      "direction": "down"
+     }
+    ]
+   ],
+   "colW": [
+    3.2,
+    2.2,
+    2.0,
+    2.0,
+    2.73
+   ],
+   "source": "Base: All respondents in each age group. Weighted. ▲/▼ change significant at 95%. Difference in change between 18–34 and 55+: p=0.014."
+  },
+  {
+   "type": "line",
+   "title": "Northstar preference share has fallen gradually, −5.3 pts from W1 to W5, with no single wave-on-wave step significant",
+   "measure": "Most preferred · % · all respondents",
+   "categories": [
+    "W1",
+    "W2",
+    "W3",
+    "W4",
+    "W5"
+   ],
+   "series": [
+    {
+     "name": "Northstar",
+     "color": "1F4E79",
+     "values": [
+      47.3,
+      46.2,
+      44.0,
+      43.1,
+      41.9
+     ]
+    },
+    {
+     "name": "Average of other tracked brands",
+     "color": "94A3B8",
+     "values": [
+      13.2,
+      13.5,
+      14.0,
+      14.2,
+      14.5
+     ]
+    }
+   ],
+   "fmt": "0\"%\"",
+   "panel": [
+    {
+     "name": "Most preferred",
+     "value": "42%",
+     "change": "−5.3 pts since W1",
+     "sig": true,
+     "direction": "down",
+     "color": "1F4E79"
+    }
+   ],
+   "panel_title": "W5 level · change",
+   "source": "Base: All respondents. Unweighted base, Northstar: W1 2000, W2 2000, W3 2000, W4 2000, W5 2000. Weighted. Significance: Wald test on Kish effective bases, 95%, wave on wave unless stated.",
+   "labels": true
+  },
+  {
+   "type": "line",
+   "title": "Among 18–34s, Harbour consideration among those aware has fallen 9.1 pts since W1; the total-market change is not significant",
+   "measure": "Consideration among aware · % · aware of the brand",
+   "categories": [
+    "W1",
+    "W2",
+    "W3",
+    "W4",
+    "W5"
+   ],
+   "series": [
+    {
+     "name": "Harbour · 18–34",
+     "color": "B45309",
+     "values": [
+      27.8,
+      24.6,
+      22.1,
+      19.6,
+      18.7
+     ]
+    },
+    {
+     "name": "Harbour · all ages",
+     "color": "94A3B8",
+     "values": [
+      31.9,
+      30.2,
+      30.5,
+      29.3,
+      30.4
+     ]
+    }
+   ],
+   "fmt": "0\"%\"",
+   "panel": [
+    {
+     "name": "Consideration among aware",
+     "value": "19%",
+     "change": "−9.1 pts since W1",
+     "sig": true,
+     "direction": "down",
+     "color": "B45309"
+    }
+   ],
+   "panel_title": "W5 level · change",
+   "source": "Base: Aware of the brand. Unweighted base, 18–34: W1 458, W2 426, W3 676, W4 425, W5 433. Weighted. Significance: Wald test on Kish effective bases, 95%, wave on wave unless stated.",
+   "labels": true
+  },
+  {
+   "type": "method",
+   "title": "About this study",
+   "items": [
+    [
+     "Sample",
+     "UK adults who decide or share the decision on their personal mobile service"
+    ],
+    [
+     "Waves",
+     "Wave 1, Wave 2, Wave 3, Wave 4, Wave 5; 2,000 respondents per wave, fresh samples."
+    ],
+    [
+     "Weighting",
+     "wt_final within each wave. Percentages are weighted; bases shown are unweighted."
+    ],
+    [
+     "Significance",
+     "Wald tests on Kish effective bases at 95%. Subgroup trends are screened at 99% because many are examined. Changes also need to exceed a materiality threshold before they are reported."
+    ],
+    [
+     "Bases",
+     "Routed questions use their own base (for example, image among those familiar with the brand; NPS among current customers). Bases under 50 are not used for claims."
+    ]
+   ],
+   "source": "Synthetic five-wave tracker (SBT-001); brands and figures are fictitious."
+  }
+ ]
+}

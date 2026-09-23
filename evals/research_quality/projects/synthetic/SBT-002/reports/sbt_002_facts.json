@@ -1,0 +1,46 @@
+{
+ "interactions": [
+  [
+   "Purchase intent",
+   "Flex",
+   "Plus",
+   18.8,
+   0.0039
+  ],
+  [
+   "Purchase intent",
+   "Flex",
+   "Simple",
+   5.0,
+   0.7668
+  ],
+  [
+   "Purchase intent",
+   "Plus",
+   "Simple",
+   -13.8,
+   0.0463
+  ],
+  [
+   "Overall appeal",
+   "Flex",
+   "Plus",
+   24.8,
+   0.0
+  ],
+  [
+   "Overall appeal",
+   "Flex",
+   "Simple",
+   4.0,
+   0.7668
+  ],
+  [
+   "Overall appeal",
+   "Plus",
+   "Simple",
+   -20.8,
+   0.0009
+  ]
+ ]
+}

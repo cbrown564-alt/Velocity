@@ -1,0 +1,806 @@
+{
+ "meta": {
+  "title": "Everyday meal-kit concept test",
+  "footer": "Everyday meal-kit concept test"
+ },
+ "slides": [
+  {
+   "type": "cover",
+   "title": "Everyday meal-kit concept test",
+   "subtitle": "Concept readout",
+   "meta": "3 concepts · 2,100 respondents · randomised monadic · weighted",
+   "footnote": "Synthetic randomised monadic concept test (SBT-002); concepts and figures are fictitious."
+  },
+  {
+   "type": "findings",
+   "title": "Flex and Plus both clear Simple; neither wins outright on purchase intent",
+   "measure": "What the concept test shows · level and comparison",
+   "rows": [
+    {
+     "value": "53%",
+     "label": "Flex · purchase intent (top two box)",
+     "change": "+2.8 pts vs Plus · not significant",
+     "sig": false,
+     "direction": "up",
+     "color": "1F4E79",
+     "text": "No clear winner on purchase intent: Flex (53%) and Plus (50%) are not significantly different; Simple trails at 40%"
+    },
+    {
+     "value": "61%",
+     "label": "Flex · overall appeal (top two box)",
+     "change": "+7.0 pts vs Plus · significant and material",
+     "sig": true,
+     "direction": "up",
+     "color": "1F4E79",
+     "text": "Flex leads on overall appeal (61% top-two box), 7 pts ahead of Plus; Simple trails at 41%"
+    },
+    {
+     "value": "+25 pts",
+     "label": "Food explorers: Plus vs Flex",
+     "change": "interaction · significant (Holm)",
+     "sig": true,
+     "direction": "up",
+     "color": "C2410C",
+     "text": "Among food explorers, Plus is +12 pts vs Flex on overall appeal; among other buyers it is −13 pts"
+    },
+    {
+     "value": "68%",
+     "label": "Premium proposition convincing: share of Plus cell asked",
+     "change": "routed question · base differs by concept",
+     "sig": null,
+     "color": "94A3B8",
+     "text": "'Premium proposition convincing' is not comparable across concepts: only 68% of Plus respondents were asked, against 99–100% of the others"
+    }
+   ],
+   "source": "Base: all respondents, each shown one concept at random (Flex n=700, Plus n=700, Simple n=700). Weighted (wt_final). Pairwise tests on top-two box, Holm-adjusted across the three pairs, 95%; 'material' = at least 5 pts."
+  },
+  {
+   "type": "table",
+   "title": "Flex is significantly and materially ahead of Simple on 5 of 7 and Plus on 4 of 7 measures; Plus beats it on 1",
+   "measure": "Concept scorecard · top-two box (4–5) · letters = significantly and materially higher than that concept (Holm, 95%, ≥5 pts)",
+   "header": [
+    "Top-two box",
+    "Flex (A)",
+    "Plus (B)",
+    "Simple (C)"
+   ],
+   "rows": [
+    [
+     {
+      "text": "Purchase intent",
+      "bold": true
+     },
+     {
+      "text": "53% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "50% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "40%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     {
+      "text": "Overall appeal",
+      "bold": true
+     },
+     {
+      "text": "61% BC",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "54% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "41%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     {
+      "text": "Uniqueness",
+      "bold": false
+     },
+     {
+      "text": "48% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "81% AC",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "34%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     {
+      "text": "Relevance",
+      "bold": false
+     },
+     {
+      "text": "64% BC",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "49% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "41%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     {
+      "text": "Credibility",
+      "bold": false
+     },
+     {
+      "text": "62% B",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "42%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "57% B",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     {
+      "text": "Value for money",
+      "bold": false
+     },
+     {
+      "text": "56% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "57% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "44%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     {
+      "text": "Ease of understanding",
+      "bold": false
+     },
+     {
+      "text": "96% B",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "32%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "93% B",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     {
+      "text": "Unweighted base",
+      "color": "5B6573"
+     },
+     {
+      "text": "700",
+      "color": "5B6573",
+      "align": "right"
+     },
+     {
+      "text": "700",
+      "color": "5B6573",
+      "align": "right"
+     },
+     {
+      "text": "700",
+      "color": "5B6573",
+      "align": "right"
+     }
+    ]
+   ],
+   "colW": [
+    4.33,
+    2.6,
+    2.6,
+    2.6
+   ],
+   "source": "Base: all respondents, each shown one concept at random (Flex n=700, Plus n=700, Simple n=700). Weighted (wt_final). Pairwise tests on top-two box, Holm-adjusted across the three pairs, 95%; 'material' = at least 5 pts."
+  },
+  {
+   "type": "bar",
+   "title": "No clear winner on purchase intent: Flex (53%) and Plus (50%) are not significantly different; Simple trails at 40%",
+   "measure": "Top-two box (4–5) by concept · % of respondents shown each concept",
+   "categories": [
+    "Flex",
+    "Plus",
+    "Simple"
+   ],
+   "series": [
+    {
+     "name": "Purchase intent",
+     "color": "1F3A5F",
+     "values": [
+      53.2,
+      50.4,
+      40.4
+     ]
+    },
+    {
+     "name": "Overall appeal",
+     "color": "8FA3BF",
+     "values": [
+      61.0,
+      54.0,
+      41.1
+     ]
+    }
+   ],
+   "dir": "col",
+   "legend": true,
+   "max": 100,
+   "fmt": "0\"%\"",
+   "source": "Base: all respondents, each shown one concept at random (Flex n=700, Plus n=700, Simple n=700). Weighted (wt_final). Pairwise tests on top-two box, Holm-adjusted across the three pairs, 95%; 'material' = at least 5 pts."
+  },
+  {
+   "type": "stacked",
+   "title": "The full purchase intent distribution shows no concept with a significantly larger rejecting minority",
+   "measure": "If this service were available at a reasonable price, how likely would you be to subscribe or try it? · % by concept",
+   "categories": [
+    "Flex",
+    "Plus",
+    "Simple"
+   ],
+   "series": [
+    {
+     "name": "Definitely would not",
+     "color": "D9786C",
+     "values": [
+      3.8,
+      9.3,
+      8.8
+     ]
+    },
+    {
+     "name": "Probably would not",
+     "color": "F0C4BE",
+     "values": [
+      16.2,
+      15.8,
+      17.8
+     ]
+    },
+    {
+     "name": "Might or might not",
+     "color": "E5E7EB",
+     "values": [
+      26.7,
+      24.4,
+      33.0
+     ]
+    },
+    {
+     "name": "Probably would",
+     "color": "A9C6E3",
+     "values": [
+      30.1,
+      24.6,
+      26.7
+     ]
+    },
+    {
+     "name": "Definitely would",
+     "color": "5B8FC7",
+     "values": [
+      23.1,
+      25.8,
+      13.7
+     ]
+    }
+   ],
+   "source": "Base: all respondents, each shown one concept at random (Flex n=700, Plus n=700, Simple n=700). Weighted (wt_final). Bottom-two box compared pairwise, Holm-adjusted, 95%, ≥5 pts."
+  },
+  {
+   "type": "bar",
+   "title": "Among food explorers, Plus is +12 pts vs Flex on overall appeal; among other buyers it is −13 pts",
+   "measure": "Overall appeal · top-two box · by food explorers (pre-specified subgroup)",
+   "categories": [
+    "Flex",
+    "Plus",
+    "Simple"
+   ],
+   "series": [
+    {
+     "name": "Food explorers",
+     "color": "C2410C",
+     "values": [
+      60.1,
+      72.1,
+      43.3
+     ]
+    },
+    {
+     "name": "Other buyers",
+     "color": "94A3B8",
+     "values": [
+      61.2,
+      48.4,
+      40.4
+     ]
+    }
+   ],
+   "dir": "col",
+   "legend": true,
+   "max": 100,
+   "fmt": "0\"%\"",
+   "source": "Base: respondents in each concept cell. Flex: food explorers n=236, others n=464; Plus: food explorers n=234, others n=466; Simple: food explorers n=227, others n=473. Weighted. Interaction = difference between concepts among food explorers minus the same difference among others; Holm-adjusted across 6 pre-specified tests. This one: +24.8 pts, adjusted p=0.0000."
+  },
+  {
+   "type": "table",
+   "title": "What appeals differs by concept: Flex for flexibility / ability to pause or swap, Plus for new or unusual flavours, Simple for familiar meals",
+   "measure": "Which aspects, if any, particularly appeal to you? Select all that apply. · % selecting · six most-mentioned items",
+   "header": [
+    "What appeals",
+    "Flex (A)",
+    "Plus (B)",
+    "Simple (C)"
+   ],
+   "rows": [
+    [
+     "Ease / convenience",
+     {
+      "text": "52% B",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "30%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "54% B",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     "Ingredient quality",
+     {
+      "text": "43% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "45% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "34%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     "New or unusual flavours",
+     {
+      "text": "27%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "62% AC",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "25%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     "Broad menu choice",
+     {
+      "text": "53% BC",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "32%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "28%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     "Flexibility / ability to pause or swap",
+     {
+      "text": "60% BC",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "27% C",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "20%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     }
+    ],
+    [
+     "Familiar meals",
+     {
+      "text": "30% B",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "24%",
+      "bold": false,
+      "sig": false,
+      "direction": "up",
+      "align": "right"
+     },
+     {
+      "text": "50% AB",
+      "bold": true,
+      "sig": true,
+      "direction": "up",
+      "align": "right"
+     }
+    ]
+   ],
+   "colW": [
+    4.33,
+    2.6,
+    2.6,
+    2.6
+   ],
+   "source": "Base: all respondents, each shown one concept at random (Flex n=700, Plus n=700, Simple n=700). Weighted (wt_final). Letters: significantly and materially higher than that concept (Holm, 95%, ≥5 pts). Respondents could choose several."
+  },
+  {
+   "type": "table",
+   "title": "What concerns differs by concept: Flex for not different enough, Plus for too complicated, Simple for limited choice",
+   "measure": "Which aspects, if any, concern you? Select all that apply. · % selecting · six most-mentioned items",
+   "header": [
+    "What concerns",
+    "Flex (A)",
+    "Plus (B)",
+    "Simple (C)"
+   ],
+   "rows": [
+    [
+     "Too expensive",
+     {
+      "text": "32%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "39% A",
+      "bold": true,
+      "sig": true,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "35%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     }
+    ],
+    [
+     "Not different enough",
+     {
+      "text": "26% B",
+      "bold": true,
+      "sig": true,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "20%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "41% AB",
+      "bold": true,
+      "sig": true,
+      "direction": "down",
+      "align": "right"
+     }
+    ],
+    [
+     "Too complicated",
+     {
+      "text": "16%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "41% AC",
+      "bold": true,
+      "sig": true,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "16%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     }
+    ],
+    [
+     "Would not use often enough",
+     {
+      "text": "21%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "24%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "24%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     }
+    ],
+    [
+     "Unclear benefit",
+     {
+      "text": "19%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "18%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "30% AB",
+      "bold": true,
+      "sig": true,
+      "direction": "down",
+      "align": "right"
+     }
+    ],
+    [
+     "Limited choice",
+     {
+      "text": "15%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "15%",
+      "bold": false,
+      "sig": false,
+      "direction": "down",
+      "align": "right"
+     },
+     {
+      "text": "35% AB",
+      "bold": true,
+      "sig": true,
+      "direction": "down",
+      "align": "right"
+     }
+    ]
+   ],
+   "colW": [
+    4.33,
+    2.6,
+    2.6,
+    2.6
+   ],
+   "source": "Base: all respondents, each shown one concept at random (Flex n=700, Plus n=700, Simple n=700). Weighted (wt_final). Letters: significantly and materially higher than that concept (Holm, 95%, ≥5 pts). Respondents could choose several."
+  },
+  {
+   "type": "bar",
+   "title": "'Premium proposition convincing' is not comparable across concepts: only 68% of Plus respondents were asked, against 99–100% of the others",
+   "measure": "Share of each cell asked (Rated ease of understanding 3 or higher (Q7 >= 3)) and top-two box among those asked",
+   "categories": [
+    "Flex",
+    "Plus",
+    "Simple"
+   ],
+   "series": [
+    {
+     "name": "Asked the question (% of cell)",
+     "color": "94A3B8",
+     "values": [
+      99.1,
+      67.9,
+      99.8
+     ]
+    },
+    {
+     "name": "Top-two box among those asked",
+     "color": "1F3A5F",
+     "values": [
+      50.1,
+      78.8,
+      37.7
+     ]
+    }
+   ],
+   "dir": "col",
+   "legend": true,
+   "max": 100,
+   "fmt": "0\"%\"",
+   "source": "Base: respondents in each concept cell; top-two box among those asked (Flex n=694, Plus n=483, Simple n=698). Weighted. Because the routed base differs by concept, compare the top-two box figures with caution."
+  },
+  {
+   "type": "method",
+   "title": "About this study",
+   "items": [
+    [
+     "Sample",
+     "UK adults aged 18-64 open to using a meal-kit delivery service in the next 12 months"
+    ],
+    [
+     "Design",
+     "Randomised monadic: each respondent saw one of 3 concepts (Flex n=700, Plus n=700, Simple n=700)."
+    ],
+    [
+     "Weighting",
+     "wt_final. Percentages are weighted; bases are unweighted."
+    ],
+    [
+     "Tests",
+     "Wald tests on Kish effective bases. Pairwise concept comparisons are Holm-adjusted within each measure. A difference is 'material' at 5 pts or more."
+    ],
+    [
+     "Subgroups",
+     "Food explorers is the pre-specified subgroup; interactions are Holm-adjusted as one family. Other cuts are exploratory (tables only)."
+    ]
+   ],
+   "source": "Synthetic randomised monadic concept test (SBT-002); concepts and figures are fictitious."
+  }
+ ]
+}
