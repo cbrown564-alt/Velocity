@@ -3,6 +3,16 @@ import { render, screen } from '@testing-library/react';
 import { CrosstabCell } from './CrosstabCell';
 
 describe('CrosstabCell', () => {
+  it.each([
+    { variant: 'frequency' as const, props: { percent: 47.7, count: 21 }, value: '47.7%' },
+    { variant: 'count' as const, props: { count: 48 }, value: '48' },
+    { variant: 'metric' as const, props: { mean: 3.2, count: 44 }, value: '3.2' },
+  ])('uses the readable sans numeric style for $variant values', ({ variant, props, value }) => {
+    render(<CrosstabCell variant={variant} {...props} />);
+    expect(screen.getByText(value)).toHaveClass('font-sans', 'font-semibold', 'tabular-nums');
+    expect(screen.getByText(value)).not.toHaveClass('font-mono', 'font-bold');
+  });
+
   it('hides cell n when showCellN is false', () => {
     render(<CrosstabCell variant="frequency" percent={47.7} count={21} showCellN={false} />);
     expect(screen.getByText('47.7%')).toBeInTheDocument();

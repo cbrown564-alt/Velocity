@@ -188,10 +188,10 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
         value={n}
         formatter={(v) => `${Math.round(v)}`}
         reducedMotion={reducedMotion}
-        className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}
+        className={`font-sans ${primarySizeClass} font-semibold tabular-nums ${primaryClass}`}
       />
     ) : (
-      <span className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}>{n}</span>
+      <span className={`font-sans ${primarySizeClass} font-semibold tabular-nums ${primaryClass}`}>{n}</span>
     );
     return (
       <div className={CELL_STACK} data-testid="crosstab-cell-count">
@@ -200,7 +200,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
           animationTrigger={animationTrigger}
           reducedMotion={reducedMotion}
           delay={0.1}
-          className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}
+          className={`${secondarySizeClass} font-sans font-semibold tabular-nums ${secondaryClass}`}
         >
           base
         </FadeIn>
@@ -212,7 +212,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
     if (isZero) {
       return (
         <div className={CELL_STACK} data-testid="crosstab-cell-metric" data-zero-cell="true">
-          <span className={`font-mono ${primarySizeClass} tabular-nums ${primaryClass}`}>—</span>
+          <span className={`font-sans ${primarySizeClass} font-semibold tabular-nums ${primaryClass}`}>—</span>
         </div>
       );
     }
@@ -224,10 +224,10 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
         value={mean ?? 0}
         formatter={(v) => v.toFixed(1)}
         reducedMotion={reducedMotion}
-        className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}
+        className={`font-sans ${primarySizeClass} font-semibold tabular-nums ${primaryClass}`}
       />
     ) : (
-      <span className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}>{displayMean}</span>
+      <span className={`font-sans ${primarySizeClass} font-semibold tabular-nums ${primaryClass}`}>{displayMean}</span>
     );
     return (
       <div className={CELL_STACK} data-testid="crosstab-cell-metric">
@@ -259,7 +259,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
             animationTrigger={animationTrigger}
             reducedMotion={reducedMotion}
             delay={0.1}
-            className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}
+            className={`${secondarySizeClass} font-sans font-semibold tabular-nums ${secondaryClass}`}
           >
             {stdDev !== undefined && <span className="mr-2">SD: {stdDev.toFixed(1)}</span>}
             {showCellN && sampleN !== undefined && (
@@ -276,7 +276,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   if (isZero) {
     return (
       <div className={CELL_STACK} data-testid="crosstab-cell-frequency" data-zero-cell="true">
-        <span className={`font-mono ${primarySizeClass} tabular-nums ${primaryClass}`}>—</span>
+        <span className={`font-sans ${primarySizeClass} font-semibold tabular-nums ${primaryClass}`}>—</span>
       </div>
     );
   }
@@ -289,10 +289,10 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
       value={percent ?? 0}
       formatter={(v) => `${v.toFixed(1)}%`}
       reducedMotion={reducedMotion}
-      className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}
+      className={`font-sans ${primarySizeClass} font-semibold tabular-nums ${primaryClass}`}
     />
   ) : (
-    <span className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}>{displayPercent}</span>
+    <span className={`font-sans ${primarySizeClass} font-semibold tabular-nums ${primaryClass}`}>{displayPercent}</span>
   );
 
   return (
@@ -311,7 +311,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
           animationTrigger={animationTrigger}
           reducedMotion={reducedMotion}
           delay={0.15}
-          className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass} ${baseClass}`}
+          className={`${secondarySizeClass} font-sans font-semibold tabular-nums ${secondaryClass} ${baseClass}`}
         >
           <span data-small-base={baseClass ? 'true' : undefined}>n={count}</span>
         </FadeIn>

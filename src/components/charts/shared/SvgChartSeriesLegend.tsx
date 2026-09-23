@@ -38,7 +38,7 @@ export const SvgChartSeriesLegend: React.FC<SvgChartSeriesLegendProps> = ({
           <text
             x={18}
             y={10}
-            style={{ fontSize: '11px', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
+            style={{ fontSize: '12px', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
           >
             {label ? <title>{label}</title> : null}
             {label || ''}

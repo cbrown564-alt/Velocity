@@ -447,6 +447,8 @@ describe('exportXlsx', () => {
     expect(sheet.getCell('B1').value).toBe('Agree');
     expect(sheet.getCell('D1').value).toBe('Total (count)');
     expect(sheet.getCell('D2').value).toBe(50);
+    expect(sheet.getCell('D2').numFmt).toBe('#,##0.0');
+    expect(sheet.getCell('B1').fill).toMatchObject({ fgColor: { argb: 'FF245FA7' } });
   });
 
   it('produces a valid XLSX (ZIP) file', async () => {

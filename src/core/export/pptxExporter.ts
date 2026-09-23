@@ -26,12 +26,12 @@ const SIG_LETTERS: Record<string, string> = {
 };
 
 const DEFAULTS = {
-  primaryColor: '1C1C1C',
-  headerColor: 'E07A5F',
-  fontFamily: 'Atkinson Hyperlegible',
+  primaryColor: '17212B',
+  headerColor: '245FA7',
+  fontFamily: 'Arial',
   fontSize: 9,
   headerFontSize: 10,
-  chartColors: ['E07A5F', '1C1C1C', '4F46E5', '10B981', 'F59E0B'],
+  chartColors: ['317A4A', '3577AB', 'AC562C', '8A4976', 'A68023', '5B62C0'],
 };
 
 // Width (inches) reserved for the row-label column.

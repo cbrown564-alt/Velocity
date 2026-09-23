@@ -146,7 +146,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
             {xTicks.map((tick) => (
               <g key={tick} transform={`translate(${xScale(tick)},0)`}>
                 <line y2={4} stroke="var(--viz-stroke-main)" />
-                <text y={18} textAnchor="middle" style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}>
+                <text y={18} textAnchor="middle" style={{ fontSize: '11px', fill: 'var(--viz-text-axis)' }}>
                   {formatValueAxisTick(labelMode, tick, { peakCount, grandTotal, hasColumnBreak })}
                 </text>
               </g>
@@ -161,7 +161,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
               y={(y0Scale(r.label) || 0) + y0Scale.bandwidth() / 2}
               dy=".35em"
               textAnchor="end"
-              style={{ fontSize: 'var(--text-xs)', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
+              style={{ fontSize: '12px', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
             >
               {r.label}
             </text>

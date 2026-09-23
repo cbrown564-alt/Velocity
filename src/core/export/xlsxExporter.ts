@@ -75,6 +75,9 @@ function addAnalysisSheet(
       if (colNumber > 1 && colNumber <= columns.length + 1 && typeof cell.value === 'number') {
         cell.numFmt = '0.0"%"';
       }
+      if (colNumber === columns.length + 2 && typeof cell.value === 'number') {
+        cell.numFmt = '#,##0.0';
+      }
       cell.border = {
         top: { style: 'thin', color: { argb: 'FFCCCCCC' } },
         bottom: { style: 'thin', color: { argb: 'FFCCCCCC' } },
@@ -117,7 +120,7 @@ export async function exportXlsx(config: ExportConfig): Promise<Uint8Array> {
     workbook.created = new Date();
 
     // Resolve theme-aware colors for headers
-    const headerHex = config.branding?.headerColor?.replace('#', '') ?? 'E07A5F';
+    const headerHex = config.branding?.headerColor?.replace('#', '') ?? '245FA7';
     const headerColorArgb = `FF${headerHex}`;
     const headerTextArgb = 'FFFFFFFF';
 
