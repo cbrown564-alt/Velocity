@@ -4,15 +4,15 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   background: var(--bg-panel);
-  border: 1px solid transparent;
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .datasetListItem:hover {
-  background: var(--bg-surface);
-  border-color: var(--border-color);
+  background: var(--bg-panel-tint);
+  border-color: var(--border-color-active);
 }
 
 .datasetListItem.selected {

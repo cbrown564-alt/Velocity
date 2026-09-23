@@ -9,7 +9,7 @@
 }
 
 .emptyHeading {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-xl);
   font-weight: 600;
   color: var(--text-primary);
@@ -115,9 +115,9 @@
 }
 
 .firstRunHeadline {
-  font-family: var(--font-display);
-  font-size: clamp(1.875rem, 2.8vw, 2.5rem);
-  font-weight: 600;
+  font-family: var(--font-body);
+  font-size: clamp(1.875rem, 2.8vw, 2.375rem);
+  font-weight: 700;
   color: var(--text-primary);
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -141,7 +141,7 @@
   padding: var(--space-4) var(--space-3);
   border: 1px solid var(--border-color-muted, var(--border-color));
   border-radius: var(--border-radius-lg);
-  background: color-mix(in srgb, var(--bg-panel) 88%, var(--bg-surface));
+  background: var(--bg-panel);
 }
 
 .workflowStep {
@@ -165,7 +165,7 @@
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  box-shadow: var(--shadow-xs);
+  box-shadow: none;
 }
 
 .workflowIndex {
@@ -254,7 +254,7 @@
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);
   background: var(--bg-panel);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .dropZone {
@@ -280,7 +280,7 @@
   width: 3rem;
   height: 3rem;
   margin-bottom: var(--space-4);
-  border-radius: 999px;
+  border-radius: var(--border-radius-md);
   background: var(--bg-surface);
   border: 1px solid var(--border-color-muted, var(--border-color));
   color: var(--text-secondary);
@@ -351,8 +351,7 @@
 }
 
 .primaryCta:hover {
-  opacity: 0.94;
-  box-shadow: var(--shadow-sm);
+  background: var(--color-accent-hover);
 }
 
 .primaryCta svg {

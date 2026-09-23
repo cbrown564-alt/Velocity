@@ -90,7 +90,7 @@ describe('WorkspaceView', () => {
     expect(screen.getByText(/no datasets found/i)).toBeInTheDocument();
   });
 
-  it('keeps datasets visible in list view', () => {
+  it('keeps datasets visible when switching from grid to list', () => {
     renderWorkspaceView({
       datasets: [makeDataset('mock_data')],
       projects: [],
@@ -98,8 +98,8 @@ describe('WorkspaceView', () => {
       storageQuota: 1024 * 1024,
     });
 
+    expect(screen.getByText('mock_data.sav')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /list view/i }));
-
     expect(screen.getByRole('button', { name: /open dataset mock_data\.sav/i })).toBeInTheDocument();
     expect(screen.getByText('mock_data.sav')).toBeInTheDocument();
   });

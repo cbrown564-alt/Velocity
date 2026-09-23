@@ -103,6 +103,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
   const [scope, setScope] = useState<ExportScope>('current');
   const [selectedSlideIds, setSelectedSlideIds] = useState<string[]>([]);
   const [useTemplateMode, setUseTemplateMode] = useState(false);
+  const [showTemplateOptions, setShowTemplateOptions] = useState(Boolean(initialConfig.templateOptions));
   const [templateRefreshMode, setTemplateRefreshMode] = useState<TemplateRefreshMode>('wave_refresh');
   const [templateOptionsState, setTemplateOptionsState] = useState(initialConfig.templateOptions ?? null);
   const [exportStep, setExportStep] = useState<ExportStep>('configure');
@@ -154,11 +155,16 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
     setScope('current');
     setSelectedSlideIds(activeSlideId ? [activeSlideId] : []);
     setUseTemplateMode(false);
+    setShowTemplateOptions(Boolean(initialConfig.templateOptions));
     setTemplateRefreshMode('wave_refresh');
     setTemplateOptionsState(initialConfig.templateOptions ?? null);
     setExportStep('configure');
     setPreviewSelectedSlideId(activeSlideId);
   }, [isOpen, initialResolvedTitle, activeSlideId, initialConfig.templateOptions]);
+
+  useEffect(() => {
+    if (slides.length <= 1 && scope !== 'current') setScope('current');
+  }, [slides.length, scope]);
 
   const slideIdsForScope = useMemo(() => {
     if (scope === 'current') {
@@ -222,6 +228,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
         applyTemplateBindings: applyTemplateBindingsToPptx,
         preserveUntouchedContent: true,
       });
+      setShowTemplateOptions(true);
     } catch {
       localStorage.removeItem(TEMPLATE_STATE_STORAGE_KEY);
     }
@@ -548,44 +555,56 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
             {/* Export Scope */}
             <div className={styles.section}>
               <div className={styles.sectionLabel}>Export Scope</div>
-              <div className={styles.scopeGroup}>
-                <label className={`${styles.scopeOption} ${scope === 'current' ? styles.selected : ''}`}>
-                  <input
-                    type="radio"
-                    name="export-scope"
-                    checked={scope === 'current'}
-                    onChange={() => setScope('current')}
-                  />
-                  <div className={styles.scopeRadio} />
-                  <div>
-                    <div className={styles.scopeLabel}>
-                      Current Slide{activeSlideTitle ? ` (${activeSlideTitle})` : ''}
+              {slides.length <= 1 ? (
+                <div className={styles.singleSlideScope}>
+                  <span className={styles.singleSlideScopeLabel}>Current slide</span>
+                  <span className={styles.singleSlideScopeTitle}>{activeSlideTitle || 'Untitled slide'}</span>
+                </div>
+              ) : (
+                <div className={styles.scopeGroup}>
+                  <label className={`${styles.scopeOption} ${scope === 'current' ? styles.selected : ''}`}>
+                    <input
+                      type="radio"
+                      name="export-scope"
+                      checked={scope === 'current'}
+                      onChange={() => setScope('current')}
+                    />
+                    <div className={styles.scopeRadio} />
+                    <div>
+                      <div className={styles.scopeLabel}>
+                        Current Slide{activeSlideTitle ? ` (${activeSlideTitle})` : ''}
+                      </div>
+                      <div className={styles.scopeDescription}>Export the slide you are viewing now</div>
                     </div>
-                    <div className={styles.scopeDescription}>Export the slide you are viewing now</div>
-                  </div>
-                </label>
-                <label className={`${styles.scopeOption} ${scope === 'all' ? styles.selected : ''}`}>
-                  <input type="radio" name="export-scope" checked={scope === 'all'} onChange={() => setScope('all')} />
-                  <div className={styles.scopeRadio} />
-                  <div>
-                    <div className={styles.scopeLabel}>All Slides ({slides.length})</div>
-                    <div className={styles.scopeDescription}>Export every slide in the deck</div>
-                  </div>
-                </label>
-                <label className={`${styles.scopeOption} ${scope === 'selected' ? styles.selected : ''}`}>
-                  <input
-                    type="radio"
-                    name="export-scope"
-                    checked={scope === 'selected'}
-                    onChange={() => setScope('selected')}
-                  />
-                  <div className={styles.scopeRadio} />
-                  <div>
-                    <div className={styles.scopeLabel}>Selected Slides</div>
-                    <div className={styles.scopeDescription}>Pick specific slides to export</div>
-                  </div>
-                </label>
-              </div>
+                  </label>
+                  <label className={`${styles.scopeOption} ${scope === 'all' ? styles.selected : ''}`}>
+                    <input
+                      type="radio"
+                      name="export-scope"
+                      checked={scope === 'all'}
+                      onChange={() => setScope('all')}
+                    />
+                    <div className={styles.scopeRadio} />
+                    <div>
+                      <div className={styles.scopeLabel}>All Slides ({slides.length})</div>
+                      <div className={styles.scopeDescription}>Export every slide in the deck</div>
+                    </div>
+                  </label>
+                  <label className={`${styles.scopeOption} ${scope === 'selected' ? styles.selected : ''}`}>
+                    <input
+                      type="radio"
+                      name="export-scope"
+                      checked={scope === 'selected'}
+                      onChange={() => setScope('selected')}
+                    />
+                    <div className={styles.scopeRadio} />
+                    <div>
+                      <div className={styles.scopeLabel}>Selected Slides</div>
+                      <div className={styles.scopeDescription}>Pick specific slides to export</div>
+                    </div>
+                  </label>
+                </div>
+              )}
 
               {scope === 'selected' && (
                 <div className={styles.scopeList}>
@@ -661,96 +680,108 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
 
             {format === 'pptx' && (
               <div className={styles.section}>
-                <div className={styles.sectionLabel}>Template Mode</div>
-                <label className={styles.checkboxItem}>
-                  <input
-                    type="checkbox"
-                    checked={useTemplateMode}
-                    onChange={(e) => setUseTemplateMode(e.target.checked)}
-                    disabled={!templateOptionsState}
-                  />
-                  <div className={styles.checkbox} />
-                  <div>
-                    <div className={styles.checkboxLabel}>Apply mapped placeholders</div>
-                    <div className={styles.checkboxDescription}>
-                      {templateOptionsState
-                        ? 'Keep untouched template content and refresh mapped values only.'
-                        : 'Load and map a PowerPoint template to enable template-aware export.'}
-                    </div>
-                  </div>
-                </label>
-                {useTemplateMode && templateOptionsState && (
-                  <div className={styles.templateModeOptions}>
-                    <label className={styles.scopeOption}>
+                <button
+                  type="button"
+                  className={styles.templateDisclosure}
+                  aria-expanded={showTemplateOptions}
+                  onClick={() => setShowTemplateOptions((visible) => !visible)}
+                >
+                  {showTemplateOptions ? 'Hide PowerPoint template options' : 'Use a PowerPoint template'}
+                </button>
+                {showTemplateOptions && (
+                  <>
+                    <div className={styles.sectionLabel}>Template Mode</div>
+                    <label className={styles.checkboxItem}>
                       <input
-                        type="radio"
-                        name="template-refresh-mode"
-                        checked={templateRefreshMode === 'wave_refresh'}
-                        onChange={() => setTemplateRefreshMode('wave_refresh')}
+                        type="checkbox"
+                        checked={useTemplateMode}
+                        onChange={(e) => setUseTemplateMode(e.target.checked)}
+                        disabled={!templateOptionsState}
                       />
-                      <div className={styles.scopeRadio} />
+                      <div className={styles.checkbox} />
                       <div>
-                        <div className={styles.scopeLabel}>Wave refresh</div>
-                        <div className={styles.scopeDescription}>
-                          Refresh mapped placeholders and preserve untouched template content.
+                        <div className={styles.checkboxLabel}>Apply mapped placeholders</div>
+                        <div className={styles.checkboxDescription}>
+                          {templateOptionsState
+                            ? 'Keep untouched template content and refresh mapped values only.'
+                            : 'Load and map a PowerPoint template to enable template-aware export.'}
                         </div>
                       </div>
                     </label>
-                    <label className={styles.scopeOption}>
-                      <input
-                        type="radio"
-                        name="template-refresh-mode"
-                        checked={templateRefreshMode === 'full_rebuild'}
-                        onChange={() => setTemplateRefreshMode('full_rebuild')}
-                      />
-                      <div className={styles.scopeRadio} />
-                      <div>
-                        <div className={styles.scopeLabel}>Full rebuild</div>
-                        <div className={styles.scopeDescription}>
-                          Re-apply placeholders for a full template export refresh.
-                        </div>
+                    {useTemplateMode && templateOptionsState && (
+                      <div className={styles.templateModeOptions}>
+                        <label className={styles.scopeOption}>
+                          <input
+                            type="radio"
+                            name="template-refresh-mode"
+                            checked={templateRefreshMode === 'wave_refresh'}
+                            onChange={() => setTemplateRefreshMode('wave_refresh')}
+                          />
+                          <div className={styles.scopeRadio} />
+                          <div>
+                            <div className={styles.scopeLabel}>Wave refresh</div>
+                            <div className={styles.scopeDescription}>
+                              Refresh mapped placeholders and preserve untouched template content.
+                            </div>
+                          </div>
+                        </label>
+                        <label className={styles.scopeOption}>
+                          <input
+                            type="radio"
+                            name="template-refresh-mode"
+                            checked={templateRefreshMode === 'full_rebuild'}
+                            onChange={() => setTemplateRefreshMode('full_rebuild')}
+                          />
+                          <div className={styles.scopeRadio} />
+                          <div>
+                            <div className={styles.scopeLabel}>Full rebuild</div>
+                            <div className={styles.scopeDescription}>
+                              Re-apply placeholders for a full template export refresh.
+                            </div>
+                          </div>
+                        </label>
                       </div>
-                    </label>
-                  </div>
-                )}
-                <div className={styles.inputGroup}>
-                  <span className={styles.inputLabel} id="template-import-label">
-                    Import Client Template (.pptx)
-                  </span>
-                  <input
-                    id="template-import"
-                    ref={templateInputRef}
-                    type="file"
-                    accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
-                    className={styles.hiddenInput}
-                    onChange={handleTemplateImport}
-                    aria-labelledby="template-import-label"
-                  />
-                  <button
-                    type="button"
-                    className={styles.templateDropzone}
-                    onClick={() => templateInputRef.current?.click()}
-                  >
-                    <Presentation size={20} />
-                    <span className={styles.templateDropzoneTitle}>
-                      {templateOptionsState?.template?.filename ?? 'Choose template file'}
-                    </span>
-                    <span className={styles.templateDropzoneHint}>
-                      {templateOptionsState ? 'Click to replace template' : 'Click to browse or drop a .pptx file'}
-                    </span>
-                  </button>
-                </div>
-                {useTemplateMode && templateReviewIssues.length > 0 && (
-                  <ul className={styles.reviewList} data-testid="template-review-list">
-                    {templateReviewIssues.map((issue) => (
-                      <li
-                        key={`${issue.code}-${issue.placeholderId ?? 'none'}-${issue.slot ?? 'none'}`}
-                        className={issue.severity === 'block' ? styles.reviewIssueBlock : styles.reviewIssueWarn}
+                    )}
+                    <div className={styles.inputGroup}>
+                      <span className={styles.inputLabel} id="template-import-label">
+                        Import Client Template (.pptx)
+                      </span>
+                      <input
+                        id="template-import"
+                        ref={templateInputRef}
+                        type="file"
+                        accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                        className={styles.hiddenInput}
+                        onChange={handleTemplateImport}
+                        aria-labelledby="template-import-label"
+                      />
+                      <button
+                        type="button"
+                        className={styles.templateDropzone}
+                        onClick={() => templateInputRef.current?.click()}
                       >
-                        {issue.message}
-                      </li>
-                    ))}
-                  </ul>
+                        <Presentation size={20} />
+                        <span className={styles.templateDropzoneTitle}>
+                          {templateOptionsState?.template?.filename ?? 'Choose template file'}
+                        </span>
+                        <span className={styles.templateDropzoneHint}>
+                          {templateOptionsState ? 'Click to replace template' : 'Click to browse or drop a .pptx file'}
+                        </span>
+                      </button>
+                    </div>
+                    {useTemplateMode && templateReviewIssues.length > 0 && (
+                      <ul className={styles.reviewList} data-testid="template-review-list">
+                        {templateReviewIssues.map((issue) => (
+                          <li
+                            key={`${issue.code}-${issue.placeholderId ?? 'none'}-${issue.slot ?? 'none'}`}
+                            className={issue.severity === 'block' ? styles.reviewIssueBlock : styles.reviewIssueWarn}
+                          >
+                            {issue.message}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
                 )}
               </div>
             )}
@@ -846,7 +877,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
       {/* Footer */}
       <div className={styles.footer}>
         <div className={styles.footerInfo}>
-          {scope === 'current' && 'Current slide'}
+          {scope === 'current' && slides.length > 1 && 'Current slide'}
           {scope === 'all' && `${slides.length} slides`}
           {scope === 'selected' && `${selectedSlideIds.length} slides selected`}
         </div>

@@ -119,7 +119,8 @@ describe('useFileUpload', () => {
     expect(addToast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Brand tracker example loaded',
-        message: expect.stringContaining('⌘K to swap variables'),
+        message: 'Weighted brand preference by segment is ready.',
+        duration: 4000,
       }),
     );
   });
@@ -157,6 +158,7 @@ describe('useFileUpload', () => {
     expect(addToast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Sleep study example loaded',
+        duration: 4000,
       }),
     );
   });

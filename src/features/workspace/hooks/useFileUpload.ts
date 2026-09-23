@@ -3,7 +3,6 @@
  */
 
 import React, { useCallback } from 'react';
-import { PILOT_BRAND_TRACKER_LOADED_COACH } from '../../../constants/pilotCopy';
 import { formatUploadFailure, getUploadFormatError } from '../../../lib/uploadFeedback';
 import * as opfsFileManager from '../../../services/opfsFileManager';
 import { recordPilotEvent } from '../../../services/pilotOnboarding';
@@ -224,13 +223,13 @@ export function useFileUpload(
               type: 'info',
               title: 'Sleep study example loaded',
               message: 'Explore sex × marital status, then export an editable PowerPoint slide.',
-              duration: 9000,
+              duration: 4000,
             }
           : {
               type: 'info',
               title: 'Brand tracker example loaded',
-              message: `Brand preference × segment is ready. ${PILOT_BRAND_TRACKER_LOADED_COACH}`,
-              duration: 12000,
+              message: 'Weighted brand preference by segment is ready.',
+              duration: 4000,
             },
       );
     } catch (err) {

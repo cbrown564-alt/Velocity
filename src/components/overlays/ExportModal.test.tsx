@@ -5,6 +5,14 @@ import { ExportModal } from './ExportModal';
 import { useVelocityStore } from '../../store';
 
 describe('ExportModal accessibility', () => {
+  const useTwoSlides = () =>
+    useVelocityStore.setState({
+      slides: [
+        { id: 's1', title: 'Slide 1', analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null } },
+        { id: 's2', title: 'Slide 2', analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null } },
+      ],
+    } as never);
+
   beforeEach(() => {
     localStorage.clear();
     useVelocityStore.setState({
@@ -35,6 +43,14 @@ describe('ExportModal accessibility', () => {
     expect(screen.getByRole('radio', { name: 'PowerPoint' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'Excel' })).toBeInTheDocument();
     expect(screen.getByText('Editable slides with tables and a cover')).toBeInTheDocument();
+  });
+
+  it('keeps template import out of the standard PowerPoint path until requested', () => {
+    render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
+
+    expect(screen.queryByText('Import Client Template (.pptx)')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /use a powerpoint template/i }));
+    expect(screen.getByText('Import Client Template (.pptx)')).toBeInTheDocument();
   });
 
   it('resolves default slide titles from the active analysis state before export', () => {
@@ -77,7 +93,8 @@ describe('ExportModal accessibility', () => {
     render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'New Slide', analyses: [] }} />);
 
     expect(screen.getByLabelText(/report title/i)).toHaveValue('Gender by Region');
-    expect(screen.getByText(/current slide \(gender by region\)/i)).toBeInTheDocument();
+    expect(screen.getByText('Current slide')).toBeInTheDocument();
+    expect(screen.getByText('Gender by Region')).toBeInTheDocument();
   });
 
   it('uses a single centered modal shell instead of a duplicated backdrop overlay', () => {
@@ -205,13 +222,22 @@ describe('ExportModal accessibility', () => {
     expect(screen.getByTestId('export-modal-review')).toBeDisabled();
   });
 
-  it('switches scope to all slides and changes footer text', () => {
+  it('shows a single-slide summary instead of redundant scope choices for one slide', () => {
+    render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
+    expect(screen.getByText('Current slide')).toBeInTheDocument();
+    expect(screen.queryByRole('radio', { name: /all slides/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('radio', { name: /selected slides/i })).not.toBeInTheDocument();
+  });
+
+  it('switches scope to all slides and changes footer text when multiple slides exist', () => {
+    useTwoSlides();
     render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
     fireEvent.click(screen.getByRole('radio', { name: /all slides/i }));
-    expect(screen.getByText(/1 slides/i)).toBeInTheDocument();
+    expect(screen.getByText(/2 slides/i)).toBeInTheDocument();
   });
 
   it('switches scope to selected slides and shows slide picker', () => {
+    useTwoSlides();
     render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
     fireEvent.click(screen.getByRole('radio', { name: /selected slides/i }));
     // Select all button appears in the picker
@@ -219,6 +245,7 @@ describe('ExportModal accessibility', () => {
   });
 
   it('selects all slides when Select all is clicked (handleSelectAllSlides)', () => {
+    useTwoSlides();
     render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
     fireEvent.click(screen.getByRole('radio', { name: /selected slides/i }));
     fireEvent.click(screen.getByRole('button', { name: /select all/i }));
@@ -228,16 +255,18 @@ describe('ExportModal accessibility', () => {
   });
 
   it('clears slide selection when Clear is clicked (handleClearSelectedSlides)', () => {
+    useTwoSlides();
     render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
     fireEvent.click(screen.getByRole('radio', { name: /selected slides/i }));
     // First select all
     fireEvent.click(screen.getByRole('button', { name: /select all/i }));
     // Then clear
     fireEvent.click(screen.getByRole('button', { name: /clear/i }));
-    expect(screen.getByText(/0 of 1 selected/i)).toBeInTheDocument();
+    expect(screen.getByText(/0 of 2 selected/i)).toBeInTheDocument();
   });
 
   it('toggles individual slide via checkbox (handleToggleSelectedSlide)', () => {
+    useTwoSlides();
     render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
     fireEvent.click(screen.getByRole('radio', { name: /selected slides/i }));
     // Find the slide label checkbox and click it
@@ -342,6 +371,7 @@ describe('ExportModal accessibility', () => {
 
     const { unmount } = render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
 
+    fireEvent.click(screen.getByRole('button', { name: /use a powerpoint template/i }));
     fireEvent.change(screen.getByLabelText(/import client template/i), {
       target: { files: [file] },
     });

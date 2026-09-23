@@ -211,6 +211,11 @@
   transform: translateY(0);
 }
 
+.datasetCard:only-child .cardActions {
+  opacity: 1;
+  transform: none;
+}
+
 .actionButton {
   display: flex;
   align-items: center;
