@@ -6,7 +6,7 @@ This is the current list of product work. It records what is being built, what i
 
 - Velocity is in internal development. The product owner is the research tester and will decide when the product is viable for other researchers. No external researcher sessions, paid pilot, fixed session count, or commercial readout is required to continue product work.
 - Build one complete, inspectable workflow at a time. Use the product directly, record defects and decisions, and improve it. A benchmark result or a working prototype is evidence about that slice, not a claim that the whole product is ready.
-- Keep the existing code checks and architectural invariants. They verify changes; they do not decide product direction. Use focused checks during development, `npm run ci` before broad completion claims, and `npm run ci:full` when browser journeys change, as `AGENTS.md` requires.
+- Keep code checks and architectural invariants. They verify changes; they do not decide product direction. Use focused checks during development, `npm run ci` before broad completion claims, and `npm run test:e2e` when browser journeys change, as `AGENTS.md` requires.
 - The product owner may change priorities as the product becomes clearer. No workstream needs a pilot result or formal approval milestone before it can be explored or prototyped.
 
 ## Current work

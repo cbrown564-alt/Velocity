@@ -176,7 +176,7 @@ Plan 06 Phase 3 (`docs/plan_06_backend_reset.md` §6) replaced the heuristic coo
 restore = open-cache | rebuild-from-source | fresh
 ```
 
-`bootOrchestrator.ts` owns explicit restore strategy selection with time budgets (cache open ≤ 2 s → abandon to rebuild). Each transition emits journey telemetry (`boot_transition`, `opfs_decision`) from Plan 06 Phase 0. Playwright chaos coverage lives in `tests/e2e/persistence-chaos.spec.ts` and the `@rebuild-path` journey-gate CI job.
+`bootOrchestrator.ts` owns explicit restore strategy selection with time budgets (cache open ≤ 2 s → abandon to rebuild). Each transition emits journey telemetry (`boot_transition`, `opfs_decision`) from Plan 06 Phase 0. Playwright chaos coverage lives in `tests/e2e/persistence-chaos.spec.ts` and can be run when this path changes.
 
 Legacy store modules (`enginePersistenceBridge`, `datasetSessionCoordinator`, `workspaceDatasetLifecycle`) are thin re-exports over `workspaceBoot` for import stability.
 

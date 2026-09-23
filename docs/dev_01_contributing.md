@@ -108,12 +108,10 @@ Run **`npm run ci`** before handing off a code change. Add targeted browser or s
 *   **End-to-End:** Playwright (`tests/e2e/*.spec.ts`; `@visual` specs are informational only)
 
 ```bash
-npm run ci              # lint + app typecheck + Vitest smoke set + build
+npm run ci              # lint, format, all typechecks, boundaries, Vitest, build
 npm run test:run        # full Vitest suite when relevant
-npm run ci:lint         # lint only
-npm run ci:e2e          # opt-in Playwright journeys
-npm run ci:full         # all typechecks + full Vitest + build + Playwright
-npm run test:mutation:ci   # opt-in core mutation evidence
+npm run test:e2e        # browser journeys when relevant
+npm run test:mutation   # optional core mutation investigation
 ```
 
 See `docs/arch_08_testing.md` for the default contract and opt-in checks.

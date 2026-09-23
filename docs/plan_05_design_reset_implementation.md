@@ -252,7 +252,7 @@ Phase 4 was previously marked complete when the baseline pack and timed automati
 
 ## 7. Cross-cutting rules (every work package)
 
-1. **Verification for changes:** run the relevant typecheck, lint, unit, browser, and visual checks; `npm run ci` before a broad completion claim and `npm run ci:full` for browser-journey changes, as `AGENTS.md` requires
+1. **Verification for changes:** run the relevant focused checks; `npm run ci` before a broad completion claim and `npm run test:e2e` for browser-journey changes, as `AGENTS.md` requires
 2. **Deletions are real:** removed components leave no dead exports, orphaned tests, unused tokens, or `TODO: restore`. Coverage config (`vitest.config.ts` excludes) may need pruning when files disappear
 3. **Foundation scope:** phases 1–3 did not change engine computation. Active convergence may change persisted UI/store orchestration to restore each slide's weight and analysis settings; follow the engine/session and dual-state playbooks if that work crosses their boundaries.
 4. **E2E churn is expected:** re-record baselines intentionally per package, never blanket-update snapshots to green a build

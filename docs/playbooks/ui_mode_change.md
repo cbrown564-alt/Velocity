@@ -80,9 +80,8 @@ Prefer tests that are resilient:
 
 **E2E companions (use when unit/component tests cannot cover the journey)**
 - Update Playwright specs or helpers when changing a browser interaction that needs end-to-end evidence — see `docs/playbooks/pre_pr_verification.md`
-- `npm run check:e2e-companion` remains an optional audit; default CI does not require a companion file based only on the changed path
-- Trigger paths: `src/lib/keyboardShortcuts/**`, `src/features/dashboard/onboarding/**`, `WorkspaceStatusStrip`, `ThemeSwitcher`, contextual micro tips
-- Run the relevant Playwright spec; use `npm run ci:e2e` for broad or promotion-bound UI changes
+- Add or update a browser test when the user interaction changes; there is no path-based companion-file rule
+- Run the relevant Playwright spec; use `npm run test:e2e` when the browser journey changes
 
 **Token usage checks**
 - If you have lint rules: enforce token usage

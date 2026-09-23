@@ -124,11 +124,11 @@ Update existing docs only if you changed:
 
 No proactive new docs.
 
-### Step 8 — Mutation check (when touching `src/core/`)
-For logic under `src/core/`, run `npm run test:mutation:ci` on the changed module before opening a PR (diff-scoped; same planner as CI). CI runs via `.github/workflows/test.yml` when mutate-eligible production files or mutation config change. Use `npm run test:mutation:full` for a deep gated campaign. Surviving mutants in the HTML report indicate assertions that do not pin behavior.
+### Step 8 — Additional checks when useful
+Use `npm run test:mutation` to investigate whether core tests detect meaningful logic changes. Use browser, parity, or production checks when the behavior crosses those boundaries. These checks answer specific questions; they are not automatic PR requirements.
 
-### Step 9 — Pre-PR CI verification (always)
-Before opening a PR, run the gates CI runs. See `docs/playbooks/pre_pr_verification.md`.
+### Step 9 — Verify the change
+Before a broad completion claim, run the same `npm run ci` command GitHub runs. See `docs/playbooks/pre_pr_verification.md`.
 
 Minimum for any code change:
 
@@ -136,17 +136,11 @@ Minimum for any code change:
 npm run ci
 ```
 
-When UI, workspace, persistence, shortcuts, or onboarding changed:
+When a browser journey changed:
 
 ```bash
 npx playwright install --with-deps   # once per environment
-npm run ci:e2e
-```
-
-When `src/core/**` changed:
-
-```bash
-npm run test:mutation:ci
+npm run test:e2e
 ```
 
 Use `makeVariable()` from `src/test/fixtures/variables.ts` for typed test data — do not bypass incomplete fixtures with `as never` on store state.
@@ -168,6 +162,5 @@ Reviewers should verify:
 ## Definition of Done
 - at least one test added for the new behavior
 - at least one edge case test added
-- `npm run ci` passes (and `npm run ci:e2e` when UI/workspace/persistence/shortcuts touched)
-- `npm run test:mutation:ci` passes when `src/core/**` changed
+- `npm run ci` passes (and `npm run test:e2e` when a browser journey changed)
 - no invariant violations introduced

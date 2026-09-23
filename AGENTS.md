@@ -29,4 +29,4 @@ Update an existing owner when behavior or a contract changes. Do not add a paral
 - Version `VelocitySessionFile` changes and provide migrations; do not remove fields without one.
 - Do not change statistical meaning, semantic confidence, or persistence behavior without focused tests and the relevant owner update.
 
-Use the relevant procedure in `docs/playbooks/` rather than restating it here. Run focused tests and boundary checks while iterating. Use `npm run ci` before a broad completion claim and `npm run ci:full` when browser journeys are affected. Inspect changed UI and exported reports directly. These checks verify implementation; they are not product approval stages.
+Use the relevant procedure in `docs/playbooks/` rather than restating it here. Run focused tests and boundary checks while iterating. Use `npm run ci` before a broad completion claim and `npm run test:e2e` when browser journeys are affected. Inspect changed UI and exported reports directly. These checks verify implementation; they are not product approval stages.
