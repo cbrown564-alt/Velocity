@@ -36,6 +36,8 @@ The focused palette and narrow-width component tests, `npm run ci`, and all 27 `
 
 **Question:** What do strong market research spreadsheets and PowerPoint exhibits actually look like, and which of those qualities should Velocity produce by default?
 
+The first local corpus inventory is in [the Track B work catalogue](assets/output-quality-corpus/catalogue.md). It records the spreadsheet, presentation, survey-data, Q/Tableau, and adjacent CSV/PDF/Word files found across `/Users/cobro/Documents/Work`, with a folder census and a provisional list of useful review candidates. It is a private-workspace inventory, not a rights-cleared external reference library; source rights and visual quality remain to be checked before using any item as a benchmark.
+
 Study the two formats separately. A PowerPoint chart communicates a finding in a deck; a spreadsheet supports inspection, reuse, and checking. A shared color palette alone is not a quality standard. The earlier [report-quality plan](workstreams/deck_native/07_report_quality_experience_plan_v2.md) is background for narrative and editable deck requirements; this track establishes current, format-specific visual evidence before redesigning either export.
 
 | Step | Result to produce | Evidence that closes the step |
