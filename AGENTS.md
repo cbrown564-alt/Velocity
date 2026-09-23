@@ -1,6 +1,6 @@
 # Velocity
 
-Stabilize the product before expanding it. The current priorities are truthful documentation, reliable workspace reopen, export quality, design-system enforcement, and CI that matches the stated quality bar.
+Build and test one complete researcher workflow at a time. The product owner is the research tester until they decide Velocity is viable for other researchers. The current priorities are the working journey, research quality, saved state, reporting quality, and truthful documentation. Product work does not require external researcher sessions, paid pilots, or formal stage approvals.
 
 ## Read the owner
 
@@ -29,4 +29,4 @@ Update an existing owner when behavior or a contract changes. Do not add a paral
 - Version `VelocitySessionFile` changes and provide migrations; do not remove fields without one.
 - Do not change statistical meaning, semantic confidence, or persistence behavior without focused tests and the relevant owner update.
 
-Use the relevant procedure in `docs/playbooks/` rather than restating it here. Run focused tests and boundary checks while iterating. Use `npm run ci` before a broad completion claim and `npm run ci:full` when browser journeys are affected. Inspect changed UI and exported reports directly.
+Use the relevant procedure in `docs/playbooks/` rather than restating it here. Run focused tests and boundary checks while iterating. Use `npm run ci` before a broad completion claim and `npm run ci:full` when browser journeys are affected. Inspect changed UI and exported reports directly. These checks verify implementation; they are not product approval stages.

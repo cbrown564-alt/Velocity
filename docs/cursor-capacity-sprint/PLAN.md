@@ -1,6 +1,6 @@
 # Cursor capacity sprint plan
 
-**Status:** active execution plan (`DESIGN-CONV-R0` complete — see `R0_RECONCILIATION.md`)  
+**Status:** Historical execution aid. Its gates, waves, external-session requirement, and pilot dependency no longer set current priorities; use the [workstream tracker](../tracker_00_implementation_status.md). `DESIGN-CONV-R0` was completed — see `R0_RECONCILIATION.md`.
 **Created:** 29 July 2026  
 **Scope:** bounded use of Composer 2.5, Grok 4.5, and GLM 5.2 before subscription capacity expires  
 **Canonical status owner:** `docs/tracker_00_implementation_status.md`

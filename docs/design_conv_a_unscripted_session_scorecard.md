@@ -1,6 +1,6 @@
 # DESIGN-CONV-A: Unscripted First-Session Scorecard
 
-**Status:** Template ready — fill during human pilot sessions (0 / 5 scored)
+**Status:** Historical external-session template. No session count or scorecard is required for current product development. The product owner is the research tester until they choose otherwise.
 
 **Depends on:** `DESIGN-RESET-1`, post-reset screenshot pack in [`docs/assets/design-reset-evidence/`](assets/design-reset-evidence/)
 
@@ -128,7 +128,7 @@ After rollup, answer for product review:
 1. **Does summon-only insertion hold?** (yes / conditional / no — cite session IDs)
 2. **If conditional or no:** prioritize `DESIGN-CONV-C` (recent strip), `DESIGN-CONV-D` (palette onboarding), or both?
 3. **Interruption budget:** Is zero-interruption scripted pass representative of real first sessions?
-4. **Link to tracker:** Update `DESIGN-CONV-A` evidence row in [`tracker_00_implementation_status.md`](tracker_00_implementation_status.md) §4.3 and [`before_after_analysis.html`](assets/design-reset-evidence/before_after_analysis.html) session metrics.
+4. **If external testing resumes:** Keep session evidence with this historical template and update the [workstream tracker](tracker_00_implementation_status.md) only if it changes current priorities.
 
 ---
 

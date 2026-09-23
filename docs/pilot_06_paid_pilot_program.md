@@ -1,10 +1,9 @@
 # PILOT-6: Paid Pilot Program Kit
 
-**Status:** Program assets ready; external recruiting and delivery blocked on `DESIGN-CONV-A`
-**Depends on:** `DESIGN-CONV-A`, `PILOT-0`, `PILOT-1`, `PILOT-2`, `PILOT-3`
-**Purpose:** Recruit and run 5-8 qualified paid pilots without over-promising beyond shipped product scope.
+**Status:** Inactive historical preparation. The product owner is the research tester and will decide if and when external research or commercial pilots are useful.
+**Original purpose:** Recruit and run 5-8 qualified paid pilots without over-promising beyond shipped product scope.
 
-Preparation, prospect-list research, and internal rehearsal may continue. Do not send outreach, accept commitments, or schedule delivery until the final redesign candidate has fresh screenshots, reproducible journey evidence, and 3–5 unscripted representative sessions recorded in the tracker.
+The material below is retained as a reference. Its schedule, cohort size, session counts, and earlier `DESIGN-CONV-A` dependency are not active product requirements.
 
 ---
 

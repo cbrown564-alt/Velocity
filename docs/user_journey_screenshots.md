@@ -56,7 +56,7 @@ The slide artifact is the exportable content; statistics remain outside it as a 
 
 The current modal reports readiness and issues, then downloads directly. The approved journey requires an export review lane with export-bound slide thumbnails, recipe/significance summaries, and an explicit review-before-download step. That work is `DESIGN-CONV-B` and currently exists only as an off-line candidate.
 
-Focus mode is not part of the target journey. It remains in current code, but the approved Q5 decision is to remove it and make the normal canvas the presentation surface.
+Focus mode was removed on `main`; the normal canvas is the presentation surface.
 
 ## 4. Organize and resume
 
@@ -66,25 +66,25 @@ Variable Manager is a two-pane overlay for dense inspection and recoding. It no 
 
 ![Resumed analysis session](assets/design-reset-evidence/screenshots/15-resumed-analysis-session.png)
 
-Session resume restores the visible deck foundation, but slide switching currently restores rows, columns, and filters without restoring `weightVar`; analysis settings are workspace-global rather than faithful per-slide state. `DESIGN-CONV-K2` owns the saved-analysis correction and persistent recipe summary.
+Session resume in the July screenshot pack predates the saved-analysis correction. `DESIGN-CONV-K2` subsequently restored per-slide weight and analysis settings on `main`; capture new screenshots before using this pack to describe the current experience.
 
-## Evidence required for final closure
+## Current verification work
 
-`DESIGN-CONV-A` closes this journey only when all of the following are true:
+The following checks help inspect the integrated journey. They are not a product approval stage:
 
-1. Approved convergence candidates are reconciled against current `main` and pass their implementation gates.
+1. Retained convergence candidates are reconciled against current `main` and verified.
 2. The screenshot workflow runs with a documented browser setup and normal user interactions; no force-clicks conceal hit-testing defects.
 3. Automation asserts the intended row, column, filter, weight, and view state for every slide and completes review-before-download.
 4. A fresh pack captures the final chrome at the agreed viewport sizes.
-5. Three to five representative users complete the journey without coaching; time, discovery, errors, recovery, and confidence are recorded.
+5. The product owner uses the journey directly and records problems with discovery, errors, recovery, or confidence.
 
-Until then, these images show an implemented baseline, not a verified or validated final redesign.
+The existing images show an implemented July baseline, not the current final experience.
 
 ## Related owners
 
 | Document | Owns |
 | :--- | :--- |
-| [`tracker_00_implementation_status.md`](tracker_00_implementation_status.md) §4.3.2 | Active dependencies, statuses, and pilot gate |
+| [`tracker_00_implementation_status.md`](tracker_00_implementation_status.md) | Current work and priorities |
 | [`plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) | Reset foundation and Phase 4 evidence contract |
 | [`design_01_system.md`](design_01_system.md) | Visual tokens, typography, contrast, layout contract |
 | [`design_02_ux_modes.md`](design_02_ux_modes.md) | Workspace, Canvas, palette, inspector, VM, and export responsibilities |

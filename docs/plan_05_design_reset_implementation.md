@@ -1,6 +1,6 @@
 # Design Reset Implementation Plan (Pathway B)
 
-**Status:** Phases 1–3 implemented; Phase 4 incomplete. The July 4 evidence is a baseline, not final validation. Active closure is tracked in `tracker_00_implementation_status.md` §4.3.2.
+**Status:** Phases 1–3 implemented; July 4 evidence is a baseline. Current integration review and screenshots are tracked in the [workstream tracker](tracker_00_implementation_status.md). Earlier Phase 4 external-session requirements are historical.
 **Date:** July 3, 2026 (status corrected July 14, 2026)
 **Purpose:** Standalone execution plan for the approved design reset. A fresh session should be able to pick up any work package from this document alone, without the originating conversation.
 
@@ -21,7 +21,7 @@ Decisions already made (do not re-litigate):
 
 - **Pathway B**: deck-first IA inversion + visual reset, with the ⌘K palette as the universal insertion entry point
 - **One theme**: evolved Soft Machine (tokens in §2). Mission Control and Liquid Glass are deleted, not deprecated
-- **Dark mode deferred** until a pilot asks; must be the same identity when it comes
+- **Dark mode deferred** until direct product use gives a reason to add it; it must remain the same identity when added
 - **Accent budget**: accent appears only on the primary action, statistical significance, and the active drop target while dragging. Screens with no export/significance have zero accent
 - **Success metric**: file-drop → three titled slides → PPTX in under 5 minutes, zero interruptions, at most one accent-colored element visible at a time
 
@@ -29,12 +29,12 @@ Working setup:
 
 ```bash
 npm run dev            # Vite, local app
-npm run typecheck      # gate: T
-npm run lint           # gate: L
-npm run test:run       # gate: U (vitest)
-npm run test:e2e       # gate: I (Playwright)
+npm run typecheck      # type verification
+npm run lint           # lint verification
+npm run test:run       # unit tests (vitest)
+npm run test:e2e       # browser tests (Playwright)
 npm run ci             # full local CI chain (includes check:design-tokens, eslint ratchet, build)
-node scripts/ui-workflow-screenshot-audit.mjs   # workflow screenshot pack (gate: V evidence)
+node scripts/ui-workflow-screenshot-audit.mjs   # workflow screenshot pack
 ```
 
 Test data: `test_data/sleep.sav` (E2E baseline), brand-tracker demo fixtures via `scripts/brand-tracker-demo.ts`.
@@ -215,16 +215,16 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 ## 6. Phase 4 — Evidence & reconciliation
 
-Phase 4 was previously marked complete when the baseline pack and timed automation landed. That classification was too broad. The pack predates the approved convergence work, the documented palette grammar differs from current command behavior, the automation records elapsed time without asserting the intended rows/columns recipe, the normal overflow interaction currently requires a forced click in screenshot tooling, and no representative sessions have run. Phase 4 closes only after the tracker’s `DESIGN-CONV-A` gate passes.
+Phase 4 was previously marked complete when the baseline pack and timed automation landed. That classification was too broad. The pack predates the approved convergence work. Palette grammar, saved-analysis fidelity, export review, and overflow handling have since been corrected on `main`; retained candidate work still needs direct inspection and current screenshots. The earlier `DESIGN-CONV-A` external-session requirement no longer controls product work.
 
 - **WP4.1** Re-run `node scripts/ui-workflow-screenshot-audit.mjs`; commit the new pack under `docs/assets/design-reset-evidence/`; before/after against both the July 1 audit pack (`ui-pilot-readiness-audit/screenshots-p2-final/`) and the north-star screens
 - **WP4.2** Timed pilot-demo pass: file-drop → three titled slides → PPTX. Record time and interruption count. Pass: < 5 minutes, zero interruptions. Methodology below.
 - **WP4.3** Update docs in the same PR: rewrite `design_01_system.md` (single theme, token table from §2), amend `design_02_ux_modes.md` (rail/palette/inspector responsibilities), close this plan's rows, reconcile `tracker_00_implementation_status.md`
-- **WP4.4** PILOT-6 photography used post–PR #18 UI (July 2 `screenshots-p2-final/`). **Re-screenshot required** before paid pilot recruiting — chrome contracts changed materially (story rail, palette-only variables, recipe inspector, single theme). Flag raised; photography not yet re-run on post-reset UI.
+- **WP4.4** Earlier pilot photography used post–PR #18 UI (July 2 `screenshots-p2-final/`). Re-screenshot the retained integrated experience when reviewing it; the old pack does not describe current chrome.
 
 ### WP4.2 — Five-minute metric pass methodology
 
-**Goal:** Verify the automated journey and validate the final experience under representative pilot conditions.
+**Goal:** Verify the automated journey and let the product owner assess the experience directly.
 
 **Environment:** Local `npm run dev`, Chromium 1440×900, `test_data/sleep.sav` (or a pilot's own SAV of similar size). One operator, no mouse unless unavoidable. Stopwatch from first file drop to PPTX saved.
 
@@ -244,7 +244,7 @@ Phase 4 was previously marked complete when the baseline pack and timed automati
 
 **Automated pass:** < 5:00 elapsed, correct saved recipe on every slide, zero interruptions, zero forced interactions, review-before-download completed, and ≤ 1 accent chrome element per screen.
 
-**Validation pass:** 3–5 people from the target workflow complete the final candidate without coaching; record discovery, errors, recovery, and confidence separately from automated timing.
+**Product review:** The product owner works through the final candidate and records discovery, errors, recovery, and confidence separately from automated timing. External sessions are optional later, at the product owner's discretion.
 
 **Evidence:** Timed run notes in PR body; screenshot pack (`docs/assets/design-reset-evidence/`) for visual before/after; E2E theme baseline (`visual-polish-theme-table.spec.ts`) re-recorded for single identity.
 
@@ -252,7 +252,7 @@ Phase 4 was previously marked complete when the baseline pack and timed automati
 
 ## 7. Cross-cutting rules (every work package)
 
-1. **Gates per PR:** typecheck (T), lint (L), unit (U), E2E/visual (I), screenshot evidence (V). `npm run ci` must pass locally before PR
+1. **Verification for changes:** run the relevant typecheck, lint, unit, browser, and visual checks; `npm run ci` before a broad completion claim and `npm run ci:full` for browser-journey changes, as `AGENTS.md` requires
 2. **Deletions are real:** removed components leave no dead exports, orphaned tests, unused tokens, or `TODO: restore`. Coverage config (`vitest.config.ts` excludes) may need pruning when files disappear
 3. **Foundation scope:** phases 1–3 did not change engine computation. Active convergence may change persisted UI/store orchestration to restore each slide's weight and analysis settings; follow the engine/session and dual-state playbooks if that work crosses their boundaries.
 4. **E2E churn is expected:** re-record baselines intentionally per package, never blanket-update snapshots to green a build
@@ -284,8 +284,8 @@ Phases 1–3 landed. Phase 4 rows below distinguish baseline evidence from final
 | 3.4 | Type & spacing sweep | **Done** | `da434a5` — 13px UI base, hairline discipline, tabular-nums |
 | 4.1 | Screenshot audit | **Baseline only** | `docs/assets/design-reset-evidence/screenshots/` (15 frames, July 3 2026); recapture after convergence |
 | 4.2 | Five-minute metric | **Automated baseline only** | Script recorded **0:11**, but does not yet prove the documented recipe grammar or normal pointer behavior; correct and rerun under `DESIGN-CONV-K1/K3` |
-| 4.3 | Docs reconciliation | **Done** | Core status documents corrected July 14; tracker §4.3.2 owns active closure |
-| 4.4 | Final photography and sessions | **Blocked** | Starts after convergence blockers land; requires fresh screenshots and 3–5 unscripted representative sessions (`DESIGN-CONV-A`) |
+| 4.3 | Docs reconciliation | **Done** | Core status documents corrected July 14; the tracker owns current work |
+| 4.4 | Current photography and product-owner review | **Open** | Inspect the retained integrated experience and capture fresh screenshots; no required external sessions |
 
 **Foundation evidence head:** `5c85707`. Do not interpret this commit as final redesign validation.
 
@@ -298,7 +298,7 @@ Phases 1–3 landed. Phase 4 rows below distinguish baseline evidence from final
 | PPTX export regression from theme collapse (WP1.1) | Golden export fixtures verified before/after; export theming is an explicit checklist item, not incidental |
 | E2E baseline churn overwhelms review | One package per PR; re-record only specs the package touches; name re-recorded specs in the PR body |
 | Palette-only insertion hurts discoverability for drag-first users (WP2.2) | Drag from palette and from VM remains; empty state names both paths; watch first pilot session recordings |
-| Recipe inspector duplicates deck-recipe state (WP2.3) | Bind to existing store/session structures; session round-trip test is the gate |
+| Recipe inspector duplicates deck-recipe state (WP2.3) | Bind to existing store/session structures; verify with a session round-trip test |
 | Removing the resident variable list slows expert scanning (WP2.1/2.2) | Palette must handle the 500-variable fixture <100ms; VM is one keystroke away; revisit only with pilot evidence |
 | Coverage/CI gates break on mass deletion | Run `npm run ci` per package; prune vitest excludes and the design-token check in the same PR as the deletion |
 

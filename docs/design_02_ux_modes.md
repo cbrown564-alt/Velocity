@@ -115,7 +115,7 @@ graph TD
 
 ## 6. Success metric
 
-File-drop → three titled, reproducible slides → reviewed PPTX in under **5 minutes**, zero interruptions, zero forced interactions, and at most one accent-colored element visible at a time (excluding in-table significance marks). Automation must assert each slide's saved rows, columns, filter, weight, and view state. Representative users must also complete the final candidate without coaching. See [`plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) §6.
+File-drop → three titled, reproducible slides → reviewed PPTX in under **5 minutes**, zero interruptions, zero forced interactions, and at most one accent-colored element visible at a time (excluding in-table significance marks). Automation must assert each slide's saved rows, columns, filter, weight, and view state. The product owner tests the journey directly and decides when it is useful enough to extend. See [`plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) §6 for the original measurement method.
 
 ## 7. Current convergence focus
 
@@ -124,8 +124,8 @@ The product has three modes only: Workspace, Analysis Canvas, and Variable Manag
 The mode model is the approved target, but the implementation is not yet complete. The active gaps are:
 
 - make recipe structure persistent and legible in the rail/inspector;
-- verify the integrated Wave 2 discovery/continuity candidates and assess discovery value in representative sessions;
-- recapture the journey and run 3–5 unscripted representative sessions on the final candidate.
+- verify the integrated discovery/continuity candidates in the running app with the product owner;
+- recapture the journey after the retained changes are integrated.
 
 Insert-palette grammar is settled as **Grammar A** (`DESIGN-CONV-K1`). `DESIGN-CONV-K3` a11y/interaction closure is Done. PPTX export includes a review-before-download preview lane (`DESIGN-CONV-B`): export-bound thumbnails, recipe/significance summary, then download. Excel remains a one-step export.
 
@@ -134,4 +134,4 @@ The first general palette open shows inline row/column guidance once per dataset
 
 Session imports show a dismissible rail summary of slide count, unresolved variables, affected slides, and adjustments. The rail stays expanded until the summary is dismissed. This summary lasts for the current app session and clears when another dataset is loaded; it is not saved into the session file.
 
-The tracker §4.3.2 owns ordering and completion. Until `DESIGN-CONV-A` passes, the reset is implemented but not verified or validated as a complete redesign. PILOT-6 photography must use post-reset chrome without a focus-mode toggle.
+The [tracker](tracker_00_implementation_status.md) owns current work. The reset foundation is implemented; the final integrated journey still needs direct inspection and verification. Earlier `DESIGN-CONV-A` and `PILOT-6` requirements are historical, not prerequisites for product work.

@@ -1,6 +1,6 @@
 # Pilot Evidence Collection Checklist (PILOT-4a + PILOT-6)
 
-**Status:** Active ops playbook (use while both rows remain `In progress`)  
+**Status:** Inactive historical pilot playbook. Its schedule and required external sessions do not govern current internal development.
 **Depends on:** `pilot_00_brief.md`, `pilot_01_packaging.md`, `pilot_02_trust_pack.md`, `pilot_04a_processing_gap_discovery.md`, `pilot_06_paid_pilot_program.md`  
 **Purpose:** Run paid pilots without scope drift and collect decision-grade evidence for `PILOT-4a` and `PILOT-6`.
 
@@ -230,4 +230,3 @@ Produce these artifacts every week while work is `In progress`:
 - [ ] Updated blocker ranking snapshot (`PILOT-4a` evidence)
 - [ ] Updated commercial snapshot (`PILOT-6` evidence)
 - [ ] Decision log entry: keep recruiting / adjust promise / close participant / prep gate decision
-

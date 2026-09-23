@@ -1,11 +1,11 @@
 # Deck-Native Multi-Agent Delivery Plan
 
-**Status:** Technical implementation complete through Gate 5; product/tracker acceptance remains gated by human review and pilot evidence; final verification passed with local mutation caveat
+**Status:** Historical execution plan. Technical implementation reached its former Gate 5 with a local mutation caveat; its human-review and pilot requirements no longer control current product work.
 **Purpose:** Coordinate a planner/designer/builder/evaluator loop for moving Velocity toward a deck-native product posture without losing the current SAV-to-deck pilot focus.
 
 Use this with:
 
-- `docs/tracker_00_implementation_status.md` for active gates
+- `docs/tracker_00_implementation_status.md` for current work
 - `docs/roadmap_00_strategic_guide.md` for sequencing
 - `docs/blue_02_feature_matrix.md` for scope decisions
 - `docs/agent_handoff_template.md` for owner transfers

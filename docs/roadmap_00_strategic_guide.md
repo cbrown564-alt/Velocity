@@ -1,103 +1,32 @@
-# Velocity Strategic Roadmap (Short Guide)
+# Velocity Strategic Guide
 
-This is the high-level planning document. It defines what we are optimizing for, in what order, and which docs govern decisions.
+This document owns product direction. [The workstream tracker](tracker_00_implementation_status.md) owns current priorities and status. Architecture and design documents own their respective contracts.
 
-For execution details and dependencies, use:
-- [docs/tracker_00_implementation_status.md](tracker_00_implementation_status.md)
+## Purpose
 
-## 1. Strategic Intent
+Build a survey-native research workbench that helps a researcher move from a survey file and brief to a defensible, editable answer. Models may interpret and propose; Velocity computes; the researcher controls methodological and editorial decisions. The first commercial use remains a plausible direction, not a schedule or a requirement to recruit researchers now.
 
-- Deliver survey-native analysis parity with Displayr/SPSS workflows while preserving local-first speed.
-- Keep architecture strict: portable core logic, Worker-side compute, and dual-state data integrity.
-- Sequence advanced capabilities only after Phase 2 commercial-critical gaps are closed.
+The product is in internal development. The product owner is the research tester and decides when it is viable for other researchers. Until then, work proceeds through direct use, focused experiments, and complete prototypes. No external-session count, paid pilot, or formal approval milestone is needed to choose or continue a workstream.
 
-## 2. Delivery Sequence (Priority Clusters)
+## How to progress
 
-1. Phase 2 closure (commercial critical)
-- Statistical Engine Phase 2 (pairwise, correction, overlap, TSL decision)
-- Editable PPTX export parity
+1. **Make the existing journey reliable.** A file should open, analyses should be inspectable, saved work should reopen faithfully, and the exported material should be editable and worth reviewing.
+2. **Test research quality on consequential tasks.** Synthetic and public studies should expose failures in preparation, analysis, selection, interpretation, and revision. Independent calculations and direct researcher judgment serve different purposes. More studies are useful only when they reveal a new failure mode.
+3. **Build one assisted workflow inside Velocity.** Connect a brief, supported engine analyses, evidence-linked findings, researcher edits, saved state, and a usable answer in the existing workspace. Keep the first implementation narrow enough to experience and revise.
+4. **Expand where the workflow needs it.** Add preparation methods, specialist statistics, presentation capabilities, or model techniques in response to a demonstrated limitation. Preserve the architectural and statistical invariants in `AGENTS.md`.
 
-2. Phase 3 foundation (Engine Convergence)
-- `VelocityEngine` unification
-- Semantic layer & discovery tools
-- MCP server foundation
+The tracks can overlap. This order is a guide to attention, not a dependency graph. A small experiment may run whenever it answers a concrete product question.
 
-3. Phase 4 validation (Agent Capability)
-- Intended-path readiness & session round-tripping
-- Task portfolio execution & eval tracking
-- Capability gap analysis
+## Current facts and limits
 
-4. Design convergence and representative validation
-- Reconcile the approved redesign candidates with the current product line
-- Complete export review, saved-analysis fidelity, interaction/accessibility, and visual-quality work
-- Capture fresh evidence and test the final candidate with representative users
+- The engine, MCP interface, survey statistics, provenance, session interchange, and editable export foundations exist. They do not by themselves provide a unified assisted research experience.
+- Design convergence has verified candidate work outside `main`; the final integrated journey and its presentation quality still need direct inspection and correction.
+- Research quality studies have exposed omissions in narrative selection. Their experimental results do not establish product viability or measured researcher time savings.
+- The pilot and representative-session plans written in June and July 2026 are historical preparations. They do not control present development. External testing and commercial work resume only if the product owner chooses them.
+- WebR, broad processing, fine-tuning, and cloud collaboration are possible future capabilities, not locked phases or obligations.
 
-5. Market-reset pilot (Commercial validation)
-- SAV-to-deck pilot for boutique researchers and independent consultants
-- Trust/performance evidence pack
-- Paid-pilot recruiting and delivery after the redesign gate passes
+## Decision practice
 
-6. Phase 5 expansion (Advanced stats)
-- Harmonization workspace baseline
-- WebR bridge & advanced stats
+For a proposed workstream, state the user task, the smallest complete result that would answer the question, and what current evidence says. Build and inspect that result. Record a decision to continue, change, or stop it in the tracker. Do not add a new approval process or claim that a prototype has been validated by external users.
 
-7. Phase 6/7 extensions (Cognitive Engine & Cloud)
-- Deep semantic reasoning
-- Realtime collaboration & platform imports
-
-## 2.1 Current Reality Check
-
-As of **July 14, 2026**, Phase 4 validation, post-validation follow-through, May stabilization, and the structural design-reset foundation are complete. The redesign itself is not complete. Approved convergence work remains off the current product line, the export review lane is open, saved slides do not yet restore all analysis state, and final interaction, accessibility, visual, and representative-user evidence is missing.
-
-- **Engine validated:** Mean score 4.7/5 across six eval families. Computation, provenance, export, and session mechanics all work.
-- **Stabilization shipped:** Reopenable workspace (`STAB-WS-1`), matrix MCP + PPTX polish (`STAB-EXP-1`), design-token CI (`STAB-DS-1`), production build + E2E gates (`STAB-CI-1`).
-- **Phase 4 follow-through shipped:** Category-aware discovery, recommended breaks/guardrails, workspace-aware MCP, deck transport resilience, and EVAL-05b harmonization rerun are Done.
-- **No architecture rewrite needed:** Gaps are redesign convergence, commercial workflow completion, and validation, not an engine/platform thesis failure. Completed foundations are summarized in `docs/completed_foundations_summary.md`.
-- **Four benchmark baselines frozen:** EVAL-01 (small deck), EVAL-02 (large survey), EVAL-04 (convergence), EVAL-06 (stress).
-- **Market opening narrowed:** Velocity should not claim broad local-first survey AI novelty. The active wedge is analysis-ready SAV file -> defensible, editable client deck for boutique agencies and independent consultants.
-
-Implication:
-- The strategic critical path is **design convergence and representative validation before paid-pilot recruiting**, not Phase 5 expansion: `DESIGN-CONV-R0` -> redesign closure -> `DESIGN-CONV-A` -> `PILOT-6` -> `PILOT-7`.
-- Pilot-program preparation may continue in parallel. External recruiting and delivery do not start until the redesign gate passes.
-- All feature additions must be evaluated against: "Does this improve paid-pilot completion, trust, or willingness to pay for the SAV-to-deck wedge?"
-- WebR (`S5-R-1`), broad prep (`S5-PREP-*`), deeper AI (Phase 6), and cloud collaboration (Phase 7) remain frozen until pilot evidence justifies them.
-- See `docs/archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md` for the full Phase 4 decision package.
-
-## 3. Scope Governance
-
-- Default to `Keep/Delay/Reject` logic from feature matrix before starting implementation.
-- All new capabilities must be exposed via the `VelocityEngine` and MCP before the React UI.
-- Do not start dependent work if predecessor contracts (eval passes) are unresolved.
-- Do not activate broad Phase 5+ work without `PILOT-7` evidence or an explicit roadmap decision.
-
-## 4. Which Docs To Use (And When)
-
-| Doc | Use when | Why it exists |
-| :--- | :--- | :--- |
-| [docs/README.md](README.md) | Looking for documentation | Active documentation map and archive policy |
-| [`AGENTS.md`](../AGENTS.md) | Starting any task or assigning agent roles | Master operating rules, invariants, and role expectations |
-| [docs/tracker_00_implementation_status.md](tracker_00_implementation_status.md) | Planning or executing active work | Dependency-first execution board with statuses and gates |
-| [docs/blue_02_feature_matrix.md](blue_02_feature_matrix.md) | Deciding whether a feature is in/out/late | Scope gate source of truth (`Keep/Delay/Reject`) |
-| [docs/archive/strategy/blue_01_unified_roadmap.md](archive/strategy/blue_01_unified_roadmap.md) | Need full historical roadmap rationale | Archived long-form context, not current status authority |
-| [archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md](archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md) | Interpreting Phase 4 conclusions (historical) | Validated/unvalidated claims and frozen baseline summary |
-| [docs/eval_framework.md](eval_framework.md) | Creating, running, or judging an agent evaluation | Scoring rubric and capability-gap classification |
-| [docs/arch_01_system_architecture.md](arch_01_system_architecture.md) | New feature or major refactor | System boundaries and component map |
-| [docs/arch_07_agent_architecture.md](arch_07_agent_architecture.md) | Modifying engine boundaries or MCP tools | Strict rules for the headless orchestration layer |
-| [docs/arch_02_data_model.md](arch_02_data_model.md) | Data structures, ingestion, metadata, types | Dual-state data model invariants |
-| [docs/arch_03_headless_core.md](arch_03_headless_core.md) | Touching `src/core/*` or adapters | Platform seam and dependency direction |
-| [docs/arch_04_statistical_engine.md](arch_04_statistical_engine.md) | Statistical methods or significance logic | Survey-native statistical correctness rules |
-| [docs/arch_05_visualisation_engine.md](arch_05_visualisation_engine.md) | Charts/D3/canvas behavior or performance | Visualization architecture and rendering phases |
-| [docs/arch_06_local_first_persistence.md](arch_06_local_first_persistence.md) | Persistence/state durability decisions | Local-first persistence strategy and tradeoffs |
-| [docs/design_01_system.md](design_01_system.md) | UI styling, tokens, component theming | Design-system tokens and visual rules |
-| [docs/design_02_ux_modes.md](design_02_ux_modes.md) | Manager vs Canvas flow changes | UX mode separation constraints |
-| [docs/arch_08_testing.md](arch_08_testing.md) | Test planning for new/changed behavior | Testing strategy and quality guardrails |
-| [.github/pull_request_template.md](../.github/pull_request_template.md) | Opening any PR | Standard contract/risk/test evidence format |
-| [docs/agent_handoff_template.md](agent_handoff_template.md) | Any multi-agent handoff | Required transfer artifact between owners |
-
-## 5. Working Agreement
-
-1. Strategy lives here.
-2. Execution order and state live in `tracker_00_implementation_status.md`.
-3. Contracts and evidence live in PRs using `.github/pull_request_template.md`.
-4. Multi-agent transitions require `docs/agent_handoff_template.md`.
-5. When tracker status and roadmap narrative diverge, reconcile using the most recent commit evidence first, then update both docs in the same PR.
+Existing automated checks remain part of implementation verification. Statistical meaning, dual-state data, worker compute, engine boundaries, and session compatibility remain governed by `AGENTS.md` and the architecture owners.

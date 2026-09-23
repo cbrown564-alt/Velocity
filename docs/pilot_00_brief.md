@@ -1,8 +1,8 @@
 # PILOT-0: SAV-to-Deck Pilot Brief
 
 **Status:** Done (June 2026)  
-**Source:** `docs/velocity_external_market_assessment.pdf`, `docs/tracker_00_implementation_status.md` §5.1  
-**Gates:** Architecture (A) — conditional pass; Market validation (V) — aligned with external assessment
+**Source:** `docs/velocity_external_market_assessment.pdf`
+**Current use:** Historical pilot thesis and commercial assumptions. The product owner is the research tester; this brief does not set current approval requirements or an external-testing schedule.
 
 ---
 

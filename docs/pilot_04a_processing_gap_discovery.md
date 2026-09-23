@@ -1,8 +1,6 @@
 # PILOT-4a: Processing Gap Discovery Kit
 
-**Status:** In progress (discovery kit prepared; external observation set not started)  
-**Depends on:** `PILOT-0`  
-**Feeds:** `PILOT-4b` scope and sequencing decisions
+**Status:** Historical external-discovery kit. Current internal preparation gaps are tracked in the [workstream tracker](tracker_00_implementation_status.md); the sample target below is not a requirement.
 
 ---
 

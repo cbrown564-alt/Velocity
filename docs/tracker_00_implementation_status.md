@@ -1,388 +1,42 @@
-# Velocity Implementation Tracker (Active Work)
+# Velocity Workstream Tracker
 
-This tracker is the operational delivery board. It is dependency-first, optimized for multi-agent orchestration, and now focused on active and decision-relevant work.
+This is the current list of product work. It records what is being built, what is being explored, and what is parked. It is not a release checklist or a sequence of approval gates. Historical plans and audits remain evidence, not instructions to resume their processes.
 
-Use with:
-- Documentation index: `docs/README.md`
-- Completed foundations summary: `docs/completed_foundations_summary.md`
-- Strategic roadmap: `docs/roadmap_00_strategic_guide.md`
-- Scope gates: `docs/blue_02_feature_matrix.md`
-- External market assessment: `docs/velocity_external_market_assessment.pdf`
-- Agent rules: `AGENTS.md`
+## Current working arrangement
 
-**Critical path:** Audit 10's engine-boot and CI-truth incident closed on July 15, 2026, with protected promotion and a ten-pair `main` soak. Resume redesign convergence and the narrow SAV-to-deck pilot gate without reopening the verified boot/CI claims absent new contrary evidence.
+- Velocity is in internal development. The product owner is the research tester and will decide when the product is viable for other researchers. No external researcher sessions, paid pilot, fixed session count, or commercial readout is required to continue product work.
+- Build one complete, inspectable workflow at a time. Use the product directly, record defects and decisions, and improve it. A benchmark result or a working prototype is evidence about that slice, not a claim that the whole product is ready.
+- Keep the existing code checks and architectural invariants. They verify changes; they do not decide product direction. Use focused checks during development, `npm run ci` before broad completion claims, and `npm run ci:full` when browser journeys change, as `AGENTS.md` requires.
+- The product owner may change priorities as the product becomes clearer. No workstream needs a pilot result or formal approval milestone before it can be explored or prototyped.
 
-## 1. Status Model
+## Current work
 
-- `Not started`: work item has not begun
-- `In progress`: active implementation
-- `Blocked`: waiting on dependency or decision
-- `Candidate`: implementation exists outside the current product line and must be reconciled, reviewed, and verified before it counts as product
-- `In review`: implementation complete, awaiting review gates
-- `Done`: merged with required evidence
-- `Merged`: absorbed into another tracker row (do not start separately)
-- `Frozen`: explicitly deferred until the relevant gate opens
-
-## 2. Gate Legend
-
-- `T`: Typecheck
-- `L`: Lint
-- `U`: Targeted unit tests
-- `I`: Integration tests / E2E
-- `G`: Golden, parity, or benchmark evidence
-- `A`: Architecture/invariant checks (`src/core` seam, Worker compute, dual-state integrity, ResultEnvelope/session rules)
-- `V`: Market validation evidence (paid pilot, observed workflow, willingness-to-pay signal)
-
-Default owner flow for all implementation items: `Architect -> Implementer -> Reviewer`.
-Handoff required for every owner transition using `docs/agent_handoff_template.md`.
-
-## 3. Active Dependency Graph
-
-```mermaid
-graph TD
-  SB1["STAB-BOOT-1 Fresh workspace (Done)"] --> SB2["STAB-BOOT-2 Boot evidence (Done)"]
-  SB2 --> SB3["STAB-BOOT-3 Linux cause (Done)"]
-  SB3 --> SB4["STAB-BOOT-4 Recoverable boot (Done)"]
-  SB4 --> SB5["STAB-BOOT-5 Verification soak (Done)"]
-  SCI25["STAB-CI-25 Merge controls (Done)"] --> SCI26["STAB-CI-26 Evidence-bound status (Done)"]
-  SB5 --> SCI26
-
-  MARKET["External Market Assessment"] --> P0["PILOT-0 Thesis + Success Criteria"]
-  P0 --> P1["PILOT-1 Pilot Build + Packaging"]
-  P0 --> P2["PILOT-2 Trust Evidence Pack"]
-  P0 --> P4A["PILOT-4a Processing Gap Discovery"]
-  P0 --> P6["PILOT-6 Paid Pilot Recruiting (Blocked)"]
-
-  P1 --> P3["PILOT-3 Complete PPTX Loop"]
-  P2 --> P3
-  P4A --> P4B["PILOT-4b Minimum Viable Processing"]
-  P2 --> P5["PILOT-5 Bounded Agent Outcomes"]
-  P3 --> P5
-  P4B --> P5
-
-  P1 --> P6
-  P2 --> P6
-  P3 --> P6
-  P5 --> P6
-  P6 --> P7["PILOT-7 Readout + Roadmap Gate"]
-
-  P0 --> PD1["PILOT-DEMO-1 Tracker Dataset (Done)"]
-  PD1 --> PD2["PILOT-DEMO-2 Recipe Demo (Done)"]
-  PD1 --> PD3["PILOT-DEMO-3 Tracker Deck (Done)"]
-  PD2 --> PD4["PILOT-DEMO-4 Integration + EVAL-07 (Done)"]
-  PD3 --> PD4
-  PD4 -. demo asset .-> P6
-  PD2 -. gap signals .-> P4A
-
-  STABUIC["STAB-UI-C Complete"] --> STABUID["STAB-UI-D Done"]
-  STABUID --> UXRREM["UXR Program Complete"]
-  UXRREM --> STABUIF["STAB-UI-F Presentation"]
-  STABUIF -. supports pilot UX .-> P6
-  UXRREM -. supports polish .-> P1
-
-  STABUIF1["STAB-UI-F1 Frame artifact"] --> STABUIF2["STAB-UI-F2 Chrome density"]
-  STABUIF3["STAB-UI-F3 Activation"] --> STABUIF2
-
-  UXRREM --> STABUIT["STAB-UI-T Technical UI"]
-  STABUIT7["STAB-UI-T7 Recode wiring"] --> STABUIT2["STAB-UI-T2 Modal foundation"]
-  STABUIT4["STAB-UI-T4 Z-index"] --> STABUIT2
-  STABUIT --> STABUIF
-
-  DR1["DESIGN-RESET-1 Foundation implemented"] --> DCR0["DESIGN-CONV-R0 Reconcile candidates"]
-  DCR0 --> DCB["B Export preview"]
-  DCR0 --> DCK1["K1 Palette + journey truth"]
-  DCR0 --> DCK2["K2 Saved-analysis fidelity"]
-  DCR0 --> DCK3["K3 Interaction + visual quality"]
-  DCR0 --> DCC["C Recent strip"]
-  DCR0 --> DCD["D Palette onboarding"]
-  DCR0 --> DCG["G Collapsible rail"]
-  DCR0 --> DCH["H Canvas handoff"]
-  DCR0 --> DCI["I Recipe diff"]
-  DCR0 --> DCQ5["Q5 Retire focus mode"]
-  DCB --> DCA["A Final evidence + sessions"]
-  DCK1 --> DCA
-  DCK2 --> DCA
-  DCK3 --> DCA
-  DCC --> DCA
-  DCD --> DCA
-  DCG --> DCA
-  DCH --> DCA
-  DCI --> DCA
-  DCQ5 --> DCA
-  DCA --> P6
-
-  P7 -. gate .-> S5R1["S5-R-1 WebR Bridge"]
-  P7 -. gate .-> S5PREP1["S5-PREP-1 Recipe Manager"]
-  P7 -. gate .-> S6AI1["S6-AI-1 Semantic Reasoning"]
-```
-
-Completed Phase 1-4, stabilization, engine/MCP, export, parity, and historical foundations are summarized in `docs/completed_foundations_summary.md`. The active critical path is `DESIGN-CONV-R0` -> redesign closure -> `DESIGN-CONV-A` -> `PILOT-6` -> `PILOT-7`.
-
-## 4. Execution Board
-
-### 4.1 SAV-to-Deck Pilot Workstream
-
-**Source:** `docs/velocity_external_market_assessment.pdf` (June 2026) and the codebase review against current tracker/source state.
-
-**Product thesis:** The fastest, simplest, most private path from an analysis-ready SAV file to a defensible, editable client deck.
-
-**Beachhead:** Boutique quantitative agencies and independent consultants who receive SAV files, produce editable client decks, run frequent crosstabs/subgroup cuts/tracker updates, and feel incumbent license/training friction.
-
-**Non-goals until validation:** Broad SPSS replacement, enterprise collaboration, direct survey platform imports, general-purpose AI, full advanced-methods breadth, and cloud/team governance.
-
-| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| PILOT-0 | Strategy / Validation | Pilot thesis, ICP screen, workflow definition, success metrics, and pricing hypotheses for the SAV-to-deck wedge | External market assessment | Done | No | A,V | [`docs/pilot_00_brief.md`](pilot_00_brief.md) — thesis, workflow targets (<5 min crosstab, <15 min slide), 8 qualification criteria, 3 pricing hypotheses, scope boundaries; gate A conditional pass (June 2026 sub-agent audit) |
-| PILOT-1 | Release / Packaging | Deployable pilot build with durable project flow, clear privacy language, browser-limit warnings, and onboarding instrumentation | PILOT-0 | Done | Yes | T,L,U,I,A,V | [`docs/pilot_01_packaging.md`](pilot_01_packaging.md) — v0.1.0-pilot build, privacy banner, browser checks, local event log (`pilotOnboarding.ts`), `tests/e2e/pilot-workflow.spec.ts` |
-| PILOT-2 | Trust Evidence | Buyer-facing trust pack: parity results, performance benchmarks, missing-value behavior, weighting assumptions, known unsupported cases, and reproducible methodology notes | PILOT-0 | Done | No | G,A,V | [`docs/pilot_02_trust_pack.md`](pilot_02_trust_pack.md) — R/SPSS/golden parity, adapter parity (8/8, 2026-06-25), fresh `benchmark:sav` (sleep + WVS7), missing-value/weighting/limitations sections; `arch_04` weighted-mean gap corrected |
-| PILOT-3 | PowerPoint Engine Loop | Complete template import/map, editable object preservation, saved slide recipes, and dataset/wave replacement | PILOT-1, PILOT-2 | Done | Yes | T,L,U,I,A | Engine/export contract and binary template application are implemented and tested. The frontend review-before-download lane is intentionally tracked separately as `DESIGN-CONV-B`; `PILOT-3` does not claim that journey is complete. |
-| PILOT-4a | Processing Discovery | Observe pilot files and classify which prep gaps actually block the Friday-4pm job: raking/RIM, nets, derived variables, banner plans, reshaping, repeatable recipes | PILOT-0 | In progress | No | V,A | Discovery kit + execution workflow: [`docs/pilot_04a_processing_gap_discovery.md`](pilot_04a_processing_gap_discovery.md), [`docs/pilot_evidence_collection_checklist.md`](pilot_evidence_collection_checklist.md); still requires 10-15 external project/file review notes, ranked blockers, and explicit "do not build yet" list from real pilot observations |
-| PILOT-4b | Minimum Viable Processing | Implement only the smallest processing layer required by PILOT-4a: reusable derived variables/nets, saved banner/break plans, common transformation recipes; raking only if repeatedly pilot-blocking | PILOT-4a | Blocked | Yes | T,L,U,I,G,A,V | Narrow implementation PRs with add-tests-first; transform/session replay tests; dual-state safeguards; pilot unblock evidence |
-| PILOT-5 | Bounded Agent Outcomes | Package the agent as auditable outcomes, not infrastructure: first-pass deck, tracker update, client-request assistant; manual control adjacent to every action | PILOT-2, PILOT-3, PILOT-4b if needed | Not started | Yes | T,L,U,I,A,V | Deck-native Gate 5 technical foundation exists (`VelocityEngine.draftDeckPlan`, `velocity_draft_deck_plan`, approval-required actions, malformed-spec rejection, variable-reference caveats), but full `PILOT-5` remains unpromoted until human acceptance, observed time reduction, and trust/correction evidence are available. |
-| PILOT-6 | Paid Pilot Program | Recruit and run 5-8 qualified paid boutique-agency/consultant pilots | DESIGN-CONV-A, PILOT-0, PILOT-1, PILOT-2, PILOT-3 | Blocked | No | V | Program kit and execution workflow are ready. External recruiting and delivery wait for the redesign gate: reconciled final candidate, fresh screenshots, reproducible journey automation, and 3–5 unscripted representative sessions. |
-| PILOT-7 | Roadmap Gate | Decide whether to continue, narrow, pause, or expand based on paid-pilot evidence; update roadmap, feature matrix, and this tracker | PILOT-6 | Not started | No | A,V | Decision memo with metrics, retained wedge, rejected assumptions, next 1-3 workstreams |
-| PILOT-DEMO-1 | Demo Asset | Brand tracker synthetic dataset + ground truth (plan Phase A): deterministic generator, 5 committed waves + raw W4, rim weights, planted SCR storyline, engine-parity golden test | PILOT-0 | Done | No | T,L,U,G | [`docs/workstreams/deck_native/10_brand_tracker_demo_plan.md`](workstreams/deck_native/10_brand_tracker_demo_plan.md) §7 Phase A — `scripts/python/generate_brand_tracker.py` + config; `public/examples/brandtracker_w4.sav`; `test_data/fixtures/brand_tracker/`; `validation/brand_tracker_ground_truth.json`; `tests/golden/brand_tracker_parity.test.ts` (12 tests green); full `npm run ci` pass (2026-07-03) |
-| PILOT-DEMO-2 | Demo Asset | Transformation recipe demo + gap log (plan Phase B): raw W4 → analysis-ready via existing engine primitives; gaps logged as PILOT-4a internal signals | PILOT-DEMO-1 | Done | No | T,L,U,I,A | Plan §4 — `scripts/brand-tracker-recipe-demo.ts` runs steps 1–10 with zero manual repair (exit 0; `npm run demo:brand-tracker-recipe`); session round-trip replay test `src/engine/__tests__/brand_tracker_recipe_roundtrip.test.ts` (green); gap signals INF-06…INF-09 added to [`docs/pilot_04a_processing_gap_discovery.md`](pilot_04a_processing_gap_discovery.md) §7 + walkthrough [`docs/workstreams/deck_native/brand_tracker_recipe_gap_log.md`](workstreams/deck_native/brand_tracker_recipe_gap_log.md); no new engine surface (2026-07-03) |
-| PILOT-DEMO-3 | Demo Asset | Tracker deck + north-star exemplar candidate (plan Phase C): `scripts/brand-tracker-demo.ts`, ~18-slide deck per story template, rubric-scored exemplar artifacts | PILOT-DEMO-1 | Done | No | T,L,U,I | Plan §5 Phase C — `scripts/brand-tracker-demo.ts` (`npm run demo:brand-tracker`, exit 0) builds an 18-slide deck (28 physical w/ dividers) on `public/examples/brandtracker_w4.sav`, weighted `wt`; golden PPTX `tests/fixtures/export/brandtracker-report.pptx`. Action titles use planted ground-truth numbers (sig movers stated; "worth the price" broadly stable; NPS low-base caveat). Exemplar candidate artifacts in `demo/artifacts/report-quality/exemplars/` (`brandtracker_w4_deck_candidate.md`, `_conformance.md` 10/10 checklist + narrative band 3, `_action_title_eval.json`, `_pptx_inspection.json`). inspect-pptx matches `sleep-report.pptx` baseline; T/L pass. Human sign-off still pending for promotion |
-| PILOT-DEMO-4 | Demo Asset | Demo integration + wave refresh + EVAL-07 (plan Phase D): Load Example swap, autoFirstCrosstab, demo contracts, e2e, wave-5 refresh, EVAL-07 freeze | PILOT-DEMO-2, PILOT-DEMO-3 | Done | No | T,L,U,I,G,V | Plan §6/§5.3 Phase D — brand tracker is the primary Load Example (`useFileUpload.ts`, sleep.sav retained as backup + fallback); funnel-relevant auto-first-crosstab (brand preference × segment) in `autoFirstCrosstab.ts`; demo contracts `demo/contracts/brand-tracker-{load,recipe,deck-export,wave-refresh}.json`; e2e smoke `tests/e2e/brand-tracker-workflow.spec.ts`; wave-5 refresh demo `scripts/brand-tracker-wave-refresh-demo.ts` (`npm run demo:brand-tracker-wave-refresh`, exit 0 — dataset-replacement review READY, recomputed titles flagged for confirmation, flat-mover demotion, RECIPE-REPLAY/INF-04 made legible); trust-pack parity commands added (`pilot_02_trust_pack.md` §3.3, §9); **EVAL-07 frozen** (`evals/eval-07/` brief + `runs/run-2026-07-03/` scorecard/gap_review/summary.json + deck/session artifacts, `npm run eval:07`). Frozen EVAL-01…06 and sleep.sav roles untouched; no new engine surface. Consultant sign-off (`brand_tracker_north_star_signoff.md`) remains the exemplar-promotion bar (2026-07-03) |
-
-#### Dependency Notes
-
-- `PILOT-0` is the shared contract. Do not start broad build work until the pilot workflow, ICP, and success metrics are explicit.
-- `PILOT-1`, `PILOT-2`, and `PILOT-4a` can run in parallel after `PILOT-0`.
-- `PILOT-3` should stay single-threaded while it defines template/recipe contracts that export, session, and deck code will share.
-- `PILOT-4b` remains blocked until real pilot/project evidence shows which processing gaps are adoption blockers.
-- `PILOT-6` program preparation can continue, but external recruiting and delivery remain blocked until `DESIGN-CONV-A` passes.
-- `PILOT-7` is the gate before re-opening broad Phase 5+ expansion.
-
-#### Recommended Next Pull
-
-1. ~~`DESIGN-CONV-R0`~~: complete — [`R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md).
-2. Wave 1 (`K1`, `K2`, `K3`, `B`, `Q5`) is complete. Verify retained Wave 2 candidates (`D`, `C`, `H`, `G`, `I`).
-3. `DESIGN-CONV-A`: capture final evidence and run unscripted representative sessions.
-4. `PILOT-4a`: continue non-product processing-gap discovery where it does not depend on recruiting.
-5. `PILOT-6`: start recruiting only after `DESIGN-CONV-A` passes.
-
-### 4.2 Future Gates
-
-These rows remain directionally valid, but should not become active until `PILOT-7` shows retention, willingness to pay, or repeated pilot blockers that justify them.
-
-| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Gate to activate |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S5-R-1 | Runtime | Productized WebR Worker + Arrow-to-R marshalling | S5-HARM-1, PILOT-7 | Frozen | Yes | T,L,U,I,A | Activate only if advanced methods/raking repeatedly block paid pilots |
-| S5-STATS-1 | Stats | Advanced models (`lme4`) + raking path integration | S5-R-1 | Frozen | Yes | T,L,U,I,G,A | Activate only after WebR runtime is productized and pilot evidence demands it |
-| S5-PREP-1 | Data Prep | Recipe manager + time travel | PILOT-7 or PILOT-4b | Frozen | Yes | T,L,U,I,A | Activate if saved transformation recipes become a retention requirement |
-| S5-PREP-2 | Data Prep | Block formula builder + programming-by-example | S5-PREP-1 | Frozen | Yes | T,L,U,I,A | Activate after recipe manager proves useful |
-| S6-AI-1 | AI | Semantic reasoning + auto-code for text | PILOT-7, S5-PREP-1 | Frozen | Yes | T,L,U,I,A,V | Activate only after bounded agent outcomes prove value |
-| S6-AI-2 | AI | Text-to-SQL/Text-to-state interpreter | S6-AI-1 | Frozen | Yes | T,L,U,I,A,V | Activate after semantic reasoning is validated |
-| S6-AI-3 | AI | Action hub workflows | S6-AI-2 | Frozen | Yes | T,L,U,I,A,V | Activate after repeatable agent workflows exist |
-| S7-CLOUD-1 | Cloud | Realtime collaboration backend + UI integration | S6-AI-3 | Frozen | Yes | T,L,U,I,A,V | Activate only for in-house/team ICP expansion |
-| S7-CLOUD-2 | Cloud | Direct survey platform imports via backend proxy | S7-CLOUD-1 | Frozen | Yes | T,L,U,I,A,V | Activate only after governance/import pain is observed in target segment |
-
-### 4.3 Presentation & Activation (`STAB-UI-F`)
-
-**Source:** July 2026 full UI audit; extends closed `STAB-UI-P` / UXR programs.  
-**Reference:** [`docs/plan_02_ui_presentation_workstream.md`](plan_02_ui_presentation_workstream.md) — findings register (`UXF-###`), slice specs, acceptance checklists.  
-**Pilot presentation gate:** [`docs/audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — Linear-bar workflow screenshot audit (July 1, 2026). **Gate closed July 2, 2026** — PPR P0/P1/P2 shipped in [PR #18](https://github.com/cbrown564-alt/velocity/pull/18); post-fix evidence in [`screenshots-p2-final/`](assets/ui-pilot-readiness-audit/screenshots-p2-final/).  
-**Goal:** Client-presentable crosstab/chart slides and credible first-five-minutes activation for `PILOT-6`.
-
-| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | Done | Yes | T,L,U,I,A | **PR #6:** widened slide frame, horizontal scroll, chart placeholder. **F1.2 PR #18:** shrink-wrap via `AnalysisOutputFrame.shrinkWrap` + content-sized charts. **F1.3 PR #18:** view-switch fade. **F1.4:** `showCellN` / `showColumnBases` toggles; deck-clean defaults off. UXF-001–005 closed. **July 3:** UXF-017 LG header fix; mulberry32 example data; status-bar display toggles; CrosstabCell layout-flow when `n=` hidden. |
-| STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | Done | No | T,L,U,I | **F2.1–F2.4 Done:** Focus discoverability via micro-tip chips; timeline dock compact default; inactive slide labels hidden until dock hover; slide title hover uses primary not accent; VM inspector guided empty state. **PR #18:** focus toolbar hide (PPR-011), VM column expand (UXF-009). |
-| STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | Done | Yes | T,L,U,I,V | **F3.1–F3.4 Done:** welcome-back labels (**PR #18** catalog hydration). **PR #18 PPR-005:** corner coaching chips + session-scoped dismiss; resume trust (PPR-016). Contextual micro-tips via `contextualMicroTips.ts`; `WorkspaceStatusStrip`. Tests: `contextualMicroTips.test.ts`, `firstCrosstabTour.test.ts`, `WorkspaceStatusStrip.test.tsx`. |
-| STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Done | No | T,L,U | `CommandPalette.tsx` variable search + shelf actions; **PR #18 PPR-012** neutral focus ring. Tests: `CommandPalette.test.tsx`, `commandPaletteSearch.test.ts` |
-| STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes (UXF-016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | UXF-015 splash contrast closed in PR #18; UXF-016 high-contrast/colorblind themes deferred until pilot requests |
-| STAB-UI-F6 | Nested row chart semantics | Define and implement chart representation for nested row recipes (e.g. measure parent + categorical children); table supports expand/collapse but chart renderers consume top-level `processedData.rows` only — scope, chart type, and table↔chart sync TBD | STAB-UI-F1; nested-row crosstab table fix (July 2026) | Not started | Yes | T,L,U,I,A | **Follow-up (July 2026).** Example: Age (numeric) + Region (nested) × Gender — table shows Age means with expandable Region rows; chart currently plots parent row only (means) or misaligns mixed metric/frequency semantics. Design options to evaluate: parent-only default, explicit drill level / row picker, small multiples by nested var, inherit table expand state, or chart-only flatten to leaves. See `arch_05_visualisation_engine.md`, `user_journey_screenshots.md` §2.2 open question. |
-| STAB-UI-VAR-1 | Variable catalog ordering | Shared browse-order contract for ⌘K insert palette (empty query) and Variable Manager: **Smart** (default), **File order** (ingest/column order), **Alphabetical** (display name); optional future grouping tiers | DESIGN-RESET-1 | Not started | Yes | T,L,U,I,A | **Contract (July 2026 intro-flow QA).** Today both surfaces lack user-controlled ordering — palette shows first *N* file-order sets; VM lists ingest order only. **Smart** mode (default) should be dataset-agnostic: rank by analysis intent (outcomes → banners/segments → grids/multiples → demographics → admin/IDs), then stable tie-break within tier (file order until semantic annotations mature). **File order** preserves source column order (`VariableSet.order` / ingest index). **Alphabetical** sorts by primary display label (`variable.label` ?? `set.name`). One pure ordering function in `src/core/` or `src/lib/`; persisted `variableCatalogOrderMode` preference in `uiSlice`; VM sort control (segmented or dropdown); palette empty-query browse calls the same function (no demo-specific hacks). Grouping/folders remain separate from sort mode. Do **not** conflate with `STAB-UI-F4` palette search grammar or synthetic-shell filtering (shipped separately, July 2026). |
-
-#### STAB-UI-F Dependency Notes
-
-- **F3.1** (welcome UUID) has no dependency on F1 — pull first for a quick trust win.
-- **F1** blocks **F2** (shared slide frame contract) and **F5** (significance color stability).
-- **F4** can run in parallel with F1/F3 after palette API is agreed in plan §F4.
-- **F6** is a design follow-up from the July 2026 nested-row crosstab fix — do not block pilot on it; requires a short design brief before implementation (mixed metric + frequency semantics, table expand state vs chart scope).
-- **STAB-UI-VAR-1** addresses catalog browse order/grouping for palette + Variable Manager; intro-flow work (auto-weight, coach toast, synthetic-shell palette filter) ships separately and must not embed demo-specific sort rules.
-- Do not expand scope into Liquid Glass maturity, mobile layout, or component monolith refactors without `PILOT-7` gate.
-- Update `UXF-###` status in the plan doc when each finding closes; link PR URLs in tracker row notes on merge.
-
-#### STAB-UI-F Recommended Pull
-
-1. `PILOT-6` paid pilot recruiting (presentation gate closed — PR #18).
-2. `PILOT-4a` processing gap discovery.
-3. `STAB-UI-VAR-1` variable catalog ordering (smart / file / alphabetical) when intro-flow browse pain recurs on real pilot files.
-4. `STAB-UI-F5` accessibility themes (only if pilot requests).
-
-### 4.3.1 Design Reset — Pathway B (`DESIGN-RESET-1`)
-
-**Source:** [`docs/plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) — deck-first IA inversion + single evolved Soft Machine identity (July 2026).
-
-| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| DESIGN-RESET-1 | Reset foundation | Single theme; story rail; insert palette; recipe inspector; honest slide; two-pane Variable Manager; baseline evidence pack | STAB-UI-F (partial supersession) | In review | Yes | T,L,U,I | Phases 1–3 are implemented on the current line. Phase 4 is incomplete: the committed screenshots are a July 4 baseline rather than final photography, the scripted five-minute pass does not prove the documented rows/columns grammar, and representative sessions have not run. Closure is owned by `DESIGN-CONV`. |
-
-**Supersedes (do not re-implement):** multi-theme switcher, resident variable sidebar, analysis shelf, timeline dock, coaching layer. STAB-UI-F2/F3/F4 rows remain historical; behavior now matches plan_05.
-
-### 4.3.2 Design Reset Convergence (`DESIGN-CONV`)
-
-**Source:** [`docs/assets/design-reset-evidence/before_after_analysis.html`](assets/design-reset-evidence/before_after_analysis.html) — key questions (Q1–Q7) and diverse paths forward (A–J).  
-**Decision date:** July 4, 2026 — product owner review of post-reset evidence pack.  
-**Goal:** Finish Sarah's five-minute journey (file drop -> three faithful slides -> reviewed PPTX) on the current product line without re-litigating Pathway B. Candidate branches are evidence of implementation work, not proof that the product contains or passes it.
-
-**Current finding (September 21):** Wave 1 core items `R0` / `Q5` / `K1` / `K2` / `K3` are Done on `main`. `DESIGN-CONV-B` export preview lane is Done on `main`. Wave 2 is integrated locally on `codex/convergence-candidates` with local automated verification (September 21); this is not a main-branch promotion or representative-user validation. C remains **Candidate** pending discovery evidence; D/H/G/I are **In review**. F rejected; E deferred. Local checks: lint, all typechecks, 1,632 unit tests (3 todo), build, 28 product/boot browser tests, 4 production smoke tests, formatting, architecture guards, and journey gate passed. The browser tests cover upload/palette handoff, accessible pinning and rail expansion, session import diagnostics, reload, and dataset switching. The journey measured 2.35s cold / 1.49s warm first crosstab and 0.14s PPTX generation. Representative-user discovery evidence and main-branch promotion remain outstanding.
-
-
-#### Convergence decisions (Q1–Q7)
-
-| Q | Question | Decision | Tracker action |
+| Priority | Workstream | Current position | Next useful result |
 | :--- | :--- | :--- | :--- |
-| Q1 | Is summon-only variable discovery fast enough for drag-first consultants? | **Open — explore options.** Early feedback: summon-only feels unintuitive; consultants are not programmers. Do not assume ⌘K-only holds without evidence. Evaluate thin resident affordances (Path C) and one-time palette onboarding (Path D) before expanding summon-only. | `DESIGN-CONV-C`, `DESIGN-CONV-D`; `DESIGN-CONV-A` supplies behavioral evidence |
-| Q2 | Does the story rail earn its 240px on 1–2 slide decks? | **Proceed via Path G.** Collapsible rail reclaims space on small decks without abandoning deck-native IA. | `DESIGN-CONV-G` |
-| Q3 | Where does "review before export" live? | **Confirmed: deck preview step before PPTX.** Path B implements configure → review lane → download for PPTX (Excel remains one-step). | `DESIGN-CONV-B` — **Wave 1 priority** |
-| Q4 | Can we teach palette grammar without reintroducing coaching? | **Proceed via Path D.** One-time inline ghost inside the palette — dismiss forever, no tour overlay. | `DESIGN-CONV-D` |
-| Q5 | Is focus mode still a mode? | **Focus mode is redundant.** Default chrome + honest slide is the presentation surface; retire focus mode rather than polish it. | `DESIGN-CONV-Q5` |
-| Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Audit complete: no.** The rail exposes only rows × columns; persistent filter/weight/view summaries, sections, and notes are absent. | `DESIGN-CONV-Q6` is Done; remediation is `DESIGN-CONV-K2` and `DESIGN-CONV-I` |
-| Q7 | Dark mode vs journey polish? | **Dark mode after journey polish.** Token inversion of evolved Soft Machine only when a pilot blocks without it. | `DESIGN-CONV-J` — **Frozen** until Wave 4 gate |
+| 1 | **Existing researcher journey** | The design-reset foundation, saved-slide settings, palette grammar, and export preview are on `main`. This working tree resolves one active analysis consistently for run, session save/reopen, export review, and XLSX output; focused and browser checks pass. The retained discovery, onboarding, rail, upload handoff, and import-summary candidates have local verification on `codex/convergence-candidates`, but are not on `main`. | Test this saved-analysis loop directly in the app, then review the convergence candidates with the product owner, keep the useful parts, and capture current journey screenshots. |
+| 2 | **Research quality and assisted interpretation** | SBT-001 generation, preparation, reference analysis, and native-chart work are experimental. The comparative runner, executable story graders, and independent researcher preference evidence are incomplete. The September research expansion is not a released product feature. | Resolve reference/scorer ambiguities and use one supported study to test whether findings and counter-evidence survive into a useful answer. Keep the study portfolio as a way to find failures, not a feature list. |
+| 3 | **One unified workflow prototype** | Engine analysis, provenance, sessions, and editable export exist. Evidence-linked findings and researcher review are not yet one durable workflow in the app. | Design the smallest session-compatible evidence/finding/review state, then build one loop: open a file and brief, run supported analyses, inspect and revise a proposed finding, save, reopen, and continue. The product owner tests it. |
+| 4 | **Reporting quality** | Editable PPTX and the review-before-download lane exist. A technically editable export is not yet proof of a strong client presentation. | Inspect exported slides directly and improve the specific defects found in the representative workflow. Preserve the link between claims and their evidence. |
+| 5 | **Preparation gaps** | Internal examples expose some processing gaps; the former `PILOT-4a` kit was written for external pilot discovery. | Keep a short list of blockers found while testing real or realistic files. Add only the preparation operation needed to complete the selected workflow, with replay and dual-state integrity checks. |
 
-#### Execution board
+These priorities describe where to spend attention now. They are not dependencies: useful design, research, and prototype work can proceed when it helps answer a concrete question.
 
-| ID | Path | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| DESIGN-CONV-R0 | — | Integrate | Inventory and reconcile all approved convergence candidates against current `main`; resolve conflicts and preserve backend-reset contracts | DESIGN-RESET-1 | Done | No | T,L,U,I,A | [`R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md) on `main` baseline `3ba5964`: inventory, docs-vs-code conflict matrix, retain/defer/reject dispositions, overlap-aware Wave 1→2 sequence; no candidate silently promoted to Done |
-| DESIGN-CONV-K1 | — | Correctness | Choose one palette grammar and align UI copy, help, tests, five-minute script, and recipe assertions | DESIGN-CONV-R0 | Done | Yes | T,L,U,I | Grammar A retained (↵ columns / ⌥↵ rows / ⇧↵ filter); docs aligned; five-minute harness asserts recipes by variable name via `__velocityStore` |
-| DESIGN-CONV-K2 | — | Correctness | Restore each slide's saved weight and analysis settings; expose persistent filter/weight/view summaries needed for recipe legibility | DESIGN-CONV-R0, DESIGN-CONV-Q6 | Done | Yes | T,L,U,I,A | Merged to `main`: store projects weight+settings on slide switch/add/remove/duplicate; session export snapshots active slide; import prefers active-slide contract; StoryRail shows filt/wt/view tokens; switch tests in `slidesSlice.test.ts` |
-| DESIGN-CONV-K3 | — | Quality | Fix overflow-menu hit testing, make closed inspector content inert or unmounted, close contrast violations, align slide-title typography, and verify supported widths | DESIGN-CONV-R0 | Done | Yes | T,L,U,I | Merged to `main`: overflow `--z-menu`; closed inspector unmounted; meaningful chrome `--text-secondary`; slide titles `--font-display`; e2e overflow widths without force-click |
-| DESIGN-CONV-A | A | Validate | Fresh final photography; reproducible journey automation; 3–5 unscripted sessions scored for time, discovery, errors, and recovery | DESIGN-CONV-B, C, D, G, H, I, Q5, K1, K2, K3 | Blocked | No | I,V | Evidence kit from PR #59 merged: [`design_conv_a_unscripted_session_scorecard.md`](design_conv_a_unscripted_session_scorecard.md), five blank session cards, and screenshot command. July images remain historical. Still required: fresh final-candidate photography and 3–5 observed unscripted sessions; no user-validation claim |
-| DESIGN-CONV-B | B | Journey | Export preview lane: export-bound thumbnails, recipe summary, significance audit, then PPTX download | DESIGN-CONV-R0 | Done | Yes | T,L,U,I,V | Partial transplant from #55: `ExportPreviewLane` + `exportPreviewSummary`; PPTX configure→review→download; Excel one-step; E2E + five-minute harness require preview |
-| DESIGN-CONV-C | C | Discovery | Thin collapsible recent-and-pinned variable strip, not a full sidebar | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | Integrated from #54 on `codex/convergence-candidates`: removed retired focus-mode references; unavailable pins cannot consume visible slots; accessible pin controls. Remains Candidate until DESIGN-CONV-A establishes discovery value. |
-| DESIGN-CONV-D | D | Keyboard | First-palette inline ghost that teaches the canonical row/column grammar and dismisses permanently | DESIGN-CONV-R0, DESIGN-CONV-K1 | In review | Yes | T,L,U,I | Integrated from #52 on `codex/convergence-candidates`: Grammar A onboarding, per-dataset dismissal, storage-failure fallback; storage and browser dismissal regressions pass; awaiting review and promotion. |
-| DESIGN-CONV-E | E | Story | Start from a three-slide tracker template | DESIGN-CONV-B, PILOT-DEMO-3, DESIGN-CONV-A | Candidate | Yes | T,L,U,I,V | R0: defer / reimplement later; code conflicts in session/splash; not on pilot critical path before core journey |
-| DESIGN-CONV-F | F | Natural language | Palette row/column binding from a short phrase | DESIGN-CONV-D, DESIGN-CONV-A | Frozen | Yes | T,L,U,I,A,V | R0: reject for Cursor capacity sprint (explicit non-goal); reopen only after DESIGN-CONV-A demand |
-| DESIGN-CONV-G | G | Polish | Story rail collapses below 48px for small decks and expands predictably | DESIGN-CONV-R0 | In review | Yes | T,L,U,I | Integrated from #49 on `codex/convergence-candidates`: explicit keyboard/touch toggle, 44px single-slide rail, preserved K2 summaries and K3 contrast; warnings keep rail expanded. Browser keyboard expansion and pinning pass; global Enter no longer intercepts native buttons. |
-| DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with the insertion path ready | DESIGN-CONV-R0, DESIGN-CONV-K1 | In review | Yes | T,L,U,I,V | Integrated from #58 on `codex/convergence-candidates`: first-upload handoff with live-state/example-auto-analysis guard; preserved recipe assertions and export review. Browser upload, escape, reload, and workspace-switch journeys pass. |
-| DESIGN-CONV-I | I | Agent | Quiet imported-session summary: slides added, unresolved variables, recipe changes | DESIGN-CONV-R0, DESIGN-CONV-K2 | In review | Yes | T,L,U,I,A | Integrated from #56 on `codex/convergence-candidates`: persistent import summary, current app/recovery wiring and active-slide restoration retained; single-slide warnings remain visible. Browser export/import round trip verifies unresolved references, affected slides, analysis, and dismissal. |
-| DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only |
-| DESIGN-CONV-Q5 | — | Retire | Remove focus mode (`F` shortcut, toolbar toggle, focus chrome rules); default canvas is the presentation surface | DESIGN-CONV-R0 | Done | Yes | T,L,U,I | Transplant from #50 onto R0 baseline: focus store/API + F/toolbar/palette removed; focus unit tests deleted; screenshot/eval scripts cleaned; `design_02_ux_modes.md` updated |
-| DESIGN-CONV-Q6 | — | Audit | Review recipe legibility for human and MCP additive refinement | DESIGN-RESET-1 | Done | No | A | [`docs/design_reset_recipe_legibility_audit.md`](design_reset_recipe_legibility_audit.md) identifies missing persistent analysis summaries and recipe structure; remediation is tracked in K2 and I |
+## Parked work
 
-#### Wave plan (multi-agent orchestration)
-
-| Wave | Items | Rationale |
-| :--- | :--- | :--- |
-| **0** | ~~`DESIGN-CONV-R0`~~ Done | Integration baseline recorded in `R0_RECONCILIATION.md` |
-| **1** | ~~`Q5`~~ ~~`K1`~~ ~~`K2`~~ ~~`K3`~~ ~~`B`~~ Done | Wave 1 pilot blockers closed |
-| **2** | `DESIGN-CONV-C`, `D`, `G`, `H`, `I` | Reconcile approved discovery, continuity, rail, and handoff candidates against the settled contracts (R0 order: D → C → H → G → I) |
-| **3** | `DESIGN-CONV-A` | Photograph and test only the final candidate; rerun after any session-driven correction |
-| **Later** | `DESIGN-CONV-E`, `F` | Non-blocking additions after the core journey passes |
-| **Hold** | `DESIGN-CONV-J` | Dark mode — after journey polish or explicit pilot blocker |
-
-#### DESIGN-CONV dependency notes
-
-- `R0` is single-threaded because every retained candidate must target one current integration baseline.
-- B, K1, K2, K3, and Q5 are pilot blockers. C, D, G, H, and I are approved candidates that must be reconciled and judged on the final experience.
-- A begins only after final chrome and behavior are on current `main`; intermediate screenshots and scripted timing do not satisfy it.
-- E and F do not block A or PILOT-6. J stays frozen until pilot evidence explicitly opens it.
-
-#### DESIGN-CONV recommended pull
-
-1. ~~`DESIGN-CONV-R0`~~ — Done (`R0_RECONCILIATION.md`).
-2. Wave 1 Done — next Wave 2: `D`, `C`, `H`, `G`, `I`.
-3. `DESIGN-CONV-D`, `C`, `H`, `G`, `I` — Wave 2 in R0 overlap-safe order.
-4. `DESIGN-CONV-A` — fresh photography and representative validation on the final candidate only.
-
-### 4.4 Technical UI Foundation (`STAB-UI-T`)
-
-**Source:** July 2026 independent technical UI audit (perf, modal/a11y infra, resilience, stacking).  
-**Reference:** [`docs/plan_03_ui_technical_foundation.md`](plan_03_ui_technical_foundation.md) — findings register (`UXT-###`), subscription inventory, slice specs.  
-**Goal:** Fast, accessible, resilient UI for `PILOT-6`; complements `STAB-UI-F` presentation work.
-
-| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-UI-T7 | Recode wiring | Fix `ModalHost` `RecodeModal onSave` noop; all recode paths persist (UXT-012) | None | Done | Yes | T,L,U | **PR #6:** `ModalHost` wires `onSaveRecode` → `handleRecodeSave` (`persistDatasetSession`); `RecodeModal.test.tsx` verifies save callback. UXT-012 closed. |
-| STAB-UI-T5 | VM theme fix | Replace hardcoded white `rgba` in `FacetedSearchBar.module.css`; token cleanup (UXT-010, UXT-021) | None | Done | No | T,L,U | **PR #6:** `color-mix(in srgb, var(--text-inverse) …)` replaces hardcoded white on active insight badges/chips. UXT-010 closed; UXT-021 partial (tailwind dead hexes deferred). |
-| STAB-UI-T4 | Z-index scale | Semantic `--z-*` tokens; toast above modal; menus above sticky headers (UXT-009) | None | Done | No | T,L,U | **PR #23:** migrated remaining ad-hoc z-index literals to `--z-sticky` through `--z-menu`; 35 → 0 raw literals in `src/` |
-| STAB-UI-T2 | Modal foundation | `ModalShell` dialog semantics, focus trap/restore, form labels, close labels, keyboard click targets (UXT-003–008, UXT-014–016) | STAB-UI-T4 | Done | Yes | T,L,U,I | **PR #21 + #22:** T2.1 `ModalShell` foundation; T2.2 bypass modal migration (UXT-004); T2.3–T2.6 form labels, close labels, keyboard parity, skip link, context menus, table scope (UXT-006–008, 014–016). Integration branch `cursor/stab-ui-integration-2f52`. |
-| STAB-UI-T3 | Error boundaries | `AnalysisErrorBoundary` on slide + chart renderers (UXT-005) | None | Done | No | T,L,U | `AnalysisErrorBoundary` + `AnalysisErrorFallback` wrap `SlideContainer` output and `AnalysisChart` renderers; reset on config change + Retry; tests in `AnalysisErrorBoundary.test.tsx`. |
-| STAB-UI-T1 | Store selectors | Eliminate bare `useVelocityStore()` in 18 files; optional memo on hot leaves (UXT-001–002) | None | Done | No | T,L,U,G | Migrated all production component/hook call sites in plan §T1 to granular selectors (`App.tsx`, `AppShell`, `DashboardShell`, Variable Manager columns, workspace hooks, harmonization shell, etc.). `rg 'useVelocityStore\(\)' src --glob '*.tsx'` returns zero in production components; bare calls remain only in store test harnesses. UXT-001 closed; UXT-002 deferred pending profile. |
-| STAB-UI-T6 | Shortcuts & hygiene | Unified keydown registry, lazy Monaco, dev-gated console noise (UXT-011, UXT-013, UXT-019) | STAB-UI-T2 | Done | No | T,L,U | `src/lib/keyboardShortcuts/registry.ts` replaces scattered listeners in AppShell, VariableManager, TimelineDock, KeyboardShortcuts; CommandPalette uses modal context; `RCodeEditor` lazy-loads Monaco; `usePersistenceManager` logs gated behind `import.meta.env.DEV`; tests in `registry.test.ts` |
-
-#### STAB-UI-T Dependency Notes
-
-- **T7** and **T5** have no dependencies — pull before or parallel with **STAB-UI-F**.
-- **T4** should land before or with **T2** so modal/toast/menu stacking is stable during modal work.
-- **T1** is the largest diff; safe to run parallel with **T3** after **T7/T5** land.
-- **T6** shortcut registry should follow **T2** so modal context integrates cleanly.
-- UXT-017, UXT-018, UXT-020 remain **deferred** unless a slice touches those files.
-- Update `UXT-###` status in the plan doc on merge; link PRs in tracker notes.
-
-#### STAB-UI-T Recommended Pull
-
-1. `PILOT-6` paid pilot recruiting.
-2. `PILOT-4a` processing gap discovery.
-
-### 4.5 CI Truth Maintenance (`STAB-CI`)
-
-Audit 10 closed `STAB-BOOT-1`…`5` and `STAB-CI-25`…`26` on July 15, 2026. The exact promoted commit, enforced checks, deliberately failing merge-control proof, repeated `main` runs, returning-session/chaos suite, and supported pilot profiles are linked in [Audit 10 §14](audit_10_engine_boot_ci_truth_rca_2026-07-14.md#14-evidence-inventory).
-
-**Source:** `docs/audit_08_ci_failure_rca_2026-07-01.md` — repeated CI failures from local ↔ CI gate mismatch and doc drift (July 2026).
-
-| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-CI-2 | CI local parity | `npm run ci` / `ci:e2e`, pre-PR playbook, doc + PR template sync | STAB-CI-1 (Done) | Done | No | A | `docs/playbooks/pre_pr_verification.md`, `docs/audit_08_ci_failure_rca_2026-07-01.md`, PR template, `makeVariable()` |
-| STAB-CI-3 | ESLint ratchet | Warn → error on ratcheted rules; changed-file guard | STAB-CI-2 | Done | No | A | `eslint.config.js`, `scripts/check-eslint-ratchet.mjs`, `npm run lint --max-warnings 0` |
-| STAB-CI-4 | E2E companion enforcement | UI trigger paths require `tests/e2e/` updates in same PR | STAB-CI-2 | Done | No | A,I | `scripts/check-e2e-companion.mjs`, wired in CI + `npm run ci` |
-| STAB-CI-5 | DuckDB Arrow browser smoke | Playwright gate for WASM Arrow ingestion path | STAB-CI-2 | Done | No | I | `tests/e2e/duckdb-arrow-smoke.spec.ts`; `duckDbArrow.test.ts` points to e2e |
-| STAB-CI-6 | Coverage exclusion ratchet | Measure store slices with characterization tests | STAB-CI-2 | Done | No | A | `harmonizationSlice`, `uiSlice`, `variableCatalogActions` in coverage set; thresholds pass |
-| STAB-CI-7 | Features/overlays coverage ratchet | Remove blanket `src/features/` + `src/components/overlays/` exclusions; add characterization tests | STAB-CI-6 | Done | No | A | Blanket exclusions removed in `vitest.config.ts`; 40+ new/extended co-located tests (workspace, variable manager, dashboard, overlays); global coverage passes (82.03% fn / 79.41% br, July 2026); measured features+overlays aggregate 73.9% fn — per-module follow-up remains |
-| STAB-CI-8 | EngineProxy / duckdbBundles characterization | `EngineProxy.ts` + `duckdbBundles.ts` in coverage set with co-located tests | STAB-CI-6 | Done | No | A | `src/services/EngineProxy.test.ts`, `src/services/duckdbBundles.test.ts`; service exclusions removed |
-| STAB-CI-9 | Parity gate in CI | `npm run test:parity` (WASM vs Node adapter on golden fixtures) added to `test` job and `npm run ci` | STAB-CI-2 | Done | No | G | 8 tests, ~2.4s wall-clock on CI-class hardware; full-CI path chosen (under 3-min budget); step in `.github/workflows/test.yml` after coverage, before build; `arch_08_testing.md` §8 updated (July 2026) |
-| STAB-CI-10 | Features/overlays per-module coverage ratchet | Per-path honesty floors for `src/features/**` and `src/components/overlays/**` | STAB-CI-7 | Done | No | A | Initial per-path floors in `vitest.config.ts` (fn 70% / 67%); ongoing raise tracked with STAB-CI-11 |
-| STAB-CI-11 | Per-path coverage thresholds | Global + path-specific floors in `vitest.config.ts` (`core`, `features`, `overlays`, `services`, `store`) | STAB-CI-10 | Done | No | A | Global br 80 / fn 81 / stmt 83; per-path blocks enforced in `unit-coverage` job |
-| STAB-CI-12 | Parallel CI jobs | Split monolithic `test` job into `lint-format`, `typecheck`, `arch-guards`, `unit-coverage`, `build`, `e2e` | STAB-CI-2 | Done | No | A | `.github/workflows/test.yml`; concurrency cancel; job summaries |
-| STAB-CI-13 | Pre-commit hooks | Lefthook runs `format:check` + `lint` on staged files | STAB-CI-3 | Done | No | A | `lefthook.yml`; `npx lefthook install`; opt-out `LEFTHOOK=0` |
-| STAB-CI-14 | CI script shortcuts | `npm run ci:lint` (lint-format job), `ci:full` (ci + e2e) | STAB-CI-12 | Done | No | A | `package.json`; referenced in workflow job summaries |
-| STAB-CI-15 | `@visual` quarantine | Product `e2e` job excludes screenshot specs via `--grep-invert @visual` | STAB-CI-12 | Done | No | I | `test:e2e`, `test:e2e:visual`, `test:e2e:visual:update` scripts |
-| STAB-CI-16 | Visual E2E workflow | Non-blocking `visual-e2e.yml` for `@visual` screenshot regression | STAB-CI-15 | Done | No | I | `continue-on-error: true`; `npm run test:e2e:visual` |
-| STAB-CI-17 | Remove skipped `duckDbArrow.test.ts` | Delete Vitest skip suite; browser path gated by Playwright smoke only | STAB-CI-5 | Done | No | I | `duckDbArrow.test.ts` removed; `duckdb-arrow-smoke.spec.ts` remains required gate |
-| STAB-CI-18 | E2E companion expansion | Theme switcher + Workshop Door landing trigger rules | STAB-CI-4 | Done | No | A,I | `scripts/check-e2e-companion.mjs` — `theme-switcher`, `workshop-door-landing` rules |
-| STAB-CI-19 | Mutation threshold raise | Stryker break 40 → 48 when measured score ≥ 48 | STAB-CI-8 | Blocked | No | A | Baseline ~46–48%; raise deferred. Diff-scoped CI planner landed so narrow core PRs no longer pay the full ~1h campaign |
-| STAB-CI-20 | CI artifacts | Upload coverage + Playwright reports on failure | STAB-CI-12 | Done | No | A | `coverage-report` (always); `playwright-report` / `playwright-test-results` on e2e failure |
-| STAB-CI-21 | CI bootstrap parity | Submodules recursive checkout, `npm ci --legacy-peer-deps`, ratchet fetch-depth | STAB-CI-12 | Done | No | A | All jobs; `lint-format` uses `fetch-depth: 0` for merge-base ratchets |
-| STAB-CI-22 | Doc sync (CI overhaul) | Update `arch_08`, pre-PR playbook, tracker §4.5, PR template, contributing, RCA banner | STAB-CI-12 | Done | No | A | This row; `docs/arch_08_testing.md` §7–§8, `pre_pr_verification.md`, `.github/pull_request_template.md` |
-| STAB-CI-23 | Features/overlays coverage ratchet | Raise per-path `src/features/**` and `src/components/overlays/**` function floors toward 82% as characterization tests land | STAB-CI-11 | In progress | No | A,U | **Baseline (July 2026):** measured fn 70.1% (`features`) / 67.1% (`overlays`) vs floors 70% / 67%; global fn 81.9%. **Target:** raise per-path fn floors incrementally toward 82% (global fn floor). **Slices (parallel):** overlays (`RecodeModal`, `ExportModal`, `FilterModal`, `SessionImportModal`), workspace (`WorkspaceView`, `ExportImportModal`, `WaveTimeline`), dashboard (hooks + `StoryRail`, `DashboardToolbar`, `DataTable`), variableManager (`VariableInspector`, `VariableManager`, `VariableList`), harmonization (no co-located tests yet). See `arch_08_testing.md` §7.1. |
-| STAB-BOOT-1 | Fresh workspace before engine | Shell and real visible start actions work with engine idle | None | Done | Yes | T,L,U,I,A | PR 60; clean-context shell and visible-file-chooser E2E; [Audit 10 §14](audit_10_engine_boot_ci_truth_rca_2026-07-14.md#14-evidence-inventory) |
-| STAB-BOOT-2 | Cross-thread boot evidence | Bounded correlated trace plus always-written failure artifacts | STAB-BOOT-1 | Done | Yes | T,L,U,I,A | Correlated boot trace, failure `finally` artifacts, exact-head Journey run 29410394467; Audit 10 §14 |
-| STAB-BOOT-3 | Linux CI cause | Prove the environmental trigger with repeated one-variable experiments | STAB-BOOT-2 | Done | No | I,G,A | Vite cold optimizer reload isolated; 220/220 diagnostic and 200/200 final-candidate starts; Audit 10 §7/§14 |
-| STAB-BOOT-4 | Bounded recoverable boot | Per-phase deadlines, cancellation, retry, visible safe-memory recovery | STAB-BOOT-3 | Done | Yes | T,L,U,I,A | Lifecycle/deadline/cancellation tests and real-browser forced-failure/safe-memory recovery in PR 60 |
-| STAB-BOOT-5 | Boot-first verification and soak | Boot prerequisite classifies dependents; dev/production critical paths stay green | STAB-BOOT-4 | Done | Yes | T,L,U,I,G,A | Ten consecutive successful `main` Test/Journey pairs plus Mac Chromium and Linux Chromium profiles; Audit 10 §14 |
-| STAB-CI-25 | Enforced merge controls | Eight canonical checks, up-to-date branch, routine bypass disabled, red-main owner | None | Done | Yes | A,I | Protection API plus deliberately failing blocked PR 61 and failed required job; Audit 10 §14 |
-| STAB-CI-26 | Evidence-bound status | Correct Plan 06/Audit 09/tracker/testing docs with commit and runs | STAB-CI-25, STAB-BOOT-5 | Done | No | A | Canonical owners corrected against merge `b564032` and linked protected/soak/chaos/pilot evidence in Audit 10 §14 |
-
-#### STAB-CI deferred (future ratchets)
-
-| ID | Outcome |
+| Work | Reason to revisit |
 | :--- | :--- |
-| STAB-CI-24+ | Further per-path ratchets (`services`, `store`, harmonization UI) after STAB-CI-23 closes the features/overlays gap |
+| Paid pilot programme and external researcher recruitment | The product owner decides when Velocity is viable for other researchers. Existing outreach and evidence kits are historical preparation only. |
+| Broad Phase 5–7 expansion: WebR, advanced models, full processing, cloud collaboration, platform imports | Revisit a specific capability when a current workflow needs it. Prefer the smallest supported implementation. |
+| Fine-tuning and a large synthetic-study portfolio | Revisit when simpler changes to study semantics, tools, evidence contracts, or completeness checks fail on a meaningful task. |
+| Dark mode, natural-language palette binding, three-slide starter template, and other optional UI additions | Revisit when direct product testing shows they improve the current workflow. |
+| CI coverage ratchets beyond current checks | Maintain truthful existing checks; raise thresholds when the relevant code or tests are being improved. |
 
-## 5. Completed Work Reference
+## What is already established
 
-Completed work is no longer expanded in this tracker. Use `docs/completed_foundations_summary.md` for the durable summary of:
+Completed foundations, benchmark results, and historical implementation IDs are summarized in [completed foundations](completed_foundations_summary.md). The [design-reset plan](plan_05_design_reset_implementation.md), [July boot/CI audit](audit_10_engine_boot_ci_truth_rca_2026-07-14.md), and [research quality strategy](workstreams/research_quality/00_strategy.md) retain detail for their respective work. `docs/archive/` remains historical evidence.
 
-- Phase 1 core ingestion, worker, canvas, and design-system foundations
-- Phase 2 survey workbench, weighting application, recoding, grids, significance, PPTX/XLSX export
-- Phase 3 `VelocityEngine`, MCP, browser convergence, and semantic layer
-- Phase 4 eval program, benchmark baselines, capability-gap synthesis, and follow-through
-- Stabilization: workspace reopen, export quality, design tokens, truthful CI, thin-slice architecture cleanup
-- UI excellence: motion/accessibility, canvas polish, theme/density, delight layers, and **complete May 2026 UXR program** (`STAB-UI-D` + follow-on waves — all `UXR-###` entries fixed in `findings.md`)
-- Harmonization workspace and fuzzy EVAL-05 follow-up
-- Testing and evidence anchors
+The former `DESIGN-CONV-A` external-session requirement and `PILOT-6`/`PILOT-7` programme no longer control the roadmap. Their documents may be used as references if the product owner later chooses external testing or commercial work.
 
-## 6. Update Rules
+## Keeping this tracker useful
 
-When updating this file:
-1. Keep active work in the execution board; move completed narratives to `docs/completed_foundations_summary.md`.
-2. Never add a work item without an `ID`, `Depends on`, `Status`, and validation evidence.
-3. If `Contract change` is `Yes`, link evidence in PR descriptions using `.github/pull_request_template.md`.
-4. Move items only by status transitions (`Not started` -> `In progress` -> `In review` -> `Done`; or `Blocked`/`Frozen` when gated).
-5. Keep the Mermaid dependency graph and tables in sync in the same commit.
-6. Do not activate Phase 5+ expansion without `PILOT-7` evidence or an explicit roadmap decision.
+Update the relevant row when the actual work or evidence changes. Record the next concrete result and link to the source code, test, screenshot, or research artifact that supports a completion claim. Do not add a new process stage, approval gate, or parallel status board for ordinary product work.

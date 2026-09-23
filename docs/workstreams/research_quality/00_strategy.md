@@ -1,6 +1,7 @@
 # Research Quality Backbone
 
 **Status:** Experimental workstream. SBT-001 generation, reversible preparation and reference-analysis scripts are implemented; the comparative runner, executable E5 graders and researcher preference evidence remain planned.
+**Current use:** Research tests may inform internal product work, but this strategy does not impose external researcher sessions, a pilot readout, or a formal product promotion sequence. The product owner is the research tester until they choose otherwise. Current priorities live in the [workstream tracker](../../tracker_00_implementation_status.md).
 **Wedge:** Brand-tracker preparation -> analysis -> publication-quality editable deck  
 **Principle:** Models interpret, propose and communicate. Velocity computes. Publication requires verified evidence.
 

@@ -1,6 +1,6 @@
 # Velocity Completed Foundations Summary
 
-This document summarizes completed work so `docs/tracker_00_implementation_status.md` can stay a forward-looking execution board. The tracker focuses on active and gated work; this file preserves the foundation story and evidence map.
+This document summarizes completed work so `docs/tracker_00_implementation_status.md` can stay a short current-work board. This file preserves the foundation story and evidence map.
 
 ## Current State
 

@@ -1,6 +1,6 @@
 # Comprehensive Feature Matrix & Decision Record
 
-This document catalogs every feature proposed across the three source documents (MVP, Strategic, Aletheia), assigns a decision (**Keep / Reject / Delay**) for the Unified Roadmap, and outlines the strategic implications.
+This document preserves the feature decisions made for the earlier unified roadmap. It is useful context, not a set of approval gates or a current work queue. The product owner is testing Velocity internally; current priorities and new decisions live in the [workstream tracker](tracker_00_implementation_status.md) and [strategic guide](roadmap_00_strategic_guide.md).
 
 ## 1. Feature Analysis by Phase
 
@@ -38,12 +38,12 @@ This document catalogs every feature proposed across the three source documents 
 
 | Feature | Source Doc | Decision | Status | Rationale |
 | :--- | :--- | :--- | :--- | :--- |
-| **WebR Integration** | Aletheia | **Removed (gated re-entry)** | N/A | Excised Plan 06 Phase 1. Re-enters as lazy plugin at `arch_01` §2.5 seam when `PILOT-7` validates demand. Weighted crosstabs run through DuckDB SQL today. |
-| **Mixed Effects Models (MLM)** | Aletheia | **Removed (gated re-entry)** | N/A | `MixedEffectsRunner` removed with WebR cluster. Same PILOT-7 plugin seam. |
-| **Visual Harmonization (Sankey)**| Aletheia | **Removed (gated re-entry)** | N/A | Harmonization workspace excised Plan 06 Phase 1 (`~2,915` lines). Wave refresh uses in-wave recodes + deck recipe, not cross-wave harmonization. Eval artifacts frozen under `evals/eval-05/`. |
+| **WebR Integration** | Aletheia | **Removed; reconsider if needed** | N/A | Excised Plan 06 Phase 1. A narrow implementation can use the lazy plugin seam at `arch_01` §2.5 when a current workflow needs it. Weighted crosstabs run through DuckDB SQL today. |
+| **Mixed Effects Models (MLM)** | Aletheia | **Removed; reconsider if needed** | N/A | `MixedEffectsRunner` was removed with WebR. Revisit for a specific supported analysis need. |
+| **Visual Harmonization (Sankey)**| Aletheia | **Removed; reconsider if needed** | N/A | Harmonization workspace was excised in Plan 06 Phase 1 (`~2,915` lines). Wave refresh uses in-wave recodes and deck recipes. Eval artifacts remain under `evals/eval-05/`. |
 | **Time Machine Animation** | Aletheia | **DELAY** | N/A | **Reasoning:** "Wow" factor but not daily utility. Prioritize core stats first. |
 | **GPU Scatterplots (Regl)** | Aletheia | **DELAY** | N/A | **Reasoning:** Only needed for N > 500k. Most survey files are N < 50k. DuckDB handles them fine without bespoke WebGL. |
-| **Syntax Drawer (R Code)** | Aletheia | **Removed (gated re-entry)** | N/A | Monaco R editor removed Plan 06 Phase 1. Trust-pack methodology snapshots preserved in docs; live R execution re-enters via WebR plugin seam only. |
+| **Syntax Drawer (R Code)** | Aletheia | **Removed; reconsider if needed** | N/A | Monaco R editor was removed in Plan 06 Phase 1. Trust-pack methodology snapshots remain in docs; a specific R workflow could use the WebR plugin seam. |
 | **Pyodide Plugin (NLP/AI)** | N/A (New) | **DELAY** | N/A | **Reasoning:** Build the survey/deck trust first, then add AI only where bounded agent outcomes prove time savings without trust failures. |
 
 ---
@@ -71,5 +71,5 @@ This document catalogs every feature proposed across the three source documents 
 2.  **Phase 2:** Strategic Workbench (grids, existing weights, recoding, editable PPTX). *Status: engine/export foundation complete; frontend review and saved-analysis fidelity are active design-convergence work.*
 3.  **Phase 3:** Engine/MCP/Semantic foundation. *Status: complete.*
 4.  **Phase 4:** Agent capability validation and follow-through. *Status: complete; completed details live in `completed_foundations_summary.md`.*
-5.  **Current design convergence:** reconcile approved redesign candidates, complete the export review and saved-analysis loop, close interaction/accessibility/visual gaps, and pass representative validation.
-6.  **Market-reset pilot:** after the redesign gate passes, prioritize SAV-to-deck trust/performance evidence, minimum viable processing only where pilots block, bounded agent outcomes, and paid-pilot validation before WebR/AI/cloud expansion.
+5.  **Current internal product work:** inspect and improve the existing journey, research quality, saved work, and reporting; build one supported assisted workflow in the same app.
+6.  **Future expansion:** revisit a capability when direct product testing shows it is needed. External research testing and commercial work begin only when the product owner chooses.

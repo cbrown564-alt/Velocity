@@ -33,7 +33,7 @@ All computation happens locally using WebAssembly or native Node extensions. No 
 │  ┌───────────────────▼───────────────────────────────────────┐  │
 │  │               Future Plugin Seam (not bundled)            │  │
 │  │  Advanced stats (WebR) and NLP (Pyodide) re-enter here    │  │
-│  │  as lazy-loaded packages when PILOT-7 gates reopen.       │  │
+│  │  as lazy-loaded packages when a workflow needs them.      │  │
 │  └───────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -59,11 +59,11 @@ All computation happens locally using WebAssembly or native Node extensions. No 
 *   **Purpose:** Manage UI view state (active tabs, modal visibility, current component states).
 *   **Future Convergence:** With the shift to `VelocityEngine`, the Zustand store is migrating away from holding domain/analysis state towards purely holding UI presentation state.
 
-### 2.5 Future Plugin Seam (PILOT-7 gated)
+### 2.5 Future Plugin Seam
 
 WebR (mixed-effects, survey-weighting runners) and Pyodide (NLP) were **removed from the live runtime** in Plan 06 Phase 1. They are not bundled, registered in the store, or wired into the worker handler map.
 
-If paid pilots reopen advanced stats (`PILOT-7`), these capabilities re-enter as **lazy-loaded plugin packages** at this seam — not as kernel types or Zustand slices. See `docs/plan_06_backend_reset.md` WP1.2–1.3.
+If a supported workflow needs these capabilities, implement them as **lazy-loaded plugin packages** at this seam — not as kernel types or Zustand slices. See `docs/plan_06_backend_reset.md` WP1.2–1.3 for the removal history.
 
 ### 2.6 The UX Architecture (Soft Modal)
 *   **Concept:** "Hub-and-Spoke".
@@ -103,7 +103,7 @@ sequenceDiagram
 | :--- | :--- | :--- |
 | Browser Memory | ~4GB | Stream large files via OPFS; warn user if file > 500MB. |
 | Main Thread Blocking | Any >16ms task | All DuckDB queries run in Web Worker. |
-| Bundle Size | <1MB initial | No frozen-feature WASM chunks; future plugins lazy-loaded at PILOT-7 seam. |
+| Bundle Size | <1MB initial | No unused WASM chunks; future plugins lazy-loaded if needed. |
 
 ## 5. Module Ownership & Import Direction
 
