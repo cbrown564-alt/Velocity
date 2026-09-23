@@ -1,6 +1,6 @@
 # Research quality evaluation harness
 
-This directory implements the experimental programme owned by `docs/workstreams/research_quality/00_strategy.md`. Current evidence comprises the [original September pilot](runs/2026-09-pilot-comparison/readout.md) and [SBT-004–006 expansion](runs/2026-09-expansion-comparison/readout.md), with machine-readable comparisons and per-run adjudications. Independent researcher validation is pending.
+This directory implements the experimental programme owned by `docs/workstreams/research_quality/00_strategy.md`. Current evidence comprises the [original September pilot](runs/2026-09-pilot-comparison/readout.md), [SBT-004–006 expansion](runs/2026-09-expansion-comparison/readout.md), and [closed second-pass completeness comparison](runs/2026-09-completeness-comparison/readout.md). Independent researcher validation is pending.
 
 ## Current scope
 

@@ -34,6 +34,7 @@ describe('ExportModal accessibility', () => {
     expect(screen.getByRole('radiogroup', { name: /export format/i })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'PowerPoint' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'Excel' })).toBeInTheDocument();
+    expect(screen.getByText('Editable slides with tables and a cover')).toBeInTheDocument();
   });
 
   it('resolves default slide titles from the active analysis state before export', () => {

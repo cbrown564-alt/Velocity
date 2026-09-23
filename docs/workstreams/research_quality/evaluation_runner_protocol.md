@@ -50,6 +50,8 @@ Reference proportions exclude routed missing values and use supplied weights. Un
 
 ### RQ-COVERAGE-01 second-pass development pilot
 
+**Status:** Closed on 23 September 2026. Five of six declared calls completed; the SBT-006 checklist call failed and was not retried. SBT-004's scored pair did not show an advantage over general review. The [readout](../../../evals/research_quality/runs/2026-09-completeness-comparison/readout.md) owns the result and scoring limits. The rules below describe the frozen execution protocol.
+
 The predeclared protocol is `evals/research_quality/runs/2026-09-completeness-comparison/protocol.json`. Six calls compare a general review with a study-neutral completeness checklist on SBT-004–006. Each pair receives identical frozen public evidence and the exact original approved-analysis one-pass draft. The checklist is derived from the public decision questions; hidden findings, scores and corrections are excluded. The coordinator has already seen prior failures, so this is explicitly a development experiment.
 
 `completeness_pilot.py RUN_ID` verifies the protocol dependencies, prior manifest/output hashes and frozen public inputs without calling a model. `--execute` consumes the corresponding declared slot using existing Codex access. The protocol must already be committed. Each slot permits one call, 360 seconds, with no retry; existing run directories fail closed. The model receives all evidence inline in an empty temporary directory and is instructed not to call tools. Any recorded tool action or failed turn invalidates the review. Exact prompts, responses, events, prior-output provenance, runtime and available usage are retained, including failures.

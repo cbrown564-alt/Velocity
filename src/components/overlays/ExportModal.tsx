@@ -636,7 +636,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
                       <Presentation size={24} aria-hidden />
                     </div>
                     <div className={styles.formatName}>PowerPoint</div>
-                    <div className={styles.formatDescription}>Editable slides with tables</div>
+                    <div className={styles.formatDescription}>
+                      {useTemplateMode ? 'Editable slides in your template' : 'Editable slides with tables and a cover'}
+                    </div>
                   </label>
                   <label className={`${styles.formatOption} ${format === 'xlsx' ? styles.selected : ''}`}>
                     <input

@@ -33,7 +33,7 @@ function addAnalysisSheet(
   const columns = item.result.columns;
 
   // Header row
-  const headerValues = ['', ...columns.map((c) => c.label), 'Total'];
+  const headerValues = ['', ...columns.map((c) => c.label), 'Total (count)'];
   const headerRow = sheet.addRow(headerValues);
   headerRow.eachCell((cell) => {
     cell.fill = {

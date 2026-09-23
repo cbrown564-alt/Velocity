@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import JSZip from 'jszip';
+import ExcelJS from 'exceljs';
 import { exportPptx, formatCell } from '../pptxExporter';
 import { exportXlsx } from '../xlsxExporter';
 import { ExportConfig } from '../types';
@@ -438,6 +439,16 @@ describe('exportPptx chart type fidelity', () => {
 // ---------------------------------------------------------------------------
 
 describe('exportXlsx', () => {
+  it('labels the row total as a count beside percentage columns', async () => {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(await exportXlsx(config));
+    const sheet = workbook.worksheets[0];
+
+    expect(sheet.getCell('B1').value).toBe('Agree');
+    expect(sheet.getCell('D1').value).toBe('Total (count)');
+    expect(sheet.getCell('D2').value).toBe(50);
+  });
+
   it('produces a valid XLSX (ZIP) file', async () => {
     const bytes = await exportXlsx(config);
     expect(bytes).toBeInstanceOf(Uint8Array);
