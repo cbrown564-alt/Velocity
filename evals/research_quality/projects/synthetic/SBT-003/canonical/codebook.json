@@ -1,0 +1,1090 @@
+{
+  "schema_version": "velocity.study.v1",
+  "missing_policy": {
+    "sysmis": "Not asked (outside the question's universe)",
+    "97": "Don't know / can't judge",
+    "98": "Prefer not to say",
+    "99": "Not answered / cannot be derived"
+  },
+  "study_id": "SBT-003",
+  "title": "Northline customer experience diagnostic",
+  "archetype": "cx_diagnostic",
+  "design": {
+    "type": "cross_sectional_current_customer",
+    "n": 2400
+  },
+  "brief": null,
+  "decision_question": "Which customer experience problems deserve priority, considering severity, reach and uncertainty?",
+  "population": "Current UK Northline residential broadband customers",
+  "waves": null,
+  "weight": "wt_final",
+  "id_variable": "respondent_id",
+  "wave_variable": null,
+  "variables": [
+    {
+      "name": "respondent_id",
+      "source_name": "respondent_id",
+      "label": "Respondent ID",
+      "type": "identifier",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": null,
+      "question_text": null,
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "tenure_band",
+      "source_name": "tenure_band",
+      "label": "Tenure",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P1",
+      "question_text": "Tenure",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Under 1 year"
+        },
+        {
+          "code": 2,
+          "label": "1-2 years"
+        },
+        {
+          "code": 3,
+          "label": "3-5 years"
+        },
+        {
+          "code": 4,
+          "label": "6 years or more"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "<1y": 1,
+        "1-2y": 2,
+        "3-5y": 3,
+        "6+y": 4
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "plan_tier",
+      "source_name": "plan_tier",
+      "label": "Plan tier",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P2",
+      "question_text": "Plan tier",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Essential"
+        },
+        {
+          "code": 2,
+          "label": "Standard"
+        },
+        {
+          "code": 3,
+          "label": "Premium"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Essential": 1,
+        "Standard": 2,
+        "Premium": 3
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "legacy_plan",
+      "source_name": "legacy_plan",
+      "label": "On a legacy plan (administrative flag)",
+      "type": "binary",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "ADMIN",
+      "question_text": "Administrative record: customer is on a legacy plan",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "nps_0_10",
+      "source_name": "nps_0_10",
+      "label": "Likelihood to recommend (0-10)",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q1",
+      "question_text": "How likely are you to recommend Northline to a friend or family member?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not at all likely"
+        },
+        {
+          "code": 1,
+          "label": "1"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "5"
+        },
+        {
+          "code": 6,
+          "label": "6"
+        },
+        {
+          "code": 7,
+          "label": "7"
+        },
+        {
+          "code": 8,
+          "label": "8"
+        },
+        {
+          "code": 9,
+          "label": "9"
+        },
+        {
+          "code": 10,
+          "label": "Extremely likely"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "low_label": "Not at all likely",
+        "high_label": "Extremely likely",
+        "top_box": [
+          9,
+          10
+        ],
+        "bottom_box": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": "NPS = weighted % 9-10 minus % 0-6",
+      "notes": null
+    },
+    {
+      "name": "overall_satisfaction_5",
+      "source_name": "overall_satisfaction_5",
+      "label": "Overall satisfaction",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q2",
+      "question_text": "Overall, how satisfied are you with Northline?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very dissatisfied"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very satisfied"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very dissatisfied",
+        "high_label": "Very satisfied",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "renewal_intent_5",
+      "source_name": "renewal_intent_5",
+      "label": "Likelihood to stay at end of agreement",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q3",
+      "question_text": "How likely are you to stay with Northline when your current agreement ends?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very unlikely"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very likely"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very unlikely",
+        "high_label": "Very likely",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "reliability_5",
+      "source_name": "reliability_5",
+      "label": "Reliability",
+      "type": "scale",
+      "role": "diagnostic",
+      "measure": "ordinal",
+      "question_id": "D1",
+      "question_text": "How would you rate Northline on the reliability of your connection?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very poor"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very good"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "diagnostics",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very poor",
+        "high_label": "Very good",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "value_5",
+      "source_name": "value_5",
+      "label": "Value for money",
+      "type": "scale",
+      "role": "diagnostic",
+      "measure": "ordinal",
+      "question_id": "D2",
+      "question_text": "How would you rate Northline on value for money?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very poor"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very good"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "diagnostics",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very poor",
+        "high_label": "Very good",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "ease_5",
+      "source_name": "ease_5",
+      "label": "Ease of dealing with Northline",
+      "type": "scale",
+      "role": "diagnostic",
+      "measure": "ordinal",
+      "question_id": "D3",
+      "question_text": "How would you rate Northline on how easy it is to deal with?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very poor"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very good"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "diagnostics",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very poor",
+        "high_label": "Very good",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "trust_5",
+      "source_name": "trust_5",
+      "label": "Trust",
+      "type": "scale",
+      "role": "diagnostic",
+      "measure": "ordinal",
+      "question_id": "D4",
+      "question_text": "How would you rate Northline on how much you trust it?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very poor"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very good"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "diagnostics",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very poor",
+        "high_label": "Very good",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "outage_90d",
+      "source_name": "outage_90d",
+      "label": "Outage in past 90 days",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I1",
+      "question_text": "Have you experienced a broadband outage in the past 90 days?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "support_contact_90d",
+      "source_name": "support_contact_90d",
+      "label": "Contacted support in past 90 days",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I2",
+      "question_text": "Have you contacted Northline customer support in the past 90 days?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "support_quality_5",
+      "source_name": "support_quality_5",
+      "label": "Support quality",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "I2b",
+      "question_text": "How would you rate the quality of the support you received?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very poor"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very good"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Contacted support in past 90 days",
+        "expr": "support_contact_90d == 1"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very poor",
+        "high_label": "Very good",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "resolved_first_contact",
+      "source_name": "resolved_first_contact",
+      "label": "Resolved at first contact",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I2c",
+      "question_text": "Was your issue resolved the first time you contacted Northline?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Contacted support in past 90 days",
+        "expr": "support_contact_90d == 1"
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "wt_final",
+      "source_name": "wt_final",
+      "label": "Final weight",
+      "type": "weight",
+      "role": "weight",
+      "measure": "scale",
+      "question_id": null,
+      "question_text": null,
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "region",
+      "source_name": "region",
+      "label": "Nation",
+      "type": "single",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "P3",
+      "question_text": "Nation",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "England"
+        },
+        {
+          "code": 2,
+          "label": "Scotland"
+        },
+        {
+          "code": 3,
+          "label": "Wales"
+        },
+        {
+          "code": 4,
+          "label": "Northern Ireland"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "England": 1,
+        "Scotland": 2,
+        "Wales": 3,
+        "Northern Ireland": 4
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "household_type",
+      "source_name": "household_type",
+      "label": "Household type",
+      "type": "single",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "P4",
+      "question_text": "Household type",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Single adult"
+        },
+        {
+          "code": 2,
+          "label": "Two or more adults, no children"
+        },
+        {
+          "code": 3,
+          "label": "With children"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Single adult": 1,
+        "Adults only": 2,
+        "With children": 3
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "outage_severity_5",
+      "source_name": "outage_severity_5",
+      "label": "Severity of outage",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "I1a",
+      "question_text": "How much did the outage affect your household?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "A great deal"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Had an outage in past 90 days",
+        "expr": "outage_90d == 1"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all",
+        "high_label": "A great deal",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "support_channel",
+      "source_name": "support_channel",
+      "label": "Support channel used",
+      "type": "single",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I2a",
+      "question_text": "Support channel used",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 1,
+          "label": "Phone"
+        },
+        {
+          "code": 2,
+          "label": "Chat"
+        },
+        {
+          "code": 3,
+          "label": "Email"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Contacted support in past 90 days",
+        "expr": "support_contact_90d == 1"
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Phone": 1,
+        "Chat": 2,
+        "Email": 3,
+        "Not asked": null
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "formal_complaint_90d",
+      "source_name": "formal_complaint_90d",
+      "label": "Formal complaint in past 90 days",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I3",
+      "question_text": "Have you made a formal complaint to Northline in the past 90 days?",
+      "text_source": "authored",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    }
+  ],
+  "sets": [
+    {
+      "id": "diagnostics",
+      "type": "battery",
+      "label": "Experience diagnostics",
+      "question_id": "D1-D4",
+      "question_text": "How would you rate Northline on each of the following?",
+      "members": [
+        "reliability_5",
+        "value_5",
+        "ease_5",
+        "trust_5"
+      ]
+    }
+  ],
+  "banner_candidates": [
+    "tenure_band",
+    "plan_tier",
+    "legacy_plan",
+    "household_type",
+    "outage_90d",
+    "support_contact_90d"
+  ],
+  "analysis_policy": {
+    "nps": "weighted promoter% minus detractor%; retain composition",
+    "small_base_warning_n": 75,
+    "suppress_n": 40,
+    "association": "non-causal unless separately identified"
+  },
+  "provenance": {
+    "adapter": "sbt003",
+    "sources": [
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-003/model_inputs/codebook.json",
+        "sha256": "f484d7cc3cae71c6db0f25787e245749cece2f9e8195c91fb93da3ea32636a6d"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-003/model_inputs/respondents.csv",
+        "sha256": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-003/model_inputs/study_materials.json",
+        "sha256": "dab20daaac7eb7aefd90a8a77ca208a101ebd2d90ab5c1424b945cc81a8843c6"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-003/questionnaire.md",
+        "sha256": "95dcfe581c8a43bfb08ac3cfca205285430dd5e757e7bc8c3ff350896e78c09a"
+      }
+    ]
+  },
+  "conversion_notes": [
+    "Question wording and scale end points are AUTHORED from a one-paragraph summary; the source has no item wording.",
+    "support_channel 'Not asked' (a text value in the source) recoded to system-missing.",
+    "resolved_first_contact stored as 0.0/1.0 floats in the source; now 0/1 codes."
+  ]
+}

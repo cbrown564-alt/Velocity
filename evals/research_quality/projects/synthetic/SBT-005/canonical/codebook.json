@@ -1,0 +1,1575 @@
+{
+  "schema_version": "velocity.study.v1",
+  "missing_policy": {
+    "sysmis": "Not asked (outside the question's universe)",
+    "97": "Don't know / can't judge",
+    "98": "Prefer not to say",
+    "99": "Not answered / cannot be derived"
+  },
+  "study_id": "SBT-005",
+  "title": "BasketBridge campaign-assignment evaluation",
+  "archetype": "campaign_evaluation",
+  "design": {
+    "type": "Two-arm complete-randomised encouragement/campaign assignment; repeated baseline and follow-up survey; one household per row.",
+    "n": 2800,
+    "arms": {
+      "0": "Usual communications (control)",
+      "1": "Campaign invitation"
+    }
+  },
+  "brief": "{\"service\": \"BasketBridge is a fictional household grocery-list and meal-planning service, available before the campaign.\", \"campaign\": \"A two-week 'Plan together, shop with a clearer list' invitation sequence. Content describes shared lists and flexible meal prompts. Organic placements remain accessible in both arms.\", \"decision_question\": \"Did assignment to campaign invitations change awareness, consideration and reported service use beyond changes in the control arm? What does that support about a further campaign or follow-up test, and what remains unestablished?\", \"target_priority\": \"Households with children under 18 are a business-priority audience specified before the campaign. Estimate their contrast with the same rules; do not infer targeting value from significance in one subgroup and not the other.\", \"deliverable\": \"Evidence-traceable, prioritised narrative with arm changes, assignment contrasts, uncertainty and base/attrition limits. No presentation generation is required.\"}",
+  "decision_question": "Did assignment to campaign invitations change awareness, consideration and reported service use beyond changes in the control arm? What does that support about a further campaign or follow-up test, and what remains unestablished?",
+  "population": null,
+  "waves": [
+    {
+      "id": "baseline",
+      "label": "Baseline (day 0)"
+    },
+    {
+      "id": "followup",
+      "label": "Follow-up (six weeks)"
+    }
+  ],
+  "weight": "weight_base",
+  "id_variable": "respondent_id",
+  "wave_variable": null,
+  "variables": [
+    {
+      "name": "respondent_id",
+      "source_name": "respondent_id",
+      "label": "Synthetic household/respondent ID",
+      "type": "identifier",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": "ID",
+      "question_text": "Synthetic household/respondent ID",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "administrative"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "age_band",
+      "source_name": "age_band",
+      "label": "Age",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P1",
+      "question_text": "Age",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "18-34"
+        },
+        {
+          "code": 2,
+          "label": "35-54"
+        },
+        {
+          "code": 3,
+          "label": "55-64"
+        },
+        {
+          "code": 4,
+          "label": "65+"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "children_under18",
+      "source_name": "children_under18",
+      "label": "Any child aged under 18 in household",
+      "type": "binary",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "P2",
+      "question_text": "Any child aged under 18 in household",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "work_pattern",
+      "source_name": "work_pattern",
+      "label": "Main work pattern",
+      "type": "single",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "P3",
+      "question_text": "Main work pattern",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Regular fixed hours"
+        },
+        {
+          "code": 2,
+          "label": "Irregular or shift hours"
+        },
+        {
+          "code": 3,
+          "label": "Not in paid work / retired"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "online_grocery_pre",
+      "source_name": "online_grocery_pre",
+      "label": "Ordered groceries online in previous four weeks",
+      "type": "binary",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "P4",
+      "question_text": "Ordered groceries online in previous four weeks",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "digital_confidence_pre",
+      "source_name": "digital_confidence_pre",
+      "label": "Confidence using apps for household tasks",
+      "type": "scale",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P5",
+      "question_text": "Confidence using apps for household tasks",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all confident"
+        },
+        {
+          "code": 2,
+          "label": "Slightly confident"
+        },
+        {
+          "code": 3,
+          "label": "Moderately confident"
+        },
+        {
+          "code": 4,
+          "label": "Very confident"
+        },
+        {
+          "code": 5,
+          "label": "Extremely confident"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all confident",
+        "high_label": "Extremely confident",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "budget_pressure_pre",
+      "source_name": "budget_pressure_pre",
+      "label": "Grocery-budget pressure in previous four weeks",
+      "type": "scale",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P6",
+      "question_text": "Grocery-budget pressure in previous four weeks",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "None"
+        },
+        {
+          "code": 2,
+          "label": "Slight"
+        },
+        {
+          "code": 3,
+          "label": "Moderate"
+        },
+        {
+          "code": 4,
+          "label": "High"
+        },
+        {
+          "code": 5,
+          "label": "Very high"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "None",
+        "high_label": "Very high",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "mealplan_days_pre",
+      "source_name": "mealplan_days_pre",
+      "label": "Days in last seven days with evening meal planned by previous evening",
+      "type": "count",
+      "role": "profile",
+      "measure": "scale",
+      "question_id": "P7",
+      "question_text": "Days in last seven days with evening meal planned by previous evening",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "assignment",
+      "source_name": "assignment",
+      "label": "Randomised campaign-encouragement assignment",
+      "type": "single",
+      "role": "design",
+      "measure": "nominal",
+      "question_id": "R1",
+      "question_text": "Randomised campaign-encouragement assignment",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Usual communications / control"
+        },
+        {
+          "code": 1,
+          "label": "Campaign invitation sequence"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "randomisation"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Assigned after baseline. Keep assignment unchanged when receipt or recall differs. Exact 1:1 complete randomisation."
+    },
+    {
+      "name": "weight_base",
+      "source_name": "weight_base",
+      "label": "Positive baseline profile-transport weight",
+      "type": "weight",
+      "role": "weight",
+      "measure": "scale",
+      "question_id": "W1",
+      "question_text": "Positive baseline profile-transport weight",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Based ONLY on age x baseline online-grocery sampling cell. Normalised once to baseline mean one; not an attrition or receipt-propensity weight. Sum is a weighted N, not a known population size."
+    },
+    {
+      "name": "followup_status",
+      "source_name": "followup_status",
+      "label": "Follow-up questionnaire returned",
+      "type": "binary",
+      "role": "design",
+      "measure": "nominal",
+      "question_id": "F1",
+      "question_text": "Follow-up questionnaire returned",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No follow-up questionnaire"
+        },
+        {
+          "code": 1,
+          "label": "Returned; item-level missingness may remain"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "administrative"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "followup_attempts",
+      "source_name": "followup_attempts",
+      "label": "Survey invitation/contact attempts",
+      "type": "count",
+      "role": "design",
+      "measure": "scale",
+      "question_id": "F2",
+      "question_text": "Survey invitation/contact attempts",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "administrative"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Nonreturners exhausted four attempts. Do not condition the main analysis on this post-assignment variable."
+    },
+    {
+      "name": "receipt_log",
+      "source_name": "receipt_log",
+      "label": "Any qualifying logged campaign receipt during days 1-14",
+      "type": "binary",
+      "role": "design",
+      "measure": "nominal",
+      "question_id": "L1",
+      "question_text": "Any qualifying logged campaign receipt during days 1-14",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "campaign_log"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "A rendered creative/opened campaign message, NOT random assignment, proven attention, recall, or purchase. Available even for survey nonreturners. Control respondents can encounter organic placements."
+    },
+    {
+      "name": "receipt_count",
+      "source_name": "receipt_count",
+      "label": "Number of qualifying logged campaign receipts",
+      "type": "count",
+      "role": "design",
+      "measure": "scale",
+      "question_id": "L2",
+      "question_text": "Number of qualifying logged campaign receipts",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All 2,800 enrolled respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "campaign_log"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "0 iff receipt_log=0; 1-4 iff receipt_log=1. Administrative exposure measure, not a causal dose."
+    },
+    {
+      "name": "recall_post",
+      "source_name": "recall_post",
+      "label": "Self-reported recall of BasketBridge campaign in previous six weeks",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q8",
+      "question_text": "Self-reported recall of BasketBridge campaign in previous six weeks",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1",
+        "expr": "followup_status == 1"
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Asked after outcomes. Can disagree with logs. A valid No is 0; 97/98/99 are not No."
+    },
+    {
+      "name": "awareness_pre",
+      "source_name": "awareness_pre",
+      "label": "Prompted awareness before today's interview",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q1_pre",
+      "question_text": "Prompted awareness before today's interview",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "All enrolled respondents",
+        "expr": null
+      },
+      "set": "pair_awareness",
+      "scale": null,
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "awareness_post",
+      "source_name": "awareness_post",
+      "label": "Prompted awareness before today's interview",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q1_post",
+      "question_text": "Prompted awareness before today's interview",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1",
+        "expr": "followup_status == 1"
+      },
+      "set": "pair_awareness",
+      "scale": null,
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "consideration_pre",
+      "source_name": "consideration_pre",
+      "label": "Likelihood to consider BasketBridge for next grocery-planning occasion",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q2_pre",
+      "question_text": "Likelihood to consider BasketBridge for next grocery-planning occasion",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Definitely would not"
+        },
+        {
+          "code": 2,
+          "label": "Probably would not"
+        },
+        {
+          "code": 3,
+          "label": "Might or might not"
+        },
+        {
+          "code": 4,
+          "label": "Probably would"
+        },
+        {
+          "code": 5,
+          "label": "Definitely would"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "All enrolled respondents",
+        "expr": null
+      },
+      "set": "pair_consideration",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Definitely would not",
+        "high_label": "Definitely would",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Unconditional after the same neutral description at each wave; do not restrict to aware respondents. Top-two-box = valid codes 4 or 5."
+    },
+    {
+      "name": "consideration_post",
+      "source_name": "consideration_post",
+      "label": "Likelihood to consider BasketBridge for next grocery-planning occasion",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q2_post",
+      "question_text": "Likelihood to consider BasketBridge for next grocery-planning occasion",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Definitely would not"
+        },
+        {
+          "code": 2,
+          "label": "Probably would not"
+        },
+        {
+          "code": 3,
+          "label": "Might or might not"
+        },
+        {
+          "code": 4,
+          "label": "Probably would"
+        },
+        {
+          "code": 5,
+          "label": "Definitely would"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1",
+        "expr": "followup_status == 1"
+      },
+      "set": "pair_consideration",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Definitely would not",
+        "high_label": "Definitely would",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Unconditional after the same neutral description at each wave; do not restrict to aware respondents. Top-two-box = valid codes 4 or 5."
+    },
+    {
+      "name": "usage_pre",
+      "source_name": "usage_pre",
+      "label": "Self-reported BasketBridge use in previous four weeks",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q3_pre",
+      "question_text": "Self-reported BasketBridge use in previous four weeks",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "All enrolled respondents",
+        "expr": null
+      },
+      "set": "pair_usage",
+      "scale": null,
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "A self-reported service-use measure, NOT administrative active-user, grocery-transaction, sales or revenue data."
+    },
+    {
+      "name": "usage_post",
+      "source_name": "usage_post",
+      "label": "Self-reported BasketBridge use in previous four weeks",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q3_post",
+      "question_text": "Self-reported BasketBridge use in previous four weeks",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1",
+        "expr": "followup_status == 1"
+      },
+      "set": "pair_usage",
+      "scale": null,
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "A self-reported service-use measure, NOT administrative active-user, grocery-transaction, sales or revenue data."
+    },
+    {
+      "name": "meal_stress_pre",
+      "source_name": "meal_stress_pre",
+      "label": "Stress deciding what household will eat in previous seven days",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q4_pre",
+      "question_text": "Stress deciding what household will eat in previous seven days",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all stressful"
+        },
+        {
+          "code": 2,
+          "label": "Slightly stressful"
+        },
+        {
+          "code": 3,
+          "label": "Moderately stressful"
+        },
+        {
+          "code": 4,
+          "label": "Very stressful"
+        },
+        {
+          "code": 5,
+          "label": "Extremely stressful"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "All enrolled respondents",
+        "expr": null
+      },
+      "set": "pair_meal_stress",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all stressful",
+        "high_label": "Extremely stressful",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "baseline"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "meal_stress_post",
+      "source_name": "meal_stress_post",
+      "label": "Stress deciding what household will eat in previous seven days",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q4_post",
+      "question_text": "Stress deciding what household will eat in previous seven days",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all stressful"
+        },
+        {
+          "code": 2,
+          "label": "Slightly stressful"
+        },
+        {
+          "code": 3,
+          "label": "Moderately stressful"
+        },
+        {
+          "code": 4,
+          "label": "Very stressful"
+        },
+        {
+          "code": 5,
+          "label": "Extremely stressful"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1",
+        "expr": "followup_status == 1"
+      },
+      "set": "pair_meal_stress",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all stressful",
+        "high_label": "Extremely stressful",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "campaign_clear_post",
+      "source_name": "campaign_clear_post",
+      "label": "The campaign message was clear",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q9",
+      "question_text": "The campaign message was clear",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1 AND recall_post == 1",
+        "expr": "followup_status == 1 and recall_post == 1"
+      },
+      "set": "campaign_diagnostics",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Asked only of recorded recall=Yes. Shared respondent impressions; report distributions and weighted descriptive associations, not causal drivers."
+    },
+    {
+      "name": "campaign_relevant_post",
+      "source_name": "campaign_relevant_post",
+      "label": "The campaign message felt relevant to my household",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q10",
+      "question_text": "The campaign message felt relevant to my household",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1 AND recall_post == 1",
+        "expr": "followup_status == 1 and recall_post == 1"
+      },
+      "set": "campaign_diagnostics",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Asked only of recorded recall=Yes. Shared respondent impressions; report distributions and weighted descriptive associations, not causal drivers."
+    },
+    {
+      "name": "campaign_trust_post",
+      "source_name": "campaign_trust_post",
+      "label": "The campaign message was believable",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q11",
+      "question_text": "The campaign message was believable",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1 AND recall_post == 1",
+        "expr": "followup_status == 1 and recall_post == 1"
+      },
+      "set": "campaign_diagnostics",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Asked only of recorded recall=Yes. Shared respondent impressions; report distributions and weighted descriptive associations, not causal drivers."
+    },
+    {
+      "name": "campaign_channel_post",
+      "source_name": "campaign_channel_post",
+      "label": "Main recalled campaign channel",
+      "type": "single",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q12",
+      "question_text": "Main recalled campaign channel",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Email"
+        },
+        {
+          "code": 2,
+          "label": "Social / online feed"
+        },
+        {
+          "code": 3,
+          "label": "Grocery or planning app placement"
+        },
+        {
+          "code": 4,
+          "label": "Other"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1 AND recall_post == 1",
+        "expr": "followup_status == 1 and recall_post == 1"
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Self-reported main channel, not verified channel attribution. Single response."
+    },
+    {
+      "name": "info_search_post",
+      "source_name": "info_search_post",
+      "label": "Searched for more information about BasketBridge during previous four weeks",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q5",
+      "question_text": "Searched for more information about BasketBridge during previous four weeks",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1",
+        "expr": "followup_status == 1"
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "usage_days_post",
+      "source_name": "usage_days_post",
+      "label": "Days used BasketBridge in previous seven days",
+      "type": "count",
+      "role": "core",
+      "measure": "scale",
+      "question_id": "Q6",
+      "question_text": "Days used BasketBridge in previous seven days",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1 AND usage_post == 1",
+        "expr": "followup_status == 1 and usage_post == 1"
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Zero is valid: a four-week user need not have used it during the last week. Do not convert structural blanks or 97/98/99 to zero."
+    },
+    {
+      "name": "satisfaction_post",
+      "source_name": "satisfaction_post",
+      "label": "Overall satisfaction with BasketBridge",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q7",
+      "question_text": "Overall satisfaction with BasketBridge",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very dissatisfied"
+        },
+        {
+          "code": 2,
+          "label": "Somewhat dissatisfied"
+        },
+        {
+          "code": 3,
+          "label": "Neither satisfied nor dissatisfied"
+        },
+        {
+          "code": 4,
+          "label": "Somewhat satisfied"
+        },
+        {
+          "code": 5,
+          "label": "Very satisfied"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1 AND usage_post == 1",
+        "expr": "followup_status == 1 and usage_post == 1"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very dissatisfied",
+        "high_label": "Very satisfied",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Selected self-reported current users only; not all assigned respondents."
+    },
+    {
+      "name": "planning_confidence_post",
+      "source_name": "planning_confidence_post",
+      "label": "Confidence managing next week's grocery/meal plan",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q13",
+      "question_text": "Confidence managing next week's grocery/meal plan",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all confident"
+        },
+        {
+          "code": 2,
+          "label": "Slightly confident"
+        },
+        {
+          "code": 3,
+          "label": "Moderately confident"
+        },
+        {
+          "code": 4,
+          "label": "Very confident"
+        },
+        {
+          "code": 5,
+          "label": "Extremely confident"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "followup_status == 1",
+        "expr": "followup_status == 1"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all confident",
+        "high_label": "Extremely confident",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": [
+        "followup"
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    }
+  ],
+  "sets": [
+    {
+      "id": "pair_awareness",
+      "type": "paired_measure",
+      "label": "Awareness before and after",
+      "members": [
+        "awareness_pre",
+        "awareness_post"
+      ],
+      "dims": {
+        "time": [
+          "baseline",
+          "followup"
+        ]
+      }
+    },
+    {
+      "id": "pair_consideration",
+      "type": "paired_measure",
+      "label": "Consideration before and after",
+      "members": [
+        "consideration_pre",
+        "consideration_post"
+      ],
+      "dims": {
+        "time": [
+          "baseline",
+          "followup"
+        ]
+      }
+    },
+    {
+      "id": "pair_usage",
+      "type": "paired_measure",
+      "label": "Usage before and after",
+      "members": [
+        "usage_pre",
+        "usage_post"
+      ],
+      "dims": {
+        "time": [
+          "baseline",
+          "followup"
+        ]
+      }
+    },
+    {
+      "id": "pair_meal_stress",
+      "type": "paired_measure",
+      "label": "Meal stress before and after",
+      "members": [
+        "meal_stress_pre",
+        "meal_stress_post"
+      ],
+      "dims": {
+        "time": [
+          "baseline",
+          "followup"
+        ]
+      }
+    },
+    {
+      "id": "campaign_diagnostics",
+      "type": "battery",
+      "label": "Campaign message diagnostics",
+      "question_id": "Q9-Q11",
+      "question_text": "How much do you agree or disagree with each statement about the campaign?",
+      "members": [
+        "campaign_clear_post",
+        "campaign_relevant_post",
+        "campaign_trust_post"
+      ]
+    }
+  ],
+  "banner_candidates": [
+    "assignment",
+    "age_band",
+    "children_under18",
+    "work_pattern",
+    "online_grocery_pre"
+  ],
+  "provenance": {
+    "adapter": "sbt005",
+    "sources": [
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-005/model_inputs/codebook.json",
+        "sha256": "172d0943ff56fc79213ddaede97441abf533906f5a7570016e1ea0cdc1ab32dc"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-005/model_inputs/respondents.csv",
+        "sha256": "5cc0283b7175366381162dea853bb107f72daee2ccbf7f24523c73b65b2af83c"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-005/model_inputs/study_materials.json",
+        "sha256": "88d1226bb8d2bb7f8499b173adf4d3a6d7c10d5eb9955f41509c96637ffebbd5"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-005/questionnaire.md",
+        "sha256": "e0fc3ccb65b6dc1c2489dfc3a32faf7351b72a99ded933c0f49a5390c596c39a"
+      }
+    ]
+  },
+  "conversion_notes": [
+    "Source missing codes already match the canonical convention; values unchanged.",
+    "Baseline and follow-up are columns in one row per household (wide), linked by *_pre/*_post pairs.",
+    "Route strings converted to executable universe expressions (AND -> and)."
+  ]
+}

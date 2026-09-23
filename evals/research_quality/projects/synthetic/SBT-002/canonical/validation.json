@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "rows": 2100,
+    "universe_mismatches": {}
+  },
+  "sav_roundtrip": {
+    "passed": true,
+    "problems": []
+  }
+}

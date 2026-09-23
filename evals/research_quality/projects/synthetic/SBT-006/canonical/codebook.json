@@ -1,0 +1,1399 @@
+{
+  "schema_version": "velocity.study.v1",
+  "missing_policy": {
+    "sysmis": "Not asked (outside the question's universe)",
+    "97": "Don't know / can't judge",
+    "98": "Prefer not to say",
+    "99": "Not answered / cannot be derived"
+  },
+  "study_id": "SBT-006",
+  "title": "PantryPace: choosing prices for a future behavioural validation test",
+  "archetype": "pricing",
+  "design": {
+    "type": "Randomised monadic pricing",
+    "n": 3000,
+    "price_levels_gbp": [
+      4,
+      7,
+      10,
+      13
+    ]
+  },
+  "brief": "Compare monadic price assignments on full stated-intent distributions, do not declare an actual market optimum. Deliver a concise evidence-traceable research narrative, not a presentation.",
+  "decision_question": "Which of GBP 4, 7, 10 and 13 monthly merits further real-behaviour testing, considering stated interest, clearly labelled price-times-intent proxies, response uncertainty and assumed variable costs?",
+  "population": "Baseline-complete adult main/shared grocery or meal planners in a hypothetical UK-address household frame. Target is the specified synthetic frame, NOT all UK households or actual customers.",
+  "waves": null,
+  "weight": "wt_design",
+  "id_variable": "respondent_id",
+  "wave_variable": null,
+  "variables": [
+    {
+      "name": "respondent_id",
+      "source_name": "respondent_id",
+      "label": "Synthetic household/respondent ID",
+      "type": "identifier",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": "ADMIN_ID",
+      "question_text": "Synthetic household/respondent ID",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "age_band",
+      "source_name": "age_band",
+      "label": "Age of household respondent",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "B01",
+      "question_text": "Age of household respondent",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "18-34"
+        },
+        {
+          "code": 2,
+          "label": "35-54"
+        },
+        {
+          "code": 3,
+          "label": "55-64"
+        },
+        {
+          "code": 4,
+          "label": "65+"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "household_children",
+      "source_name": "household_children",
+      "label": "Child aged under 18 lives in household",
+      "type": "binary",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "B02",
+      "question_text": "Child aged under 18 lives in household",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "budget_band",
+      "source_name": "budget_band",
+      "label": "Household grocery-budget position",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "B03",
+      "question_text": "Household grocery-budget position",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Often difficult to keep within budget"
+        },
+        {
+          "code": 2,
+          "label": "Managing, with some trade-offs"
+        },
+        {
+          "code": 3,
+          "label": "Generally comfortable"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "meal_planning_role",
+      "source_name": "meal_planning_role",
+      "label": "Responsibility for household grocery/meal planning",
+      "type": "single",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "B04",
+      "question_text": "Responsibility for household grocery/meal planning",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Main responsibility"
+        },
+        {
+          "code": 2,
+          "label": "Shared responsibility"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "weekday_time_pressure_5",
+      "source_name": "weekday_time_pressure_5",
+      "label": "Usually rushed when deciding weekday meals",
+      "type": "scale",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "B05",
+      "question_text": "Usually rushed when deciding weekday meals",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "current_planning_method",
+      "source_name": "current_planning_method",
+      "label": "Main existing grocery/meal-planning method",
+      "type": "single",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "B06",
+      "question_text": "Main existing grocery/meal-planning method",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Paper, memory or printed recipes"
+        },
+        {
+          "code": 2,
+          "label": "General notes/calendar/spreadsheet app"
+        },
+        {
+          "code": 3,
+          "label": "Free dedicated planning app"
+        },
+        {
+          "code": 4,
+          "label": "Paid dedicated planning app or subscription"
+        },
+        {
+          "code": 5,
+          "label": "No regular method"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "digital_confidence_5",
+      "source_name": "digital_confidence_5",
+      "label": "Confidence using household digital services",
+      "type": "scale",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "B07",
+      "question_text": "Confidence using household digital services",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all confident"
+        },
+        {
+          "code": 2,
+          "label": "Slightly confident"
+        },
+        {
+          "code": 3,
+          "label": "Moderately confident"
+        },
+        {
+          "code": 4,
+          "label": "Very confident"
+        },
+        {
+          "code": 5,
+          "label": "Extremely confident"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all confident",
+        "high_label": "Extremely confident",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "plan_ahead_days_7",
+      "source_name": "plan_ahead_days_7",
+      "label": "Evenings planned before the day, last seven days",
+      "type": "count",
+      "role": "profile",
+      "measure": "scale",
+      "question_id": "B08",
+      "question_text": "Evenings planned before the day, last seven days",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "subscription_spend_band",
+      "source_name": "subscription_spend_band",
+      "label": "Current household optional digital-subscription spending per month",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "B09",
+      "question_text": "Current household optional digital-subscription spending per month",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "None"
+        },
+        {
+          "code": 1,
+          "label": "Under GBP 10"
+        },
+        {
+          "code": 2,
+          "label": "GBP 10-29"
+        },
+        {
+          "code": 3,
+          "label": "GBP 30 or more"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": "Reported spend band on other existing services, not PantryPace revenue."
+    },
+    {
+      "name": "household_size_band",
+      "source_name": "household_size_band",
+      "label": "Household size",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "B10",
+      "question_text": "Household size",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "One"
+        },
+        {
+          "code": 2,
+          "label": "Two"
+        },
+        {
+          "code": 3,
+          "label": "Three"
+        },
+        {
+          "code": 4,
+          "label": "Four or more"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "design_stratum",
+      "source_name": "design_stratum",
+      "label": "Baseline design cell",
+      "type": "single",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": "ADMIN_STRATUM",
+      "question_text": "Baseline design cell",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "children=1; budget_band=1"
+        },
+        {
+          "code": 2,
+          "label": "children=1; budget_band=2"
+        },
+        {
+          "code": 3,
+          "label": "children=1; budget_band=3"
+        },
+        {
+          "code": 4,
+          "label": "children=0; budget_band=1"
+        },
+        {
+          "code": 5,
+          "label": "children=0; budget_band=2"
+        },
+        {
+          "code": 6,
+          "label": "children=0; budget_band=3"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "wt_design",
+      "source_name": "wt_design",
+      "label": "Fixed positive baseline design weight",
+      "type": "weight",
+      "role": "weight",
+      "measure": "scale",
+      "question_id": "ADMIN_WEIGHT",
+      "question_text": "Fixed positive baseline design weight",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": "target_share[stratum]/sample_share[stratum], scaled once so baseline weights sum to 3000; never adjusted for assignment or post-price response."
+    },
+    {
+      "name": "assigned_price_arm",
+      "source_name": "assigned_price_arm",
+      "label": "Randomised monadic price arm",
+      "type": "single",
+      "role": "design",
+      "measure": "nominal",
+      "question_id": "RAND01",
+      "question_text": "Randomised monadic price arm",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "GBP 4 per month"
+        },
+        {
+          "code": 2,
+          "label": "GBP 7 per month"
+        },
+        {
+          "code": 3,
+          "label": "GBP 10 per month"
+        },
+        {
+          "code": 4,
+          "label": "GBP 13 per month"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "assigned_price_gbp",
+      "source_name": "assigned_price_gbp",
+      "label": "Monthly GBP price shown",
+      "type": "ordinal",
+      "role": "design",
+      "measure": "ordinal",
+      "question_id": "RAND02",
+      "question_text": "Monthly GBP price shown",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 4,
+          "label": "£4"
+        },
+        {
+          "code": 7,
+          "label": "£7"
+        },
+        {
+          "code": 10,
+          "label": "£10"
+        },
+        {
+          "code": 13,
+          "label": "£13"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": "Actual price value, not the arm code. One price per household."
+    },
+    {
+      "name": "postprice_responded",
+      "source_name": "postprice_responded",
+      "label": "Entered post-price evaluation module",
+      "type": "binary",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": "ADMIN_RESPONSE",
+      "question_text": "Entered post-price evaluation module",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Exited after price assignment; no evaluation module responses"
+        },
+        {
+          "code": 1,
+          "label": "Entered evaluation module"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "intent_5",
+      "source_name": "intent_5",
+      "label": "Stated likelihood to take subscription at assigned price",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P01",
+      "question_text": "Stated likelihood to take subscription at assigned price",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Definitely would not subscribe"
+        },
+        {
+          "code": 2,
+          "label": "Probably would not subscribe"
+        },
+        {
+          "code": 3,
+          "label": "Might or might not subscribe"
+        },
+        {
+          "code": 4,
+          "label": "Probably would subscribe"
+        },
+        {
+          "code": 5,
+          "label": "Definitely would subscribe"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached the post-price evaluation module (postprice_responded=1).",
+        "expr": "postprice_responded == 1"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Definitely would not subscribe",
+        "high_label": "Definitely would subscribe",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "value_5",
+      "source_name": "value_5",
+      "label": "Expected value at shown price",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P02",
+      "question_text": "Expected value at shown price",
+      "text_source": "codebook (stem authored)",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very poor"
+        },
+        {
+          "code": 2,
+          "label": "Poor"
+        },
+        {
+          "code": 3,
+          "label": "Neither poor nor good"
+        },
+        {
+          "code": 4,
+          "label": "Good"
+        },
+        {
+          "code": 5,
+          "label": "Very good"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached the post-price evaluation module (postprice_responded=1).",
+        "expr": "postprice_responded == 1"
+      },
+      "set": "post_price_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very poor",
+        "high_label": "Very good",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "fit_5",
+      "source_name": "fit_5",
+      "label": "Fit with household meal-planning needs",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P03",
+      "question_text": "Fit with household meal-planning needs",
+      "text_source": "codebook (stem authored)",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all relevant"
+        },
+        {
+          "code": 2,
+          "label": "Slightly relevant"
+        },
+        {
+          "code": 3,
+          "label": "Moderately relevant"
+        },
+        {
+          "code": 4,
+          "label": "Very relevant"
+        },
+        {
+          "code": 5,
+          "label": "Extremely relevant"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached the post-price evaluation module (postprice_responded=1).",
+        "expr": "postprice_responded == 1"
+      },
+      "set": "post_price_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all relevant",
+        "high_label": "Extremely relevant",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "affordability_5",
+      "source_name": "affordability_5",
+      "label": "Affordability of shown monthly price",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P04",
+      "question_text": "Affordability of shown monthly price",
+      "text_source": "codebook (stem authored)",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very difficult to afford"
+        },
+        {
+          "code": 2,
+          "label": "Difficult to afford"
+        },
+        {
+          "code": 3,
+          "label": "Neither difficult nor easy"
+        },
+        {
+          "code": 4,
+          "label": "Easy to afford"
+        },
+        {
+          "code": 5,
+          "label": "Very easy to afford"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached the post-price evaluation module (postprice_responded=1).",
+        "expr": "postprice_responded == 1"
+      },
+      "set": "post_price_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very difficult to afford",
+        "high_label": "Very easy to afford",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "ease_5",
+      "source_name": "ease_5",
+      "label": "Expected ease of using described service",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P05",
+      "question_text": "Expected ease of using described service",
+      "text_source": "codebook (stem authored)",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very difficult"
+        },
+        {
+          "code": 2,
+          "label": "Difficult"
+        },
+        {
+          "code": 3,
+          "label": "Neither difficult nor easy"
+        },
+        {
+          "code": 4,
+          "label": "Easy"
+        },
+        {
+          "code": 5,
+          "label": "Very easy"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached the post-price evaluation module (postprice_responded=1).",
+        "expr": "postprice_responded == 1"
+      },
+      "set": "post_price_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very difficult",
+        "high_label": "Very easy",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "trust_5",
+      "source_name": "trust_5",
+      "label": "Confidence service would do what is described",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P06",
+      "question_text": "Confidence service would do what is described",
+      "text_source": "codebook (stem authored)",
+      "values": [
+        {
+          "code": 1,
+          "label": "No confidence"
+        },
+        {
+          "code": 2,
+          "label": "Little confidence"
+        },
+        {
+          "code": 3,
+          "label": "Some confidence"
+        },
+        {
+          "code": 4,
+          "label": "Much confidence"
+        },
+        {
+          "code": 5,
+          "label": "Complete confidence"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached the post-price evaluation module (postprice_responded=1).",
+        "expr": "postprice_responded == 1"
+      },
+      "set": "post_price_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "No confidence",
+        "high_label": "Complete confidence",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "differentiation_5",
+      "source_name": "differentiation_5",
+      "label": "Difference from planning options respondent knows",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P07",
+      "question_text": "Difference from planning options respondent knows",
+      "text_source": "codebook (stem authored)",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all different"
+        },
+        {
+          "code": 2,
+          "label": "Slightly different"
+        },
+        {
+          "code": 3,
+          "label": "Moderately different"
+        },
+        {
+          "code": 4,
+          "label": "Very different"
+        },
+        {
+          "code": 5,
+          "label": "Extremely different"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached the post-price evaluation module (postprice_responded=1).",
+        "expr": "postprice_responded == 1"
+      },
+      "set": "post_price_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all different",
+        "high_label": "Extremely different",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "certainty_5",
+      "source_name": "certainty_5",
+      "label": "Certainty about the stated intent answer",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P08",
+      "question_text": "Certainty about the stated intent answer",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all certain"
+        },
+        {
+          "code": 2,
+          "label": "Slightly certain"
+        },
+        {
+          "code": 3,
+          "label": "Moderately certain"
+        },
+        {
+          "code": 4,
+          "label": "Very certain"
+        },
+        {
+          "code": 5,
+          "label": "Extremely certain"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached module AND gave a valid 1-5 intent answer.",
+        "expr": "(postprice_responded == 1) and (intent_5 in [1, 2, 3, 4, 5])"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all certain",
+        "high_label": "Extremely certain",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "primary_use_goal",
+      "source_name": "primary_use_goal",
+      "label": "Most useful possible role for the service",
+      "type": "single",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "P09",
+      "question_text": "Most useful possible role for the service",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "None of these"
+        },
+        {
+          "code": 1,
+          "label": "Reduce deciding/planning effort"
+        },
+        {
+          "code": 2,
+          "label": "Keep grocery spending organised"
+        },
+        {
+          "code": 3,
+          "label": "Use food already at home"
+        },
+        {
+          "code": 4,
+          "label": "Find practical recipe variety"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached the post-price evaluation module (postprice_responded=1).",
+        "expr": "postprice_responded == 1"
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "anticipated_use_days_7",
+      "source_name": "anticipated_use_days_7",
+      "label": "Hypothetical days of use per week",
+      "type": "count",
+      "role": "core",
+      "measure": "scale",
+      "question_id": "P10",
+      "question_text": "Hypothetical days of use per week",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached module AND intent_5 is 3, 4 or 5. Missing intent does not satisfy the route.",
+        "expr": "(postprice_responded == 1) and (intent_5 in [3, 4, 5])"
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": "Conditional expectation among maybe/probably/definitely interested respondents, not observed usage and not all-household usage."
+    },
+    {
+      "name": "reason_not_commit",
+      "source_name": "reason_not_commit",
+      "label": "Main reason for not giving a positive intent answer",
+      "type": "single",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "P11",
+      "question_text": "Main reason for not giving a positive intent answer",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Monthly price"
+        },
+        {
+          "code": 2,
+          "label": "Free options already adequate"
+        },
+        {
+          "code": 3,
+          "label": "Not enough need"
+        },
+        {
+          "code": 4,
+          "label": "Trust or privacy concern"
+        },
+        {
+          "code": 5,
+          "label": "Setup/ongoing effort"
+        },
+        {
+          "code": 6,
+          "label": "Other reason"
+        }
+      ],
+      "missing": [
+        97,
+        98,
+        99
+      ],
+      "universe": {
+        "text": "Reached module AND intent_5 is 1, 2 or 3. Missing intent does not satisfy the route.",
+        "expr": "(postprice_responded == 1) and (intent_5 in [1, 2, 3])"
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "time_pressed_family",
+      "source_name": "time_pressed_family",
+      "label": "Prespecified baseline audience: children plus weekday meal time pressure",
+      "type": "binary",
+      "role": "derived",
+      "measure": "nominal",
+      "question_id": "DERIVED01",
+      "question_text": "Prespecified baseline audience: children plus weekday meal time pressure",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not meet criteria"
+        },
+        {
+          "code": 1,
+          "label": "Children under 18 and pressure answer 4 or 5"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "All 3,000 baseline-complete, randomly assigned households.",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": "\"If household_children=0, set 0. If children=1 and weekday_time_pressure_5 in {4,5}, set 1. If children=1 and pressure in {1,2,3}, set 0. Otherwise set 97 (unknown). No outcome or price field is used.\"",
+      "notes": null
+    }
+  ],
+  "sets": [
+    {
+      "id": "post_price_evaluation",
+      "type": "battery",
+      "label": "Evaluation at the shown price",
+      "question_id": "P02-P07",
+      "question_text": "Thinking about the service at the monthly price shown, how would you rate it on each of the following?",
+      "members": [
+        "value_5",
+        "fit_5",
+        "affordability_5",
+        "ease_5",
+        "trust_5",
+        "differentiation_5"
+      ]
+    }
+  ],
+  "banner_candidates": [
+    "assigned_price_gbp",
+    "age_band",
+    "household_children",
+    "budget_band",
+    "time_pressed_family"
+  ],
+  "provenance": {
+    "adapter": "sbt006",
+    "sources": [
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-006/model_inputs/codebook.json",
+        "sha256": "64ddaeb0d942d0cea2426210904fc8beedfe4105ead9b92c3da8fdf6c2ed2176"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-006/model_inputs/respondents.csv",
+        "sha256": "591dbccf2eff795fcb65c11c130f8dc13ba510e2a4856e9310a8d22b9469ca9e"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-006/model_inputs/study_materials.json",
+        "sha256": "f4d45a27930eaa364431763d2bb8c55572665f6bfe0a2d71c309e8fd1dd0367f"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-006/questionnaire.md",
+        "sha256": "10cee6c4d18ae436535aa93f8c84f50d9b636b699bc879165b3c1e2fa553a78d"
+      }
+    ]
+  },
+  "conversion_notes": [
+    "Source missing codes already match the canonical convention; values unchanged.",
+    "Structured route objects converted to executable universe expressions.",
+    "Battery stem for P02-P07 authored (source has item labels only)."
+  ]
+}

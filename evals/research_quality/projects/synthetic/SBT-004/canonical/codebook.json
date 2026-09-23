@@ -1,0 +1,1644 @@
+{
+  "schema_version": "velocity.study.v1",
+  "missing_policy": {
+    "sysmis": "Not asked (outside the question's universe)",
+    "97": "Don't know / can't judge",
+    "98": "Prefer not to say",
+    "99": "Not answered / cannot be derived"
+  },
+  "study_id": "SBT-004",
+  "title": "Household grocery and meal-planning needs",
+  "archetype": "usage_attitudes",
+  "design": {
+    "type": "cross_sectional_usage_and_attitudes",
+    "n": 2700
+  },
+  "brief": "PantryWorks is a fictional grocery retailer exploring optional meal-planning and shopping-list support. This cross-sectional usage-and-attitudes study describes household tasks, constraints, existing tools and unmet support needs; it does not expose or randomise product concepts.",
+  "decision_question": "Which household tasks and audiences should inform a small, optional grocery/meal-planning support pilot, and what further evidence is needed before selecting a delivery format or claiming commercial impact?",
+  "population": "A fictional UK household population with at least one adult aged 18+ who has main or shared responsibility for grocery shopping and evening-meal decisions. One planner per household. Assume profile eligibility known from recruitment; CSV contains eligible completes only.",
+  "waves": null,
+  "weight": "wt_final",
+  "id_variable": "respondent_id",
+  "wave_variable": null,
+  "variables": [
+    {
+      "name": "respondent_id",
+      "source_name": "respondent_id",
+      "label": "One pseudonymous synthetic household/respondent ID",
+      "type": "identifier",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": "ADMIN_ID",
+      "question_text": "One pseudonymous synthetic household/respondent ID",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "age_band",
+      "source_name": "age_band",
+      "label": "Age of responding grocery/meal planner",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P1",
+      "question_text": "Age of responding grocery/meal planner",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "18-34"
+        },
+        {
+          "code": 2,
+          "label": "35-49"
+        },
+        {
+          "code": 3,
+          "label": "50-64"
+        },
+        {
+          "code": 4,
+          "label": "65+"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "children_u16",
+      "source_name": "children_u16",
+      "label": "At least one child under 16 usually lives in the household",
+      "type": "binary",
+      "role": "profile",
+      "measure": "nominal",
+      "question_id": "P2",
+      "question_text": "At least one child under 16 usually lives in the household",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "work_hours_band",
+      "source_name": "work_hours_band",
+      "label": "Respondent's usual weekly paid work hours",
+      "type": "ordinal",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "P3",
+      "question_text": "Respondent's usual weekly paid work hours",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not currently in paid work"
+        },
+        {
+          "code": 1,
+          "label": "Under 30 paid hours/week"
+        },
+        {
+          "code": 2,
+          "label": "30 or more paid hours/week"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "wt_final",
+      "source_name": "wt_final",
+      "label": "Positive relative household analysis weight",
+      "type": "weight",
+      "role": "weight",
+      "measure": "scale",
+      "question_id": "ADMIN_WEIGHT",
+      "question_text": "Positive relative household analysis weight",
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_plan_ahead_5",
+      "source_name": "att_plan_ahead_5",
+      "label": "I prefer to decide most of our evening meals several days ahead.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A1",
+      "question_text": "How much do you agree or disagree with each statement? — I prefer to decide most of our evening meals several days ahead.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_spontaneous_5",
+      "source_name": "att_spontaneous_5",
+      "label": "I prefer to decide what we eat on the day rather than plan ahead.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A2",
+      "question_text": "How much do you agree or disagree with each statement? — I prefer to decide what we eat on the day rather than plan ahead.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_budget_worry_5",
+      "source_name": "att_budget_worry_5",
+      "label": "Keeping our grocery spending within what we intend is a worry for me.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A3",
+      "question_text": "How much do you agree or disagree with each statement? — Keeping our grocery spending within what we intend is a worry for me.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_price_tradeoffs_5",
+      "source_name": "att_price_tradeoffs_5",
+      "label": "I often have to trade off the food I would like against what the household can afford.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A4",
+      "question_text": "How much do you agree or disagree with each statement? — I often have to trade off the food I would like against what the household can afford.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_time_short_5",
+      "source_name": "att_time_short_5",
+      "label": "I struggle to find enough time to organise our household's meals.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A5",
+      "question_text": "How much do you agree or disagree with each statement? — I struggle to find enough time to organise our household's meals.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_decision_fatigue_5",
+      "source_name": "att_decision_fatigue_5",
+      "label": "Deciding what to cook feels like one decision too many.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A6",
+      "question_text": "How much do you agree or disagree with each statement? — Deciding what to cook feels like one decision too many.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_waste_concern_5",
+      "source_name": "att_waste_concern_5",
+      "label": "Avoiding wasted food is an important priority in our household.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A7",
+      "question_text": "How much do you agree or disagree with each statement? — Avoiding wasted food is an important priority in our household.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_waste_difficult_5",
+      "source_name": "att_waste_difficult_5",
+      "label": "I find it difficult to use up perishable food before it spoils.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A8",
+      "question_text": "How much do you agree or disagree with each statement? — I find it difficult to use up perishable food before it spoils.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "att_digital_help_5",
+      "source_name": "att_digital_help_5",
+      "label": "I would welcome a digital tool that suggested what our household could cook and buy each week.",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "A9",
+      "question_text": "How much do you agree or disagree with each statement? — I would welcome a digital tool that suggested what our household could cook and buy each week.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "Tend to disagree"
+        },
+        {
+          "code": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "code": 4,
+          "label": "Tend to agree"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "attitudes",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "need_budget",
+      "source_name": "need_budget",
+      "label": "need budget",
+      "type": "binary",
+      "role": "derived",
+      "measure": "nominal",
+      "question_id": "DERIVED",
+      "question_text": "need budget",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Criteria not met"
+        },
+        {
+          "code": 1,
+          "label": "Criteria met"
+        }
+      ],
+      "missing": [
+        99
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": "{\"inputs\": [\"att_budget_worry_5\", \"att_price_tradeoffs_5\"], \"rule\": \"1 iff BOTH valid item codes are >=4; 0 otherwise when BOTH are valid; 99 if either input is not in 1..5\", \"exclusive\": false, \"priority_assignment\": false}",
+      "notes": null
+    },
+    {
+      "name": "need_effort",
+      "source_name": "need_effort",
+      "label": "need effort",
+      "type": "binary",
+      "role": "derived",
+      "measure": "nominal",
+      "question_id": "DERIVED",
+      "question_text": "need effort",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Criteria not met"
+        },
+        {
+          "code": 1,
+          "label": "Criteria met"
+        }
+      ],
+      "missing": [
+        99
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": "{\"inputs\": [\"att_time_short_5\", \"att_decision_fatigue_5\"], \"rule\": \"1 iff BOTH valid item codes are >=4; 0 otherwise when BOTH are valid; 99 if either input is not in 1..5\", \"exclusive\": false, \"priority_assignment\": false}",
+      "notes": null
+    },
+    {
+      "name": "need_waste",
+      "source_name": "need_waste",
+      "label": "need waste",
+      "type": "binary",
+      "role": "derived",
+      "measure": "nominal",
+      "question_id": "DERIVED",
+      "question_text": "need waste",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Criteria not met"
+        },
+        {
+          "code": 1,
+          "label": "Criteria met"
+        }
+      ],
+      "missing": [
+        99
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": "{\"inputs\": [\"att_waste_concern_5\", \"att_waste_difficult_5\"], \"rule\": \"1 iff BOTH valid item codes are >=4; 0 otherwise when BOTH are valid; 99 if either input is not in 1..5\", \"exclusive\": false, \"priority_assignment\": false}",
+      "notes": null
+    },
+    {
+      "name": "meal_plan_days_7d",
+      "source_name": "meal_plan_days_7d",
+      "label": "On how many of the past seven days was your household's main evening meal decided by the previous evening?",
+      "type": "count",
+      "role": "core",
+      "measure": "scale",
+      "question_id": "B1",
+      "question_text": "On how many of the past seven days was your household's main evening meal decided by the previous evening?",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "0 days"
+        },
+        {
+          "code": 1,
+          "label": "1 days"
+        },
+        {
+          "code": 2,
+          "label": "2 days"
+        },
+        {
+          "code": 3,
+          "label": "3 days"
+        },
+        {
+          "code": 4,
+          "label": "4 days"
+        },
+        {
+          "code": 5,
+          "label": "5 days"
+        },
+        {
+          "code": 6,
+          "label": "6 days"
+        },
+        {
+          "code": 7,
+          "label": "7 days"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "unplanned_topups_7d",
+      "source_name": "unplanned_topups_7d",
+      "label": "On how many of the past seven days did your household make an unplanned extra grocery shop or order because something was missing?",
+      "type": "single",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "B2",
+      "question_text": "On how many of the past seven days did your household make an unplanned extra grocery shop or order because something was missing?",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "0 days"
+        },
+        {
+          "code": 1,
+          "label": "1 days"
+        },
+        {
+          "code": 2,
+          "label": "2 days"
+        },
+        {
+          "code": 3,
+          "label": "3 days"
+        },
+        {
+          "code": 4,
+          "label": "4 days"
+        },
+        {
+          "code": 5,
+          "label": "5 days"
+        },
+        {
+          "code": 6,
+          "label": "6 days"
+        },
+        {
+          "code": 7,
+          "label": "7 days"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "waste_days_7d",
+      "source_name": "waste_days_7d",
+      "label": "On how many of the past seven days did your household throw away unused perishable food or an uneaten prepared meal? Exclude unavoidable peelings and bones.",
+      "type": "count",
+      "role": "core",
+      "measure": "scale",
+      "question_id": "B3",
+      "question_text": "On how many of the past seven days did your household throw away unused perishable food or an uneaten prepared meal? Exclude unavoidable peelings and bones.",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "0 days"
+        },
+        {
+          "code": 1,
+          "label": "1 days"
+        },
+        {
+          "code": 2,
+          "label": "2 days"
+        },
+        {
+          "code": 3,
+          "label": "3 days"
+        },
+        {
+          "code": 4,
+          "label": "4 days"
+        },
+        {
+          "code": 5,
+          "label": "5 days"
+        },
+        {
+          "code": 6,
+          "label": "6 days"
+        },
+        {
+          "code": 7,
+          "label": "7 days"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "over_budget_4w",
+      "source_name": "over_budget_4w",
+      "label": "Spent more on groceries than intended in at least one of the past four weeks",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "B4",
+      "question_text": "Spent more on groceries than intended in at least one of the past four weeks",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": "No monetary amount or income is collected. No intended spending limit / unable to judge is coded 97, not No."
+    },
+    {
+      "name": "planning_tool_28d",
+      "source_name": "planning_tool_28d",
+      "label": "Digital grocery/meal planning tool used most often in past 28 days",
+      "type": "single",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "U1",
+      "question_text": "Digital grocery/meal planning tool used most often in past 28 days",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No digital planning tool in past 28 days"
+        },
+        {
+          "code": 1,
+          "label": "Grocery retailer app/site"
+        },
+        {
+          "code": 2,
+          "label": "Free recipe or list app/site"
+        },
+        {
+          "code": 3,
+          "label": "Paid meal-planning app/site"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": "Used a planning/list/recipe function, not simply browsed or purchased groceries. If more than one, code the most-used type."
+    },
+    {
+      "name": "tool_satisfaction_5",
+      "source_name": "tool_satisfaction_5",
+      "label": "Overall satisfaction with the most-used planning tool",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "U2",
+      "question_text": "Overall satisfaction with the most-used planning tool",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very dissatisfied"
+        },
+        {
+          "code": 2,
+          "label": "Fairly dissatisfied"
+        },
+        {
+          "code": 3,
+          "label": "Neither satisfied nor dissatisfied"
+        },
+        {
+          "code": 4,
+          "label": "Fairly satisfied"
+        },
+        {
+          "code": 5,
+          "label": "Very satisfied"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "Used a digital planning tool in the past 28 days (U1 = 1, 2 or 3)",
+        "expr": "planning_tool_28d in [1, 2, 3]"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very dissatisfied",
+        "high_label": "Very satisfied",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "shared_list_use_28d",
+      "source_name": "shared_list_use_28d",
+      "label": "Used a shared shopping-list/meal-plan function with another household member in past 28 days",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "U3",
+      "question_text": "Used a shared shopping-list/meal-plan function with another household member in past 28 days",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "Used a digital planning tool in the past 28 days (U1 = 1, 2 or 3)",
+        "expr": "planning_tool_28d in [1, 2, 3]"
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": "Current tool users without a sharing feature or another member to share with answer No, not a structural blank."
+    },
+    {
+      "name": "support_budget",
+      "source_name": "support_budget",
+      "label": "Keep grocery spending within what we intend",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "N1",
+      "question_text": "Which tasks, if any, would you like more help with? Select all that apply. — Keep grocery spending within what we intend",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "needs",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "support_quick_meals",
+      "source_name": "support_quick_meals",
+      "label": "Find quick meals and re-plan when plans change",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "N1",
+      "question_text": "Which tasks, if any, would you like more help with? Select all that apply. — Find quick meals and re-plan when plans change",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "needs",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "support_use_up",
+      "source_name": "support_use_up",
+      "label": "Use up food and leftovers before they are wasted",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "N1",
+      "question_text": "Which tasks, if any, would you like more help with? Select all that apply. — Use up food and leftovers before they are wasted",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "needs",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "support_shared_plan",
+      "source_name": "support_shared_plan",
+      "label": "Share a meal plan or shopping list with other household members",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "N1",
+      "question_text": "Which tasks, if any, would you like more help with? Select all that apply. — Share a meal plan or shopping list with other household members",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "needs",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "barrier_setup_time",
+      "source_name": "barrier_setup_time",
+      "label": "Time or effort to set it up and keep it updated",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "N2",
+      "question_text": "What, if anything, would make it difficult to start using a digital grocery/meal-planning helper, or to use one more often? Select all that apply. — Time or effort to set it up and keep it updated",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "barriers",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "barrier_rigid",
+      "source_name": "barrier_rigid",
+      "label": "Suggestions or plans being too rigid for our household",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "N2",
+      "question_text": "What, if anything, would make it difficult to start using a digital grocery/meal-planning helper, or to use one more often? Select all that apply. — Suggestions or plans being too rigid for our household",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "barriers",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "barrier_cost",
+      "source_name": "barrier_cost",
+      "label": "Another subscription or extra cost",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "N2",
+      "question_text": "What, if anything, would make it difficult to start using a digital grocery/meal-planning helper, or to use one more often? Select all that apply. — Another subscription or extra cost",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "barriers",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "barrier_privacy",
+      "source_name": "barrier_privacy",
+      "label": "Sharing household or shopping information",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "N2",
+      "question_text": "What, if anything, would make it difficult to start using a digital grocery/meal-planning helper, or to use one more often? Select all that apply. — Sharing household or shopping information",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": "barriers",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "needs_block_status",
+      "source_name": "needs_block_status",
+      "label": "Response status for complete support-needs block",
+      "type": "single",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": "N1_STATUS",
+      "question_text": "Response status for complete support-needs block",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Answered, including none"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "barriers_block_status",
+      "source_name": "barriers_block_status",
+      "label": "Response status for complete digital-barriers block",
+      "type": "single",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": "N2_STATUS",
+      "question_text": "Response status for complete digital-barriers block",
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Answered, including none"
+        }
+      ],
+      "missing": [
+        97,
+        98
+      ],
+      "universe": {
+        "text": "All eligible sampled households",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    }
+  ],
+  "sets": [
+    {
+      "id": "attitudes",
+      "type": "battery",
+      "label": "Attitudes to meal planning",
+      "question_id": "A1-A9",
+      "question_text": "How much do you agree or disagree with each statement?",
+      "members": [
+        "att_plan_ahead_5",
+        "att_spontaneous_5",
+        "att_budget_worry_5",
+        "att_price_tradeoffs_5",
+        "att_time_short_5",
+        "att_decision_fatigue_5",
+        "att_waste_concern_5",
+        "att_waste_difficult_5",
+        "att_digital_help_5"
+      ]
+    },
+    {
+      "id": "needs",
+      "type": "multi_response",
+      "label": "Tasks wanting more help with",
+      "question_id": "N1",
+      "question_text": "Which tasks, if any, would you like more help with? Select all that apply.",
+      "members": [
+        "support_budget",
+        "support_quick_meals",
+        "support_use_up",
+        "support_shared_plan"
+      ],
+      "status_variable": "needs_block_status",
+      "base": "Answered the block (status = 1); percentages of respondents"
+    },
+    {
+      "id": "barriers",
+      "type": "multi_response",
+      "label": "Barriers to using a digital helper",
+      "question_id": "N2",
+      "question_text": "What, if anything, would make it difficult to start using a digital grocery/meal-planning helper, or to use one more often? Select all that apply.",
+      "members": [
+        "barrier_setup_time",
+        "barrier_rigid",
+        "barrier_cost",
+        "barrier_privacy"
+      ],
+      "status_variable": "barriers_block_status",
+      "base": "Answered the block (status = 1); percentages of respondents"
+    }
+  ],
+  "banner_candidates": [
+    "age_band",
+    "children_u16",
+    "work_hours_band",
+    "planning_tool_28d"
+  ],
+  "provenance": {
+    "adapter": "sbt004",
+    "sources": [
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-004/model_inputs/codebook.json",
+        "sha256": "c1e0edc250b036ddfb20c530872afcce104f8bcbbf5370a74e1ca0366cd04a52"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-004/model_inputs/respondents.csv",
+        "sha256": "6394f992f4eeddf376413b0ca394466f4a2ca9151304a015930adf658b3aa20a"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-004/model_inputs/study_materials.json",
+        "sha256": "3887fa6ab6f4535dca6d4d84de979779bf7f0295fdbc6b59eb4a850f59b60af4"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-004/questionnaire.md",
+        "sha256": "06dfa43d9e907728a7b307acd600973ff0131280a3df86b9b6e08474e11adc7a"
+      }
+    ]
+  },
+  "conversion_notes": [
+    "Source missing codes already match the canonical convention (97 DK, 98 refused, 99 not derivable, blank = not asked); values unchanged.",
+    "Question text for items is the codebook statement with the block stem prefixed."
+  ]
+}

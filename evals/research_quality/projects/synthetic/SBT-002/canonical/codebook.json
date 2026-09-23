@@ -1,0 +1,1782 @@
+{
+  "schema_version": "velocity.study.v1",
+  "missing_policy": {
+    "sysmis": "Not asked (outside the question's universe)",
+    "97": "Don't know / can't judge",
+    "98": "Prefer not to say",
+    "99": "Not answered / cannot be derived"
+  },
+  "study_id": "SBT-002",
+  "title": "Everyday meal-kit concept test",
+  "archetype": "concept_test",
+  "design": {
+    "type": "randomised_monadic",
+    "n": 2100,
+    "cells": [
+      "Flex",
+      "Plus",
+      "Simple"
+    ],
+    "cell_variable": "concept"
+  },
+  "brief": null,
+  "decision_question": "Which meal-kit concepts should advance, for whom, and with what qualifications?",
+  "population": "UK adults aged 18-64 open to using a meal-kit delivery service in the next 12 months",
+  "waves": null,
+  "weight": "wt_final",
+  "id_variable": "respondent_id",
+  "wave_variable": null,
+  "variables": [
+    {
+      "name": "respondent_id",
+      "source_name": "respondent_id",
+      "label": "Respondent ID",
+      "type": "identifier",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": null,
+      "question_text": null,
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "age",
+      "source_name": "age",
+      "label": "Age",
+      "type": "ordinal",
+      "role": "screener",
+      "measure": "ordinal",
+      "question_id": "S1",
+      "question_text": "Age",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "18-24"
+        },
+        {
+          "code": 2,
+          "label": "25-34"
+        },
+        {
+          "code": 3,
+          "label": "35-44"
+        },
+        {
+          "code": 4,
+          "label": "45-54"
+        },
+        {
+          "code": 5,
+          "label": "55-64"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "18-24": 1,
+        "25-34": 2,
+        "35-44": 3,
+        "45-54": 4,
+        "55-64": 5
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "gender",
+      "source_name": "gender",
+      "label": "Gender",
+      "type": "single",
+      "role": "screener",
+      "measure": "nominal",
+      "question_id": "S2",
+      "question_text": "Gender",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Woman"
+        },
+        {
+          "code": 2,
+          "label": "Man"
+        },
+        {
+          "code": 3,
+          "label": "Non-binary or another identity"
+        }
+      ],
+      "missing": [
+        98
+      ],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Woman": 1,
+        "Man": 2,
+        "Non-binary/other": 3,
+        "Prefer not": 98
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "region",
+      "source_name": "region",
+      "label": "Region",
+      "type": "single",
+      "role": "screener",
+      "measure": "nominal",
+      "question_id": "S3",
+      "question_text": "Region",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "London"
+        },
+        {
+          "code": 2,
+          "label": "South East"
+        },
+        {
+          "code": 3,
+          "label": "South West"
+        },
+        {
+          "code": 4,
+          "label": "East of England"
+        },
+        {
+          "code": 5,
+          "label": "Midlands"
+        },
+        {
+          "code": 6,
+          "label": "North of England"
+        },
+        {
+          "code": 7,
+          "label": "Scotland"
+        },
+        {
+          "code": 8,
+          "label": "Wales"
+        },
+        {
+          "code": 9,
+          "label": "Northern Ireland"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "London": 1,
+        "South East": 2,
+        "South West": 3,
+        "East": 4,
+        "Midlands": 5,
+        "North": 6,
+        "Scotland": 7,
+        "Wales": 8,
+        "Northern Ireland": 9
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "mealkit_open_5",
+      "source_name": "mealkit_open_5",
+      "label": "Meal-kit openness",
+      "type": "scale",
+      "role": "screener",
+      "measure": "ordinal",
+      "question_id": "S4",
+      "question_text": "How likely are you to consider using a meal-kit delivery service in the next 12 months?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Definitely would not"
+        },
+        {
+          "code": 2,
+          "label": "Probably would not"
+        },
+        {
+          "code": 3,
+          "label": "Might or might not"
+        },
+        {
+          "code": 4,
+          "label": "Probably would"
+        },
+        {
+          "code": 5,
+          "label": "Definitely would"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Definitely would not",
+        "high_label": "Definitely would",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "food_p1",
+      "source_name": "food_p1",
+      "label": "Enjoy trying new foods or flavours",
+      "type": "scale",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P1",
+      "question_text": "I enjoy trying foods or flavours that are new to me.",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "food_exploration",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "food_p2",
+      "source_name": "food_p2",
+      "label": "Look for meals that feel different",
+      "type": "scale",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P2",
+      "question_text": "I often look for meals that feel different from my usual choices.",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "food_exploration",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "food_p3",
+      "source_name": "food_p3",
+      "label": "Willing to pay more for special food",
+      "type": "scale",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P3",
+      "question_text": "I am willing to pay a little more for food that feels special or distinctive.",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Strongly agree"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "food_exploration",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Strongly disagree",
+        "high_label": "Strongly agree",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "food_explorer",
+      "source_name": "food_explorer",
+      "label": "Food explorer (mean of P1-P3 >= 4)",
+      "type": "binary",
+      "role": "derived",
+      "measure": "nominal",
+      "question_id": null,
+      "question_text": null,
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": "1 when mean(food_p1, food_p2, food_p3) >= 4.0; pre-specified strategic subgroup",
+      "notes": null
+    },
+    {
+      "name": "mealkit_usage",
+      "source_name": "mealkit_usage",
+      "label": "Current meal-kit usage",
+      "type": "ordinal",
+      "role": "profile",
+      "measure": "ordinal",
+      "question_id": "P4",
+      "question_text": "Current meal-kit usage",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Never used"
+        },
+        {
+          "code": 2,
+          "label": "Used previously"
+        },
+        {
+          "code": 3,
+          "label": "Use occasionally"
+        },
+        {
+          "code": 4,
+          "label": "Use regularly"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Never": 1,
+        "Previous": 2,
+        "Occasional": 3,
+        "Regular": 4
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "concept",
+      "source_name": "concept",
+      "label": "Concept shown (random assignment)",
+      "type": "single",
+      "role": "design",
+      "measure": "nominal",
+      "question_id": "RAND",
+      "question_text": "Randomly assigned concept",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Flex"
+        },
+        {
+          "code": 2,
+          "label": "Plus"
+        },
+        {
+          "code": 3,
+          "label": "Simple"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Flex": 1,
+        "Plus": 2,
+        "Simple": 3
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "appeal_5",
+      "source_name": "appeal_5",
+      "label": "Overall appeal",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q1",
+      "question_text": "How appealing is this concept to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all appealing"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Extremely appealing"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "concept_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all appealing",
+        "high_label": "Extremely appealing",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "purchase_intent_5",
+      "source_name": "purchase_intent_5",
+      "label": "Purchase intent",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q2",
+      "question_text": "If this service were available at a reasonable price, how likely would you be to subscribe or try it?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Definitely would not"
+        },
+        {
+          "code": 2,
+          "label": "Probably would not"
+        },
+        {
+          "code": 3,
+          "label": "Might or might not"
+        },
+        {
+          "code": 4,
+          "label": "Probably would"
+        },
+        {
+          "code": 5,
+          "label": "Definitely would"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "concept_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Definitely would not",
+        "high_label": "Definitely would",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "uniqueness_5",
+      "source_name": "uniqueness_5",
+      "label": "Uniqueness",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q3",
+      "question_text": "How different does this concept feel from meal-kit services you already know about?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all different"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very different"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "concept_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all different",
+        "high_label": "Very different",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "relevance_5",
+      "source_name": "relevance_5",
+      "label": "Relevance",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q4",
+      "question_text": "How relevant does this concept feel to your needs?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all relevant"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Extremely relevant"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "concept_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all relevant",
+        "high_label": "Extremely relevant",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "credibility_5",
+      "source_name": "credibility_5",
+      "label": "Credibility",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q5",
+      "question_text": "How believable is it that a meal-kit provider could deliver this proposition consistently?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all believable"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Extremely believable"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "concept_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all believable",
+        "high_label": "Extremely believable",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "value_5",
+      "source_name": "value_5",
+      "label": "Value for money",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q6",
+      "question_text": "Assuming a modest premium over a standard meal-kit subscription, how good or poor would you expect the value for money to be?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very poor"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very good"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "concept_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very poor",
+        "high_label": "Very good",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "understanding_5",
+      "source_name": "understanding_5",
+      "label": "Ease of understanding",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q7",
+      "question_text": "How easy is the concept to understand?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Very difficult"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Very easy"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "concept_evaluation",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Very difficult",
+        "high_label": "Very easy",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "premium_value_5",
+      "source_name": "premium_value_5",
+      "label": "Premium proposition convincing",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "Q8",
+      "question_text": "Thinking specifically about what makes this concept premium, how convincing is the premium proposition?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Not at all convincing"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Extremely convincing"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Rated ease of understanding 3 or higher (Q7 >= 3)",
+        "expr": "understanding_5 >= 3"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Not at all convincing",
+        "high_label": "Extremely convincing",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "wt_final",
+      "source_name": "wt_final",
+      "label": "Final weight",
+      "type": "weight",
+      "role": "weight",
+      "measure": "scale",
+      "question_id": null,
+      "question_text": null,
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": "Supplied calibration weight"
+    },
+    {
+      "name": "like_flexibility",
+      "source_name": "like_flexibility",
+      "label": "Flexibility / ability to pause or swap",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_ease",
+      "source_name": "like_ease",
+      "label": "Ease / convenience",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_broad_choice",
+      "source_name": "like_broad_choice",
+      "label": "Broad menu choice",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_familiar",
+      "source_name": "like_familiar",
+      "label": "Familiar meals",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_new_flavours",
+      "source_name": "like_new_flavours",
+      "label": "New or unusual flavours",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_chef",
+      "source_name": "like_chef",
+      "label": "Chef-led inspiration",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_quality",
+      "source_name": "like_quality",
+      "label": "Ingredient quality",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_provenance",
+      "source_name": "like_provenance",
+      "label": "Provenance / sourcing",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_premium",
+      "source_name": "like_premium",
+      "label": "Premium feel",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "like_none",
+      "source_name": "like_none",
+      "label": "None of these",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "likes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "dislike_expensive",
+      "source_name": "dislike_expensive",
+      "label": "Too expensive",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "dislikes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "dislike_complicated",
+      "source_name": "dislike_complicated",
+      "label": "Too complicated",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "dislikes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "dislike_not_different",
+      "source_name": "dislike_not_different",
+      "label": "Not different enough",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "dislikes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "dislike_too_adventurous",
+      "source_name": "dislike_too_adventurous",
+      "label": "Too unfamiliar / adventurous",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "dislikes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "dislike_limited_choice",
+      "source_name": "dislike_limited_choice",
+      "label": "Limited choice",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "dislikes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "dislike_unclear_benefit",
+      "source_name": "dislike_unclear_benefit",
+      "label": "Unclear benefit",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "dislikes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "dislike_low_frequency",
+      "source_name": "dislike_low_frequency",
+      "label": "Would not use often enough",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "dislikes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "dislike_none",
+      "source_name": "dislike_none",
+      "label": "None of these",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not selected"
+        },
+        {
+          "code": 1,
+          "label": "Selected"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "dislikes",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    }
+  ],
+  "sets": [
+    {
+      "id": "food_exploration",
+      "type": "battery",
+      "label": "Food exploration orientation",
+      "question_id": "P1-P3",
+      "question_text": "Please indicate how much you agree or disagree with each statement.",
+      "members": [
+        "food_p1",
+        "food_p2",
+        "food_p3"
+      ]
+    },
+    {
+      "id": "concept_evaluation",
+      "type": "battery",
+      "label": "Concept evaluation",
+      "question_id": "Q1-Q7",
+      "question_text": "All questions refer to the assigned concept.",
+      "members": [
+        "appeal_5",
+        "purchase_intent_5",
+        "uniqueness_5",
+        "relevance_5",
+        "credibility_5",
+        "value_5",
+        "understanding_5"
+      ]
+    },
+    {
+      "id": "likes",
+      "type": "multi_response",
+      "label": "What appeals",
+      "question_id": "Q9",
+      "question_text": "Which aspects, if any, particularly appeal to you? Select all that apply.",
+      "members": [
+        "like_flexibility",
+        "like_ease",
+        "like_broad_choice",
+        "like_familiar",
+        "like_new_flavours",
+        "like_chef",
+        "like_quality",
+        "like_provenance",
+        "like_premium",
+        "like_none"
+      ],
+      "exclusive": [
+        "like_none"
+      ]
+    },
+    {
+      "id": "dislikes",
+      "type": "multi_response",
+      "label": "What concerns",
+      "question_id": "Q10",
+      "question_text": "Which aspects, if any, concern you? Select all that apply.",
+      "members": [
+        "dislike_expensive",
+        "dislike_complicated",
+        "dislike_not_different",
+        "dislike_too_adventurous",
+        "dislike_limited_choice",
+        "dislike_unclear_benefit",
+        "dislike_low_frequency",
+        "dislike_none"
+      ],
+      "exclusive": [
+        "dislike_none"
+      ]
+    }
+  ],
+  "banner_candidates": [
+    "concept",
+    "food_explorer",
+    "age",
+    "gender",
+    "mealkit_usage"
+  ],
+  "provenance": {
+    "adapter": "sbt002",
+    "sources": [
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-002/model_inputs/codebook.json",
+        "sha256": "96f1262da3bb905f12cb7bfc315e7e2577d65547dd6a0c5d70d83d09c7db64ca"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-002/model_inputs/respondents.csv",
+        "sha256": "26b1e05267701de7bcc2b3a81a71205b76492f1c6066460fa56d071e725e0525"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-002/model_inputs/study_materials.json",
+        "sha256": "5b1bc5bddcb78139cc7260d6313bcffe9490975b84e0e6bdf33a83aed4ef6077"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-002/questionnaire.md",
+        "sha256": "4fc7c6dfc39626c1d876a0d3c9d7d4db1bb77b85b65a76962b46c103399b3164"
+      }
+    ]
+  },
+  "conversion_notes": [
+    "Text answers recoded to integers in questionnaire order; the mapping is stored in each variable's 'recode'.",
+    "Gender 'Prefer not' recoded to 98 (prefer not to say), so it is excluded from valid bases.",
+    "Scale end-point labels and question wording taken from questionnaire.md; intermediate points are numbered."
+  ]
+}

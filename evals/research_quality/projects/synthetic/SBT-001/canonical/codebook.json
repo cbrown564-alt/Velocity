@@ -1,0 +1,3655 @@
+{
+  "schema_version": "velocity.study.v1",
+  "missing_policy": {
+    "sysmis": "Not asked (outside the question's universe)",
+    "97": "Don't know / can't judge",
+    "98": "Prefer not to say",
+    "99": "Not answered / cannot be derived"
+  },
+  "study_id": "SBT-001",
+  "title": "UK mobile network brand tracker (five waves)",
+  "archetype": "tracker",
+  "design": {
+    "type": "repeated_cross_section",
+    "n_per_wave": 2000,
+    "waves": 5,
+    "brands": [
+      "northstar",
+      "pulse",
+      "mosaic",
+      "lumen",
+      "harbour"
+    ]
+  },
+  "brief": null,
+  "decision_question": null,
+  "population": "UK adults who decide or share the decision on their personal mobile service",
+  "waves": [
+    {
+      "id": 1,
+      "label": "Wave 1",
+      "fieldwork": null
+    },
+    {
+      "id": 2,
+      "label": "Wave 2",
+      "fieldwork": null
+    },
+    {
+      "id": 3,
+      "label": "Wave 3",
+      "fieldwork": null
+    },
+    {
+      "id": 4,
+      "label": "Wave 4",
+      "fieldwork": null
+    },
+    {
+      "id": 5,
+      "label": "Wave 5",
+      "fieldwork": null
+    }
+  ],
+  "weight": "wt_final",
+  "id_variable": "respondent_id",
+  "wave_variable": "wave",
+  "variables": [
+    {
+      "name": "respondent_id",
+      "source_name": "respondent_id",
+      "label": "Respondent ID",
+      "type": "identifier",
+      "role": "admin",
+      "measure": "nominal",
+      "question_id": null,
+      "question_text": null,
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "wave",
+      "source_name": "wave",
+      "label": "Tracking wave",
+      "type": "ordinal",
+      "role": "design",
+      "measure": "ordinal",
+      "question_id": "WAVE",
+      "question_text": null,
+      "text_source": "codebook",
+      "values": [
+        {
+          "code": 1,
+          "label": "Wave 1"
+        },
+        {
+          "code": 2,
+          "label": "Wave 2"
+        },
+        {
+          "code": 3,
+          "label": "Wave 3"
+        },
+        {
+          "code": 4,
+          "label": "Wave 4"
+        },
+        {
+          "code": 5,
+          "label": "Wave 5"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S1_age",
+      "source_name": "S1_age",
+      "label": "Age band",
+      "type": "ordinal",
+      "role": "screener",
+      "measure": "ordinal",
+      "question_id": "S1",
+      "question_text": "Age",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "18-24"
+        },
+        {
+          "code": 2,
+          "label": "25-34"
+        },
+        {
+          "code": 3,
+          "label": "35-44"
+        },
+        {
+          "code": 4,
+          "label": "45-54"
+        },
+        {
+          "code": 5,
+          "label": "55-64"
+        },
+        {
+          "code": 6,
+          "label": "65+"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "18-24": 1,
+        "25-34": 2,
+        "35-44": 3,
+        "45-54": 4,
+        "55-64": 5,
+        "65+": 6
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S2_gender",
+      "source_name": "S2_gender",
+      "label": "Gender",
+      "type": "single",
+      "role": "screener",
+      "measure": "nominal",
+      "question_id": "S2",
+      "question_text": "Gender",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Man"
+        },
+        {
+          "code": 2,
+          "label": "Woman"
+        },
+        {
+          "code": 3,
+          "label": "Non-binary or another identity"
+        }
+      ],
+      "missing": [
+        98
+      ],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Man": 1,
+        "Woman": 2,
+        "Non-binary/another identity": 3,
+        "Prefer not to say": 98
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S3_region",
+      "source_name": "S3_region",
+      "label": "Region",
+      "type": "single",
+      "role": "screener",
+      "measure": "nominal",
+      "question_id": "S3",
+      "question_text": "Region",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "London"
+        },
+        {
+          "code": 2,
+          "label": "South East"
+        },
+        {
+          "code": 3,
+          "label": "South West"
+        },
+        {
+          "code": 4,
+          "label": "East"
+        },
+        {
+          "code": 5,
+          "label": "Midlands"
+        },
+        {
+          "code": 6,
+          "label": "North"
+        },
+        {
+          "code": 7,
+          "label": "Wales"
+        },
+        {
+          "code": 8,
+          "label": "Scotland"
+        },
+        {
+          "code": 9,
+          "label": "Northern Ireland"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "London": 1,
+        "South East": 2,
+        "South West": 3,
+        "East": 4,
+        "Midlands": 5,
+        "North": 6,
+        "Wales": 7,
+        "Scotland": 8,
+        "Northern Ireland": 9
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S5_income",
+      "source_name": "S5_income",
+      "label": "Household income",
+      "type": "ordinal",
+      "role": "screener",
+      "measure": "ordinal",
+      "question_id": "S5",
+      "question_text": "Household income",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Under £20k"
+        },
+        {
+          "code": 2,
+          "label": "£20-39k"
+        },
+        {
+          "code": 3,
+          "label": "£40-59k"
+        },
+        {
+          "code": 4,
+          "label": "£60-99k"
+        },
+        {
+          "code": 5,
+          "label": "£100k or more"
+        }
+      ],
+      "missing": [
+        98
+      ],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "<£20k": 1,
+        "£20-39k": 2,
+        "£40-59k": 3,
+        "£60-99k": 4,
+        "£100k+": 5,
+        "Prefer not to say": 98
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S4_employment",
+      "source_name": "S4_employment",
+      "label": "Employment status",
+      "type": "single",
+      "role": "screener",
+      "measure": "nominal",
+      "question_id": "S4",
+      "question_text": "Employment status",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Full-time"
+        },
+        {
+          "code": 2,
+          "label": "Part-time"
+        },
+        {
+          "code": 3,
+          "label": "Self-employed"
+        },
+        {
+          "code": 4,
+          "label": "Student"
+        },
+        {
+          "code": 5,
+          "label": "Not working"
+        },
+        {
+          "code": 6,
+          "label": "Retired"
+        },
+        {
+          "code": 7,
+          "label": "Other"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Full-time": 1,
+        "Part-time": 2,
+        "Self-employed": 3,
+        "Student": 4,
+        "Not working": 5,
+        "Retired": 6,
+        "Other": 7
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S6_decision_role",
+      "source_name": "S6_decision_role",
+      "label": "Decision role for personal mobile service",
+      "type": "single",
+      "role": "screener",
+      "measure": "nominal",
+      "question_id": "S6",
+      "question_text": "Who decides on your personal mobile service?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Sole decision maker"
+        },
+        {
+          "code": 2,
+          "label": "Share the decision"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "Sole": 1,
+        "Shared": 2
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S7_contract_type",
+      "source_name": "S7_contract_type",
+      "label": "Contract type",
+      "type": "single",
+      "role": "screener",
+      "measure": "nominal",
+      "question_id": "S7",
+      "question_text": "What type of mobile contract do you have?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "SIM-only"
+        },
+        {
+          "code": 2,
+          "label": "Handset contract"
+        },
+        {
+          "code": 3,
+          "label": "PAYG"
+        },
+        {
+          "code": 4,
+          "label": "Other"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "SIM-only": 1,
+        "Handset contract": 2,
+        "PAYG": 3,
+        "Other": 4
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A2_northstar",
+      "source_name": "A2_northstar",
+      "label": "Aided awareness: Northstar",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A2",
+      "question_text": "Which of these brands had you heard of before today?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "aided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F1_northstar",
+      "source_name": "F1_northstar",
+      "label": "Familiarity: Northstar",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "F1",
+      "question_text": "How familiar are you with each brand?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Never heard much about it"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Know it very well"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Northstar (A2)",
+        "expr": "A2_northstar == 1"
+      },
+      "set": "familiarity",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Never heard much about it",
+        "high_label": "Know it very well",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F2_northstar",
+      "source_name": "F2_northstar",
+      "label": "Would seriously consider: Northstar",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "F2",
+      "question_text": "If choosing a mobile provider today, which would you seriously consider?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Northstar (A2)",
+        "expr": "A2_northstar == 1"
+      },
+      "set": "consider",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A1_northstar",
+      "source_name": "A1_northstar",
+      "label": "Unaided awareness: Northstar",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A1",
+      "question_text": "Which mobile network brands come to mind? (unaided, coded)",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "code": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "unaided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "M2_northstar",
+      "source_name": "M2_northstar",
+      "label": "Prompted ad awareness: Northstar",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "M2",
+      "question_text": "Which of these brands have you seen or heard advertising for recently?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "ad_awareness",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A2_pulse",
+      "source_name": "A2_pulse",
+      "label": "Aided awareness: Pulse",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A2",
+      "question_text": "Which of these brands had you heard of before today?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "aided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F1_pulse",
+      "source_name": "F1_pulse",
+      "label": "Familiarity: Pulse",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "F1",
+      "question_text": "How familiar are you with each brand?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Never heard much about it"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Know it very well"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Pulse (A2)",
+        "expr": "A2_pulse == 1"
+      },
+      "set": "familiarity",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Never heard much about it",
+        "high_label": "Know it very well",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F2_pulse",
+      "source_name": "F2_pulse",
+      "label": "Would seriously consider: Pulse",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "F2",
+      "question_text": "If choosing a mobile provider today, which would you seriously consider?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Pulse (A2)",
+        "expr": "A2_pulse == 1"
+      },
+      "set": "consider",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A1_pulse",
+      "source_name": "A1_pulse",
+      "label": "Unaided awareness: Pulse",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A1",
+      "question_text": "Which mobile network brands come to mind? (unaided, coded)",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "code": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "unaided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "M2_pulse",
+      "source_name": "M2_pulse",
+      "label": "Prompted ad awareness: Pulse",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "M2",
+      "question_text": "Which of these brands have you seen or heard advertising for recently?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "ad_awareness",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A2_mosaic",
+      "source_name": "A2_mosaic",
+      "label": "Aided awareness: Mosaic",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A2",
+      "question_text": "Which of these brands had you heard of before today?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "aided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F1_mosaic",
+      "source_name": "F1_mosaic",
+      "label": "Familiarity: Mosaic",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "F1",
+      "question_text": "How familiar are you with each brand?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Never heard much about it"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Know it very well"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Mosaic (A2)",
+        "expr": "A2_mosaic == 1"
+      },
+      "set": "familiarity",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Never heard much about it",
+        "high_label": "Know it very well",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F2_mosaic",
+      "source_name": "F2_mosaic",
+      "label": "Would seriously consider: Mosaic",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "F2",
+      "question_text": "If choosing a mobile provider today, which would you seriously consider?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Mosaic (A2)",
+        "expr": "A2_mosaic == 1"
+      },
+      "set": "consider",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A1_mosaic",
+      "source_name": "A1_mosaic",
+      "label": "Unaided awareness: Mosaic",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A1",
+      "question_text": "Which mobile network brands come to mind? (unaided, coded)",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "code": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "unaided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "M2_mosaic",
+      "source_name": "M2_mosaic",
+      "label": "Prompted ad awareness: Mosaic",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "M2",
+      "question_text": "Which of these brands have you seen or heard advertising for recently?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "ad_awareness",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A2_lumen",
+      "source_name": "A2_lumen",
+      "label": "Aided awareness: Lumen",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A2",
+      "question_text": "Which of these brands had you heard of before today?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "aided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F1_lumen",
+      "source_name": "F1_lumen",
+      "label": "Familiarity: Lumen",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "F1",
+      "question_text": "How familiar are you with each brand?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Never heard much about it"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Know it very well"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Lumen (A2)",
+        "expr": "A2_lumen == 1"
+      },
+      "set": "familiarity",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Never heard much about it",
+        "high_label": "Know it very well",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F2_lumen",
+      "source_name": "F2_lumen",
+      "label": "Would seriously consider: Lumen",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "F2",
+      "question_text": "If choosing a mobile provider today, which would you seriously consider?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Lumen (A2)",
+        "expr": "A2_lumen == 1"
+      },
+      "set": "consider",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A1_lumen",
+      "source_name": "A1_lumen",
+      "label": "Unaided awareness: Lumen",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A1",
+      "question_text": "Which mobile network brands come to mind? (unaided, coded)",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "code": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "unaided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "M2_lumen",
+      "source_name": "M2_lumen",
+      "label": "Prompted ad awareness: Lumen",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "M2",
+      "question_text": "Which of these brands have you seen or heard advertising for recently?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "ad_awareness",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A2_harbour",
+      "source_name": "A2_harbour",
+      "label": "Aided awareness: Harbour",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A2",
+      "question_text": "Which of these brands had you heard of before today?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "aided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F1_harbour",
+      "source_name": "F1_harbour",
+      "label": "Familiarity: Harbour",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "F1",
+      "question_text": "How familiar are you with each brand?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Never heard much about it"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "Know it very well"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Harbour (A2)",
+        "expr": "A2_harbour == 1"
+      },
+      "set": "familiarity",
+      "scale": {
+        "points": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "low_label": "Never heard much about it",
+        "high_label": "Know it very well",
+        "top_box": [
+          4,
+          5
+        ],
+        "bottom_box": [
+          1,
+          2
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F2_harbour",
+      "source_name": "F2_harbour",
+      "label": "Would seriously consider: Harbour",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "F2",
+      "question_text": "If choosing a mobile provider today, which would you seriously consider?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Aware of Harbour (A2)",
+        "expr": "A2_harbour == 1"
+      },
+      "set": "consider",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "A1_harbour",
+      "source_name": "A1_harbour",
+      "label": "Unaided awareness: Harbour",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "A1",
+      "question_text": "Which mobile network brands come to mind? (unaided, coded)",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "code": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "unaided",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "M2_harbour",
+      "source_name": "M2_harbour",
+      "label": "Prompted ad awareness: Harbour",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "M2",
+      "question_text": "Which of these brands have you seen or heard advertising for recently?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": "ad_awareness",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S8_current_provider",
+      "source_name": "S8_current_provider",
+      "label": "Current provider",
+      "type": "single",
+      "role": "screener",
+      "measure": "nominal",
+      "question_id": "S8",
+      "question_text": "Which network provides your personal mobile service?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Northstar"
+        },
+        {
+          "code": 2,
+          "label": "Pulse"
+        },
+        {
+          "code": 3,
+          "label": "Mosaic"
+        },
+        {
+          "code": 4,
+          "label": "Lumen"
+        },
+        {
+          "code": 5,
+          "label": "Harbour"
+        },
+        {
+          "code": 6,
+          "label": "Other provider"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "northstar": 1,
+        "pulse": 2,
+        "mosaic": 3,
+        "lumen": 4,
+        "harbour": 5,
+        "other": 6
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "S9_provider_tenure",
+      "source_name": "S9_provider_tenure",
+      "label": "Provider tenure",
+      "type": "ordinal",
+      "role": "screener",
+      "measure": "ordinal",
+      "question_id": "S9",
+      "question_text": "How long have you been with your current provider?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Less than 1 year"
+        },
+        {
+          "code": 2,
+          "label": "1-2 years"
+        },
+        {
+          "code": 3,
+          "label": "3-4 years"
+        },
+        {
+          "code": 4,
+          "label": "5+ years"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "<1 year": 1,
+        "1-2 years": 2,
+        "3-4 years": 3,
+        "5+ years": 4
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "F3_preference",
+      "source_name": "F3_preference",
+      "label": "Most preferred brand",
+      "type": "single",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "F3",
+      "question_text": "Which one brand would you most prefer to use?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Northstar"
+        },
+        {
+          "code": 2,
+          "label": "Pulse"
+        },
+        {
+          "code": 3,
+          "label": "Mosaic"
+        },
+        {
+          "code": 4,
+          "label": "Lumen"
+        },
+        {
+          "code": 5,
+          "label": "Harbour"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "northstar": 1,
+        "pulse": 2,
+        "mosaic": 3,
+        "lumen": 4,
+        "harbour": 5
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_northstar_reliable",
+      "source_name": "I_northstar_reliable",
+      "label": "Image: Northstar — Reliable network",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Northstar? — Reliable network",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Northstar (F1 = 3, 4 or 5)",
+        "expr": "F1_northstar in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_northstar_value",
+      "source_name": "I_northstar_value",
+      "label": "Image: Northstar — Good value for money",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Northstar? — Good value for money",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Northstar (F1 = 3, 4 or 5)",
+        "expr": "F1_northstar in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_northstar_innovative",
+      "source_name": "I_northstar_innovative",
+      "label": "Image: Northstar — Innovative",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Northstar? — Innovative",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Northstar (F1 = 3, 4 or 5)",
+        "expr": "F1_northstar in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_northstar_trust",
+      "source_name": "I_northstar_trust",
+      "label": "Image: Northstar — A brand I trust",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Northstar? — A brand I trust",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Northstar (F1 = 3, 4 or 5)",
+        "expr": "F1_northstar in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_northstar_customer_service",
+      "source_name": "I_northstar_customer_service",
+      "label": "Image: Northstar — Good customer service",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Northstar? — Good customer service",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Northstar (F1 = 3, 4 or 5)",
+        "expr": "F1_northstar in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_northstar_premium",
+      "source_name": "I_northstar_premium",
+      "label": "Image: Northstar — Premium",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Northstar? — Premium",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Northstar (F1 = 3, 4 or 5)",
+        "expr": "F1_northstar in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_northstar_environmental",
+      "source_name": "I_northstar_environmental",
+      "label": "Image: Northstar — Environmentally responsible",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Northstar? — Environmentally responsible",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Northstar (F1 = 3, 4 or 5)",
+        "expr": "F1_northstar in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_northstar_people_like_me",
+      "source_name": "I_northstar_people_like_me",
+      "label": "Image: Northstar — For people like me",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Northstar? — For people like me",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Northstar (F1 = 3, 4 or 5)",
+        "expr": "F1_northstar in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_pulse_reliable",
+      "source_name": "I_pulse_reliable",
+      "label": "Image: Pulse — Reliable network",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Pulse? — Reliable network",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Pulse (F1 = 3, 4 or 5)",
+        "expr": "F1_pulse in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_pulse_value",
+      "source_name": "I_pulse_value",
+      "label": "Image: Pulse — Good value for money",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Pulse? — Good value for money",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Pulse (F1 = 3, 4 or 5)",
+        "expr": "F1_pulse in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_pulse_innovative",
+      "source_name": "I_pulse_innovative",
+      "label": "Image: Pulse — Innovative",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Pulse? — Innovative",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Pulse (F1 = 3, 4 or 5)",
+        "expr": "F1_pulse in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_pulse_trust",
+      "source_name": "I_pulse_trust",
+      "label": "Image: Pulse — A brand I trust",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Pulse? — A brand I trust",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Pulse (F1 = 3, 4 or 5)",
+        "expr": "F1_pulse in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_pulse_customer_service",
+      "source_name": "I_pulse_customer_service",
+      "label": "Image: Pulse — Good customer service",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Pulse? — Good customer service",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Pulse (F1 = 3, 4 or 5)",
+        "expr": "F1_pulse in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_pulse_premium",
+      "source_name": "I_pulse_premium",
+      "label": "Image: Pulse — Premium",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Pulse? — Premium",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Pulse (F1 = 3, 4 or 5)",
+        "expr": "F1_pulse in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_pulse_environmental",
+      "source_name": "I_pulse_environmental",
+      "label": "Image: Pulse — Environmentally responsible",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Pulse? — Environmentally responsible",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Pulse (F1 = 3, 4 or 5)",
+        "expr": "F1_pulse in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_pulse_people_like_me",
+      "source_name": "I_pulse_people_like_me",
+      "label": "Image: Pulse — For people like me",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Pulse? — For people like me",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Pulse (F1 = 3, 4 or 5)",
+        "expr": "F1_pulse in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_mosaic_reliable",
+      "source_name": "I_mosaic_reliable",
+      "label": "Image: Mosaic — Reliable network",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Mosaic? — Reliable network",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Mosaic (F1 = 3, 4 or 5)",
+        "expr": "F1_mosaic in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_mosaic_value",
+      "source_name": "I_mosaic_value",
+      "label": "Image: Mosaic — Good value for money",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Mosaic? — Good value for money",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Mosaic (F1 = 3, 4 or 5)",
+        "expr": "F1_mosaic in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_mosaic_innovative",
+      "source_name": "I_mosaic_innovative",
+      "label": "Image: Mosaic — Innovative",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Mosaic? — Innovative",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Mosaic (F1 = 3, 4 or 5)",
+        "expr": "F1_mosaic in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_mosaic_trust",
+      "source_name": "I_mosaic_trust",
+      "label": "Image: Mosaic — A brand I trust",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Mosaic? — A brand I trust",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Mosaic (F1 = 3, 4 or 5)",
+        "expr": "F1_mosaic in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_mosaic_customer_service",
+      "source_name": "I_mosaic_customer_service",
+      "label": "Image: Mosaic — Good customer service",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Mosaic? — Good customer service",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Mosaic (F1 = 3, 4 or 5)",
+        "expr": "F1_mosaic in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_mosaic_premium",
+      "source_name": "I_mosaic_premium",
+      "label": "Image: Mosaic — Premium",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Mosaic? — Premium",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Mosaic (F1 = 3, 4 or 5)",
+        "expr": "F1_mosaic in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_mosaic_environmental",
+      "source_name": "I_mosaic_environmental",
+      "label": "Image: Mosaic — Environmentally responsible",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Mosaic? — Environmentally responsible",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Mosaic (F1 = 3, 4 or 5)",
+        "expr": "F1_mosaic in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_mosaic_people_like_me",
+      "source_name": "I_mosaic_people_like_me",
+      "label": "Image: Mosaic — For people like me",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Mosaic? — For people like me",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Mosaic (F1 = 3, 4 or 5)",
+        "expr": "F1_mosaic in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_lumen_reliable",
+      "source_name": "I_lumen_reliable",
+      "label": "Image: Lumen — Reliable network",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Lumen? — Reliable network",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Lumen (F1 = 3, 4 or 5)",
+        "expr": "F1_lumen in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_lumen_value",
+      "source_name": "I_lumen_value",
+      "label": "Image: Lumen — Good value for money",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Lumen? — Good value for money",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Lumen (F1 = 3, 4 or 5)",
+        "expr": "F1_lumen in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_lumen_innovative",
+      "source_name": "I_lumen_innovative",
+      "label": "Image: Lumen — Innovative",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Lumen? — Innovative",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Lumen (F1 = 3, 4 or 5)",
+        "expr": "F1_lumen in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_lumen_trust",
+      "source_name": "I_lumen_trust",
+      "label": "Image: Lumen — A brand I trust",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Lumen? — A brand I trust",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Lumen (F1 = 3, 4 or 5)",
+        "expr": "F1_lumen in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_lumen_customer_service",
+      "source_name": "I_lumen_customer_service",
+      "label": "Image: Lumen — Good customer service",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Lumen? — Good customer service",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Lumen (F1 = 3, 4 or 5)",
+        "expr": "F1_lumen in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_lumen_premium",
+      "source_name": "I_lumen_premium",
+      "label": "Image: Lumen — Premium",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Lumen? — Premium",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Lumen (F1 = 3, 4 or 5)",
+        "expr": "F1_lumen in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_lumen_environmental",
+      "source_name": "I_lumen_environmental",
+      "label": "Image: Lumen — Environmentally responsible",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Lumen? — Environmentally responsible",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Lumen (F1 = 3, 4 or 5)",
+        "expr": "F1_lumen in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_lumen_people_like_me",
+      "source_name": "I_lumen_people_like_me",
+      "label": "Image: Lumen — For people like me",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Lumen? — For people like me",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Lumen (F1 = 3, 4 or 5)",
+        "expr": "F1_lumen in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_harbour_reliable",
+      "source_name": "I_harbour_reliable",
+      "label": "Image: Harbour — Reliable network",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Harbour? — Reliable network",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Harbour (F1 = 3, 4 or 5)",
+        "expr": "F1_harbour in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_harbour_value",
+      "source_name": "I_harbour_value",
+      "label": "Image: Harbour — Good value for money",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Harbour? — Good value for money",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Harbour (F1 = 3, 4 or 5)",
+        "expr": "F1_harbour in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_harbour_innovative",
+      "source_name": "I_harbour_innovative",
+      "label": "Image: Harbour — Innovative",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Harbour? — Innovative",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Harbour (F1 = 3, 4 or 5)",
+        "expr": "F1_harbour in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_harbour_trust",
+      "source_name": "I_harbour_trust",
+      "label": "Image: Harbour — A brand I trust",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Harbour? — A brand I trust",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Harbour (F1 = 3, 4 or 5)",
+        "expr": "F1_harbour in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_harbour_customer_service",
+      "source_name": "I_harbour_customer_service",
+      "label": "Image: Harbour — Good customer service",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Harbour? — Good customer service",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Harbour (F1 = 3, 4 or 5)",
+        "expr": "F1_harbour in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_harbour_premium",
+      "source_name": "I_harbour_premium",
+      "label": "Image: Harbour — Premium",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Harbour? — Premium",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Harbour (F1 = 3, 4 or 5)",
+        "expr": "F1_harbour in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_harbour_environmental",
+      "source_name": "I_harbour_environmental",
+      "label": "Image: Harbour — Environmentally responsible",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Harbour? — Environmentally responsible",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Harbour (F1 = 3, 4 or 5)",
+        "expr": "F1_harbour in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "I_harbour_people_like_me",
+      "source_name": "I_harbour_people_like_me",
+      "label": "Image: Harbour — For people like me",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "I",
+      "question_text": "Which of these statements apply to Harbour? — For people like me",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Does not apply"
+        },
+        {
+          "code": 1,
+          "label": "Applies"
+        }
+      ],
+      "missing": [
+        97
+      ],
+      "universe": {
+        "text": "Familiar with Harbour (F1 = 3, 4 or 5)",
+        "expr": "F1_harbour in [3, 4, 5]"
+      },
+      "set": "image",
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "E1_satisfaction",
+      "source_name": "E1_satisfaction",
+      "label": "Overall satisfaction with current provider (0-10)",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "E1",
+      "question_text": "Overall satisfaction with current provider",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Extremely dissatisfied"
+        },
+        {
+          "code": 1,
+          "label": "1"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "5"
+        },
+        {
+          "code": 6,
+          "label": "6"
+        },
+        {
+          "code": 7,
+          "label": "7"
+        },
+        {
+          "code": 8,
+          "label": "8"
+        },
+        {
+          "code": 9,
+          "label": "9"
+        },
+        {
+          "code": 10,
+          "label": "Extremely satisfied"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Customers of one of the five tracked brands",
+        "expr": "S8_current_provider in [1, 2, 3, 4, 5]"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "low_label": "Extremely dissatisfied",
+        "high_label": "Extremely satisfied",
+        "top_box": [
+          9,
+          10
+        ],
+        "bottom_box": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "E2_nps",
+      "source_name": "E2_nps",
+      "label": "Likelihood to recommend current provider (0-10)",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "E2",
+      "question_text": "Likelihood to recommend current provider",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Not at all likely"
+        },
+        {
+          "code": 1,
+          "label": "1"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "5"
+        },
+        {
+          "code": 6,
+          "label": "6"
+        },
+        {
+          "code": 7,
+          "label": "7"
+        },
+        {
+          "code": 8,
+          "label": "8"
+        },
+        {
+          "code": 9,
+          "label": "9"
+        },
+        {
+          "code": 10,
+          "label": "Extremely likely"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Customers of one of the five tracked brands",
+        "expr": "S8_current_provider in [1, 2, 3, 4, 5]"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "low_label": "Not at all likely",
+        "high_label": "Extremely likely",
+        "top_box": [
+          9,
+          10
+        ],
+        "bottom_box": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "E3_problem",
+      "source_name": "E3_problem",
+      "label": "Network/service problem in past 3 months",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "E3",
+      "question_text": "Network/service problem in past 3 months?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Customers of one of the five tracked brands",
+        "expr": "S8_current_provider in [1, 2, 3, 4, 5]"
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "E4_contacted_service",
+      "source_name": "E4_contacted_service",
+      "label": "Contacted customer service in past 3 months",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "E4",
+      "question_text": "Contacted customer service in past 3 months?",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Customers of one of the five tracked brands",
+        "expr": "S8_current_provider in [1, 2, 3, 4, 5]"
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "E5_service_satisfaction",
+      "source_name": "E5_service_satisfaction",
+      "label": "Satisfaction with customer service (0-10)",
+      "type": "scale",
+      "role": "core",
+      "measure": "ordinal",
+      "question_id": "E5",
+      "question_text": "Satisfaction with customer service",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "Extremely dissatisfied"
+        },
+        {
+          "code": 1,
+          "label": "1"
+        },
+        {
+          "code": 2,
+          "label": "2"
+        },
+        {
+          "code": 3,
+          "label": "3"
+        },
+        {
+          "code": 4,
+          "label": "4"
+        },
+        {
+          "code": 5,
+          "label": "5"
+        },
+        {
+          "code": 6,
+          "label": "6"
+        },
+        {
+          "code": 7,
+          "label": "7"
+        },
+        {
+          "code": 8,
+          "label": "8"
+        },
+        {
+          "code": 9,
+          "label": "9"
+        },
+        {
+          "code": 10,
+          "label": "Extremely satisfied"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Tracked-brand customers who contacted customer service",
+        "expr": "E4_contacted_service == 1"
+      },
+      "set": null,
+      "scale": {
+        "points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "low_label": "Extremely dissatisfied",
+        "high_label": "Extremely satisfied",
+        "top_box": [
+          9,
+          10
+        ],
+        "bottom_box": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "M3_pulse_campaign_recognition",
+      "source_name": "M3_pulse_campaign_recognition",
+      "label": "Recognise Pulse campaign",
+      "type": "binary",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "M3",
+      "question_text": "Pulse campaign recognition (synthetic stimulus)",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 0,
+          "label": "No"
+        },
+        {
+          "code": 1,
+          "label": "Yes"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "Asked from Wave 3 onward",
+        "expr": "wave >= 3"
+      },
+      "set": null,
+      "scale": null,
+      "waves": [
+        3,
+        4,
+        5
+      ],
+      "recode": null,
+      "derivation": null,
+      "notes": "Questionnaire specifies Yes definitely / Yes maybe / No / DK; generated data is 0/1 only."
+    },
+    {
+      "name": "O1_reason_code",
+      "source_name": "O1_reason_code",
+      "label": "Main reason for preferring brand (coded)",
+      "type": "single",
+      "role": "core",
+      "measure": "nominal",
+      "question_id": "O1",
+      "question_text": "What is the main reason you prefer this brand? (open end, coded)",
+      "text_source": "questionnaire",
+      "values": [
+        {
+          "code": 1,
+          "label": "Network quality"
+        },
+        {
+          "code": 2,
+          "label": "Price"
+        },
+        {
+          "code": 3,
+          "label": "Customer service"
+        },
+        {
+          "code": 4,
+          "label": "Trust"
+        },
+        {
+          "code": 5,
+          "label": "Innovation"
+        },
+        {
+          "code": 6,
+          "label": "Habit / familiarity"
+        },
+        {
+          "code": 7,
+          "label": "Recommendation"
+        },
+        {
+          "code": 8,
+          "label": "Other provider"
+        }
+      ],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": {
+        "network_quality": 1,
+        "price": 2,
+        "service": 3,
+        "trust": 4,
+        "innovation": 5,
+        "habit": 6,
+        "recommendation": 7,
+        "other": 8
+      },
+      "derivation": null,
+      "notes": null
+    },
+    {
+      "name": "wt_final",
+      "source_name": "wt_final",
+      "label": "Final weight (rim, within wave)",
+      "type": "weight",
+      "role": "weight",
+      "measure": "scale",
+      "question_id": null,
+      "question_text": null,
+      "text_source": "codebook",
+      "values": [],
+      "missing": [],
+      "universe": {
+        "text": "All respondents",
+        "expr": null
+      },
+      "set": null,
+      "scale": null,
+      "waves": null,
+      "recode": null,
+      "derivation": null,
+      "notes": null
+    }
+  ],
+  "sets": [
+    {
+      "id": "unaided",
+      "type": "brand_grid",
+      "label": "Unaided awareness",
+      "question_id": "A1",
+      "dims": {
+        "brand": [
+          "northstar",
+          "pulse",
+          "mosaic",
+          "lumen",
+          "harbour"
+        ]
+      },
+      "members": [
+        "A1_northstar",
+        "A1_pulse",
+        "A1_mosaic",
+        "A1_lumen",
+        "A1_harbour"
+      ]
+    },
+    {
+      "id": "aided",
+      "type": "brand_grid",
+      "label": "Aided awareness",
+      "question_id": "A2",
+      "dims": {
+        "brand": [
+          "northstar",
+          "pulse",
+          "mosaic",
+          "lumen",
+          "harbour"
+        ]
+      },
+      "members": [
+        "A2_northstar",
+        "A2_pulse",
+        "A2_mosaic",
+        "A2_lumen",
+        "A2_harbour"
+      ]
+    },
+    {
+      "id": "familiarity",
+      "type": "brand_grid",
+      "label": "Familiarity",
+      "question_id": "F1",
+      "dims": {
+        "brand": [
+          "northstar",
+          "pulse",
+          "mosaic",
+          "lumen",
+          "harbour"
+        ]
+      },
+      "members": [
+        "F1_northstar",
+        "F1_pulse",
+        "F1_mosaic",
+        "F1_lumen",
+        "F1_harbour"
+      ]
+    },
+    {
+      "id": "consider",
+      "type": "brand_grid",
+      "label": "Consideration",
+      "question_id": "F2",
+      "dims": {
+        "brand": [
+          "northstar",
+          "pulse",
+          "mosaic",
+          "lumen",
+          "harbour"
+        ]
+      },
+      "members": [
+        "F2_northstar",
+        "F2_pulse",
+        "F2_mosaic",
+        "F2_lumen",
+        "F2_harbour"
+      ]
+    },
+    {
+      "id": "ad_awareness",
+      "type": "brand_grid",
+      "label": "Prompted ad awareness",
+      "question_id": "M2",
+      "dims": {
+        "brand": [
+          "northstar",
+          "pulse",
+          "mosaic",
+          "lumen",
+          "harbour"
+        ]
+      },
+      "members": [
+        "M2_northstar",
+        "M2_pulse",
+        "M2_mosaic",
+        "M2_lumen",
+        "M2_harbour"
+      ]
+    },
+    {
+      "id": "image",
+      "type": "brand_attribute_grid",
+      "label": "Brand image",
+      "question_id": "I",
+      "question_text": "For each brand you know well, which of these statements apply?",
+      "dims": {
+        "brand": [
+          "northstar",
+          "pulse",
+          "mosaic",
+          "lumen",
+          "harbour"
+        ],
+        "attribute": [
+          "reliable",
+          "value",
+          "innovative",
+          "trust",
+          "customer_service",
+          "premium",
+          "environmental",
+          "people_like_me"
+        ]
+      },
+      "members": [
+        "I_northstar_reliable",
+        "I_northstar_value",
+        "I_northstar_innovative",
+        "I_northstar_trust",
+        "I_northstar_customer_service",
+        "I_northstar_premium",
+        "I_northstar_environmental",
+        "I_northstar_people_like_me",
+        "I_pulse_reliable",
+        "I_pulse_value",
+        "I_pulse_innovative",
+        "I_pulse_trust",
+        "I_pulse_customer_service",
+        "I_pulse_premium",
+        "I_pulse_environmental",
+        "I_pulse_people_like_me",
+        "I_mosaic_reliable",
+        "I_mosaic_value",
+        "I_mosaic_innovative",
+        "I_mosaic_trust",
+        "I_mosaic_customer_service",
+        "I_mosaic_premium",
+        "I_mosaic_environmental",
+        "I_mosaic_people_like_me",
+        "I_lumen_reliable",
+        "I_lumen_value",
+        "I_lumen_innovative",
+        "I_lumen_trust",
+        "I_lumen_customer_service",
+        "I_lumen_premium",
+        "I_lumen_environmental",
+        "I_lumen_people_like_me",
+        "I_harbour_reliable",
+        "I_harbour_value",
+        "I_harbour_innovative",
+        "I_harbour_trust",
+        "I_harbour_customer_service",
+        "I_harbour_premium",
+        "I_harbour_environmental",
+        "I_harbour_people_like_me"
+      ]
+    }
+  ],
+  "banner_candidates": [
+    "wave",
+    "S1_age",
+    "S2_gender",
+    "S3_region",
+    "S7_contract_type",
+    "S8_current_provider"
+  ],
+  "provenance": {
+    "adapter": "sbt001",
+    "generator_version": "synthetic_brand_tracker_v2",
+    "root_seed": 564001,
+    "sources": [
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-001/raw/wave_01.csv",
+        "sha256": "a266cbd2f7570a34bea4a5f223a7e507afaa5eec8ef11b60d0b07138053af605"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-001/raw/wave_02.csv",
+        "sha256": "fa604914d57777338515a8ca3e3444fcfc6a170e4aadf276022da5bb8d32c039"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-001/raw/wave_03.csv",
+        "sha256": "c9019cac5e0cc0a70a0e42c4ea7883ea37aa651111cad2257c45b55728e56fe0"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-001/raw/wave_04.csv",
+        "sha256": "3dcf473729ee80083367b5cd689248b91a4c167453c87891dc997e167ec98857"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-001/raw/wave_05.csv",
+        "sha256": "2a995efbd3d107e94f5d64bbd314a99eda691332424376251d53a2f91ea07eb9"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-001/questionnaire.md",
+        "sha256": "5f0bed542237a4e8d339cb4cc305c940168f31f33aba13abcbc385481769b9d1"
+      },
+      {
+        "path": "evals/research_quality/projects/synthetic/SBT-001/hidden/validation_report.json",
+        "sha256": "5aa70d8cf95a19033e53a1111831396239e3cc9ed05ca2fb86932fd76ae82dcb"
+      }
+    ]
+  },
+  "conversion_notes": [
+    "Missing codes translated: source 97 (not asked) -> system-missing; 98 (DK) -> 97; 99 (refused) -> 98.",
+    "Waves stacked into one file with 'wave'; respondent IDs are unique across waves (fresh samples).",
+    "S2 gender and S5 income 'Prefer not to say' recoded to 98.",
+    "Generated data deviates from questionnaire.md: M3 is 0/1 (questionnaire has four options), M4 is absent, E3/E4 have no don't-know code, S9 has no DK, fieldwork dates are not specified."
+  ]
+}
