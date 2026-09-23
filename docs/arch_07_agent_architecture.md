@@ -171,7 +171,7 @@ OPFS mode continues to require the EH bundle. Safe memory mode disables persiste
 | Crosstabs / stats | `runAnalysis('crosstab' \| 'variableStats', …)`, `runCrosstab`, `getVariableStats`, `query`, `getUniqueValues` | `runAnalysis` routes to typed worker calls; generic `engine.runAnalysis` worker message removed. |
 | Transforms | `recode`, `recodeVariable`, `updateColumn`, `dropColumn`, `fillSystemMissing` | Transform log in store; worker executes SQL. |
 | Chart data | `processData` | Used by `useProcessedAnalysisData` after crosstab rows arrive. |
-| Export / introspection | `getDeckRecipe()` (store → `core/deck`), `core/export` pipeline | Single deck recipe; PPTX from same object as preview (Phase 2). |
+| Export / introspection | `getDeckRecipe()` (store → `core/deck`), `core/export` pipeline | The active slide is resolved from live analysis state; review, template binding, and download use that same recipe. |
 | Agent parity (headless) | VelocityEngine: `describe`, `runAnalysis`, `buildDeck`, `exportDeck`, `exportSession`, semantic tools | CLI frozen as parity harness — no feature growth. |
 
 #### Worker message inventory (20 handlers)
@@ -585,6 +585,8 @@ interface VelocitySessionFile {
 5. Version changes require a migration function; no silent field removal.
 
 The browser renders import diagnostics as a dismissible story-rail summary (`sessionImportRailSummary` / `SessionImportSummary`), rather than a timed toast. It reports unresolved variables, affected slides, and removed references or skipped transforms. The summary is transient UI state, does not change the session schema, and keeps a one-slide rail expanded until dismissal. Active-slide weight and analysis settings are restored before analysis as before.
+
+For the browser's active slide, `currentSlidesSnapshot()` resolves live rows, column, filters, weight, and analysis settings without changing the store. `getDeckRecipe()` and the export review use this resolved slide; session download snapshots the same state into `slides` before serialization. On import, the saved active slide is projected into live analysis state before rerunning. An explicit `weightVar: null` means unweighted even if the dataset carries a weight. This keeps the saved analysis and its export aligned without changing the session format.
 
 Implementation: `src/core/session/*`, `VelocityEngine.exportSession()` / `importSession()`.
 

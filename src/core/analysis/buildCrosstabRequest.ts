@@ -40,7 +40,7 @@ export const buildCrosstabRequest = ({
   weightVar,
   analysisSettings,
 }: BuildCrosstabRequestParams): BuildCrosstabRequestResult => {
-  const resolvedWeightVar = weightVar ?? dataset.weightVariable ?? null;
+  const resolvedWeightVar = weightVar !== undefined ? weightVar : (dataset.weightVariable ?? null);
 
   const options: CrosstabQueryOptions & { includeDistributions?: boolean } = {
     rowVars: [],

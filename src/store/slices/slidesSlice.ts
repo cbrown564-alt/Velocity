@@ -75,11 +75,35 @@ function captureAnalysisStateFromStore(state: {
   dataset?: { weightVariable?: string | null };
 }): SlideAnalysisState {
   return {
-    rowVars: state.tableConfig?.rowVars ?? [],
+    rowVars: [...(state.tableConfig?.rowVars ?? [])],
     colVar: state.tableConfig?.colVar ?? null,
-    filters: state.activeFilters ?? [],
+    filters: (state.activeFilters ?? []).map((filter) => ({
+      ...filter,
+      value: Array.isArray(filter.value) ? [...filter.value] : filter.value,
+    })),
     weightVar: state.dataset?.weightVariable ?? null,
   };
+}
+
+/** Resolve the active slide from live analysis state without mutating the store. */
+export function currentSlidesSnapshot(state: {
+  slides: Slide[];
+  activeSlideId: string | null;
+  tableConfig?: { rowVars: string[]; colVar: string | null };
+  activeFilters?: Filter[];
+  dataset?: { weightVariable?: string | null } | null;
+  analysisSettings?: AnalysisSettings;
+}): Slide[] {
+  if (!state.activeSlideId) return state.slides;
+  return state.slides.map((slide) =>
+    slide.id === state.activeSlideId
+      ? {
+          ...slide,
+          analysisState: captureAnalysisStateFromStore(state),
+          analysisSettings: state.analysisSettings ? { ...state.analysisSettings } : slide.analysisSettings,
+        }
+      : slide,
+  );
 }
 
 /**
@@ -461,28 +485,9 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
   snapshotCurrentSlide: () => {
     const state = get();
     if (!state.activeSlideId) return;
-
-    const now = Date.now();
-    const analysisState = captureAnalysisStateFromStore(state);
-    const activeSlide = state.slides.find((s) => s.id === state.activeSlideId);
-    const visualizationType = activeSlide?.visualizationType || 'table';
-    const chartType = activeSlide?.chartType;
-    const analysisSettings = state.analysisSettings
-      ? ({ ...state.analysisSettings } as AnalysisSettings)
-      : activeSlide?.analysisSettings;
-
     set({
-      slides: state.slides.map((s) =>
-        s.id === state.activeSlideId
-          ? {
-              ...s,
-              analysisState,
-              analysisSettings,
-              visualizationType: visualizationType as 'table' | 'chart',
-              chartType,
-              updatedAt: now,
-            }
-          : s,
+      slides: currentSlidesSnapshot(state).map((slide) =>
+        slide.id === state.activeSlideId ? { ...slide, updatedAt: Date.now() } : slide,
       ),
     });
   },
@@ -521,6 +526,6 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
 
   getDeckRecipe: (metadata) => {
     const state = get();
-    return buildDeckRecipe(state.slides, state.sections, metadata);
+    return buildDeckRecipe(currentSlidesSnapshot(state), state.sections, metadata);
   },
 });

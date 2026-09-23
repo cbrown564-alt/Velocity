@@ -11,7 +11,8 @@ import styles from './ExportModal.module.css';
 import { exportDeckRecipe } from '../../core/export/exportDeckRecipe';
 import { ExportConfig, TemplateRefreshMode } from '../../core/export/types';
 import { useVelocityStore } from '../../store';
-import { applyAnalysisStateOverrides, filterDeckRecipe } from '../../core/deck/deckRecipe';
+import { currentSlidesSnapshot } from '../../store/slices/slidesSlice';
+import { filterDeckRecipe } from '../../core/deck/deckRecipe';
 import { resolveSlideTitle } from '../../core/export/resolveSlideDefaults';
 import { buildExportReview, slidesToRecipes } from '../../core/export/slideRecipe';
 import {
@@ -119,24 +120,18 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
   const isQuerying = useVelocityStore((state) => state.isQuerying);
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
 
-  const activeAnalysisState = useMemo<SlideAnalysisState>(
-    () => ({
-      rowVars: tableConfig.rowVars,
-      colVar: tableConfig.colVar,
-      filters: activeFilters,
-      weightVar: dataset?.weightVariable ?? null,
-    }),
-    [tableConfig.rowVars, tableConfig.colVar, activeFilters, dataset?.weightVariable],
+  const currentSlides = useMemo(
+    () => currentSlidesSnapshot({ slides, activeSlideId, tableConfig, activeFilters, dataset, analysisSettings }),
+    [slides, activeSlideId, tableConfig, activeFilters, dataset, analysisSettings],
   );
 
   const resolveTitleForSlide = useCallback(
     (slideId: string): string | null => {
-      const slide = slides.find((candidate) => candidate.id === slideId);
+      const slide = currentSlides.find((candidate) => candidate.id === slideId);
       if (!slide || !dataset) return null;
-      const analysisState = slideId === activeSlideId ? activeAnalysisState : slide.analysisState;
-      return resolveExportSlideTitle(slide.title, analysisState, variableSets, dataset.variables);
+      return resolveExportSlideTitle(slide.title, slide.analysisState, variableSets, dataset.variables);
     },
-    [slides, dataset, activeSlideId, activeAnalysisState, variableSets],
+    [currentSlides, dataset, variableSets],
   );
 
   const activeSlideTitle = useMemo(() => {
@@ -188,26 +183,16 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
     }
 
     return buildExportReview({
-      slides,
+      slides: currentSlides,
       slideIds: slideIdsForScope,
       variableSets,
       variables: dataset.variables,
-      analysisStateOverrides: activeSlideId
-        ? {
-            [activeSlideId]: {
-              rowVars: tableConfig.rowVars,
-              colVar: tableConfig.colVar,
-              filters: activeFilters,
-              weightVar: dataset.weightVariable ?? null,
-            },
-          }
-        : undefined,
     });
-  }, [dataset, slides, slideIdsForScope, variableSets, activeSlideId, tableConfig, activeFilters]);
+  }, [dataset, currentSlides, slideIdsForScope, variableSets]);
 
   const templateSlideRecipes = useMemo(
-    () => slidesToRecipes(slides.filter((slide) => slideIdsForScope.includes(slide.id))),
-    [slides, slideIdsForScope],
+    () => slidesToRecipes(currentSlides.filter((slide) => slideIdsForScope.includes(slide.id))),
+    [currentSlides, slideIdsForScope],
   );
 
   useEffect(() => {
@@ -324,10 +309,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
 
     return slideIdsForScope
       .map((slideId, index) => {
-        const slide = slides.find((candidate) => candidate.id === slideId);
+        const slide = currentSlides.find((candidate) => candidate.id === slideId);
         if (!slide) return null;
 
-        const analysisState: SlideAnalysisState = slideId === activeSlideId ? activeAnalysisState : slide.analysisState;
+        const analysisState = slide.analysisState;
         const slideIssues = issuesBySlide.get(slideId) ?? [];
 
         return {
@@ -341,7 +326,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
         };
       })
       .filter((slide): slide is NonNullable<typeof slide> => slide !== null);
-  }, [dataset, slideIdsForScope, slides, activeSlideId, activeAnalysisState, variableSets, issuesBySlide]);
+  }, [dataset, slideIdsForScope, currentSlides, variableSets, issuesBySlide]);
 
   const significanceAudit = useMemo(() => {
     const weightVarId = dataset?.weightVariable ?? null;
@@ -433,10 +418,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
     const exportStartedAt = Date.now();
 
     try {
-      const recipe = applyAnalysisStateOverrides(
-        filterDeckRecipe(getDeckRecipe({ title, branding: initialConfig.branding }), slideIdsForScope),
-        activeSlideId ? { [activeSlideId]: activeAnalysisState } : {},
-      );
+      const recipe = filterDeckRecipe(getDeckRecipe({ title, branding: initialConfig.branding }), slideIdsForScope);
       const data = await exportDeckRecipe({
         recipe,
         format,

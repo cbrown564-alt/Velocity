@@ -2,6 +2,13 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useVelocityStore } from './index';
 import type { Filter } from '../types';
+import { mockDataset, mockNominalSet, mockNominalVariable, makeVariable } from '../test/fixtures/variables';
+import { exportSession, serializeSessionFile } from '../core/session/sessionExporter';
+import { importSession } from '../core/session/sessionImporter';
+import { materializeDeckRecipe } from '../core/export/materializeDeckRecipe';
+import { exportMaterializedDeck } from '../core/export/exportDeckRecipe';
+import ExcelJS from 'exceljs';
+import { defaultAnalysisSettings } from './slices/analysisSlice';
 
 function mockEngineProxy() {
   const mockEnvelope = (data: unknown) => ({
@@ -53,6 +60,10 @@ describe('slidesSlice', () => {
       ],
       activeSlideId: 'slide-test-1',
       activeCellId: 'cell-test-1',
+      tableConfig: { rowVars: [], colVar: null },
+      activeFilters: [],
+      dataset: null,
+      analysisSettings: { ...defaultAnalysisSettings },
     });
   });
 
@@ -62,6 +73,157 @@ describe('slidesSlice', () => {
       act(() => result.current.updateSlideTitle('slide-test-1', 'Awareness'));
       expect(result.current.getDeckRecipe({ title: 'Tracker deck' }).slideRecipes[0].title).toBe('Awareness');
     });
+
+    it('uses the live active analysis before an explicit snapshot', () => {
+      const state = useVelocityStore.getState();
+      const filter: Filter = { id: 'filter-region', variableId: 'region', operator: 'eq', value: 1 };
+      useVelocityStore.setState({
+        tableConfig: { rowVars: ['awareness'], colVar: 'segment' },
+        activeFilters: [filter],
+        dataset: {
+          id: 'dataset',
+          name: 'test.sav',
+          rowCount: 10,
+          source: 'sav',
+          variables: [],
+          weightVariable: 'weight',
+        },
+      });
+
+      const recipe = state.getDeckRecipe();
+      expect(recipe.slideRecipes[0].analysisState).toEqual({
+        rowVars: ['awareness'],
+        colVar: 'segment',
+        filters: [filter],
+        weightVar: 'weight',
+      });
+      expect(useVelocityStore.getState().slides[0].analysisState.rowVars).toEqual([]);
+    });
+  });
+
+  it('runs, reopens, and materializes one saved analysis with the same recipe and labeled results', async () => {
+    const dataset = {
+      ...mockDataset,
+      id: 'saved-analysis-source',
+      variables: [mockNominalVariable, makeVariable({ id: 'weight', name: 'Weight', type: 'numeric' })],
+      weightVariable: 'weight',
+    };
+    const filter: Filter = { id: 'filter-gender', variableId: mockNominalVariable.id, operator: 'eq', value: 1 };
+    const settings = {
+      ...defaultAnalysisSettings,
+      comparisonMethod: 'pairwise' as const,
+      correctionType: 'fdr' as const,
+      significanceLevel: 0.8 as const,
+    };
+    const { browserEngine, mockRunCrosstab } = mockEngineProxy();
+    useVelocityStore.setState({
+      dataset,
+      variableSets: [mockNominalSet],
+      browserEngine,
+      tableConfig: { rowVars: [mockNominalSet.id], colVar: null },
+      activeFilters: [filter],
+      analysisSettings: settings,
+    });
+
+    await useVelocityStore.getState().runAnalysis();
+    expect(mockRunCrosstab).toHaveBeenCalledOnce();
+    const firstRun = mockRunCrosstab.mock.calls[0][1];
+    expect(firstRun).toMatchObject({
+      rowVars: [mockNominalSet.id],
+      filters: [filter],
+      weightVar: 'weight',
+      analysisSettings: settings,
+    });
+
+    const initialRecipe = useVelocityStore.getState().getDeckRecipe();
+    useVelocityStore.getState().snapshotCurrentSlide();
+    const saved = useVelocityStore.getState();
+    const file = exportSession({
+      dataset,
+      variableSets: saved.variableSets,
+      folders: saved.folders,
+      transformLog: saved.transformLog,
+      tableConfig: saved.tableConfig,
+      activeFilters: saved.activeFilters,
+      analysisSettings: saved.analysisSettings,
+      slides: saved.slides,
+      sections: saved.sections,
+    });
+    const reopened = importSession(JSON.parse(serializeSessionFile(file)), {
+      ...dataset,
+      id: 'saved-analysis-reopened',
+    });
+    const reopenedSlide = reopened.patch.slides[0];
+    expect(reopenedSlide.analysisState).toEqual(initialRecipe.slideRecipes[0].analysisState);
+    expect(reopenedSlide.analysisSettings).toEqual(settings);
+    expect(reopened.patch.dataset.variables[0].valueLabels).toEqual(mockNominalVariable.valueLabels);
+
+    useVelocityStore.setState({
+      dataset: reopened.patch.dataset,
+      variableSets: reopened.patch.variableSets,
+      slides: reopened.patch.slides,
+      sections: reopened.patch.sections,
+      activeSlideId: reopened.patch.activeSlideId,
+      analysisSettings: reopenedSlide.analysisSettings!,
+    });
+    useVelocityStore.getState().applySlideAnalysisState(reopenedSlide.analysisState, { runAnalysis: false });
+    await useVelocityStore.getState().runAnalysis();
+    expect(mockRunCrosstab).toHaveBeenCalledTimes(2);
+    expect(mockRunCrosstab.mock.calls[1][1]).toMatchObject(firstRun);
+    expect(useVelocityStore.getState().getDeckRecipe().slideRecipes).toEqual(initialRecipe.slideRecipes);
+
+    const rawRows = [
+      { rowKey_0: 1, colKey: 'Total', count: 4, weightedCount: 6 },
+      { rowKey_0: 2, colKey: 'Total', count: 3, weightedCount: 5 },
+    ];
+    const exportEngine = {
+      runCrosstab: vi.fn().mockResolvedValue({ data: { rows: rawRows, tableStats: null } }),
+    };
+    const beforeExport = await materializeDeckRecipe({
+      recipe: initialRecipe,
+      engine: exportEngine,
+      dataset,
+      variableSets: [mockNominalSet],
+      analysisSettings: settings,
+    });
+    const afterExport = await materializeDeckRecipe({
+      recipe: useVelocityStore.getState().getDeckRecipe(),
+      engine: exportEngine,
+      dataset: reopened.patch.dataset,
+      variableSets: reopened.patch.variableSets,
+      analysisSettings: reopenedSlide.analysisSettings,
+    });
+    expect(afterExport).toEqual(beforeExport);
+    expect(afterExport.slides).toHaveLength(1);
+    expect(afterExport.slides[0].result.rows.map((row) => row.label)).toEqual(['Male', 'Female', 'Non-binary']);
+    expect(exportEngine.runCrosstab.mock.calls[1]).toEqual(exportEngine.runCrosstab.mock.calls[0]);
+    const beforeXlsx = await exportMaterializedDeck(beforeExport, 'xlsx');
+    const afterXlsx = await exportMaterializedDeck(afterExport, 'xlsx');
+    const beforeWorkbook = new ExcelJS.Workbook();
+    const afterWorkbook = new ExcelJS.Workbook();
+    await beforeWorkbook.xlsx.load(Buffer.from(beforeXlsx));
+    await afterWorkbook.xlsx.load(Buffer.from(afterXlsx));
+    expect(afterWorkbook.worksheets.map((sheet) => sheet.getSheetValues())).toEqual(
+      beforeWorkbook.worksheets.map((sheet) => sheet.getSheetValues()),
+    );
+    expect(afterWorkbook.worksheets[0].getCell('A2').value).toBe('Male');
+
+    const unweightedRecipe = {
+      ...initialRecipe,
+      slideRecipes: initialRecipe.slideRecipes.map((slide) => ({
+        ...slide,
+        analysisState: { ...slide.analysisState, weightVar: null },
+      })),
+    };
+    const unweightedExport = await materializeDeckRecipe({
+      recipe: unweightedRecipe,
+      engine: exportEngine,
+      dataset,
+      variableSets: [mockNominalSet],
+      analysisSettings: settings,
+    });
+    expect(exportEngine.runCrosstab.mock.calls[2][0].weightVar).toBeUndefined();
+    expect(unweightedExport.slides[0].result.grandTotal).toBe(7);
   });
 
   describe('addSlide', () => {

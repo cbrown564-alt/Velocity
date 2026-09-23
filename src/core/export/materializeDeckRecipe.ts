@@ -58,7 +58,7 @@ export async function materializeDeckRecipe(input: MaterializeDeckRecipeInput): 
   for (const slideRecipe of input.recipe.slideRecipes) {
     const analysisState = slideRecipe.analysisState;
     if (analysisState.rowVars.length === 0) continue;
-    const weightVar = analysisState.weightVar ?? input.dataset.weightVariable ?? null;
+    const weightVar = analysisState.weightVar;
     const { rowVariables, colVariable, firstRowVarSet } = resolveAnalysisVariables(
       analysisState,
       input.variableSets,

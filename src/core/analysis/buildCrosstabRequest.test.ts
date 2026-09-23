@@ -9,6 +9,20 @@ import {
 } from '../../test/fixtures/variables';
 
 describe('buildCrosstabRequest', () => {
+  it('keeps an explicit unweighted slide unweighted when the dataset has a default weight', () => {
+    const request = buildCrosstabRequest({
+      dataset: { ...mockDataset, weightVariable: 'weight' },
+      variableSets: [mockNominalSet],
+      rowVars: [mockNominalSet.id],
+      colVar: null,
+      filters: [],
+      weightVar: null,
+    });
+
+    expect(request.options.weightVar).toBeUndefined();
+    expect(request.isWeighted).toBe(false);
+  });
+
   it('passes through analysis significance settings for worker execution', () => {
     const request = buildCrosstabRequest({
       dataset: mockDataset,
