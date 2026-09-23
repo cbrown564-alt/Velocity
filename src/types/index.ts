@@ -132,13 +132,6 @@ export interface TableStats {
   chiSquare?: ChiSquareResult;
 }
 
-export type DragItem = {
-  id: string;
-  label: string;
-};
-
-export type DropZoneType = 'row' | 'column';
-
 // ============================================================================
 // Collaboration Types (Future)
 // ============================================================================
