@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { readFileSync, writeFileSync, readdirSync, appendFileSync, existsSync } from 'fs';
+import { readFileSync, readdirSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { DuckDBNodeAdapter } from '../../src/adapters/DuckDBNodeAdapter';
 import { runCrosstab } from '../../src/core/analysis/crosstabRunner';
@@ -15,7 +15,6 @@ import { getVariableStats } from '../../src/core/analysis/variableStatsRunner';
 
 const FIXTURES = resolve(__dirname, 'fixtures');
 const EXPECTED = resolve(__dirname, 'expected');
-const PERF_LOG = resolve(__dirname, 'perf_log.jsonl');
 
 function loadExpected(name: string): any {
   const path = resolve(EXPECTED, name);
@@ -28,13 +27,11 @@ function sortRows(rows: any[]): any[] {
   return [...rows].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
 
-/** Compare with numeric tolerance and bootstrap if missing */
-function expectCloseDeepWithBootstrap(actual: any, expectedName: string, toleranceLength = 1e-6): void {
+/** Compare with a committed fixture; a missing fixture must fail the test. */
+function expectCloseDeepWithFixture(actual: any, expectedName: string, toleranceLength = 1e-6): void {
   const expected = loadExpected(expectedName);
   if (!expected) {
-    console.warn(`WARNING: Expected file ${expectedName} not found. Writing current results as golden.`);
-    writeFileSync(resolve(EXPECTED, expectedName), JSON.stringify(actual, null, 2));
-    return;
+    throw new Error(`Missing golden fixture: ${expectedName}`);
   }
   expectCloseDeep(actual, expected, toleranceLength);
 }
@@ -86,7 +83,7 @@ describe('Golden Tests (Legacy)', () => {
       { variables: {}, variableSets: {} },
     );
 
-    expectCloseDeepWithBootstrap(sortRows(results.rows), 'gender_counts.json');
+    expectCloseDeepWithFixture(sortRows(results.rows), 'gender_counts.json');
   });
 
   it('region by gender crosstab', async () => {
@@ -101,7 +98,7 @@ describe('Golden Tests (Legacy)', () => {
       { variables: {}, variableSets: {} },
     );
 
-    expectCloseDeepWithBootstrap(sortRows(results.rows), 'region_by_gender.json');
+    expectCloseDeepWithFixture(sortRows(results.rows), 'region_by_gender.json');
   });
 
   it('weighted gender counts', async () => {
@@ -116,12 +113,12 @@ describe('Golden Tests (Legacy)', () => {
       { variables: {}, variableSets: {} },
     );
 
-    expectCloseDeepWithBootstrap(sortRows(results.rows), 'gender_weighted.json');
+    expectCloseDeepWithFixture(sortRows(results.rows), 'gender_weighted.json');
   });
 
   it('age variable stats', async () => {
     const results = await getVariableStats(db, 'age', 'numeric', undefined, 10);
-    expectCloseDeepWithBootstrap(results, 'age_stats.json');
+    expectCloseDeepWithFixture(results, 'age_stats.json');
   });
 });
 
@@ -137,22 +134,8 @@ describe('Dynamic Golden Tests', () => {
       try {
         await db.loadCSV(resolve(FIXTURES, testConfig.csvFile));
 
-        const start = process.hrtime();
         const results = await runCrosstab(db, testConfig.config, testConfig.context);
-        const [s, ns] = process.hrtime(start);
-        const durationMs = s * 1e3 + ns / 1e6;
-
-        // Performance logging for large datasets
-        if (testConfig.csvFile.includes('large_perf')) {
-          const logEntry = {
-            timestamp: new Date().toISOString(),
-            fixture: testConfig.csvFile,
-            durationMs: durationMs.toFixed(2),
-          };
-          appendFileSync(PERF_LOG, JSON.stringify(logEntry) + '\n');
-        }
-
-        expectCloseDeepWithBootstrap(sortRows(results.rows), testConfig.expectedFile);
+        expectCloseDeepWithFixture(sortRows(results.rows), testConfig.expectedFile);
       } finally {
         await db.close();
       }

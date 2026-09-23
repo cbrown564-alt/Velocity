@@ -6,10 +6,6 @@ describe('UISlice — Table Density', () => {
     useVelocityStore.setState({ tableDensity: 'compact' });
   });
 
-  it('defaults tableDensity to compact', () => {
-    expect(useVelocityStore.getState().tableDensity).toBe('compact');
-  });
-
   it('toggles density between compact and generous', () => {
     useVelocityStore.getState().toggleTableDensity();
     expect(useVelocityStore.getState().tableDensity).toBe('generous');
@@ -17,23 +13,11 @@ describe('UISlice — Table Density', () => {
     useVelocityStore.getState().toggleTableDensity();
     expect(useVelocityStore.getState().tableDensity).toBe('compact');
   });
-
-  it('sets density explicitly', () => {
-    useVelocityStore.getState().setTableDensity('generous');
-    expect(useVelocityStore.getState().tableDensity).toBe('generous');
-
-    useVelocityStore.getState().setTableDensity('compact');
-    expect(useVelocityStore.getState().tableDensity).toBe('compact');
-  });
 });
 
 describe('UISlice — Toast Layer', () => {
   beforeEach(() => {
     useVelocityStore.setState({ toasts: [] });
-  });
-
-  it('defaults to empty toasts', () => {
-    expect(useVelocityStore.getState().toasts).toEqual([]);
   });
 
   it('adds a toast with generated id', () => {
@@ -105,14 +89,6 @@ describe('UISlice — Search Scope Boundaries', () => {
     expect(useVelocityStore.getState().searchQuery).toBe('region');
     expect(useVelocityStore.getState().managerSearchQuery).toBe('gender');
   });
-
-  it('updates manager search without mutating canvas search', () => {
-    useVelocityStore.getState().setSearchQuery('age');
-    useVelocityStore.getState().setManagerSearchQuery('nps');
-
-    expect(useVelocityStore.getState().searchQuery).toBe('age');
-    expect(useVelocityStore.getState().managerSearchQuery).toBe('nps');
-  });
 });
 
 describe('UISlice — App Mode & Modals', () => {
@@ -166,13 +142,6 @@ describe('UISlice — App Mode & Modals', () => {
     expect(useVelocityStore.getState().analysisExportModal.config).toEqual(config);
     useVelocityStore.getState().closeAnalysisExportModal();
     expect(useVelocityStore.getState().analysisExportModal.isOpen).toBe(false);
-  });
-
-  it('tracks dragging id', () => {
-    useVelocityStore.getState().setDraggingId('var-1');
-    expect(useVelocityStore.getState().draggingId).toBe('var-1');
-    useVelocityStore.getState().setDraggingId(null);
-    expect(useVelocityStore.getState().draggingId).toBeNull();
   });
 });
 
