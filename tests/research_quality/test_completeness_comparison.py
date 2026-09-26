@@ -49,3 +49,25 @@ def test_failed_arm_is_not_zero_quality_or_zero_cost():
     result = module().pair_result(row([]), {"status": "failed"}, row([]))
     assert result["status"] == "incomplete_pair"
     assert result["promising"] is None
+
+
+def test_all_completed_protocol_slots_have_output_bound_scoring():
+    import json
+    import hashlib
+    base = ROOT / 'evals/research_quality/runs'
+    plan = json.loads((base / '2026-09-completeness-comparison/protocol.json').read_text())
+    completed = 0
+    for slot in plan['slots']:
+        run = base / slot['run_id']
+        manifest = json.loads((run / 'manifest.json').read_text())
+        if manifest['status'] != 'complete':
+            assert not (run / 'scorecard.json').exists()
+            continue
+        completed += 1
+        digest = hashlib.sha256((run / 'output.json').read_bytes()).hexdigest()
+        for name in ['adjudication.json', 'numerical_audit.json', 'numerical_mapping.json']:
+            assert json.loads((run / name).read_text())['output_sha256'] == digest
+        result = module().summary(slot['run_id'], current=True)
+        assert result['provenance_coverage'] == 1
+        assert result['numerical_audit'] == 'PASS'
+    assert completed == 5

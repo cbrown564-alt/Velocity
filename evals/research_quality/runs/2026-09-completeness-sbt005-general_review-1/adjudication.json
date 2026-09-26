@@ -1,0 +1,157 @@
+{
+  "adjudicator": "Codex primary agent; provisional, not independent researcher validation",
+  "adjudicated_at": "2026-09-26",
+  "output_sha256": "6987741e5b4805842bafcc54a53e20e5b7906af0d6a3d4a0eff479011a56a5d0",
+  "matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": "CAM_M1_INCREMENTAL_AWARENESS",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1"
+      ],
+      "rationale": "Both arm changes and incremental contrast are selected; observed pairs and attrition limits are explicit."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "CAM_M2_DOWNSTREAM_BOUND",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1",
+        "F2"
+      ],
+      "rationale": "The opening story pairs supported awareness with both unestablished downstream effects; no equivalence claim."
+    },
+    {
+      "model_finding_id": "F3",
+      "reference_finding_id": "CAM_M4_ATTRITION_LIMIT",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F3"
+      ],
+      "rationale": "Selective follow-up, baseline composition and endpoint-specific completeness are distinguished; fixed weights do not recover missing outcomes."
+    },
+    {
+      "model_finding_id": "F4",
+      "reference_finding_id": "CAM_M3_SELECTION_CONTRAST",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F4"
+      ],
+      "rationale": "Receipt and recall comparisons retain pre-existing gaps and are explicitly noncausal, distinct from assignment."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "CAM_S1_REACH_NOT_RECALL",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F5"
+      ],
+      "rationale": "Crossover and log/recall discordance are explicit; neither measure is treated as attention or assignment."
+    },
+    {
+      "model_finding_id": "F6",
+      "reference_finding_id": "CAM_S3_FAMILY_CONTEXT",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F6"
+      ],
+      "rationale": "Need intensity is separated from prespecified heterogeneous response; intervals and adjusted interaction tests qualify targeting."
+    },
+    {
+      "model_finding_id": "F7",
+      "reference_finding_id": "CAM_S2_SELECTED_DIAGNOSTICS",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F7",
+        "F9"
+      ],
+      "rationale": "Selected-recaller diagnostics and routed user experience are both selected in the same beat, with correlation and causal limitations."
+    },
+    {
+      "model_finding_id": "F9",
+      "reference_finding_id": "CAM_S2_SELECTED_DIAGNOSTICS",
+      "match_state": "partial",
+      "model_importance": "context",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F9"
+      ],
+      "rationale": "Complementary user-experience component credited jointly on F7; not duplicate full coverage."
+    },
+    {
+      "model_finding_id": "F8",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F8"
+      ],
+      "rationale": "Bounded recommendation for further controlled learning; no sales, ROI, broad rollout or tiny-cell effectiveness claim."
+    }
+  ],
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "universe_weight_routing": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "inference_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_correctness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "finding_completeness": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Provisional semantic and numerical evidence recorded separately; independent researcher scale calibration pending."
+    }
+  },
+  "hard_failures": [],
+  "proposed_corrections": [
+    "Assess reading burden and narrative priorities through researcher use; no human rating is inferred."
+  ],
+  "notes": [
+    "Retrospective completion of the original no-retry experiment; original output, manifest, prompts and failed call are unchanged.",
+    "Semantic adjudication uses selected findings and story, not lexical overlap or unused tables.",
+    "Numerical audit covers explicit mapped estimates only; not every prose number is mechanically checked.",
+    "Human preference and correction minutes remain unmeasured."
+  ]
+}
