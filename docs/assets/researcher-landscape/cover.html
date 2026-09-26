@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Holding the Number — cover</title>
+<link rel="stylesheet" href="report.css">
+<style>
+  @page { size: A4; margin: 0; }
+  body { width: 210mm; height: 297mm; overflow: hidden; background: #f3f1ec; }
+  .cover { position: relative; width: 210mm; height: 297mm; padding: 24mm 20mm 20mm; }
+  .brand { font-family: 'Inter', sans-serif; font-size: 8pt; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #11769c; }
+  .title { font-family: 'Source Serif 4', serif; font-size: 50pt; line-height: 1.0; font-weight: 700; letter-spacing: -.02em; color: #16202b; margin: 16mm 0 6mm; }
+  .title em { font-weight: 400; color: #11769c; }
+  .sub { font-family: 'Source Serif 4', serif; font-size: 15pt; line-height: 1.35; color: #44505e; max-width: 140mm; }
+  .art { position: absolute; left: 20mm; right: 20mm; top: 140mm; }
+  .meta { position: absolute; left: 20mm; right: 20mm; bottom: 18mm; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6mm; border-top: 1.2pt solid #16202b; padding-top: 4mm; font-family: 'Inter', sans-serif; font-size: 8pt; color: #44505e; line-height: 1.45; }
+  .meta b { display: block; color: #16202b; font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1mm; }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="brand">Velocity · Research report</div>
+  <div class="title">Holding<br>the <em>number</em></div>
+  <div class="sub">How quantitative researchers work in 2026, what they say about evidence and AI, and where Velocity fits.</div>
+
+  <div class="art">
+    <svg viewBox="0 0 640 300" width="100%" aria-hidden="true">
+      <!-- threads from the number to the five parts of a defensible answer -->
+      <g fill="none" stroke-width="1.6">
+        <path d="M150 150 C 300 150, 330 30, 470 30" stroke="#11769c"/>
+        <path d="M150 150 C 300 150, 330 90, 470 90" stroke="#11769c"/>
+        <path d="M150 150 C 300 150, 330 150, 470 150" stroke="#11769c"/>
+        <path d="M150 150 C 300 150, 330 210, 470 210" stroke="#d9772b"/>
+        <path d="M150 150 C 300 150, 330 270, 470 270" stroke="#2a9d74" stroke-dasharray="4 4"/>
+      </g>
+      <text x="0" y="178" font-family="Source Serif 4, serif" font-size="80" font-weight="700" fill="#16202b" letter-spacing="-2">42%</text>
+      <circle cx="150" cy="150" r="5" fill="#16202b"/>
+      <g font-family="Inter, sans-serif">
+        <g fill="#11769c"><circle cx="470" cy="30" r="5"/><circle cx="470" cy="90" r="5"/><circle cx="470" cy="150" r="5"/></g>
+        <circle cx="470" cy="210" r="5" fill="#d9772b"/>
+        <circle cx="470" cy="270" r="5" fill="#fff" stroke="#2a9d74" stroke-width="2"/>
+        <g font-size="12.5" font-weight="700" fill="#16202b">
+          <text x="484" y="34">Intent</text><text x="484" y="94">Definition</text><text x="484" y="154">Evidence</text><text x="484" y="214">Judgment</text><text x="484" y="274">Delivery state</text>
+        </g>
+        <g font-size="9" fill="#6f7a87">
+          <text x="484" y="47">which decision it informs</text>
+          <text x="484" y="107">population, base, weight, wave</text>
+          <text x="484" y="167">result, alternatives, quality</text>
+          <text x="484" y="227">the researcher’s own words</text>
+          <text x="484" y="287">what to re-check after a change</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="meta">
+    <div><b>Date</b>26 September 2026</div>
+    <div><b>Prepared for</b>Velocity product owner</div>
+    <div><b>Status</b>Desk research and product inference; not user research</div>
+  </div>
+</div>
+</body>
+</html>

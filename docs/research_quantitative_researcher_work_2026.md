@@ -2,6 +2,8 @@
 
 **Research note, 26 September 2026.** Desk research and product inference, not user research. Companion to [the nine interaction sketches](plan_07_researcher_journey_and_output_quality.md#researcher-workflow-exploration--26-september-2026) in draft PR #80. This note records where the sketches match observed practice, where competitors already serve the need, and what to test with researchers. Sources and limitations follow.
 
+A designed, extended version with further researcher voices, 2025–26 survey evidence, Pew's screening experiment, and a reproducibility audit is at [`assets/researcher-landscape/quantitative-researcher-landscape-2026.pdf`](assets/researcher-landscape/quantitative-researcher-landscape-2026.pdf) (source HTML and `build.mjs` alongside). Its figures came from search-indexed excerpts; verify them against the originals before external use.
+
 ## The short answer
 
 The quantitative/qualitative distinction still describes methods, skills and often job titles, but it is not a clean division of people or agencies. In Greenbook's 2026 GRIT sample of **brand-side researchers**, 45% said all their projects were quantitative, 24% all qualitative, and 28% involved both (n=170). The question is about the allocation of their projects, not the composition of the entire industry or a census of agency job titles. Among brand-side analytics professionals the mixed share was 39% (n=148). A quant specialist may work with qualitative colleagues, open ends, behavioural or operational data, and client strategists without personally moderating interviews. [GRIT data](https://www.greenbook.org/grit/insights-practice-edition/ai-readable).

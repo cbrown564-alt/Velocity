@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Holding the Number</title>
+<link rel="stylesheet" href="report.css">
+</head>
+<body>
+
+<!-- ============ CONTENTS + HOW TO READ ============ -->
+<section class="section">
+  <div class="kicker">Contents</div>
+  <h1 style="font-size:18pt">What this report covers</h1>
+  <div class="toc">
+    <div class="row"><span class="i">—</span><span>Summary<small>Seven findings and the one question worth testing next</small></span><span class="pg">{{p:sum}}</span></div>
+    <div class="row"><span class="i">01</span><span>The people around a number<small>Roles, responsibilities, and why job titles are the wrong unit</small></span><span class="pg">{{p:01}}</span></div>
+    <div class="row"><span class="i">02</span><span>Agencies remain a substantial market<small>UK and global sizing, read carefully</small></span><span class="pg">{{p:02}}</span></div>
+    <div class="row"><span class="i">03</span><span>A study is a chain of decisions and handoffs<small>Eight moments, and what goes wrong at each</small></span><span class="pg">{{p:03}}</span></div>
+    <div class="row"><span class="i">04</span><span>In researchers’ own words<small>Voices from conferences, studies, trade press, and practice guides</small></span><span class="pg">{{p:04}}</span></div>
+    <div class="row"><span class="i">05</span><span>Adoption is near-universal; trust is not<small>Six industry surveys, compared honestly</small></span><span class="pg">{{p:05}}</span></div>
+    <div class="row"><span class="i">06</span><span>Clean data is a decision, not a button<small>Pew’s bogus-respondent experiment and the tracker problem</small></span><span class="pg">{{p:06}}</span></div>
+    <div class="row"><span class="i">07</span><span>Can anyone reconstruct the number?<small>What a large reproducibility audit says about analytical memory</small></span><span class="pg">{{p:07}}</span></div>
+    <div class="row"><span class="i">08</span><span>The tool stack is real and already competitive<small>Where Velocity cannot claim to be different</small></span><span class="pg">{{p:08}}</span></div>
+    <div class="row"><span class="i">09</span><span>A proposed position for Velocity<small>The defensible answer, and which prototypes matter most</small></span><span class="pg">{{p:09}}</span></div>
+    <div class="row"><span class="i">10</span><span>The next exploration should follow real work<small>Four tasks, what to record, and what would prove us wrong</small></span><span class="pg">{{p:10}}</span></div>
+    <div class="row"><span class="i">A</span><span>Method, limits, and sources<small>How this was researched and what could not be checked</small></span><span class="pg">{{p:A}}</span></div>
+  </div>
+
+  <h2 style="margin-top:7mm">How to read the evidence</h2>
+  <p class="small">Survey statistics about researchers come from very different samples. Every claim in this report carries one of five labels so a reader can weigh it without re-reading the sources.</p>
+  <table class="plain">
+    <tr><th style="width:34mm">Label</th><th>What it means</th><th style="width:52mm">Example</th></tr>
+    <tr><td><span class="tag t-m">Measured</span></td><td>An experiment, audit, or methodological study that observed an outcome directly.</td><td>Pew’s screening experiment on 11,114 respondents</td></tr>
+    <tr><td><span class="tag t-s">Industry survey</span></td><td>A professional-body or independent survey of researchers. Self-reported attitudes and practice, usually non-probability.</td><td>MRII, GRIT, MRS/AURA</td></tr>
+    <tr><td><span class="tag t-v">Vendor sample</span></td><td>A survey run by a software company, often self-selected. Directional; it also shows what the vendor wants to sell.</td><td>Displayr quiz, Harris/QuestDIY, Qualtrics</td></tr>
+    <tr><td><span class="tag t-p">Practitioner voice</span></td><td>A named or described researcher speaking for themselves — a quote, talk, interview, or practice guide. Illustrative, not representative.</td><td>IIEX speakers, study participants, client-side leads</td></tr>
+    <tr><td><span class="tag t-i">Inference</span></td><td>Our reading of the evidence for Velocity. A hypothesis to test, not a finding.</td><td>Proposed position; segment hypothesis</td></tr>
+  </table>
+</section>
+
+<!-- ============ SUMMARY ============ -->
+<section class="section">
+  <div class="kicker">Section 00 · Summary</div>
+  <h1>The hard part is not the first answer. It is keeping the answer true.</h1>
+  <p class="lede">Researchers have adopted AI almost universally, but they have not handed it the responsibility for a number. The durable pain is being able to say what a figure means, why it changed, and whether the conclusion still stands — as a study moves between people, tools, and revisions.</p>
+
+  <div class="finding"><div class="num">1</div><p><b>Responsibility, not job title, is the useful boundary.</b>Quant and qual specialists still exist, but most brand-side researchers’ work spans several methods and several collaborators. Design for the research lead, the data/operations specialist, and the client-side insight lead around each finding. <span class="tag t-s">Industry survey</span> <span class="tag t-i">Inference</span></p></div>
+  <div class="finding"><div class="num">2</div><p><b>Agencies are not disappearing.</b>MRS puts UK supply-side research, insight, and analytics turnover at about £9.5bn with 75,000+ workers; ESOMAR sizes the global insights industry at about $153bn. Clients still buy judgment, execution, and accountability. <span class="tag t-s">Industry survey</span></p></div>
+  <div class="finding"><div class="num">3</div><p><b>Use is near-universal; embedding and trust are not.</b>95–98% of researchers in two vendor samples use AI, yet only about one in ten say it is embedded across their workflow, 90% are not fully confident in its accuracy, and 67% double-check every output. <span class="tag t-v">Vendor sample</span> <span class="tag t-s">Industry survey</span></p></div>
+  <div class="finding"><div class="num">4</div><p><b>Researchers describe their stance as authorship.</b>Across conferences and studies the same idea recurs: AI should “inform judgment,” not replace it, and researchers should remain “the authors and not the editors” of their insight. <span class="tag t-p">Practitioner voice</span></p></div>
+  <div class="finding"><div class="num">5</div><p><b>Cleaning decisions change answers.</b>In Pew’s August 2026 experiment, three reasonable screening methods kept between 36% and 82% of respondents and moved one subgroup estimate from an 8-point to a 19-point lead. There is no neutral “clean” button. <span class="tag t-m">Measured</span></p></div>
+  <div class="finding"><div class="num">6</div><p><b>Analytical memory is fragile even where it is most valued.</b>An audit of 699 published survey-based results reproduced only about half numerically and 18% exactly; 23% failed on incomplete materials. Commercial projects are unlikely to be better documented. <span class="tag t-m">Measured</span> <span class="tag t-i">Inference</span></p></div>
+  <div class="finding"><div class="num">7</div><p><b>Traceability is already a competitor claim.</b>Displayr says every number traces to tables, tests, weights, variables, and source; quantilope says quinn now runs the full lifecycle. Velocity’s difference must be observable in a difficult task — above all, a late change. <span class="tag t-v">Vendor sample</span> <span class="tag t-i">Inference</span></p></div>
+
+  <div class="callout blue">
+    <div class="label">The question to test next</div>
+    <p style="font-size:11.2pt; line-height:1.42"><em>Can one researcher carry a defensible answer through a change — a new population, a corrected weight, a suspect batch, a new wave — with less reconstruction and less risk than they can today?</em></p>
+  </div>
+</section>
+
+<!-- ============ 01 PEOPLE ============ -->
+<section class="section">
+  <div class="kicker">Section 01 · The people around a number</div>
+  <h1>The quant–qual split still exists. It is just not where the work divides.</h1>
+  <p class="lede">Specialist roles persist, especially in large agencies. But a finding passes through several hands, and in smaller teams one person holds several of them.</p>
+
+  <p><strong>Specialists are real.</strong> MRS maintains separate career pathways, and Ipsos advertises roles explicitly for quantitative research, survey scripting, and data processing. A current Ipsos client-service role spans questionnaire checks, sample monitoring, validation, Excel/SPSS preparation, and client deliverables; a separate processing role scripts surveys and produces tables.<sup class="ref">27</sup> <span class="tag t-p">Practitioner voice</span></p>
+
+  <p><strong>But researchers’ projects mix methods.</strong> In Greenbook’s 2026 GRIT sample of brand-side researchers, fewer than half said all their projects were quantitative, and more than a quarter said their projects involved both.<sup class="ref">10</sup> This describes the <em>allocation of their projects</em>, not the make-up of the industry.</p>
+
+  <div class="figure">
+    <div class="figure-title">Brand-side researchers’ project mix</div>
+    <div class="figure-sub">Share of respondents describing their projects as… · GRIT 2026, brand-side researchers, n = 170</div>
+    <svg viewBox="0 0 640 74" width="100%" role="img" aria-label="45% all quantitative, 28% both, 24% all qualitative, 3% other">
+      <rect x="0" y="6" width="286" height="28" rx="3" fill="#11769c"/>
+      <rect x="288" y="6" width="177.2" height="28" fill="#2a9d74"/>
+      <rect x="467.2" y="6" width="151.6" height="28" fill="#d9772b"/>
+      <rect x="620.8" y="6" width="19.2" height="28" rx="3" fill="#c3c8cf"/>
+      <text x="10" y="25" fill="#fff" font-size="12" font-weight="700">45%</text>
+      <text x="298" y="25" fill="#fff" font-size="12" font-weight="700">28%</text>
+      <text x="477" y="25" fill="#fff" font-size="12" font-weight="700">24%</text>
+      <text x="0" y="54" fill="#16202b" font-size="10" font-weight="600">All quantitative</text>
+      <text x="288" y="54" fill="#16202b" font-size="10" font-weight="600">Both</text>
+      <text x="467" y="54" fill="#16202b" font-size="10" font-weight="600">All qualitative</text>
+      <text x="640" y="54" fill="#6f7a87" font-size="9" text-anchor="end">3% other</text>
+      <text x="0" y="69" fill="#6f7a87" font-size="8.5">Among brand-side analytics professionals the “both” share was 39% (n = 148).</text>
+    </svg>
+    <div class="caption">Source: Greenbook GRIT 2026 Insights Practice Report, as recorded in Velocity’s research note of 26 September 2026. <span class="tag t-s">Industry survey</span> North-America-heavy, non-probability; the full GRIT sample is 735.</div>
+  </div>
+
+  <p><strong>Responsibilities blur while organisations don’t converge.</strong> GRIT 2026 describes an industry “splitting into two operating models”: analytics professionals are expanding on every tracked dimension, while traditional research functions face budget pressure and a narrowing method portfolio.<sup class="ref">10</sup> Its commentary reports blurred responsibilities without evidence that insights and analytics teams are merging. “Everyone is now a mixed-methods researcher” would overstate the evidence.</p>
+
+  <h2>Design for three collaborators around each finding</h2>
+  <table>
+    <tr><th style="width:38mm">Person</th><th>The question they must answer</th><th style="width:56mm">What they need to see</th></tr>
+    <tr><td>Research lead</td><td>Does this answer the brief, and can I defend the interpretation to the client?</td><td>Intent, claim, caveats, alternatives considered</td></tr>
+    <tr><td>Data / operations specialist</td><td>Which source fields, cleaning decisions, weights, bases, and tests produced it?</td><td>Definitions, transformations, exclusions, universes</td></tr>
+    <tr><td>Client-side insight lead</td><td>Can I use it in a decision, explain its limits, and revisit it later?</td><td>Portable answer, limits, what changed since</td></tr>
+  </table>
+  <p class="small">The same person may occupy several rows. Velocity’s job is to preserve the handoff between them. <span class="tag t-i">Inference</span></p>
+</section>
+
+<!-- ============ 02 MARKET ============ -->
+<section class="section">
+  <div class="kicker">Section 02 · Agencies remain a substantial market</div>
+  <h1>Clients still buy judgment and accountability, not only software.</h1>
+
+  <div class="tiles" style="grid-template-columns: repeat(3,1fr)">
+    <div class="tile"><div class="n hl">£9.5bn</div><div class="d">UK research, insight &amp; analytics <strong>supply-side turnover</strong> (MRS)</div></div>
+    <div class="tile"><div class="n">75,000+</div><div class="d">workers in more than 4,000 UK enterprises (MRS)</div></div>
+    <div class="tile"><div class="n">$153bn</div><div class="d">global insights industry, 2024 (ESOMAR Global Market Research 2025)</div></div>
+  </div>
+  <div class="tile-source">Sources 21–23. <span class="tag t-s">Industry survey</span></div>
+
+  <div class="callout">
+    <div class="label">Do not add these figures together</div>
+    <p>MRS’s £9.5bn is <strong>supply-side turnover</strong>. Its separate £18.7bn “Business of Evidence” figure uses a broader lens covering analytics, data, and evidence functions across the economy.<sup class="ref">22</sup> They measure different things. Likewise ESOMAR’s categories are industry-wide, not Velocity’s serviceable market.</p>
+  </div>
+
+  <div class="figure">
+    <div class="figure-title">Where the $153bn sits</div>
+    <div class="figure-sub">ESOMAR estimate of the 2024 global insights industry, US$ billions</div>
+    <svg viewBox="0 0 640 118" width="100%" role="img" aria-label="Research software 62, market research 56, reporting 35 billion dollars">
+      <g font-size="10.5">
+        <text x="0" y="22" fill="#16202b" font-weight="600">Research software</text>
+        <rect x="150" y="8" width="400" height="20" rx="3" fill="#11769c"/>
+        <text x="558" y="22" fill="#16202b" font-weight="700">$62bn</text>
+        <text x="0" y="58" fill="#16202b" font-weight="600">Market research</text>
+        <rect x="150" y="44" width="361.3" height="20" rx="3" fill="#11769c"/>
+        <text x="519" y="58" fill="#16202b" font-weight="700">$56bn</text>
+        <text x="0" y="94" fill="#16202b" font-weight="600">Reporting</text>
+        <rect x="150" y="80" width="225.8" height="20" rx="3" fill="#11769c"/>
+        <text x="384" y="94" fill="#16202b" font-weight="700">$35bn</text>
+      </g>
+      <line x1="150" y1="2" x2="150" y2="106" stroke="#16202b" stroke-width="1"/>
+      <text x="150" y="116" fill="#6f7a87" font-size="8.5">Market research still contains substantial full-service and fieldwork activity; software grew faster in 2024.</text>
+    </svg>
+    <div class="caption">Sources: ESOMAR via Research World (total); category split as reported in the originating memo and not re-checked against the full ESOMAR report in this pass.<sup class="ref">23</sup></div>
+  </div>
+
+  <h2>A segment hypothesis, not a winning market</h2>
+  <p>GRIT’s 2026 supplier analysis describes a particularly strong operating profile among service firms with 101–500 staff, infrastructure constraints for small specialists, and a managed transition for the largest firms. That analysis mixes survey results with advisers’ interpretation, so it should shape a hypothesis rather than settle one. Meanwhile ESOMAR’s buyer research places in-house execution at around half of projects for several team structures, with wide variation by sector (30% in-house in FMCG, 23% in pharmaceuticals).<sup class="ref">10,28</sup> The in-house/agency line is a handoff pattern, not a binary.</p>
+
+  <div class="cols">
+    <div class="callout blue" style="margin-top:1mm">
+      <div class="label">Primary hypothesis</div>
+      <p>A <strong>small or mid-sized agency</strong> running recurring quantitative studies or trackers, with several people touching each project and clients expecting editable PowerPoint and Excel. Enough repeat work that mistakes and rework are expensive; not enough engineering to build a connected workflow. <span class="tag t-i">Inference</span></p>
+    </div>
+    <div class="callout blue" style="margin-top:1mm">
+      <div class="label">Secondary hypothesis</div>
+      <p>The <strong>client-side team</strong> that receives work from several agencies and must interrogate, reuse, and defend it internally. MRS/AURA’s ClientSight 2025 found growing impact and influence were both top priorities and top challenges for these professionals.<sup class="ref">29</sup> <span class="tag t-s">Industry survey</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 CHAIN ============ -->
+<section class="section">
+  <div class="kicker">Section 03 · A study is a chain of decisions and handoffs</div>
+  <h1>Eight moments where meaning can quietly change.</h1>
+  <p class="lede">Triangulated from current job descriptions, platform documentation, and disclosure standards. It is a workflow model to validate, not a measured time-use study.</p>
+
+  <div class="timeline">
+    <div class="step head"><div>Moment</div><div>The researcher’s real task</div><div>Frequent failure or cost</div></div>
+    <div class="step"><div class="m"><span>01</span>Brief &amp; proposal</div><div>Turn a business decision into a population, measures, method, timeline, and deliverable.</div><div class="risk">A vague question survives until reporting; unpromising pitches consume scarce capacity.</div></div>
+    <div class="step"><div class="m"><span>02</span>Questionnaire &amp; programming</div><div>Define routing, response options, quotas, and what each measure will mean.</div><div class="risk">The programmed instrument diverges from the approved questionnaire.</div></div>
+    <div class="step"><div class="m"><span>03</span>Fieldwork</div><div>Monitor sample, quotas, incidence, and quality.</div><div class="risk">Fraud, poor answers, composition shifts, and late changes — including undisclosed top-up sample.</div></div>
+    <div class="step"><div class="m"><span>04</span>Preparation</div><div>Reconcile files, labels, missing codes, multiple responses, exclusions, and weights.</div><div class="risk">A plausible-looking dataset carries a wrong denominator or a silent recode.</div></div>
+    <div class="step"><div class="m"><span>05</span>Exploration</div><div>Work through tables, segments, waves, tests, and open ends.</div><div class="risk">Many interesting cuts, small bases, uncertain relevance, lost reasoning.</div></div>
+    <div class="step"><div class="m"><span>06</span>Interpretation</div><div>Decide which findings matter, test alternatives, write caveats.</div><div class="risk">The attractive result beats the robust one; prose outlives changed evidence.</div></div>
+    <div class="step"><div class="m"><span>07</span>Delivery</div><div>Check tables, build slides and workbooks, answer client questions.</div><div class="risk">Repeated copying, inconsistent figures, hard-to-reconstruct numbers.</div></div>
+    <div class="step"><div class="m"><span>08</span>Next wave</div><div>Reuse definitions and outputs with a changed questionnaire or sample.</div><div class="risk">A refreshed chart appears comparable when the measure is not.</div></div>
+  </div>
+
+  <p><strong>The small details are part of the result.</strong> AAPOR’s Transparency Initiative requires population, full question wording and answer options, sample construction, mode, weighting, and more to be disclosed with findings, and further details within 30 days of a request.<sup class="ref">24</sup> Its June 2026 code extends this to processing, quality checks, exclusions, and AI use. In survey work, source-to-claim traceability is a professional obligation before it is a product feature.</p>
+
+  <p><strong>Where the quality work actually lands.</strong> In the Global Data Quality benchmark led by the Insights Association, sample providers reported removing 0.8% of respondents in-survey for fraud and quality reasons; research agencies reported 3.3%.<sup class="ref">19</sup> <span class="tag t-s">Industry survey</span> The gap suggests that consequential quality judgments are made downstream, by the agency, after data arrives — exactly the moment Velocity’s preparation microscope targets. <span class="tag t-i">Inference</span></p>
+</section>
+
+<!-- ============ 04 VOICES ============ -->
+<section class="section">
+  <div class="kicker">Section 04 · In researchers’ own words</div>
+  <h1>“Inform judgment. Do not replace it.”</h1>
+  <p class="lede">What researchers say when they describe their own relationship to evidence and to AI. These are illustrative voices, not a representative sample — but they are strikingly consistent.</p>
+
+  <div class="quote-grid">
+    <div>
+      <div class="quote">
+        <blockquote>We use it to inform judgment. We do not use it to replace judgment.</blockquote>
+        <div class="who"><b>Speaker at IIEX Europe 2026</b>, reported by Greenbook, July 2026<sup class="ref">11</sup></div>
+        <div class="so">The same coverage urges researchers to stay accountable for their work and to “remain the authors and not the editors” of their own insight.</div>
+      </div>
+      <div class="quote">
+        <blockquote>No matter what question you ask, the platform always gives you an answer, even when it’s not directly related.</blockquote>
+        <div class="who"><b>Participant P6</b>, think-aloud study of 15 researchers, FAccT 2026<sup class="ref">13</sup></div>
+        <div class="so">The authors found that AI’s confident tone “misrepresents epistemic uncertainty,” making it harder for the accountable researcher to know what to scrutinise.</div>
+      </div>
+      <div class="quote">
+        <blockquote>Students would never know the applicability of information.</blockquote>
+        <div class="who"><b>Participant</b>, same study, on junior researchers<sup class="ref">13</sup></div>
+        <div class="so">Concern that AI can hide gaps in understanding rather than reveal them — a real risk where junior executives do first-pass analysis.</div>
+      </div>
+      <div class="quote">
+        <blockquote>A syntax file with no comments still runs; it just stops being useful to anyone — including the researcher who wrote it, six months later.</blockquote>
+        <div class="who"><b>CASRAI practice guide</b> on reproducible SPSS analysis<sup class="ref">17</sup></div>
+      </div>
+    </div>
+    <div>
+      <div class="quote">
+        <blockquote>…some of it no doubt misplaced…</blockquote>
+        <div class="who"><b>Client-side insight leader</b>, Research Live Industry Report 2026<sup class="ref">14</sup></div>
+        <div class="so">On the trust colleagues now place in what AI produces. Leaders from Virgin Media O2, the BBC, Sage and Vue describe “cutting through the noise with credibility” as their challenge.</div>
+      </div>
+      <div class="quote">
+        <blockquote>It’s exciting to be at the start of the AI journey and to be able to take ownership of how it can add value…</blockquote>
+        <div class="who"><b>Client-side insight professional</b>, Research Live Industry Report 2025<sup class="ref">15</sup></div>
+        <div class="so">Note the word <em>ownership</em>: enthusiasm framed as control.</div>
+      </div>
+      <div class="quote">
+        <blockquote>A trend is only real if every wave measured it the same way.</blockquote>
+        <div class="who"><b>Tracker practice guide</b>, PulseAI Research<sup class="ref">18</sup></div>
+        <div class="so">It warns that sample quietly topped up from a second supplier when a quota underfills causes more unexplained trend breaks than any other single factor, and asks tools to treat a wave as a first-class object with an audit trail.</div>
+      </div>
+      <div class="quote">
+        <blockquote>…to save time while keeping control.</blockquote>
+        <div class="who"><b>Most-chosen goal</b> among 203 researchers, Displayr, March 2026<sup class="ref">4</sup></div>
+        <div class="so">35% chose this, ahead of end-to-end automation at 32%.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="label">What the voices add up to</div>
+    <p>Researchers welcome speed but define their professional value as <strong>authorship and accountability</strong>. Their anxieties are specific: confident output that hides uncertainty, reasoning that cannot be recovered later, comparisons that silently stop being comparable, and juniors who cannot tell when something is wrong. A product that makes these visible serves the researcher’s identity rather than threatening it. <span class="tag t-i">Inference</span></p>
+  </div>
+  <p class="small">Quotations were captured from search-indexed excerpts of the named sources because direct page access was blocked in this research environment. Check wording against the originals before external use. Forum voices (Reddit, Hacker News, LinkedIn) could not be accessed and remain a gap.</p>
+</section>
+
+<!-- ============ 05 TRUST ============ -->
+<section class="section">
+  <div class="kicker">Section 05 · Adoption is near-universal; trust is not</div>
+  <h1>Researchers use AI every day and check almost everything it produces.</h1>
+  <p class="lede">Six surveys from 2025–26 tell a consistent story from different angles. Their samples differ sharply, so read each on its own terms.</p>
+
+  <h3>Displayr AI Readiness Quiz · March 2026 · n = 203 self-selected researchers <span class="tag t-v">Vendor sample</span></h3>
+  <div class="tiles">
+    <div class="tile"><div class="n">95%</div><div class="d">use AI to some degree</div></div>
+    <div class="tile"><div class="n hl">11%</div><div class="d">have embedded it across the full research process</div></div>
+    <div class="tile"><div class="n warm">90%</div><div class="d">are not fully confident in AI output accuracy</div></div>
+    <div class="tile"><div class="n warm">67%</div><div class="d">double-check every output as routine</div></div>
+  </div>
+  <div class="tile-source">Also: 42% name trusting outputs as their biggest day-to-day challenge; 63% call trust their primary readiness blocker; 72% describe a partly or wholly fragmented workflow.<sup class="ref">4</sup></div>
+
+  <h3>Harris Poll / QuestDIY · August 2025 · n = 219 US researchers <span class="tag t-v">Vendor sample</span></h3>
+  <div class="tiles">
+    <div class="tile"><div class="n">98%</div><div class="d">have used generative AI; 72% use it daily</div></div>
+    <div class="tile"><div class="n hl">56%</div><div class="d">save at least five hours a week</div></div>
+    <div class="tile"><div class="n warm">31%</div><div class="d">say validation time has <strong>increased</strong></div></div>
+    <div class="tile"><div class="n warm">37%</div><div class="d">cite data-quality issues; 39% call it error-prone</div></div>
+  </div>
+  <div class="tile-source">Researchers “treat AI outputs as drafts requiring senior review rather than finished products.” 28% saw inconsistencies in style, tone, or formatting in deliverables.<sup class="ref">5</sup></div>
+
+  <h3>The wider picture</h3>
+  <table>
+    <tr><th style="width:44mm">Source</th><th style="width:30mm">Sample</th><th>What it adds</th><th style="width:22mm">Type</th></tr>
+    <tr><td>MRII State of the Industry 2026</td><td>498 professionals, global, Apr 2026</td><td>About half use AI regularly, but only 1 in 10 say it is fully embedded in standard workflows. 63% worry about AI-driven job loss; 57% are highly satisfied with their jobs.<sup class="ref">7</sup></td><td><span class="tag t-s">Survey</span></td></tr>
+    <tr><td>MRII AI in Focus 2025</td><td>426 researchers, global, Feb 2025</td><td>62% report AI use by themselves or their team (up 23 points); 77% favourable. Time saving is the dominant perceived benefit, well ahead of better insight.<sup class="ref">6</sup></td><td><span class="tag t-s">Survey</span></td></tr>
+    <tr><td>MRII job satisfaction 2025</td><td>MRII panel</td><td>Satisfaction fell to 59% from 65% in 2024; only 35% satisfied with advancement. Top training need: AI/ML (55%).<sup class="ref">8</sup></td><td><span class="tag t-s">Survey</span></td></tr>
+    <tr><td>GRIT Insights Practice 2026</td><td>735 industry respondents</td><td>A <strong>governance gap</strong>: teams driving AI adoption are often least confident that AI risks are managed. Agentic AI is already embedded in analysing data, updating reports, and preparing data.<sup class="ref">10</sup></td><td><span class="tag t-s">Survey</span></td></tr>
+    <tr><td>Qualtrics Market Research Trends 2026</td><td>3,000+ researchers, global</td><td>Only 13% identify as “traditional” non-users; 15% actively use AI agents; 78% <em>expect</em> agents to run over half of projects end-to-end within three years — an expectation, not an observation.<sup class="ref">9</sup></td><td><span class="tag t-v">Vendor</span></td></tr>
+  </table>
+
+  <div class="figure" style="break-before: page">
+    <div class="figure-title">The use–embedding gap</div>
+    <div class="figure-sub">Share of researchers who use AI vs. share who say it is embedded across their workflow · two independent 2026 samples</div>
+    <svg viewBox="0 0 640 132" width="100%" role="img" aria-label="Displayr: 95% use, 11% embedded. MRII: about 50% use regularly, about 10% fully embedded.">
+      <g stroke="#e3e6ea" stroke-width="1">
+        <line x1="210" y1="22" x2="210" y2="104"/><line x1="312.5" y1="22" x2="312.5" y2="104"/><line x1="415" y1="22" x2="415" y2="104"/><line x1="517.5" y1="22" x2="517.5" y2="104"/><line x1="620" y1="22" x2="620" y2="104"/>
+      </g>
+      <g font-size="8.5" fill="#6f7a87" text-anchor="middle">
+        <text x="210" y="116">0%</text><text x="312.5" y="116">25%</text><text x="415" y="116">50%</text><text x="517.5" y="116">75%</text><text x="620" y="116">100%</text>
+      </g>
+      <g font-size="8.8" fill="#44505e">
+        <circle cx="214" cy="9" r="4.5" fill="#11769c"/><text x="222" y="12">Use AI (any / regularly)</text>
+        <circle cx="352" cy="9" r="4.5" fill="#d9772b"/><text x="360" y="12">Embedded across the workflow</text>
+      </g>
+      <g font-size="10" font-weight="600" fill="#16202b">
+        <text x="0" y="48">Displayr quiz, n = 203</text>
+        <text x="0" y="86">MRII industry, n = 498</text>
+      </g>
+      <g font-size="8.4" fill="#6f7a87"><text x="0" y="60">self-selected, Mar 2026</text><text x="0" y="98">global, Apr 2026</text></g>
+      <line x1="255.1" y1="48" x2="599.5" y2="48" stroke="#c3c8cf" stroke-width="2"/>
+      <line x1="251" y1="86" x2="415" y2="86" stroke="#c3c8cf" stroke-width="2"/>
+      <circle cx="599.5" cy="48" r="6.5" fill="#11769c" stroke="#fff" stroke-width="2"/>
+      <circle cx="255.1" cy="48" r="6.5" fill="#d9772b" stroke="#fff" stroke-width="2"/>
+      <circle cx="415" cy="86" r="6.5" fill="#11769c" stroke="#fff" stroke-width="2"/>
+      <circle cx="251" cy="86" r="6.5" fill="#d9772b" stroke="#fff" stroke-width="2"/>
+      <g font-size="10" font-weight="700" fill="#16202b" text-anchor="middle">
+        <text x="599.5" y="36">95%</text><text x="255.1" y="36">11%</text>
+        <text x="415" y="74">≈50%</text><text x="251" y="74">≈10%</text>
+      </g>
+      <text x="0" y="130" font-size="8.4" fill="#6f7a87">Different samples and question wording; compare the gap within each row, not values across rows.</text>
+    </svg>
+    <div class="caption">Sources: Displayr (“use AI to some degree”; “embedded across the full research process”)<sup class="ref">4</sup>; MRII 2026 (“about half … regularly”; “1 in 10 … fully embedded in standard workflows”).<sup class="ref">7</sup></div>
+  </div>
+
+  <div class="callout blue">
+    <div class="label">Reading across the surveys</div>
+    <p>The gap between <strong>use</strong> (roughly 50–98%) and <strong>embedding</strong> (roughly 10%) is the most consistent pattern across sources, and the most relevant to Velocity. Researchers have added AI to steps; they have not rebuilt the workflow around it, because they cannot yet verify it cheaply. Verification cost, not capability, is the bottleneck — which is precisely where a product built around inspectable evidence could earn its place. <span class="tag t-i">Inference</span></p>
+  </div>
+
+  <p class="small" style="margin-top:5mm"><strong>Pressure predates AI.</strong> An MRS qualitative study of supply-side talent (2022) described long hours, manual work, and researchers stretching to protect client quality; this pass could not re-locate it, so treat it as evidence of longstanding dynamics, not a measured 2026 rate. A product that simply lets agencies take on more projects may intensify that strain. The desirable experience is less reconstruction and checking, and more time to reason and speak confidently to a client.</p>
+</section>
+
+<!-- ============ 06 CLEAN DATA ============ -->
+<section class="section">
+  <div class="kicker">Section 06 · Clean data is a decision, not a button</div>
+  <h1>Three reasonable cleaning rules. Three different answers.</h1>
+  <p class="lede">Pew Research Center’s August 2026 study screened one opt-in survey three ways. Removing suspect respondents generally lowered error, but no method reliably solved the problem — and the choice of method moved results.</p>
+
+  <div class="figure">
+    <div class="figure-title">Same 11,114 respondents, four analysis populations</div>
+    <div class="figure-sub">Left: respondents retained by each screen. Right: Harris’s lead among Hispanic voters in the resulting sample, percentage points.</div>
+    <svg viewBox="0 0 640 196" width="100%" role="img" aria-label="Retained respondents and Harris lead among Hispanic voters by screening method">
+      <!-- column headers -->
+      <text x="0" y="12" font-size="9" fill="#6f7a87" font-weight="600" letter-spacing=".6">SCREEN</text>
+      <text x="128" y="12" font-size="9" fill="#6f7a87" font-weight="600" letter-spacing=".6">RESPONDENTS RETAINED</text>
+      <text x="410" y="12" font-size="9" fill="#6f7a87" font-weight="600" letter-spacing=".6">HARRIS LEAD, HISPANIC VOTERS</text>
+      <!-- gridlines right panel: x = 410 + v*10.5 -->
+      <g stroke="#e3e6ea" stroke-width="1">
+        <line x1="410" y1="22" x2="410" y2="168"/>
+        <line x1="462.5" y1="22" x2="462.5" y2="168"/>
+        <line x1="515" y1="22" x2="515" y2="168"/>
+        <line x1="567.5" y1="22" x2="567.5" y2="168"/>
+        <line x1="620" y1="22" x2="620" y2="168"/>
+      </g>
+      <g font-size="8.5" fill="#6f7a87" text-anchor="middle">
+        <text x="410" y="180">0</text><text x="462.5" y="180">+5</text><text x="515" y="180">+10</text><text x="567.5" y="180">+15</text><text x="620" y="180">+20</text>
+      </g>
+      <!-- rows: y centers 42, 78, 114, 150 ; bar scale 11114 -> 190px -->
+      <g font-size="10.5" fill="#16202b" font-weight="600">
+        <text x="0" y="46">No screening</text>
+        <text x="0" y="82">Trap questions</text>
+        <text x="0" y="118">Automated prescreen</text>
+        <text x="0" y="154">Voter-file match</text>
+      </g>
+      <rect x="128" y="33" width="190" height="18" rx="3" fill="#c3c8cf"/>
+      <rect x="128" y="69" width="156.4" height="18" rx="3" fill="#11769c"/>
+      <rect x="128" y="105" width="98.2" height="18" rx="3" fill="#11769c"/>
+      <rect x="128" y="141" width="68" height="18" rx="3" fill="#11769c"/>
+      <g font-size="10" fill="#16202b">
+        <text x="324" y="46"><tspan font-weight="700">11,114</tspan></text>
+        <text x="290" y="82"><tspan font-weight="700">9,151</tspan> <tspan fill="#6f7a87">82%</tspan></text>
+        <text x="232" y="118"><tspan font-weight="700">5,745</tspan> <tspan fill="#6f7a87">52%</tspan></text>
+        <text x="202" y="154"><tspan font-weight="700">3,977</tspan> <tspan fill="#6f7a87">36%</tspan></text>
+      </g>
+      <!-- lollipops: 9 -> 504.5 ; 8 -> 494 ; 16 -> 578 ; 19 -> 609.5 -->
+      <g stroke-width="2">
+        <line x1="410" y1="42" x2="504.5" y2="42" stroke="#c3c8cf"/>
+        <line x1="410" y1="78" x2="494" y2="78" stroke="#d9772b"/>
+        <line x1="410" y1="114" x2="578" y2="114" stroke="#d9772b"/>
+        <line x1="410" y1="150" x2="609.5" y2="150" stroke="#d9772b"/>
+      </g>
+      <circle cx="504.5" cy="42" r="6" fill="#8e96a1" stroke="#fff" stroke-width="2"/>
+      <circle cx="494" cy="78" r="6" fill="#d9772b" stroke="#fff" stroke-width="2"/>
+      <circle cx="578" cy="114" r="6" fill="#d9772b" stroke="#fff" stroke-width="2"/>
+      <circle cx="609.5" cy="150" r="6" fill="#d9772b" stroke="#fff" stroke-width="2"/>
+      <g font-size="10" font-weight="700" fill="#16202b">
+        <text x="504.5" y="31" text-anchor="middle">+9</text>
+        <text x="494" y="67" text-anchor="middle">+8</text>
+        <text x="578" y="103" text-anchor="middle">+16</text>
+        <text x="609.5" y="139" text-anchor="middle">+19</text>
+      </g>
+      <text x="0" y="194" font-size="8.5" fill="#6f7a87">Voter-file matching slightly <tspan font-weight="700">increased</tspan> overall error, mostly by removing good respondents who simply declined to give a name or address.</text>
+    </svg>
+    <div class="caption">Source: Pew Research Center, “No Easy Fix for Bogus Respondents in Online Opt-In Polls,” 27 Aug 2026; online opt-in survey of 11,114 US adults, 14–19 Nov 2024, sample via CloudResearch from Cint’s Lucid marketplace.<sup class="ref">1,2</sup> <span class="tag t-m">Measured</span></div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>Why it matters for Velocity</h3>
+      <p>Pew also found bogus respondents disproportionately claim to be young or Hispanic, producing subgroup errors nearly twice the general-population error in an earlier benchmark.<sup class="ref">1</sup> A quality rule is therefore a <strong>substantive analytical choice</strong> that changes who a percentage describes. It deserves the same inspection and provenance as a weight.</p>
+      <p>This directly supports PR #80’s <strong>inspect a flag → see its effect → then decide</strong> pattern, and argues against any “one-click clean.” <span class="tag t-i">Inference</span></p>
+    </div>
+    <div>
+      <h3>The tracker version of the same problem</h3>
+      <p>Tracker guidance converges on one rule: keep core wording, translations, sample sources, and composition identical wave to wave, record every deliberate change, and annotate charts when something did change.<sup class="ref">18</sup> <span class="tag t-p">Practitioner voice</span></p>
+      <p>Quirks contributors describe fraud from bad actors, bots, and AI imitation as an existential threat, compounded by long, repetitive surveys that degrade even honest answers.<sup class="ref">20</sup> The study was discussed widely, including on Columbia’s statistics blog.<sup class="ref">3</sup></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 RECONSTRUCT ============ -->
+<section class="section">
+  <div class="kicker">Section 07 · Can anyone reconstruct the number?</div>
+  <h1>Even with the code in hand, only half the results came back.</h1>
+  <p class="lede">The most direct evidence on analytical memory comes from academic survey research, where documentation norms are strongest. That makes it a conservative benchmark for commercial work.</p>
+
+  <p>Krähmer, Schächtele and Auspurg audited more than 1,000 articles built on the European Social Survey (2015–2020). Only about 35% of authors shared code. For 100 articles with code available, they attempted to reproduce 699 published results from raw data.<sup class="ref">16</sup> <span class="tag t-m">Measured</span></p>
+
+  <div class="figure">
+    <div class="figure-title">Outcome of attempting to reproduce 699 published survey results</div>
+    <div class="figure-sub">Articles where analysis code was shared · share of results</div>
+    <svg viewBox="0 0 640 96" width="100%" role="img" aria-label="18% exactly reproducible, about 33% reproduced but not exactly, 26% numerical deviations, 23% blocked by incomplete materials">
+      <rect x="0" y="8" width="113.2" height="30" rx="3" fill="#11769c"/>
+      <rect x="115.2" y="8" width="209.2" height="30" fill="#7fb3c8"/>
+      <rect x="326.4" y="8" width="164.4" height="30" fill="#d9772b"/>
+      <rect x="492.8" y="8" width="147.2" height="30" rx="3" fill="#c3c8cf"/>
+      <g font-size="12" font-weight="700">
+        <text x="9" y="28" fill="#fff">18%</text>
+        <text x="124" y="28" fill="#0b4f69">≈33%</text>
+        <text x="335" y="28" fill="#fff">26%</text>
+        <text x="501" y="28" fill="#16202b">23%</text>
+      </g>
+      <g font-size="9.5" fill="#16202b" font-weight="600">
+        <text x="0" y="56">Exactly reproducible</text>
+        <text x="115" y="56">Reproduced, not exactly (derived)</text>
+        <text x="326" y="56">Numerical deviations</text>
+        <text x="493" y="56">Blocked: incomplete or</text>
+        <text x="493" y="68">poorly documented materials</text>
+      </g>
+      <line x1="0" y1="80" x2="324" y2="80" stroke="#11769c" stroke-width="1.5"/>
+      <line x1="0" y1="76" x2="0" y2="84" stroke="#11769c" stroke-width="1.5"/>
+      <line x1="324" y1="76" x2="324" y2="84" stroke="#11769c" stroke-width="1.5"/>
+      <text x="0" y="94" font-size="8.5" fill="#0b4f69" font-weight="600">≈ half numerically reproducible</text>
+    </svg>
+    <div class="caption">Source: Krähmer, Schächtele &amp; Auspurg, Royal Society Open Science, 2026. The ≈33% middle segment is derived as the remainder of the reported “around half” reproducible after the 18% exact; treat it as approximate.<sup class="ref">16</sup></div>
+  </div>
+
+  <p><strong>Why this is relevant to agencies.</strong> Commercial projects rarely publish code, frequently change hands, and must answer client questions weeks after delivery. If a disciplined academic workflow loses a quarter of its results to missing materials, the agency equivalent — “which base was that, and who applied the exclusion?” — is plausibly worse. This is inference; no equivalent audit of commercial research was found. <span class="tag t-i">Inference</span></p>
+
+  <div class="callout">
+    <div class="label">Implication</div>
+    <p>A durable record of <strong>definition, transformation, and judgment</strong> attached to each claim is not a nice-to-have audit feature. It is the thing most likely to be missing when a client disputes a number or a new wave arrives. The unit Velocity should preserve is not the table or the chart; it is the answer and its reasons.</p>
+  </div>
+</section>
+
+<!-- ============ 08 TOOLS ============ -->
+<section class="section">
+  <div class="kicker">Section 08 · The tool stack is real and already competitive</div>
+  <h1>“Easy crosstabs” and “traceable AI” are both taken.</h1>
+  <p class="lede">Researchers cross boundaries between collection platforms, processing teams or files, analysis tools, and presentation software. The examples below establish capabilities, not market share.</p>
+
+  <table>
+    <tr><th style="width:32mm">Layer</th><th>Examples and what they already do</th><th style="width:52mm">Implication for Velocity</th></tr>
+    <tr><td>Collection &amp; fieldwork</td><td>Qualtrics and Forsta cover survey data, weighting, crosstabs, and field reporting; specialist teams handle scripting, checks, tabulation, coding. Qualtrics launched synthetic panels at X4 2026.<sup class="ref">9</sup></td><td>Do not assume Velocity must own survey authoring or sample supply.</td></tr>
+    <tr><td>Processing &amp; analysis</td><td>Excel, SPSS/Dimensions, Q/Displayr, Forsta, Crunch, and scripted R/Python. Crunch addresses preparation and sharing; Displayr connects cleaning, tables, tests, and reporting.<sup class="ref">27</sup></td><td>Crosstabs alone is an exposed position.</td></tr>
+    <tr><td>Integrated AI research</td><td>Displayr: every number “traced back to the tables, tests, weights, variables, and source”; its agent detects filters and weights automatically.<sup class="ref">25</sup> quantilope: quinn now runs the “full end-to-end research lifecycle” (Feb 2026), under a “Human-Led, AI-Powered” banner.<sup class="ref">26</sup> Zappi: standardised on-demand studies.</td><td>Neither end-to-end AI nor provenance is unique. Velocity must show its difference in a hard task.</td></tr>
+    <tr><td>Qual &amp; mixed methods</td><td>Platforms combine structured responses with AI-moderated interviews and source-linked qualitative analysis.</td><td>Make room for qualitative context without building a qual platform.</td></tr>
+    <tr><td>Client delivery</td><td>Native PowerPoint, Excel, PDFs, dashboards; vendors already automate refreshes and editable exports. Displayr notes automatic updates can overwrite edits, hence explicit reruns.</td><td>The value is whether an exported assertion stays accurate, intelligible, and easy to revise.</td></tr>
+  </table>
+
+  <div class="callout blue">
+    <div class="label">Where the competitive bar actually is</div>
+    <p>Every competitor can demonstrate a clean first answer on a well-behaved file. Few demonstrations show what happens to <strong>edited prose, approved caveats, and exported slides</strong> when the population, weight, exclusion, or wave changes. That late-change path is where Velocity’s claim should be tested — and against a capable baseline such as Displayr/Q or the researcher’s own stack, not a strawman. <span class="tag t-i">Inference</span></p>
+  </div>
+</section>
+
+<!-- ============ 09 POSITION ============ -->
+<section class="section">
+  <div class="kicker">Section 09 · A proposed position for Velocity</div>
+  <h1>Findings researchers can explain, challenge, revise, and stand behind.</h1>
+  <p class="lede">Broader than “analysis software,” narrower and more credible than “an AI researcher.” The unit of value is a <strong>defensible answer to a research question</strong>.</p>
+
+  <div class="anatomy">
+    <div class="part"><div class="h"><span>1</span>Intent</div><p>The client question and the decision it informs.</p></div>
+    <div class="part"><div class="h"><span>2</span>Definition</div><p>Population, eligibility, numerator, denominator, missing policy, weighting, comparable waves.</p></div>
+    <div class="part"><div class="h"><span>3</span>Evidence</div><p>Computed result, bases, relevant alternatives, quality concerns, source references.</p></div>
+    <div class="part"><div class="h"><span>4</span>Judgment</div><p>The researcher’s interpretation, caveat, and review decision — in their words.</p></div>
+    <div class="part"><div class="h"><span>5</span>Delivery state</div><p>Which slides, workbooks, or shared answers depend on it; what is due for review after a change.</p></div>
+  </div>
+
+  <p>This is substantially aligned with PR #80’s exploration and the reviewed handoff in PRs #75 and #79. The added emphasis is <strong>the late change</strong>. A researcher discovers the product’s value when a client changes the target population, a weight is corrected, a suspect batch is investigated, or wave five contains a new response code: can they see the affected claims, keep their own reasoning, and repair the deliverable without starting over?</p>
+
+  <h2>Which prototypes matter most</h2>
+  <table>
+    <tr><th style="width:44mm">Prototype</th><th>Researcher job it serves</th><th style="width:22mm">Priority</th></tr>
+    <tr><td>Preparation microscope + population lens</td><td>Make an error visible at the moment it can be corrected; state who a percentage describes. Directly answers the Pew finding that cleaning choices move estimates.</td><td><span class="priority p-high">Lead</span></td></tr>
+    <tr><td>Measure identity + wave rehearsal</td><td>Potentially the strongest durable value for trackers: a refreshed number without a stable definition is dangerous. Include a deliberately incompatible wave — a product that confidently maps it should fail.</td><td><span class="priority p-high">Lead</span></td></tr>
+    <tr><td>Reviewed narrative &amp; export (PRs #75/#79)</td><td>Closes the loop: preserve the researcher’s wording while marking precisely which claims need another look after evidence changes.</td><td><span class="priority p-high">Lead</span></td></tr>
+    <tr><td>Assumption lab</td><td>Valuable when a consequential claim is sensitive to a justified choice. Keep it bounded so it does not become a machine for searching out favourable results.</td><td><span class="priority p-med">Bounded</span></td></tr>
+    <tr><td>Question desk vs notebook</td><td>Competing main-workspace ideas. Test both on the same interrupted, revised project; choose by how readily a researcher resumes and explains the work.</td><td><span class="priority p-med">Compare</span></td></tr>
+    <tr><td>Signal inbox</td><td>Directs attention after a revised file or wave; “interesting” rankings may miss client context, so expose selection criteria.</td><td><span class="priority p-watch">Later</span></td></tr>
+  </table>
+
+  <div class="callout">
+    <div class="label">No moat claimed</div>
+    <p>The prototypes use synthetic fixtures and interaction checks; there is no researcher usability result or measured correction burden, and the research-evaluation PRs are explicit about missing human ratings. The defensible claim today is a <strong>promising, unusually coherent product hypothesis</strong> with good prototype coverage of its hardest decisions. Lead with researcher competence — <em>“Get from a messy survey file to an answer you can explain and revise”</em> — and avoid “instant insights” or “replace the researcher.”</p>
+  </div>
+</section>
+
+<!-- ============ 10 NEXT ============ -->
+<section class="section">
+  <div class="kicker">Section 10 · The next exploration should follow real work</div>
+  <h1>Observe six to eight recent projects, not opinions about AI.</h1>
+  <p class="lede">Split participants between agency research leads, data/operations staff, and client-side recipients. For each, ask for a real questionnaire or codebook, received data, analysis file, delivered deck, and one revision or client query — redacted where needed.</p>
+
+  <p>Reconstruct what happened, then have the researcher perform four tasks in both their current stack and the relevant prototype:</p>
+  <table>
+    <tr><th style="width:48mm">Task</th><th>What to observe</th></tr>
+    <tr><td>Explain a disputed percentage</td><td>Files opened, people contacted, time to find the exact base, and whether the explanation is correct.</td></tr>
+    <tr><td>Investigate a quality exclusion or weight change</td><td>Whether they inspect effects before applying a rule; what they record about the decision. (Pew’s design is a ready-made template.)</td></tr>
+    <tr><td>Revise a delivered headline</td><td>Which numbers, prose, charts, and caveats they remember to update — and which they miss.</td></tr>
+    <tr><td>Bring in the next tracker wave</td><td>How they detect changes in wording, routing, codes, sample source, and comparability. Include one deliberately incompatible change.</td></tr>
+  </table>
+
+  <div class="cols">
+    <div>
+      <h3>Record</h3>
+      <ul>
+        <li>Rework and wrong assumptions caught</li>
+        <li>Handoffs and people contacted</li>
+        <li>Time spent checking vs reasoning</li>
+        <li>Confidence explaining the result, and whether that confidence was warranted</li>
+        <li>False assurances and unsupported suggestions from the tool</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Don’t rely on</h3>
+      <ul>
+        <li>Task completion alone</li>
+        <li>Preference for a screen</li>
+        <li>General attitudes to AI — six surveys already cover these</li>
+        <li>Comparison against a weak baseline; include Displayr/Q or the participant’s own stack</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <div class="label">What would prove the hypothesis wrong</div>
+    <p>If researchers using the prototype make as many consequential corrections, miss as many stale claims after a change, or take longer to reach a defensible answer than in their current stack, the position fails — regardless of how much they like the interface. If the added definition work slows common tasks for experienced Q/Displayr users without catching more errors, narrow to a preparation-and-review integration instead.</p>
+  </div>
+
+  <p style="font-size:11.4pt; line-height:1.45; margin-top:6mm"><strong>The research question is now sharp:</strong> <em>can one researcher carry a defensible answer through a change with less reconstruction and less risk than they can today?</em> If yes, in real projects, that is a compelling researcher-oriented wedge for agencies and their clients alike.</p>
+</section>
+
+<!-- ============ APPENDIX ============ -->
+<section class="section sources">
+  <div class="kicker">Section A · Method, limits, and sources</div>
+  <h1 style="font-size:18pt">How this was researched</h1>
+  <p class="small">This report extends an initial desk review (supplied by the product owner) and Velocity’s research note <em>docs/research_quantitative_researcher_work_2026.md</em>. New research was conducted on 26 September 2026 using web search. Direct page fetches to most publishers (Pew, Greenbook, Displayr, arXiv, Hacker News, Reddit, LinkedIn) were blocked by this environment’s network policy, so figures and quotations were taken from search-indexed excerpts and summaries of the named sources. Items not independently re-verified in this pass are marked below. <strong>Before any external use, check each quotation and figure against the original.</strong> No first-hand interviews, observed sessions, or competitor hands-on tests were performed; nothing here measures Velocity’s effect on researchers.</p>
+
+  <h2>Sources</h2>
+  <ol>
+    <li>Pew Research Center. “No Easy Fix for Bogus Respondents in Online Opt-In Polls.” 27 Aug 2026. <a class="u" href="https://pewresearch.org/methods/2026/08/27/no-easy-fix-for-bogus-respondents-in-online-opt-in-polls/">pewresearch.org/methods/2026/08/27/no-easy-fix-for-bogus-respondents-in-online-opt-in-polls/</a></li>
+    <li>Pew Research Center. Methodology for the above. <a class="u" href="https://pewresearch.org/methods/2026/08/27/bogus-respondents-methodology/">pewresearch.org/methods/2026/08/27/bogus-respondents-methodology/</a></li>
+    <li>Statistical Modeling, Causal Inference, and Social Science (Columbia). “Survey Statistics: Pew Research finds ‘No Easy Fix…’” 8 Sep 2026. <span class="u">statmodeling.stat.columbia.edu/2026/09/08/…</span></li>
+    <li>Displayr. “AI &amp; Market Research: Adoption Is Near-Universal, Trust Is Not.” AI Readiness Quiz, n = 203, March 2026. <a class="u" href="https://displayr.com/ai-market-research-adoption-is-near-universal-trust-is-not/">displayr.com/ai-market-research-adoption-is-near-universal-trust-is-not/</a></li>
+    <li>eMarketer. “AI saves time but adds quality risks, market researchers say” (Harris Poll / QuestDIY, n = 219, Aug 2025); also Resultsense summary. <a class="u" href="https://emarketer.com/content/ai-saves-time-adds-quality-risks--market-researchers-say">emarketer.com/content/ai-saves-time-adds-quality-risks--market-researchers-say</a></li>
+    <li>MRII. “AI in Focus 2025,” n = 426, Feb 2025. <span class="u">mrii.org/mrii-releases-new-global-report-ai-in-focus-2025-…</span></li>
+    <li>MRII. 2026 State of the Market Research Industry, n = 498, 28 Apr 2026. <a class="u" href="https://mrii.org/mrii-study-finds-insights-professionals-optimistic-ai-adoption-rises-but-integration-lags/">mrii.org/mrii-study-finds-insights-professionals-optimistic-ai-adoption-rises-but-integration-lags/</a></li>
+    <li>MRII. “Study reveals drop in job satisfaction and rising need for AI skills.” <span class="u">mrii.org/mrii-study-reveals-drop-in-job-satisfaction-…</span></li>
+    <li>Qualtrics. 2026 Market Research Trends report, 3,000+ researchers; X4 2026 announcements. <a class="u" href="https://qualtrics.com/articles/research-teams-not-using-ai-are-four-times-more-likely-lose-organizational-influence/">qualtrics.com/articles/research-teams-not-using-ai-are-four-times-more-likely-lose-organizational-influence/</a></li>
+    <li>Greenbook. 2026 GRIT Insights Practice Report (n = 735; brand-side cells as recorded in Velocity’s research note). <a class="u" href="https://greenbook.org/grit/insights-practice-edition">greenbook.org/grit/insights-practice-edition</a></li>
+    <li>Greenbook. “How to Trust AI in Research Without Trusting It Too Much.” 21 Jul 2026 (IIEX Europe coverage). <a class="u" href="https://greenbook.org/insights/the-prompt-ai/how-to-trust-ai-in-research-without-trusting-it-too-much">greenbook.org/insights/the-prompt-ai/how-to-trust-ai-in-research-without-trusting-it-too-much</a></li>
+    <li>Behaviorally. “Insights from IIEX Europe 2026.” <span class="u">behaviorally.com/blog/insights-from-iiex-europe-2026-…</span></li>
+    <li>“How Researchers Navigate Accountability, Transparency, and Trust When Using AI Tools in Early-Stage Research: A Think-Aloud Study.” Microsoft Research; ACM FAccT 2026; n = 15. <a class="u" href="https://doi.org/10.1145/3805689.3812262">doi.org/10.1145/3805689.3812262</a> · arXiv 2604.23136</li>
+    <li>Research Live. “‘Cutting through the noise with credibility’: The client view from the Research Live Industry Report” (2026). <span class="u">research-live.com/article/features/…/id/5145713</span></li>
+    <li>Research Live. “Research Live Industry Report 2025: The client view.” <span class="u">research-live.com/article/features/…/id/5134513</span></li>
+    <li>Krähmer, D., Schächtele, L. &amp; Auspurg, K. “Code sharing and reproducibility in survey-based social research: evidence from a large-scale audit.” Royal Society Open Science 13(3), 2026. <a class="u" href="https://doi.org/10.1098/rsos.251997">doi.org/10.1098/rsos.251997</a></li>
+    <li>CASRAI. “SPSS Syntax for Reproducible Analysis.” <a class="u" href="https://casrai.org/guides/spss-syntax-for-reproducible-analysis">casrai.org/guides/spss-syntax-for-reproducible-analysis</a></li>
+    <li>PulseAI Research. “Brand Tracking Studies: The Rule Most Trackers Break.” Vendor practice blog. <span class="u">pulseairesearch.com/pulse-shift/blogs/1180/…</span></li>
+    <li>Global Data Quality initiative / MRII. GDQ benchmark and feedback loop. <a class="u" href="https://mrii.org/global-data-quality/">mrii.org/global-data-quality/</a> · <a class="u" href="https://globaldataquality.org">globaldataquality.org</a></li>
+    <li>Burdick, T. “Data fraud: A threat to market research.” Quirk’s, 5 May 2025. <a class="u" href="https://quirks.com/articles/data-fraud-a-threat-to-market-research">quirks.com/articles/data-fraud-a-threat-to-market-research</a></li>
+    <li>MRS. Industry size and growth rates. <a class="u" href="https://mrs.org.uk/resources/industry-size">mrs.org.uk/resources/industry-size</a></li>
+    <li>MRS. “UK research and evidence market hits record £18.7 billion valuation.” <a class="u" href="https://mrs.org.uk/article/anytype/uk-research-and-evidence-market-hits-record-187-billion-valuation">mrs.org.uk/article/anytype/uk-research-and-evidence-market-hits-record-187-billion-valuation</a></li>
+    <li>Research World / ESOMAR. “Inside the $153bn Insights Industry” (Global Market Research 2025). Category split from originating memo, not re-verified. <a class="u" href="https://researchworld.com/articles/inside-the-153bn-insights-industry">researchworld.com/articles/inside-the-153bn-insights-industry</a></li>
+    <li>AAPOR. Transparency Initiative and Disclosure Standards; Code of Professional Ethics and Practices. <a class="u" href="https://aapor.org/standards-and-ethics/">aapor.org/standards-and-ethics/</a></li>
+    <li>Displayr. Product homepage and Research Agent pages. <a class="u" href="https://displayr.com">displayr.com</a></li>
+    <li>quantilope. “quinn Now Powers the Full End-to-End Research Lifecycle.” PR Newswire, 18 Feb 2026. <span class="u">prnewswire.com/news-releases/…-302689989.html</span></li>
+    <li>Ipsos job descriptions (client service, data processing/scripting, senior research executive), as cited in Velocity’s research note; Crunch and Forsta documentation.</li>
+    <li>Velocity internal: PR #80 (researcher workflow exploration), PR #79 (research workflow completion), PR #75 (reviewed handoff); <em>docs/research_quantitative_researcher_work_2026.md</em>.</li>
+    <li>MRS / AURA / Insight Management Academy. ClientSight 2025 (with Opinium), results June–July 2025. Sample of 198 per originating memo, not re-verified. <a class="u" href="https://mrs.org.uk/event/anytype/mrs-aura-and-the-insight-management-academy-join-forces">mrs.org.uk/event/anytype/mrs-aura-and-the-insight-management-academy-join-forces</a></li>
+  </ol>
+  <p class="small"><strong>Not re-verified in this pass:</strong> the MRS 2022 supply-side talent study; ESOMAR’s $56bn/$62bn/$35bn category split; the ClientSight sample size; GRIT’s 101–500-staff supplier analysis. These are carried from the originating memo and Velocity’s research note.</p>
+</section>
+
+</body>
+</html>
