@@ -249,3 +249,196 @@ All retrieved 26 September 2026. Vendor pages establish described capabilities, 
 - **S10:** [Dovetail AI Chat](https://dovetail.com/product/ai-chat/).
 - **S11:** [Outset Research Objectives](https://outset.ai/resources/blog/research-objectives-launch).
 - **S12:** [Maze: Analysis and reporting for AI-moderated studies](https://help.maze.co/articles/9244710783-from-sessions-to-insights-analysis-and-reporting-for-ai-moderated-studies).
+
+## Beyond survey software: preparation and analysis laboratory — 26 September 2026
+
+This extends the earlier exploration at the product owner's request. It deliberately explores several possible products inside Velocity, rather than treating the first question-led desk as a settled destination. The six new [interactive sketches](assets/researcher-exploration/survey-laboratory-preview.html) complement, rather than replace, the three earlier concepts. Their [editable source](assets/researcher-exploration/survey-laboratory.html) and [interaction checks](assets/researcher-exploration/verify-laboratory.mjs) sit together.
+
+### What the wider search changes
+
+The opportunity is more specific than “an AI research workspace.” Data preparation tools make irregularities tangible through profiles, rows and repeatable operations. Notebooks make dependencies executable. Semantic layers make definitions reusable. Visual analysis systems make exploration branchable. These are mature interaction ideas to borrow, not capabilities Velocity can claim to have invented.
+
+In particular, Microsoft's current Data Formulator describes persistent questions, intermediate findings, charts, branching and side-by-side comparison [B12]. This is a significant adjacent precedent for the first exploration's question-led desk. A thread plus an agent plus charts is not a sufficient distinction. Velocity needs to carry survey meaning through the whole loop: routing, respondent versus response bases, multiple-response sets, missing-response roles, weighting, comparability, uncertainty and the researcher's interpretation.
+
+**Working product hypothesis:** a researcher should be able to touch an analytical choice and immediately see its meaning, numerical consequence and downstream consequences—without losing the prior state. The useful unit is a *reversible research decision*. A chat, notebook, table and preparation flow are different views onto it. This is a hypothesis about product usefulness, not a claim of market exclusivity or validated demand.
+
+### Wider landscape: what to borrow and where the analogy breaks
+
+Reviewed official documentation and primary research, retrieved 26 September 2026. These observations establish documented interaction patterns. They are not a hands-on usability ranking, an exhaustive market census, or independent evidence of time savings.
+
+| Tool / family | Documented interaction worth studying | Survey translation | What must not transfer uncritically |
+| :--- | :--- | :--- | :--- |
+| OpenRefine [B1–B2] | Facets expose values and counts, narrow a temporary view, and support exploration alongside replayable editing operations. | Inspect a special response code, its distribution and source label before assigning a role. Keep inspection distinct from mutation. | A facet is not automatically a saved research population. Similar strings are not necessarily equivalent response categories. |
+| Power Query [B3] | Column quality, distributions and profiles make preparation inspectable. Profiling can use a sample or the full dataset. | State the profiled scope prominently: all records, first N or selected subset. Show routed-out, refused and unknown separately. | A generic empty/error/valid classification erases survey semantics. Sampled profiling must not certify a whole file. |
+| Tableau Prep [B4–B5] | Profile summaries, underlying rows, ordered changes and reusable cleaning steps connect operation to consequence. | Show before/after bases beside each transformation; replay a preparation recipe on the next wave. | An executable recipe can still be conceptually wrong when questionnaire meaning changes. |
+| Dataiku [B6] | Visual preparation scripts can become reusable flow recipes. | Promote a useful one-off repair into a named study recipe with explicit inputs. | Turning every small recode into an enterprise pipeline introduces setup and maintenance overhead. |
+| KNIME [B7] | Components encapsulate reusable workflows, configuration and interactive views. | Package a repeated survey task—such as a brand funnel—with its definitions and inspection surface. | Researchers should not need to understand a large node graph to calculate a net. |
+| Hex [B8] | Pivot cells support direct field manipulation and downstream reuse; input cells connect controls to analysis. | Let a researcher construct a comparison, inspect its base, then reuse that result in a research note. | Totals, weighted percentages and multiple-response percentages need survey-specific aggregation rules. |
+| marimo [B9] | Dependency-aware execution makes changes propagate; lazy execution can mark dependent outputs stale. | A changed weight invalidates the dependent evidence and interpretation; recompute evidence deliberately when expensive. | Human judgement is not a computed cell. Do not automatically rewrite it or label it reviewed. |
+| Observable [B10] | Reactive dataflow connects inputs, calculations and visual explanations. | An answer can expose a small set of legitimate assumptions and show their consequences. | Unbounded reader controls can produce a different analysis while retaining the original conclusion. |
+| dbt Semantic Layer [B11] | Shared metric definitions provide reusable semantics across downstream queries. | Treat a survey measure's universe, numerator, denominator and weighting policy as an addressable definition. | Shared definitions cannot collapse differences between incidence, conversion, respondent percentage and response percentage. |
+| JMP [B13] | Linked selection connects observations across views; data filtering offers distinct selection and analysis inclusion behaviours. | Brush a cohort to inspect it, then explicitly choose whether it becomes the analysis population. | Every visual click must not silently change the analytical base. Selection also needs a keyboard route. |
+| Data Formulator [B12] | Persistent analytical threads, branches, inspectable transformations and direct chart refinement. | Compare alternate analytical decisions while preserving their context and provenance. | Plausible generated transformations are not evidence of a defensible survey estimand or valid inference. |
+| Boba [B14] | A research system for specifying and inspecting multiple analytical decision paths. | A small assumption lab can expose whether a finding depends on a defensible choice. | This is research inspiration, not a turnkey survey feature or proof of usability for Velocity's audience. |
+| Voyager 2 [B15] | Mixed manual and recommended visual exploration, including partial specifications. | Hold the measure fixed and suggest a bounded set of meaningful comparisons. | More views are not necessarily more insight. Avoid unbounded subgroup fishing and attention overload. |
+
+### Bottlenecks beneath the visible tasks
+
+The first exploration focused on the path to an answer. This pass examines why researchers cannot comfortably trust, reuse or revise the ingredients of that answer. Priorities below are product judgement, not prevalence estimates from interviews.
+
+| Bottleneck and symptom | Deeper cause | Intervention to explore | Failure condition / useful observation |
+| :--- | :--- | :--- | :--- |
+| “I have to open the codebook again.” | The value, label, routing and intended analytical role live in different places. | Preparation microscope: distribution → exact code → source meaning → scoped change preview. | If the researcher still leaves to understand a code, the inspection surface is incomplete. |
+| “This percentage looks wrong.” | The denominator is hidden or conflates eligible, answered, weighted and raw bases. | Denominator inspector with a population-to-valid-response explanation. | If users cannot explain who counted, a more attractive chart has not helped. |
+| “Where did those people go?” | A transient selection became a filter, or a cell-level missing rule became row deletion. | Separate inspection selection, saved cohort and active analysis population. | If users repeatedly misidentify their active population, the scope distinction is too subtle. |
+| “Did I already try weighting this?” | Exploration overwrites settings; reasoning exists only in memory. | Branch comparison with explicit differences and a recoverable working branch. | If branches multiply without being revisited, retain a simple comparison/history rather than a workspace tree. |
+| “The result depends on one choice.” | A single specification hides sensitivity. | Compare a bounded set of justified assumptions before final wording. | If the lab encourages selecting the biggest or most significant result, its interaction has failed. |
+| “Two slides call this consideration but disagree.” | Display names substitute for measure identity; definitions are copied. | Measure studio with source-linked denominator and reusable identity. | If every minor exploratory change requires administration, the model is too rigid. |
+| “Can I refresh this for the next wave?” | Reuse assumes schema and meaning are interchangeable. | Wave rehearsal detects exceptions before replacing the working dataset. | If a renamed or relabelled field silently passes as comparable, the rehearsal cannot be trusted. |
+| “The numbers refreshed, but the story did not.” | Recalculation and judgement review are treated as one operation. | Reactive evidence, preserved prose and selective review state. | If everything becomes stale after a local change, review becomes noise. |
+| “I prepared that in the last project.” | Useful recipes lack parameters, scope and portable source assumptions. | Reusable task components, initially within one tracker. | If adaptation is harder than recreating the operation, stop expanding the template system. |
+| “I have twenty interesting cuts and no answer.” | Exploration optimises coverage instead of relevance to a question. | Comparison composer constrained by objective, available base and comparison family. | If suggested cuts add correction burden or distract from the question, make discovery manual. |
+| “The client changed a control; is the headline still true?” | Published prose outlives its analytical conditions. | Bounded explorable answers with explicit supported states. | If changing a control leaves incompatible prose looking authoritative, disable the control or qualify the prose. |
+| “Why was this record excluded?” | Quality flags, evidence and exclusion decisions have collapsed into one field. | Quality investigation showing the flagged records' contribution before applying a rule. | A flag should not itself authorize deletion; look for transparent reasoning and sensitivity. |
+
+### Six interaction experiments
+
+All six run locally on explicitly synthetic fixtures. They are distinct interaction experiments, not six new navigation destinations to add to the production app. State is independent between sketches to keep comparisons intelligible. No live data, model calls, statistical testing, storage or importing is implied.
+
+#### 1. Preparation microscope — make meaning inspectable
+
+**Moment:** a researcher notices that top-two satisfaction is unexpectedly low. The distribution includes code 97, labelled “Don't know,” in the denominator. The correct choice depends on the question being answered; exclusion is not inherently the only valid policy.
+
+**Working interaction:** select a raw response code; see its count and source label; choose its measure-specific role; preview the new denominator and result; explicitly apply; undo. The fixture contains 240 records, 200 scale responses, 16 don't-knows, eight refusals and 16 not-asked responses. One hundred are positive. Including don't-knows gives 100/216 = 46.3%; excluding them gives 100/200 = 50.0%. Both the reason and the magnitude are visible. Respondents remain available for other questions.
+
+**Design bet:** profiles should be an entrance to reasoning, not just a data-quality dashboard. Put the source distribution at left, the selected meaning in the centre and the analytical consequence at right. No opaque cleanliness score. No sweeping “fix all.” One reversible action.
+
+**Unresolved:** whether roles should be a dataset default plus measure override, or entirely local. Grid items, multiple-response variables and user-defined missing ranges need richer policies. A production preview must use the engine's actual eligible base, not assume every selected code appears in every analysis.
+
+#### 2. Population lens — direct manipulation with explicit scope
+
+**Moment:** a researcher wants to understand who is behind a movement before deciding which segment to analyse.
+
+**Working interaction:** select 18–34 or 35+ and see awareness and consideration for that group. The current analysis remains all respondents until “Analyse this selection.” Clearing restores the full population. The synthetic all-person population is 240, the aware denominator 160 and the positive numerator 64. Selecting 18–34 inspects 80 people and 32/64 consideration; adoption changes the current result from 40% to 50%.
+
+**Design bet:** make exploration tactile while keeping “looking at” and “calculating among” distinguishable. This is useful friction at the point of analytical commitment, not a confirmation dialog after every click. The population strip belongs near the result, not in an easily missed global filter tray.
+
+**Unresolved:** compound cohorts, exclusions, missing demographics, survey design effects and the exact distinction between selected rows and eligible responses. A real cohort should store its expression and data version, not a brittle list of transient row positions. The sketch's age controls stand in for linked brushing; free-form brushing is not implemented.
+
+#### 3. Assumption lab — keep the alternatives in view
+
+**Moment:** a reported increase may depend on weights or quality exclusions. Researchers can currently re-run these cuts, but retaining the comparison and reasoning is costly.
+
+**Working interaction:** inspect three specifications and explicitly adopt a defensible one as the working analysis. Unweighted consideration rises from 54/144 to 64/160, or +2.5 points. An illustrative age-weight scenario gives 41.7% to 42.9%, or +1.2 points. Excluding eight flagged aware records in each wave gives 39.7% to 38.2%, or −1.5 points. That last branch is inspectable but cannot be adopted in this sketch because the flags have not been investigated. All branches remain visible after adoption.
+
+**Design bet:** an analytical comparison table can be a better thinking surface than either a chat transcript or a sprawling node graph. Show base, changed assumption and effect together. Do not rank alternatives by effect size or significance. The spread is sensitivity, not a confidence interval; weighting in this fixture is a scenario, not a claim about population calibration.
+
+**Unresolved:** how to bound the family of defensible alternatives and avoid a combinatorial explosion. Start with one changed dimension per branch. An eventual multiverse mode needs a stated rationale for the family, accounting for multiplicity where inference is performed, and clear separation of specification exploration from confirmatory claims. Do not turn this exploration into an automatic significance hunt.
+
+#### 4. Measure studio — give definitions an identity
+
+**Moment:** “consideration” means either propensity among brand-aware respondents or the incidence of being both aware and willing to consider in the sample. Both can be useful, but they answer different questions.
+
+**Working interaction:** change the denominator from 160 aware respondents to 240 respondents. The same numerator, 64, moves from 40.0% to 26.7%. The label and readable definition change with it. Creating the second measure leaves the three existing outputs bound to the first. The unaware people's unasked consideration response is not imputed as a directly observed “no”; the second quantity is explicitly joint awareness-and-consideration incidence.
+
+**Design bet:** let the researcher read the calculation as a sentence—count X, among Y, using Z—while still exposing exact source codes. A different estimand should acquire a separate identity instead of silently revising an old trend.
+
+**Unresolved:** distinction between correcting a mistaken definition and intentionally creating a new estimand. Production should support both: a versioned correction with impact review, and a separate measure with an explicit relationship. Avoid a universal central catalogue as a prerequisite to ordinary analysis. Local measures can become reusable when the researcher actually needs reuse.
+
+#### 5. Reactive research notebook — compute evidence, preserve judgement
+
+**Moment:** adjusting a weight should update the calculation without either losing the researcher's prose or allowing it to masquerade as reviewed.
+
+**Working interaction:** switch from unweighted to the age scenario. The old result remains visible but is marked out of date. Recompute to show +1.2 points. The editable interpretation remains intact and needs explicit review. Reviewing the new result restores current status. This deliberately explores lazy execution rather than automatically running every dependent operation on every keystroke.
+
+**Design bet:** an ordered notebook can expose a small research argument more calmly than a canvas of panels. Each cell has a role: specification, computed evidence, interpretation. Human text has a dependency but is not a formula. A change can invalidate its review without overwriting it.
+
+**Unresolved:** notebook versus question desk as the main workspace. They may be alternatives, not additive modes. A notebook helps sequential, reproducible reasoning; a desk may better support many open questions. Prototype both on the same owner task before choosing. The current review button records researcher acknowledgement, not a semantic guarantee that every sentence is correct.
+
+#### 6. Wave rehearsal — reuse with exceptions, not optimism
+
+**Moment:** importing the next tracker wave risks making old preparation and interpretations appear current despite changed meanings.
+
+**Working interaction:** inspect four stages: source, meaning, replay and impact. Wave 5 introduces Q12 code 9. The fixture questionnaire identifies it as don't-know, previously code 97. Record that mapping with its source, then rehearse the recipe. Satisfaction becomes available at 104/200 = 52%; its interpretation needs review. Awareness and consideration stay available because they do not depend on Q12. The working tracker remains on Wave 4 throughout.
+
+**Design bet:** a short staged flow is useful when the order matters, but the default surface should be the exception and affected outputs, not an enormous technical graph. Show the raw value, proposed role, source evidence and consequence together. A successful replay is not the same as a reviewed research conclusion.
+
+**Unresolved:** wording changes, changed routing, split variables, newly introduced response options, changing sample sources and overlapping respondents. Some differences require a series break, not a mapping. A future codebook-assisted suggestion should remain unresolved when evidence is absent or contradictory. This sketch includes one explicit meaning exception, not a general matching system.
+
+### Further ideas worth keeping in the exploration space
+
+These are intentionally not a committed backlog. They extend the borrowed patterns and reveal where the boundaries of a survey-native environment might sit.
+
+| Idea | Concrete researcher action | Why explore it / reason to discard it |
+| :--- | :--- | :--- |
+| Denominator peel | Expand 240 sampled → 160 eligible → 152 valid → weighted base, with the cause of each difference. | Makes bases explainable; discard the visual treatment if it oversimplifies overlapping exclusion rules. |
+| Comparison composer | Pin a measure and wave; choose “show across” from an eligible set of dimensions, with base warnings. | Borrow partial specification from visual exploration research; reject if recommendations create more triage than insight. |
+| Questionnaire-aware joins | Preview respondent-key duplicates and the post-join grain before attaching another file. | Prevent accidental respondent multiplication; never hide one-to-many relationships behind a successful join badge. |
+| Multiple-response lens | Switch between respondents choosing an option and share of all selections, with the denominator sentence changing. | Exposes an especially consequential survey distinction; keep the two measures separate in saved outputs. |
+| Weight impact lens | Inspect which groups gain influence, raw versus weighted bases and effective sample size under stated assumptions. | Makes weighting understandable; not a replacement for design-aware variance estimation or a universal quality score. |
+| Quality investigation desk | Compare flagged and unflagged respondents, inspect rule evidence, then stage an exclusion. | Keeps quality detection separate from decisions; reject rules that cannot be explained or audited. |
+| Recode by example | Mark source categories and see a proposed net, its code expression and overlap before saving. | Makes transformations direct; prevent disjoint/exhaustive assumptions from being silently inferred. |
+| Semantic diff | Compare questionnaire wording, routing, response options and measure definitions between waves. | Can reveal issues invisible to numerical diffs; textual similarity alone must not certify equivalence. |
+| Recipe component | Reuse a “brand funnel” with explicit awareness, usage, consideration and universe inputs. | Packages intent rather than UI clicks; defer cross-study generalisation until same-tracker reuse proves useful. |
+| Evidence backtrace | From a sentence, inspect its result, definition, preparation steps and raw-source references. | Answers “how did we get here?” without a permanent DAG; guard raw respondent access and output disclosure appropriately. |
+| Research checkpoints | Name the state before changing an assumption, then compare results and wording after. | Makes exploration recoverable; avoid forcing researchers to understand Git terminology. |
+| Bounded explorable answer | Share an answer with only reviewed population/assumption controls, clearly marking unreviewed combinations. | Lets a reader interrogate the finding; dangerous if prose appears valid under unsupported combinations. |
+| Calculation receipt | Attach a compact definition/base/weight/version record to exported evidence. | Carries meaning beyond the app; must complement, not clutter, the presentation. |
+| Repair by dependency | Resolve a missing variable once and preview every affected result before rebinding. | Reduces repeated repair; same label must never be sufficient evidence for automatic substitution. |
+
+### What feels coherent, and what should remain separate
+
+The most coherent near-term combination is **microscope → explicit population → evidence-linked answer**. It addresses ambiguity before adding more generated output. The assumption lab is a deeper investigation surface opened when a question warrants it. Wave rehearsal serves repeat-tracker work and could be valuable even if the question-led desk never ships. Measure identity and dependency tracking are shared foundations, not necessarily separate product areas.
+
+The notebook is the strongest alternative to the desk. Do not put both in top-level navigation merely because both prototypes exist. Likewise, a full preparation DAG and a plain-language recipe are competing representations. Show a graph only when branching dependencies themselves are the thing the researcher needs to understand. A universal semantic catalogue, fully autonomous preparation agent and public interactive-report builder are not prerequisites for testing these ideas.
+
+Design taste here means restraint in service of the work: quiet surfaces, readable analytical density, exact labels, one active decision, source context one step away, and very little decorative AI chrome. Preserve the existing neutral Velocity identity. Use colour for selected state or a consequential exception, not a scorecard of artificial certainty. Let typography and spacing distinguish source evidence, computed evidence and human judgement. Avoid a permanent right-hand assistant panel consuming space when no conversation is needed.
+
+### What we can build on, and what is missing
+
+Velocity already has typed categorical codes and labels, transformations, analysis configuration, filters, weights, session persistence, provenance and editable export. These are useful foundations. The sketches must not imply that a new UI alone supplies the missing semantics or dependency behaviour.
+
+| Proposed concept | Existing foundation | Additional contract needed before production |
+| :--- | :--- | :--- |
+| Microscope | Variable metadata, codes/labels, transformation recipes | Measure-specific response roles, scoped preview using the engine, reversible change provenance |
+| Population lens | Filters and analysis configuration | Separate transient inspection selection from persistent population expression; eligible-base explanation |
+| Assumption lab | Reusable analysis specification and compute engine | Immutable branch specification, explicit difference, aligned result provenance and comparison limitations |
+| Measure studio | Variables, transforms, result provenance | Stable measure identity, version, universe/numerator/denominator definition, correction versus new-estimand distinction |
+| Notebook | Existing results, sessions and interpretation work | Explicit dependency fingerprints, selective staleness, preserved prose, reviewed-against version |
+| Wave rehearsal | Import, metadata, recipes and sessions | Staged candidate dataset, semantic exceptions, mapping provenance and affected-output rehearsal |
+
+All production computation remains in the existing core/engine/worker boundary. No React or browser state belongs in core. Session additions require a new version and migrations; preserve current v2 reopen behaviour. Hash semantic dependencies as well as numbers: unchanged rounded output does not prove unchanged meaning. A proposed action should be represented as a typed operation with declared scope, preconditions, preview and reversible result. A model may suggest it, but the engine and explicit researcher action determine what changes.
+
+### Next owner explorations and stop signals
+
+1. **Meaning-to-result task:** explain the 46.3% versus 50.0% satisfaction difference and choose a defensible definition. Observe whether the microscope removes codebook hunting and whether the user can explain the retained respondents and changed cells.
+2. **Population task:** inspect the younger group, return to the full population, then intentionally analyse the younger group. Observe accidental scope changes, not just task speed.
+3. **Sensitivity task:** decide what can be said about the increase after inspecting all three specifications. A good outcome is a qualified interpretation with an unresolved quality diagnostic, not choosing the largest increase.
+4. **Notebook versus desk:** perform the same correction and handoff in each. Observe where reasoning is easier to resume, how much review is needed, and whether prose survives intact. Keep the better primary representation rather than merging every feature.
+5. **Next-wave task:** resolve code 9 and explain which outputs still need review. Then try a deliberately incompatible wording change in a later prototype. The system should offer a series break, not enthusiastically map everything.
+
+The product owner can perform these directly; no recruitment programme or external approval gate is required. Record mistaken assumptions, corrections, abandoned paths, retrieval steps and review effort. Time savings remain unmeasured. Keep an idea only if it improves a consequential decision or makes a meaningful mistake easier to catch; novelty alone is insufficient.
+
+### Verification and honest limits
+
+The six sketches include working local interactions, computed percentages for the first five, reversible preparation, explicit cohort adoption, comparison/adoption state, separate measure creation, evidence invalidation with preserved prose and staged mapping/replay. Wave rehearsal uses a fixed synthetic replay result rather than a real import engine. Automated DOM checks exercise each complete path and relevant reversals, including independent fixture arithmetic and preservation of text. They do not establish browser layout quality, statistical validity, durable recovery or researcher usability.
+
+The standalone preview and inline fragment share the same source. There are no network API calls or production application changes. All edits disappear on reload. Production CI is not claimed for this documentation/prototype-only change. The earlier browser local-file policy restriction remains; no workaround or new rendered browser inspection is claimed. The prototypes should be treated as tangible hypotheses ready for direct owner use, not released features.
+
+### Broader sources
+
+- **B1:** [OpenRefine: Exploring facets](https://openrefine.org/docs/manual/facets).
+- **B2:** [OpenRefine: Exporting data and history](https://openrefine.org/docs/manual/exporting).
+- **B3:** [Microsoft: Power Query data profiling tools](https://learn.microsoft.com/en-us/power-query/data-profiling-tools).
+- **B4:** [Tableau Prep workspace](https://help.tableau.com/current/prep/en-gb/prep_about.htm).
+- **B5:** [Tableau Prep: Copy and reuse steps](https://help.tableau.com/current/prep/en-gb/prep_copy_reuse_steps.htm).
+- **B6:** [Dataiku DSS: Visual data preparation](https://doc.dataiku.com/dss/latest/preparation/index.html).
+- **B7:** [KNIME Analytics Platform Components Guide](https://docs.knime.com/ap/latest/analytics_platform_components_guide/).
+- **B8:** [Hex pivot cells](https://learn.hex.tech/docs/explore-data/cells/transform-cells/pivot-cells) and [input cells](https://learn.hex.tech/docs/explore-data/cells/input-cells/input-cells-introduction).
+- **B9:** [marimo: Running cells and reactivity](https://docs.marimo.io/guides/reactivity/) and [FAQ](https://docs.marimo.io/faq/).
+- **B10:** [Observable: Reactive dataflow](https://observablehq.com/@observablehq/reactive-dataflow).
+- **B11:** [dbt Semantic Layer](https://docs.getdbt.com/docs/use-dbt-semantic-layer/dbt-sl).
+- **B12:** [Microsoft Research: Data Formulator 0.7](https://www.microsoft.com/en-us/research/blog/data-formulator-0-7-ai-powered-data-analytics-for-enterprise-data/) and [Data Formulator 2 research](https://www.microsoft.com/en-us/research/publication/data-formulator-2-iteratively-creating-rich-visualizations-with-ai/).
+- **B13:** [JMP Public: Interactive features](https://www.jmp.com/support/help/en/19.0/jmppublic/jmppublic.shtml).
+- **B14:** [Boba: Authoring and Visualizing Multiverse Analyses](https://idl.uw.edu/papers/boba).
+- **B15:** [Voyager 2: Augmenting Visual Analysis with Partial View Specifications](https://idl.uw.edu/papers/voyager2).
