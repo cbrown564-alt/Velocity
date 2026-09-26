@@ -1,5 +1,6 @@
-const pptxgen = require('pptxgenjs');
-const D = require('./deck.json');
+import pptxgen from 'pptxgenjs';
+import { readFileSync } from 'node:fs';
+const D = JSON.parse(readFileSync(new URL('./deck.json', import.meta.url), 'utf8'));
 const pres = new pptxgen();
 pres.layout = 'LAYOUT_WIDE'; // 13.33 x 7.5
 pres.title = 'Atlas brand tracker — Wave 4 readout (reference exhibit set)';
