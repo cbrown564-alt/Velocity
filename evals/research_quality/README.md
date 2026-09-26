@@ -67,3 +67,22 @@ This adapter reuses Velocity's existing native PPTX exporter. It checks data/evi
 The original E1–E8 strategy labels describe research stages; the pre-presentation E1–E5 labels describe experiment arms. Their versioned camelCase (SBT-001) and snake_case (SBT-002/003) formats remain explicit adapters, not interchangeable schemas.
 
 For an approved SBT-004, SBT-005 or SBT-006 analysis candidate, use `scripts/research-expansion-deck.ts` with the same three arguments. It preserves all evidence and reviewer changes in notes, uses a representative native chart per beat and requires renewed approval when evidence changes. These decks are software QA examples, not researcher-approved deliverables or publication-quality validation. The expansion's browser screenshots and rendered export evidence are recorded alongside its comparison readout.
+
+## Portable approved handoff
+
+The existing review interface already supports progress export/import and clears approval after evidence changes. Once a researcher exports an approved SBT-002/004/005/006 narrative, preserve its exact evidence and native deck together:
+
+```sh
+node --import tsx scripts/research-handoff.ts create approved-review.json analysis_results.json NEW_DIRECTORY
+node --import tsx scripts/research-handoff.ts verify NEW_DIRECTORY
+```
+
+The destination must be new. It contains the original approved-review and analysis bytes, `reviewed.pptx`, and a hash/size receipt with exhibit titles and limitations. Creation applies the existing adapter's approval/evidence checks; verification checks all three files and revalidates the narrative against evidence. This is corruption/staleness detection, not authentication of reviewer identity or scientific approval. Keep the original review-pack progress export for further editing; the handoff does not replace it or migrate the production session format. No human approval is fabricated by the command.
+
+### Verification of this continuation (26 September)
+
+- `npm run ci`: passed, including 1,499 Vitest tests (3 existing todo), type checks, boundaries and production build. A pre-existing CommonJS import in the ESM reference-deck generator was corrected to unblock lint.
+- `python -m pytest tests/research_quality -q`: 79 passed, including complete-slot score binding.
+- The handoff create/verify commands passed on the existing SBT-005 and SBT-006 **software-QA** review records. The six-page campaign deck was rendered with LibreOffice and inspected. Native chart data, original wording and qualifications are covered by the handoff regression tests. These records remain software QA, not researcher approval.
+- The existing browser review journey could not run: its Chromium executable was absent and Playwright's browser download returned an invalid archive. No browser-pass claim is made. The production browser UI and session format are unchanged.
+- Visual limitation retained: the bounded adapter draws one representative chart per beat. It can repeat a chart, and additional comparisons/counter-evidence are in notes rather than fully visualised. This is a portable research handoff, not a client-ready deck redesign.
