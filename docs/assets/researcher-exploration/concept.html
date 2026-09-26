@@ -1,0 +1,171 @@
+<div id="velocity-exploration">
+  <style>
+    #velocity-exploration { --v-paper: light-dark(#ffffff,#17212b); --v-ground: light-dark(#f6f8fa,#111920); --v-ink: light-dark(#17212b,#edf2f6); --v-muted: light-dark(#52606d,#aebbc7); --v-line: light-dark(#d9e1e7,#35434f); --v-tint: light-dark(#eef2f5,#24313c); --v-blue: light-dark(#245fa7,#8dbcf6); --v-onblue: light-dark(#ffffff,#111920); --v-sage: light-dark(#6f8177,#9bac9f); --v-warning: light-dark(#83561b,#e8be80); font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:var(--v-ink); }
+    #velocity-exploration * { box-sizing:border-box; }
+    #velocity-exploration .v-app { background:var(--v-paper); min-height:760px; border:1px solid var(--v-line); border-radius:10px; overflow:clip; }
+    #velocity-exploration .v-top { padding:17px 24px; display:flex; align-items:center; gap:22px; border-bottom:1px solid var(--v-line); flex-wrap:wrap; }
+    #velocity-exploration .v-wordmark { font-size:19px; letter-spacing:-.8px; font-weight:700; }
+    #velocity-exploration .v-project { font-size:12px; color:var(--v-muted); flex:1; }
+    #velocity-exploration .v-caption { font-size:11px; color:var(--v-muted); margin:10px 0 12px; }
+    #velocity-exploration button, #velocity-exploration input, #velocity-exploration textarea { font:inherit; color:inherit; }
+    #velocity-exploration button { border:1px solid var(--v-line); background:var(--v-paper); padding:9px 13px; border-radius:5px; font-size:12px; line-height:1.4; }
+    #velocity-exploration button:hover { background:var(--v-tint); }
+    #velocity-exploration button:focus-visible, #velocity-exploration textarea:focus-visible { outline:2px solid var(--v-blue); outline-offset:3px; }
+    #velocity-exploration button.v-primary { background:var(--v-blue); color:var(--v-onblue); border-color:var(--v-blue); }
+    #velocity-exploration button:disabled { opacity:.55; }
+    #velocity-exploration .v-quiet { border-color:transparent; background:transparent; color:var(--v-muted); }
+    #velocity-exploration .v-tabs { display:flex; gap:20px; padding:0 24px; border-bottom:1px solid var(--v-line); flex-wrap:wrap; }
+    #velocity-exploration .v-tabs button { border:0; border-radius:0; padding:14px 0; background:transparent; color:var(--v-muted); border-bottom:2px solid transparent; }
+    #velocity-exploration .v-tabs button[aria-pressed=true] { color:var(--v-ink); border-bottom-color:var(--v-ink); }
+    #velocity-exploration .v-layout { display:grid; grid-template-columns:216px minmax(0,1fr); min-height:638px; }
+    #velocity-exploration .v-rail { padding:26px 16px; border-right:1px solid var(--v-line); background:var(--v-ground); }
+    #velocity-exploration .v-label { font-size:11px; line-height:1.6; text-transform:uppercase; letter-spacing:1.5px; font-weight:600; color:var(--v-muted); }
+    #velocity-exploration .v-rail button { display:block; width:100%; text-align:left; background:transparent; border:0; margin-top:12px; padding:12px; font-size:13px; }
+    #velocity-exploration .v-rail button[aria-pressed=true] { background:var(--v-paper); box-shadow:0 1px 2px #00000008; }
+    #velocity-exploration .v-rail small { display:block; margin-top:6px; font-size:11px; color:var(--v-muted); }
+    #velocity-exploration .v-rail-note { border-top:1px solid var(--v-line); margin:24px 12px 0; padding-top:18px; font-size:11px; line-height:1.6; color:var(--v-muted); }
+    #velocity-exploration .v-main { padding:30px 34px; min-width:0; }
+    #velocity-exploration h2 { font-size:30px; line-height:1.22; letter-spacing:-1.1px; font-weight:500; margin:10px 0 14px; max-width:670px; text-wrap:balance; }
+    #velocity-exploration h3 { font-size:16px; line-height:1.45; font-weight:600; margin:0 0 12px; }
+    #velocity-exploration p { font-size:13px; line-height:1.7; margin:10px 0 18px; }
+    #velocity-exploration .v-sub { color:var(--v-muted); max-width:650px; }
+    #velocity-exploration .v-context { font-size:11px; line-height:1.7; color:var(--v-muted); display:flex; gap:7px 18px; flex-wrap:wrap; margin-bottom:24px; }
+    #velocity-exploration .v-two { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+    #velocity-exploration .v-exhibit { border-top:1px solid var(--v-line); border-bottom:1px solid var(--v-line); padding:23px 0; margin:22px 0; }
+    #velocity-exploration .v-bar-row { display:grid; grid-template-columns:28px 1fr 38px; align-items:center; gap:10px; margin:16px 0; font-size:12px; font-variant-numeric:tabular-nums; }
+    #velocity-exploration .v-track { height:13px; background:var(--v-tint); }
+    #velocity-exploration .v-bar { height:100%; background:var(--v-sage); transition:width 150ms ease; }
+    #velocity-exploration .v-bar-raw { background:var(--v-muted); }
+    #velocity-exploration .v-change { margin-top:18px; font-size:24px; letter-spacing:-.7px; }
+    #velocity-exploration .v-change small { font-size:11px; letter-spacing:0; color:var(--v-muted); }
+    #velocity-exploration .v-tiny { font-size:11px; line-height:1.6; color:var(--v-muted); }
+    #velocity-exploration .v-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:18px 0 0; }
+    #velocity-exploration .v-actions .v-status { flex:1; font-size:11px; color:var(--v-muted); }
+    #velocity-exploration .v-note { padding:16px 18px; background:var(--v-ground); border-left:2px solid var(--v-sage); margin:16px 0; }
+    #velocity-exploration .v-note p { margin:5px 0 0; }
+    #velocity-exploration details { margin-top:18px; border-top:1px solid var(--v-line); padding-top:15px; }
+    #velocity-exploration summary { font-size:12px; color:var(--v-muted); }
+    #velocity-exploration table { border-collapse:collapse; width:100%; margin:16px 0; font-size:12px; font-variant-numeric:tabular-nums; }
+    #velocity-exploration th, #velocity-exploration td { padding:10px 8px; text-align:right; border-bottom:1px solid var(--v-line); }
+    #velocity-exploration th:first-child, #velocity-exploration td:first-child { text-align:left; }
+    #velocity-exploration th { font-size:11px; color:var(--v-muted); font-weight:500; }
+    #velocity-exploration textarea { display:block; width:100%; background:var(--v-paper); border:1px solid var(--v-line); border-radius:5px; padding:12px; font-size:14px; line-height:1.5; min-height:92px; resize:vertical; margin:8px 0; }
+    #velocity-exploration .v-edit { margin-top:20px; }
+    #velocity-exploration .v-question { padding:16px 0; border-bottom:1px solid var(--v-line); }
+    #velocity-exploration .v-question strong { display:block; font-size:15px; font-weight:500; }
+    #velocity-exploration .v-question p { margin:6px 0; }
+    #velocity-exploration .v-diff { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:20px 0; }
+    #velocity-exploration .v-diff > div { padding:18px; background:var(--v-ground); }
+    #velocity-exploration .v-diff strong { display:block; font-size:27px; font-weight:500; margin:8px 0; }
+    #velocity-exploration .v-warning { color:var(--v-warning); }
+    #velocity-exploration .v-doc { max-width:670px; margin:auto; }
+    #velocity-exploration .v-doc-head { padding-bottom:24px; border-bottom:2px solid var(--v-ink); margin-bottom:26px; }
+    #velocity-exploration .v-story-row { display:grid; grid-template-columns:28px 1fr; gap:12px; padding:22px 0; border-bottom:1px solid var(--v-line); }
+    #velocity-exploration .v-story-row > span { font-size:12px; color:var(--v-muted); }
+    #velocity-exploration .v-story-row h3 { font-size:20px; font-weight:500; letter-spacing:-.4px; }
+    #velocity-exploration .v-inbox { display:grid; grid-template-columns:310px minmax(0,1fr); min-height:680px; }
+    #velocity-exploration .v-inbox-list { background:var(--v-ground); border-right:1px solid var(--v-line); padding:24px 18px; }
+    #velocity-exploration .v-inbox-list button { text-align:left; display:block; width:100%; margin:12px 0; padding:18px; }
+    #velocity-exploration .v-inbox-list button[aria-pressed=true] { border-color:var(--v-ink); }
+    #velocity-exploration .v-inbox-list strong { display:block; font-size:14px; line-height:1.5; margin:6px 0; font-weight:500; }
+    #velocity-exploration .v-paper-layout { display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:36px; padding:34px; min-height:680px; }
+    #velocity-exploration .v-margin { border-left:1px solid var(--v-line); padding-left:22px; }
+    #velocity-exploration .v-cite { padding:2px 7px; font-size:11px; margin-left:5px; }
+    #velocity-exploration .v-step { display:flex; justify-content:space-between; gap:15px; padding:15px 0; border-bottom:1px solid var(--v-line); font-size:12px; }
+    #velocity-exploration .v-footer { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:12px 24px; border-top:1px solid var(--v-line); font-size:11px; color:var(--v-muted); }
+    #velocity-exploration [hidden] { display:none!important; }
+    @media (max-width:750px) { #velocity-exploration .v-layout,#velocity-exploration .v-inbox,#velocity-exploration .v-paper-layout { grid-template-columns:1fr; } #velocity-exploration .v-rail { border-right:0; border-bottom:1px solid var(--v-line); padding:16px; } #velocity-exploration .v-rail button { margin-top:6px; padding:9px; } #velocity-exploration .v-rail-note { display:none; } #velocity-exploration .v-main { padding:24px 20px; } #velocity-exploration .v-inbox-list { border-right:0; border-bottom:1px solid var(--v-line); } #velocity-exploration .v-margin { border-left:0; border-top:1px solid var(--v-line); padding:20px 0 0; } #velocity-exploration .v-paper-layout { padding:24px 20px; gap:20px; } #velocity-exploration h2 { font-size:26px; } }
+    @media (max-width:430px) { #velocity-exploration .v-two,#velocity-exploration .v-diff { grid-template-columns:1fr; gap:16px; } #velocity-exploration .v-top { padding:15px; gap:10px; } #velocity-exploration .v-tabs { padding:0 16px; gap:18px; } #velocity-exploration th,#velocity-exploration td { padding:8px 3px; font-size:11px; } }
+    @media (pointer:coarse) { #velocity-exploration button { min-height:44px; } #velocity-exploration textarea { font-size:16px; } }
+    @media (prefers-reduced-motion:reduce) { #velocity-exploration .v-bar { transition:none; } }
+  </style>
+  <div class="v-caption">VELOCITY / WORKFLOW EXPLORATION · Interactive concepts with illustrative data. No live analysis or export.</div>
+  <div class="viz-carousel" aria-label="Researcher workflow directions">
+    <section data-variant="Question desk · recommended" aria-label="Question desk concept">
+      <div class="v-app">
+        <header class="v-top"><span class="v-wordmark">velocity</span><span class="v-project">Meridian / Brand tracker / Wave 4</span><button class="v-quiet cursor-interaction" data-action="reset">Reset example</button></header>
+        <nav class="v-tabs" aria-label="Research workspace"><button class="cursor-interaction" data-view="brief" aria-pressed="false">Brief</button><button class="cursor-interaction" data-view="investigate" aria-pressed="true">Investigate</button><button class="cursor-interaction" data-view="answer" aria-pressed="false">Answer <span id="v-answer-count">0</span></button><button class="cursor-interaction" data-view="changes" aria-pressed="false">Changes</button></nav>
+        <div class="v-layout">
+          <aside class="v-rail"><div class="v-label">Questions that matter</div><button class="cursor-interaction" data-question="growth" aria-pressed="true">01 &nbsp; Is Meridian growing?<small id="v-question-status">An explanation to test</small></button><button class="cursor-interaction" data-question="trust" aria-pressed="false">02 &nbsp; Has trust improved?<small>Wording changed</small></button><button class="cursor-interaction" data-question="action" aria-pressed="false">03 &nbsp; What should we do?<small>Decision still open</small></button><div class="v-rail-note">For the next brand review<br><strong>Decide whether the rise warrants more investment.</strong><br><br>Research lead · You</div></aside>
+          <main class="v-main" id="v-main"></main>
+        </div>
+        <footer class="v-footer"><span>Illustrative tracker · 1,200 interviews per wave · No significance inference</span><span id="v-state" aria-live="polite">Working example</span></footer>
+      </div>
+    </section>
+    <section data-variant="Signal inbox" aria-label="Signal inbox concept" hidden>
+      <div class="v-app">
+        <header class="v-top"><span class="v-wordmark">velocity</span><span class="v-project">Meridian / Wave 4 review</span><span class="v-tiny">2 items need judgement</span></header>
+        <div class="v-inbox"><aside class="v-inbox-list"><div class="v-label">What deserves attention</div><button class="cursor-interaction" data-signal="mix" aria-pressed="true"><span class="v-tiny">01 / Apparent movement</span><strong>A six-point rise disappears after weighting.</strong><span class="v-tiny">Meridian preference · W3 → W4</span></button><button class="cursor-interaction" data-signal="wording" aria-pressed="false"><span class="v-tiny">02 / Comparability</span><strong>Trust changed. So did the question.</strong><span class="v-tiny">Trend requires a decision</span></button><p class="v-tiny">Sorted by consequence for the brief, not by the smallest p-value.</p></aside><main class="v-main" id="v-signal-detail"></main></div>
+        <footer class="v-footer"><span>Alternative direction · strongest for recurring tracker review</span><span>Illustrative data</span></footer>
+      </div>
+    </section>
+    <section data-variant="Living answer" aria-label="Living answer concept" hidden>
+      <div class="v-app">
+        <header class="v-top"><span class="v-wordmark">velocity</span><span class="v-project">Meridian / Brand review / Working answer</span><button class="cursor-interaction" id="v-document-edit">Edit conclusion</button></header>
+        <div class="v-paper-layout"><main class="v-doc"><div class="v-doc-head"><div class="v-label">Brand review / September</div><h2>The headline rose.<br>The weighted estimate didn’t.</h2><p class="v-sub">A decision note for the Meridian team</p></div><h3>What we know</h3><p>Unweighted preference rose from 24% to 30%. With the same population targets applied to both waves, preference is 26% in each wave.<button class="v-cite cursor-interaction" data-citation="numbers" aria-label="Inspect evidence 1">1</button></p><p>The sample now contains more of the group with higher preference. Neither group’s observed preference rate changed.<button class="v-cite cursor-interaction" data-citation="mix" aria-label="Inspect evidence 2">2</button></p><h3>What this means for the decision</h3><p id="v-document-conclusion">Do not use the raw rise alone to justify more investment. Check commercial performance and campaign exposure before changing spend.</p><div id="v-document-editor" hidden><label class="v-tiny" for="v-document-text">Your conclusion</label><textarea id="v-document-text">Do not use the raw rise alone to justify more investment. Check commercial performance and campaign exposure before changing spend.</textarea><button class="v-primary cursor-interaction" id="v-document-save">Keep wording</button></div><div class="v-note"><div class="v-label">Still unanswered</div><p>Has brand trust improved? The wording changed between waves; this comparison cannot answer it yet.</p></div><p class="v-tiny">Evidence describes this illustrative sample. No causal or statistical-significance conclusion is claimed.</p></main><aside class="v-margin" id="v-document-evidence"><div class="v-label">Evidence in the margin</div><h3 style="margin-top:15px">A readable argument.<br>An inspectable basis.</h3><p class="v-sub">Select a numbered reference to see the source without losing your place.</p></aside></div>
+        <footer class="v-footer"><span>Alternative direction · strongest for synthesis and client review</span><span id="v-document-state" aria-live="polite">Illustrative working note</span></footer>
+      </div>
+    </section>
+  </div>
+  <script>
+  (() => {
+    const root = document.getElementById('velocity-exploration');
+    const main = root.querySelector('#v-main');
+    let state = { view:'investigate', question:'growth', checked:false, kept:false, parked:false, corrected:false, staged:false, stale:false, edited:false, trustRecorded:false, headline:'The raw rise is explained by the sample mix in this example.', note:'' };
+    const esc = (s) => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const action = (name,label,primary=false) => `<button class="${primary?'v-primary ':''}cursor-interaction" data-action="${name}">${label}</button>`;
+    const chart = () => `<div class="v-two v-exhibit" role="img" aria-label="Unweighted preference: wave 3 24 percent, wave 4 30 percent. Weighted preference: wave 3 26 percent, wave 4 ${state.corrected?28:26} percent. Both charts use zero to 40 percent."><div><div class="v-label">As sampled · unweighted</div><div class="v-bar-row"><span>W3</span><div class="v-track"><div class="v-bar v-bar-raw" style="width:60%"></div></div><span>24%</span></div><div class="v-bar-row"><span>W4</span><div class="v-track"><div class="v-bar v-bar-raw" style="width:75%"></div></div><span>30%</span></div><div class="v-change">+6 <small>percentage points</small></div></div><div><div class="v-label">Population weighted</div><div class="v-bar-row"><span>W3</span><div class="v-track"><div class="v-bar" style="width:65%"></div></div><span>26%</span></div><div class="v-bar-row"><span>W4</span><div class="v-track"><div class="v-bar" style="width:${state.corrected?70:65}%"></div></div><span>${state.corrected?28:26}%</span></div><div class="v-change">${state.corrected?'+2':'0'} <small>percentage points</small></div></div><div class="v-tiny">Shared scale: 0–40% preference</div></div>`;
+    const detail = () => `${state.corrected?'<p class="v-tiny">The table below preserves the original sample-mix check. The corrected W4 target changes the weighted estimate to 28%.</p>':''}<div class="v-note"><div class="v-label">The alternative explanation</div><p>The higher-preference group grew from 20% to 50% of the sample. Preference within each group stayed at 20% and 40%. At a fixed 30% population share for the higher-preference group, both waves give 26%.</p></div><table><caption class="v-tiny">Observed counts and rates · all respondents</caption><thead><tr><th>Group</th><th>W3 n</th><th>W4 n</th><th>Preference<br>W3 / W4</th></tr></thead><tbody><tr><td>Lower preference</td><td>960</td><td>600</td><td>20% / 20%</td></tr><tr><td>Higher preference</td><td>240</td><td>600</td><td>40% / 40%</td></tr><tr><td>Total</td><td>1,200</td><td>1,200</td><td>24% / 30%</td></tr></tbody></table><p class="v-tiny">Illustrative two-group post-stratification. These checks explain the arithmetic; they do not establish a causal effect or statistical equivalence.</p>`;
+    function notify(message) { root.querySelector('#v-state').textContent=message; }
+    function render() {
+      root.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===state.view)));
+      root.querySelectorAll('[data-question]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.question===state.question)));
+      root.querySelector('#v-answer-count').textContent=state.kept?'1':'0';
+      root.querySelector('#v-question-status').textContent=state.stale?'Evidence changed · revisit':state.kept?'Kept in the answer':state.parked?'Set aside for now':state.checked?'Explanation inspected':'An explanation to test';
+      if(state.view==='brief') {
+        main.innerHTML=`<div class="v-label">Start with the decision</div><h2>What would make us invest more in Meridian?</h2><p class="v-sub">The brief is a working set of questions. Each one keeps its evidence, alternative explanations, and your conclusion together.</p><div class="v-question"><strong>01 / Is the apparent growth present after weighting?</strong><p class="v-tiny">Available: preference, wave, group and analysis weights.</p></div><div class="v-question"><strong>02 / Has trust improved?</strong><p class="v-tiny">Question wording changed. Compare definitions before comparing results.</p></div><div class="v-question"><strong>03 / Does the evidence support more investment?</strong><p class="v-tiny">Survey evidence alone cannot establish incremental return on spend.</p></div><div class="v-note"><div class="v-label">Preparation that affects this answer</div><p>Two waves loaded. Preference codes align. Both waves use population weighting. Trust needs a comparability decision.</p></div><div class="v-actions">${action('investigate','Investigate the apparent growth',true)}</div>`;
+      } else if(state.view==='changes') {
+        main.innerHTML=`<div class="v-label">Review the consequences</div><h2>${state.corrected?'A changed estimate needs changed wording.':'What changes when the data changes?'}</h2><p class="v-sub">A correction to the Wave 4 weight would change the answer you kept. Compare it before replacing the current evidence.</p>${state.staged||state.corrected?`<div class="v-diff"><div><div class="v-label">Current evidence · original</div><strong>26% → 26%</strong><span class="v-tiny">Fixed 30% higher-group target</span></div><div><div class="v-label">Corrected W4 weight</div><strong>26% → 28%</strong><span class="v-tiny">W4 higher-group target corrected to 40%</span></div></div><div class="v-step"><span>Growth finding</span><strong class="v-warning">Revisit interpretation</strong></div><div class="v-step"><span>Your wording and decision</span><span>Preserved for comparison</span></div><div class="v-step"><span>Trust wording issue</span><span>Unaffected</span></div><p class="v-tiny">This is a correction to the illustrative weight specification, not evidence of individual change. The correction itself needs a defensible external basis.</p><div class="v-actions">${state.corrected?action('investigate','Revisit the finding',true):action('apply','Use corrected evidence',true)+action('cancel-stage','Keep original evidence')}</div>`:`<div class="v-note"><div class="v-label">A realistic interruption</div><p>The data provider corrects the population target for Wave 4. The chart can update automatically; your interpretation needs your attention.</p></div><div class="v-actions">${action('stage','Preview a weight correction',true)}</div>`}`;
+      } else if(state.view==='answer') {
+        main.innerHTML=`<div class="v-doc"><div class="v-doc-head"><div class="v-label">Working answer / Brand review</div><h2>What we can say.<br>What remains open.</h2></div>${state.kept?`<div class="v-story-row"><span>01</span><div><div class="v-label ${state.stale?'v-warning':''}">${state.stale?'Evidence changed · review before use':'Your selected finding'}</div><h3 style="margin-top:8px">${esc(state.headline)}</h3><p class="v-sub">Unweighted preference: 24% → 30%. Weighted preference: 26% → ${state.corrected?28:26}%.</p>${state.note?`<p>${esc(state.note)}</p>`:''}<div class="v-actions">${action('investigate','Open its evidence')}${action('remove','Remove from answer')}</div></div></div>`:`<p class="v-sub">No finding selected yet. Investigate the growth question, inspect the sample mix, then choose what belongs here.</p>${action('investigate','Return to the evidence',true)}`}<div class="v-story-row"><span>02</span><div><h3>Trust remains unresolved.</h3><p class="v-sub">The question changed between waves. Keep this limitation beside the decision, rather than hiding it in an appendix.</p>${action('trust','Inspect wording')}</div></div><div class="v-note"><div class="v-label">Decision</div><p>More investment requires evidence beyond this headline movement. Commercial performance and campaign exposure are still needed.</p></div><p class="v-tiny">Concept preview: this is an editable working argument. Production export and durable project storage are not connected.</p></div>`;
+      } else if(state.question==='trust') {
+        main.innerHTML=`<div class="v-label">Question 02 / Comparability</div><h2>Trust changed.<br>So did the question.</h2><p class="v-sub">These items may measure different things. A shared variable name is not enough to establish a trend.</p><div class="v-diff"><div><div class="v-label">Wave 3</div><p>“Meridian is a brand I trust.”</p></div><div><div class="v-label">Wave 4</div><p>“Meridian is reliable.”</p></div></div><div class="v-note"><div class="v-label">Research judgement</div><p>Keep the measures separate for now. A bridge study or agreed harmonisation rule would be needed to support a combined trend.</p></div><div class="v-actions">${action('mark-trust',state.trustRecorded?'Recorded · keep separate':'Record as not comparable',true)}${action('investigate','Back to growth')}</div>`;
+      } else if(state.question==='action') {
+        main.innerHTML=`<div class="v-label">Question 03 / Decision</div><h2>A survey result is part of the investment case.</h2><p class="v-sub">We can describe the observed preference movement. We cannot infer the incremental return from additional spend from these two waves alone.</p><div class="v-question"><strong>What we can examine here</strong><p>Preference, sample composition and question comparability.</p></div><div class="v-question"><strong>What is still missing</strong><p>Campaign exposure, commercial outcomes, costs and a credible counterfactual.</p></div><div class="v-actions">${action('answer','Read the working answer',true)}</div>`;
+      } else {
+        main.innerHTML=`<div class="v-label">Question 01 / Is Meridian growing?</div><h2>${state.corrected?'The correction changes the conclusion.':'A six-point rise.<br>A different sample.'}</h2><p class="v-sub">${state.corrected?'Weighted preference is now two points higher. Your earlier wording remains available, but needs review.':'The raw result suggests momentum. The weighted result suggests a different explanation worth testing.'}</p><div class="v-context"><span>Preference · all respondents</span><span>W3 → W4 · n = 1,200 each</span><span>${state.corrected?'Corrected W4 weight':'Population weighting'}</span></div>${chart()}${state.checked?detail():`<div class="v-note"><div class="v-label">One useful next question</div><p>Did preference change within groups, or did the mix of people answering change?</p></div>`}${state.stale?`<p class="v-warning">Your selected finding needs review. The earlier wording has been preserved.</p>`:''}<div class="v-actions">${!state.checked?action('check','Test the sample-mix explanation',true):action('keep',state.kept&&!state.stale?'Update finding':'Keep in the answer',true)}${action('edit','Write my interpretation')}${action('park',state.parked?'Restore finding':'Set aside')}</div><div class="v-edit" id="v-editor" hidden><label class="v-tiny" for="v-headline">Finding headline</label><textarea id="v-headline">${esc(state.headline)}</textarea><label class="v-tiny" for="v-note-input">Why it matters / limits</label><textarea id="v-note-input">${esc(state.note)}</textarea><div class="v-actions">${action('save-edit','Save wording',true)}${action('cancel-edit','Cancel')}</div></div><details><summary class="cursor-interaction">Source, calculation and scope</summary><p class="v-tiny">Illustrative fixture, not SBT benchmark data. W3: 192 + 96 preferrers / 1,200. W4: 120 + 240 / 1,200. Weighted rate: 20% × lower-group target + 40% × higher-group target. Original target 70/30; corrected W4 60/40. DK and missing responses are absent in this fixture. No significance test has been run.</p></details>`;
+      }
+    }
+    root.addEventListener('click',e=>{
+      const button=e.target.closest('button'); if(!button)return;
+      if(button.dataset.view){state.view=button.dataset.view;render();return;}
+      if(button.dataset.question){state.question=button.dataset.question;state.view='investigate';render();return;}
+      const a=button.dataset.action;
+      if(!a)return;
+      if(a==='reset'){state={view:'investigate',question:'growth',checked:false,kept:false,parked:false,corrected:false,staged:false,stale:false,edited:false,trustRecorded:false,headline:'The raw rise is explained by the sample mix in this example.',note:''};notify('Example reset');}
+      if(a==='investigate'){state.view='investigate';state.question='growth';}
+      if(a==='answer')state.view='answer';
+      if(a==='trust'){state.view='investigate';state.question='trust';}
+      if(a==='check'){state.checked=true;notify('Sample composition and within-group rates shown');}
+      if(a==='edit'){root.querySelector('#v-editor').hidden=false;root.querySelector('#v-headline').focus();return;}
+      if(a==='cancel-edit'){root.querySelector('#v-editor').hidden=true;return;}
+      if(a==='save-edit'){const text=root.querySelector('#v-headline').value.trim();if(!text){notify('Add a headline before saving');return;}state.headline=text;state.note=root.querySelector('#v-note-input').value;state.edited=true;notify('Your wording is preserved in this preview');}
+      if(a==='keep'){if(state.corrected&&!state.edited){state.headline='Weighted preference is two points higher after the correction.';}state.kept=true;state.parked=false;state.stale=false;notify('Finding kept · judgement remains yours');state.view='answer';}
+      if(a==='remove'){state.kept=false;notify('Finding removed; evidence retained');}
+      if(a==='park'){state.parked=!state.parked;if(state.parked)state.kept=false;notify(state.parked?'Set aside; evidence remains available':'Finding restored');}
+      if(a==='stage'){state.staged=true;notify('Correction previewed; current evidence unchanged');}
+      if(a==='cancel-stage'){state.staged=false;notify('Original evidence retained');}
+      if(a==='apply'){state.corrected=true;state.stale=state.kept;notify('Corrected evidence applied; affected finding requires review');}
+      if(a==='mark-trust'){state.trustRecorded=true;notify('Trust recorded as not comparable in this preview');button.textContent='Recorded · keep separate';return;}
+      render();
+    });
+    const signals={mix:{label:'Apparent movement',title:'A rise that doesn’t survive weighting.',text:'The unweighted estimate moves six points; the original weighted estimate is unchanged. Inspect composition before making this a growth story.',detail:'W3 24% → W4 30% unweighted. W3 26% → W4 26% weighted.',cta:'Set aside as a growth claim'},wording:{label:'Comparison interrupted',title:'Resolve the meaning before the movement.',text:'“A brand I trust” became “is reliable”. The change belongs in the researcher’s review queue before it belongs in a trend chart.',detail:'W3: trust. W4: reliability. Numeric comparison withheld.',cta:'Keep as separate measures'}};
+    function renderSignal(key){const s=signals[key];root.querySelector('#v-signal-detail').innerHTML=`<div class="v-label">${s.label}</div><h2>${s.title}</h2><p class="v-sub">${s.text}</p><div class="v-exhibit"><h3>Evidence at a glance</h3><p>${s.detail}</p></div><label class="v-tiny" for="v-signal-note">Researcher note</label><textarea id="v-signal-note" placeholder="Record what this changes for the brief…"></textarea><div class="v-actions"><button class="v-primary cursor-interaction" id="v-signal-decide">${s.cta}</button></div><p class="v-tiny" id="v-signal-state" aria-live="polite">No decision recorded</p>`;root.querySelector('#v-signal-decide').onclick=()=>{root.querySelector('#v-signal-state').textContent='Decision recorded in this preview'+(root.querySelector('#v-signal-note').value?' · '+root.querySelector('#v-signal-note').value:'');};}
+    root.querySelectorAll('[data-signal]').forEach(b=>b.onclick=()=>{root.querySelectorAll('[data-signal]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderSignal(b.dataset.signal);});
+    root.querySelector('#v-document-edit').onclick=()=>{root.querySelector('#v-document-editor').hidden=false;root.querySelector('#v-document-text').focus();};
+    root.querySelector('#v-document-save').onclick=()=>{root.querySelector('#v-document-conclusion').textContent=root.querySelector('#v-document-text').value;root.querySelector('#v-document-editor').hidden=true;root.querySelector('#v-document-state').textContent='Your wording kept in this preview';};
+    root.querySelectorAll('[data-citation]').forEach(b=>b.onclick=()=>{root.querySelector('#v-document-evidence').innerHTML=b.dataset.citation==='numbers'?'<div class="v-label">Evidence 1 / Preference</div><h3 style="margin-top:15px">Same measure. Two views.</h3><p>Unweighted: 24% → 30%.<br>Weighted: 26% → 26%.</p><p class="v-tiny">All respondents. n = 1,200 each wave. Original 70/30 population targets. No significance inference.</p>':'<div class="v-label">Evidence 2 / Sample mix</div><h3 style="margin-top:15px">The higher-preference group grew.</h3><p>Sample share: 20% → 50%. Within-group preference remains 20% / 40%.</p><p class="v-tiny">Illustrative aggregate fixture. No individual-level change inferred.</p>';});
+    render();renderSignal('mix');
+  })();
+  </script>
+</div>
